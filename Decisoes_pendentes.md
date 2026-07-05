@@ -63,6 +63,17 @@ Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
 
 **Decisão:** _(a registrar)_
 
+## 8. Passo final do otimizador: qual Σ e quais restrições 🔴
+Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
+
+**Contexto:** o passo `w = inv(δΣ)μ` aceita duas covariâncias:
+- **Σ amostral** — pesos respondem só à mudança na média; com confiança zero volta exatamente a `w_mkt`.
+- **Σ_bl posterior (He & Litterman)** — incorpora a incerteza das views; com confiança zero os pesos encolhem para `w_mkt/(1+τ)` (sobra caixa implícito).
+
+Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?). O esqueleto atual é irrestrito (BL padrão) e deixa a escolha do Σ para o chamador.
+
+**Decisão:** _(a registrar)_
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.
