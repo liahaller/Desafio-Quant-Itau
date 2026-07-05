@@ -1,7 +1,7 @@
 """Testes do Ω reativo.
 
 Casos sintéticos com resultado conhecido só podem ser escritos depois que
-a forma funcional (Decisão 4, ver Decisoes_pendentes.md) for fechada na
+a forma funcional (Decisão 6, ver Decisoes_pendentes.md) for fechada na
 reunião de 07/jul/2026. Até lá, o teste documenta a interface esperada e
 confirma que o placeholder falha de forma explícita.
 """

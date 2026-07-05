@@ -1,7 +1,7 @@
 """Testes da camada tática.
 
 Casos sintéticos com resultado conhecido só podem ser escritos depois que
-as Decisões 3, 6 e 7 (ver Decisoes_pendentes.md) forem fechadas na reunião
+as Decisões 5, 8 e 9 (ver Decisoes_pendentes.md) forem fechadas na reunião
 de 07/jul/2026. Até lá, os testes documentam a interface esperada e
 confirmam que os placeholders falham de forma explícita.
 """

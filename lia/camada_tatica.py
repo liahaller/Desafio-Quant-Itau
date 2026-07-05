@@ -22,12 +22,12 @@ def detectar_surpresa_pead(evento: EventoMercado) -> bool:
     """Indica se o desfecho do evento conta como "surpresa" e deve
     disparar o trade de drift pós-evento (PEAD).
 
-    TODO(DECISAO-3): critério de limiar, janela de holding e ativos
+    TODO(DECISAO-5): critério de limiar, janela de holding e ativos
     elegíveis ainda não decididos — ver Decisoes_pendentes.md.
     """
     raise NotImplementedError(
         "Definição de 'surpresa' (PEAD) ainda não decidida "
-        "(ver Decisoes_pendentes.md, Decisão 3)"
+        "(ver Decisoes_pendentes.md, Decisão 5)"
     )
 
 
@@ -36,12 +36,12 @@ def detectar_salto_event_driven(evento: EventoMercado) -> bool:
     resolução (ex.: fusão 40% -> 70%) grande o suficiente para
     caracterizar o sinal event-driven.
 
-    TODO(DECISAO-6): tamanho do salto, unidade de medida e janela de
+    TODO(DECISAO-8): tamanho do salto, unidade de medida e janela de
     tempo ainda não decididos — ver Decisoes_pendentes.md.
     """
     raise NotImplementedError(
         "Gatilho de salto event-driven ainda não decidido "
-        "(ver Decisoes_pendentes.md, Decisão 6)"
+        "(ver Decisoes_pendentes.md, Decisão 8)"
     )
 
 
@@ -49,10 +49,10 @@ def calcular_velocidade_ajuste(serie_probabilidade: list[float]) -> float:
     """Calcula a velocidade (derivada) de ajuste da probabilidade durante
     um movimento, usada como gatilho do sinal de velocidade.
 
-    TODO(DECISAO-7): forma de estimar a derivada e limiar de gatilho ainda
+    TODO(DECISAO-9): forma de estimar a derivada e limiar de gatilho ainda
     não decididos — ver Decisoes_pendentes.md.
     """
     raise NotImplementedError(
         "Forma de cálculo da velocidade de ajuste ainda não decidida "
-        "(ver Decisoes_pendentes.md, Decisão 7)"
+        "(ver Decisoes_pendentes.md, Decisão 9)"
     )
