@@ -61,3 +61,31 @@ seção 3.
 
 **Pendente:** mesmo da entrada anterior; numeração agora alinhada com o
   doc oficial do time.
+
+## 2026-07-06 — Lia
+
+**Feito:**
+- Criada a base da matriz de relação tridimensional da camada tática
+  (`lia/matriz_relacao.py`): ativos × mercados do Polymarket × tempo,
+  com **distance correlation** por célula, seguindo a referência do
+  relatório NEXUS (Desafio Quant AI 2025) indicada pela Lia. Contém
+  `distance_correlation`, a estrutura `MatrizRelacao3D` (com `consultar`
+  e `fatia_em`) e `calcular_matriz_relacao` (janelas móveis; `janela`
+  obrigatória por argumento, sem default — o valor é decisão pendente).
+- Testes sintéticos com resultado conhecido em
+  `lia/tests/test_matriz_relacao.py`: dcor(x,x)=1, invariância afim,
+  série constante → 0, captura de relação não-linear (y=x² com Pearson
+  ≈ 0), NaN propagado, dimensões/alinhamento de datas da matriz 3D.
+- Registrada a Decisão 10 em `Decisoes_pendentes.md` (status 🟡): a
+  direção metodológica (estrutura 3D + dcor) foi dada pela Lia; janela,
+  passo, série do Polymarket e a fronteira com a Decisão 3 (Camada 2 do
+  Felipe) ficam para confirmar em reunião.
+
+**Quebrou:** nada. Ressalva: Python não está instalado nesta máquina, os
+  testes não puderam ser executados localmente — rodar `pytest lia/tests`
+  num ambiente com numpy/pandas/pytest antes de considerar pronto.
+
+**Pendente:**
+- Fechar em reunião os itens em aberto da Decisão 10 (janela, passo,
+  série do Polymarket, fronteira com Camada 2).
+- Demais pendências das entradas anteriores (Decisões 5–9).

@@ -121,6 +121,29 @@ partir do norte geral da Lia.
   vs. regressão local numa janela.
 - Limiar de velocidade que caracteriza o gatilho.
 
+## 10. Matriz de relação 3D ações × mercados Polymarket × tempo (camada tática) 🟡
+Como medir a relação entre cada ação e cada previsão macro do Polymarket
+para selecionar os ativos elegíveis dos trades táticos.
+
+**Decisão (em discussão — direção dada pela Lia em 06/jul, confirmar com o grupo):**
+- Estrutura tridimensional: ativos × mercados do Polymarket × tempo
+  (janelas móveis), inspirada na matriz de dependência do relatório NEXUS
+  (Desafio Quant AI 2025).
+- Métrica por célula: **distance correlation** (dcor, Fórmula 1 do
+  NEXUS) — captura relação linear e não-linear; nula só sob independência
+  estatística.
+- Base implementada em `lia/matriz_relacao.py` com testes sintéticos.
+
+**Em aberto (para a reunião):**
+- Tamanho da janela móvel e passo de recálculo (a função exige `janela`
+  como argumento explícito, sem default, até isso ser fechado).
+- Série do Polymarket a usar: variação da probabilidade ou nível.
+- Fronteira com a Decisão 3 (mapeamento cenário → ativos, Camada 2 do
+  Felipe): esta matriz é da camada tática (seleção de elegíveis para
+  trades curtos), não substitui a matriz de retornos condicionais da
+  estrutural — confirmar com o Felipe que não há sobreposição de
+  interface.
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.
