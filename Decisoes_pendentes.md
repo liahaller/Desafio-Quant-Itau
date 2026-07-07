@@ -31,12 +31,12 @@ Universo da camada estrutural (cobre as 5 views: Fed 2.3, inflação 2.2, eleito
 - Treasuries nominais: **TLT** (longos, mais sensível a juros — amplifica as views de juros).
 - Fonte de preços: yfinance · frequência diária.
 
-**Em aberto:** incluir proxy de Brasil (EWZ) para cobrir a transmissão EUA→BR da view 3.1 — decidir depois.
+**Fechado:** universo restrito aos EUA. Sem proxy de Brasil (EWZ); a view 3.1 opera apenas sobre ativos americanos.
 
-## 2. Acesso ao Polymarket 🔴
+## 2. Acesso ao Polymarket 🟢
 De onde vêm os dados do poly no mock: API real · snapshot histórico · dados sintéticos.
 
-**Decisão:** _(a registrar)_
+**Decisão:** API CLOB oficial do Polymarket (endpoint `/prices-history`).
 
 ## 3. Mapeamento cenário → ativos (Camada 2) 🔴
 Como estimar a matriz de retornos condicionais. Regredir retorno do ativo contra o quê (mudança de probabilidade? dummy de resolução?).
@@ -58,8 +58,19 @@ Como volume, estabilidade, convergência e proximidade de evento viram um númer
 
 **Decisão:** _(a registrar)_
 
-## 7. Convergência entre fontes (polls, casas de aposta) 🔴
+## 7. Convergência entre fontes (polls, casas de aposta) 🟡
 Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
+
+**Decisão:** fora do v1 — fica como stub. Reavaliar depois se entra em versão futura (em aberto).
+
+## 8. Passo final do otimizador: qual Σ e quais restrições 🔴
+Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
+
+**Contexto:** o passo `w = inv(δΣ)μ` aceita duas covariâncias:
+- **Σ amostral** — pesos respondem só à mudança na média; com confiança zero volta exatamente a `w_mkt`.
+- **Σ_bl posterior (He & Litterman)** — incorpora a incerteza das views; com confiança zero os pesos encolhem para `w_mkt/(1+τ)` (sobra caixa implícito).
+
+Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?). O esqueleto atual é irrestrito (BL padrão) e deixa a escolha do Σ para o chamador.
 
 **Decisão:** _(a registrar)_
 

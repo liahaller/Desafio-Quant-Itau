@@ -32,6 +32,14 @@ Este arquivo define como qualquer instância do Claude Code deve se comportar ne
 **Fim de toda sessão:**
 1. Atualizar `Decisoes_pendentes.md` se algo novo surgiu (nunca marcar decisão como fechada sem instrução explícita do humano).
 2. Adicionar entrada no `LOG.md`: data, dono da sessão, o que foi feito, o que quebrou, o que ficou pendente.
+3. Incluir na mesma entrada o bloco **"Uso de IA"** (insumo do relatório de uso de IA do desafio):
+   - **Modelo:** modelo/ferramenta usados na sessão (ex.: Claude Code / Fable 5).
+   - **Contexto consumido:** % ou tokens de contexto usados na sessão.
+   - **Prompt inicial (verbatim):** o primeiro prompt do humano na sessão, colado sem editar.
+   - **Iterações até aceitar:** nº de rodadas de correção até o resultado ser aceito.
+   - **Erros da IA:** alucinações, código quebrado, suposições indevidas (ou "nenhum").
+   - **Decisões escaladas:** nº das decisões registradas em `Decisoes_pendentes.md` nesta sessão (ou "—").
+   - **Tags:** `[PROMPT-CHAVE]` se o prompt da sessão for candidato ao teste de reprodutibilidade.
 
 ## 4. Escopo da tarefa
 
