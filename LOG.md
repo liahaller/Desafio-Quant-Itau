@@ -89,3 +89,67 @@ seção 3.
 - Fechar em reunião os itens em aberto da Decisão 10 (janela, passo,
   série do Polymarket, fronteira com Camada 2).
 - Demais pendências das entradas anteriores (Decisões 5–9).
+
+## 2026-07-08 — Lia
+
+**Feito:**
+- Merge da `main` no branch `Lia` concluído (commit `17470e3`). Conflitos
+  em `Decisoes_pendentes.md` resolvidos por instrução da Lia: o arquivo
+  ficou **idêntico ao da main** (Decisões 1, 2 e 7 fechadas; Decisão 8
+  agora é o passo final do otimizador, do Felipe). Consequência: as
+  antigas seções 8 (gatilho de salto), 9 (velocidade de ajuste) e 10
+  (matriz 3D) saíram do doc.
+- Decisão 6 (Ω reativo): a reunião do grupo delegou a decisão à Lia.
+  Registrado no doc (status 🟡) o protocolo proposto para fechá-la:
+  estrutura multiplicativa com volume como veto, confiança escalando o
+  baseline de He-Litterman, e parâmetros (janela, decaimento, threshold)
+  escolhidos por teste de monotonicidade confiança → erro realizado.
+- Criado o harness de calibração (`lia/calibracao_omega.py`): definições
+  de erro realizado (`erro_realizado_futuro`, `erro_vs_resolucao`),
+  scores candidatos (`score_estabilidade`, `score_proximidade`
+  linear/exponencial, `portao_volume`, `combinar_por_rank`) e o critério
+  de escolha (`avaliar_monotonicidade`, `comparar_candidatas`). Funções
+  puras, sem acesso a dados, sem defaults nos parâmetros do modelo.
+  Testes sintéticos em `lia/tests/test_calibracao_omega.py`.
+- Python 3.12.10 instalado nesta máquina (winget, em
+  `%LOCALAPPDATA%\Programs\Python\Python312`, fora do PATH) com
+  numpy/pandas/pytest. A suíte completa (24 testes) rodou pela primeira
+  vez: **todos passaram** — resolvida a ressalva da entrada de 06/07.
+
+**Quebrou:** primeira execução do pytest teve 4 falhas + 1 erro, todos no
+  código novo: (a) `pandas.corr(method="spearman")` depende de scipy —
+  trocado por Pearson sobre ranks, equivalente e sem dependência nova;
+  (b) o nome `teste_monotonicidade` colidia com o padrão de coleta do
+  pytest — renomeado para `avaliar_monotonicidade`; (c) asserção com
+  direção invertida num teste da forma exponencial. Corrigido na sessão.
+
+**Pendente:**
+- Lia ratificar a estrutura proposta da Decisão 6, escolher a definição
+  de erro realizado e, após a calibração, a normalização final para
+  (0,1].
+- Rodar a calibração de verdade: depende do histórico do Polymarket via
+  pipeline do Paulo (confirmar com ele se **volume** vem junto — o
+  `/prices-history` só entrega preço).
+- Os `TODO(DECISAO-8/9/10)` em `lia/camada_tatica.py` e
+  `lia/matriz_relacao.py` apontam para seções que saíram do doc no merge
+  (e o nº 8 agora é outra decisão, do Felipe) — decidir se os itens
+  táticos voltam ao doc e com que numeração.
+- Python fora do PATH — usar caminho completo ou ajustar o PATH.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Sonnet 5 (início da sessão) e Fable 5 (da
+  discussão da Decisão 6 em diante, troca via `/model`).
+- **Contexto consumido:** ~35% da janela (~70k tokens, estimativa).
+- **Prompt inicial (verbatim):** `git merge main`
+- **Iterações até aceitar:** merge: 2 (a primeira proposta de resolução
+  fundia conteúdo das duas versões; a Lia corrigiu para "igual ao da
+  main"). Harness: 1 (aceito de primeira; houve 1 rodada interna de
+  correção após a primeira execução dos testes).
+- **Erros da IA:** (1) supôs que o Spearman do pandas não dependia de
+  scipy — 3 testes quebraram; (2) nomeou função com prefixo que o pytest
+  coleta como teste; (3) asserção invertida num teste; (4) na resolução
+  do merge, a primeira proposta assumiu que era para preservar conteúdo
+  das duas versões, quando a intenção era manter só o da main.
+- **Decisões escaladas:** 6 (contexto e protocolo de calibração
+  registrados; decisão segue aberta, delegada à Lia).
+- **Tags:** —
