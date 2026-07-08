@@ -69,8 +69,9 @@ def bl_posterior(pi_prior, sigma, tau, P, Q, omega):
 def optimal_weights(mu, sigma, delta):
     """Pesos mean-variance não restritos: w = inv(delta * Sigma) @ mu.
 
-    O chamador escolhe qual Sigma passar (amostral ou posterior do BL) —
-    ver TODO(DECISAO-8) em Decisoes_pendentes.md.
+    DECISAO-8 (fechada, ver Decisoes_pendentes.md): passar a Sigma AMOSTRAL
+    (não a posterior do BL) e manter os pesos irrestritos (sem long-only
+    nem soma = 1).
     """
     _check_shapes(sigma, w_mkt=mu)
     return np.linalg.solve(delta * sigma, mu)

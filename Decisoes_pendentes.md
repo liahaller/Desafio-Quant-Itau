@@ -63,27 +63,23 @@ Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
 
 **Decisão:** fora do v1 — fica como stub. Reavaliar depois se entra em versão futura (em aberto).
 
-## 8. Passo final do otimizador: qual Σ e quais restrições 🔴
+## 8. Passo final do otimizador: qual Σ e quais restrições 🟢
 Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
 
 **Contexto:** o passo `w = inv(δΣ)μ` aceita duas covariâncias:
 - **Σ amostral** — pesos respondem só à mudança na média; com confiança zero volta exatamente a `w_mkt`.
 - **Σ_bl posterior (He & Litterman)** — incorpora a incerteza das views; com confiança zero os pesos encolhem para `w_mkt/(1+τ)` (sobra caixa implícito).
 
-Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?). O esqueleto atual é irrestrito (BL padrão) e deixa a escolha do Σ para o chamador.
+Também em aberto estava: restrições nos pesos (long-only? soma 1? limite de alavancagem?).
 
-**Decisão:** _(a registrar)_
+**Decisão (parte A — qual Σ):** fechada em reunião (2026-07-07): **Σ amostral** no passo final. Motivos: caso neutro limpo (confiança zero → carteira = `w_mkt`, isola o efeito do Polymarket) e o encolhimento por incerteza já é papel do Ω reativo.
 
-## 8. Passo final do otimizador: qual Σ e quais restrições 🔴
-Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
+**Decisão (parte B — restrições):** fechada em reunião (2026-07-07): **B1 — irrestrito** (fórmula fechada, sem restrições nos pesos). Aceita-se short e desvio da soma = 1 vindos das views; todo desvio de `w_mkt` é atribuível ao sinal do Polymarket, e os testes analíticos permanecem válidos. Reavaliar se o backtest mostrar pesos extremos.
 
-**Contexto:** o passo `w = inv(δΣ)μ` aceita duas covariâncias:
-- **Σ amostral** — pesos respondem só à mudança na média; com confiança zero volta exatamente a `w_mkt`.
-- **Σ_bl posterior (He & Litterman)** — incorpora a incerteza das views; com confiança zero os pesos encolhem para `w_mkt/(1+τ)` (sobra caixa implícito).
-
-Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?). O esqueleto atual é irrestrito (BL padrão) e deixa a escolha do Σ para o chamador.
-
-**Decisão:** _(a registrar)_
+_Alternativas descartadas (referência para reavaliação futura):_
+- **B2 — restrições formais** (long-only, soma = 1, teto por ativo) via programação quadrática (`scipy.optimize.minimize`/SLSQP). Carteira sempre realista e ótima dentro das regras, mas perde a fórmula fechada, exige solver + reescrita dos testes e distorce a atribuição view→peso quando uma trava ativa.
+- **B3 — pós-processamento**: truncar pesos negativos em zero e renormalizar para somar 1. Barato (~3 linhas) e preserva o núcleo analítico, mas o resultado não é ótimo e a renormalização distorce pesos de ativos não relacionados à view.
+- **B4 — travar na origem**: limitar magnitude de Q (decisão 4) e/ou piso no Ω (decisão 6) para que a carteira irrestrita raramente shorte/alavanque. Zero mudança no otimizador, mas não é garantia formal e transfere a discussão para as decisões 4 e 6.
 
 ---
 
