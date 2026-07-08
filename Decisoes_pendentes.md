@@ -53,10 +53,30 @@ Fórmula da surpresa. `1 − prob_atribuída`? Contínua ou por threshold?
 
 **Decisão:** _(a registrar)_
 
-## 6. Forma funcional do Ω reativo 🔴
+## 6. Forma funcional do Ω reativo 🟡
 Como volume, estabilidade, convergência e proximidade de evento viram um número de confiança. Versão mínima para o mock vs. versão completa.
 
-**Decisão:** _(a registrar)_
+**Decisão:** _(a registrar — delegada à Lia)_
+
+**Contexto (registrado em 08/07/2026):**
+- A reunião do grupo delegou esta decisão à Lia.
+- Critério proposto para fechar (protocolo de calibração, em vez de escolha
+  arbitrária):
+  1. **O que a matemática já determina:** a confiança `c ∈ (0,1]` escala o
+     baseline de He-Litterman — `Omega_ii = diag(P·tau·Sigma·P')_ii / c` —
+     de modo que `c = 1` recupera o BL clássico e `c → 0` recolhe ao prior.
+  2. **O que a semântica determina:** estrutura multiplicativa
+     `c = portao(volume) × f(estabilidade) × g(proximidade)` — volume é
+     veto (mercado sem liquidez invalida o preço; soma ponderada permitiria
+     compensação indevida); convergência fica fora do v1 (Decisão 7).
+  3. **O que o dado decide:** janela da estabilidade, forma/horizonte do
+     decaimento de proximidade e threshold de volume saem de teste de
+     monotonicidade no histórico — faixas de confiança maiores devem
+     apresentar erro realizado da probabilidade menor; empates são
+     resolvidos pela forma com menos parâmetros.
+- Dependências: histórico do Polymarket via pipeline do Paulo (Decisão 2:
+  `/prices-history` entrega preço; disponibilidade de **volume** a
+  confirmar com o Paulo).
 
 ## 7. Convergência entre fontes (polls, casas de aposta) 🟡
 Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
