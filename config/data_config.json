@@ -1,0 +1,6 @@
+{
+    "tickers": ["XLK", "XLU", "XLP", "XLF", "XLE", "XLV", "TIP", "TLT", "SPY"],
+    "start": null,
+    "end": null,
+    "output_path": "data/etf_prices_daily.parquet"
+}

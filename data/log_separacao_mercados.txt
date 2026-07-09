@@ -1,0 +1,375 @@
+LOG DE SEPARAÇÃO — mercados Fed/FOMC do Polymarket
+Passo de organização (não é decisão metodológica fechada).
+Gerado por: src/data_pipeline/separar_mercados_fed.py
+Original (intocado): polymarket_fed_probabilities.parquet — 65606 linhas, 331 mercados únicos
+
+======================================================================
+RESUMO
+======================================================================
+Mercados únicos no núcleo de reunião ('reunioes'): 76
+Mercados únicos fora do núcleo ('outros'):         244
+CASOS AMBÍGUOS (temporariamente em 'outros'):      11
+Linhas: reunioes=16338 | outros=49268 | original=65606
+
+======================================================================
+REUNIOES — 76 mercados (→ polymarket_fed_reunioes.parquet)
+======================================================================
+  Fed decreases interest rates by 25 bps after 2024 May meeting?
+  Fed decreases interest rates by 25 bps after December 2024 meeting?
+  Fed decreases interest rates by 25 bps after December 2025 meeting?
+  Fed decreases interest rates by 25 bps after January 2025 meeting?
+  Fed decreases interest rates by 25 bps after January 2026 meeting?
+  Fed decreases interest rates by 25 bps after July 2024 meeting?
+  Fed decreases interest rates by 25 bps after July 2025 meeting?
+  Fed decreases interest rates by 25 bps after June 2024 meeting?
+  Fed decreases interest rates by 25 bps after June 2025 meeting?
+  Fed decreases interest rates by 25 bps after March 2025 meeting?
+  Fed decreases interest rates by 25 bps after May 2025 meeting?
+  Fed decreases interest rates by 25 bps after November 2024 meeting?
+  Fed decreases interest rates by 25 bps after October 2025 meeting?
+  Fed decreases interest rates by 25 bps after September 2024 meeting?
+  Fed decreases interest rates by 25 bps after September 2025 meeting?
+  Fed decreases interest rates by 50 bps after December 2024 meeting?
+  Fed decreases interest rates by 50 bps after January 2025 meeting?
+  Fed decreases interest rates by 50 bps after November 2024 meeting?
+  Fed decreases interest rates by 50+ bps after December 2025 meeting?
+  Fed decreases interest rates by 50+ bps after January 2026 meeting?
+  Fed decreases interest rates by 50+ bps after July 2024 meeting?
+  Fed decreases interest rates by 50+ bps after July 2025 meeting?
+  Fed decreases interest rates by 50+ bps after June 2024 meeting?
+  Fed decreases interest rates by 50+ bps after June 2025 meeting?
+  Fed decreases interest rates by 50+ bps after March 2025 meeting?
+  Fed decreases interest rates by 50+ bps after May 2024 meeting?
+  Fed decreases interest rates by 50+ bps after May 2025 meeting?
+  Fed decreases interest rates by 50+ bps after October 2025 meeting?
+  Fed decreases interest rates by 50+ bps after September 2024 meeting?
+  Fed decreases interest rates by 50+ bps after September 2025 meeting?
+  Fed decreases interest rates by 75+ bps after December 2024 meeting?
+  Fed decreases interest rates by 75+ bps after January 2025 meeting?
+  Fed decreases interest rates by 75+ bps after November 2024 meeting?
+  Fed increases interest rates by 25+ bps after December 2024 meeting?
+  Fed increases interest rates by 25+ bps after December 2025 meeting?
+  Fed increases interest rates by 25+ bps after January 2025 meeting?
+  Fed increases interest rates by 25+ bps after January 2026 meeting?
+  Fed increases interest rates by 25+ bps after July 2024 meeting?
+  Fed increases interest rates by 25+ bps after July 2025 meeting?
+  Fed increases interest rates by 25+ bps after June 2024 meeting?
+  Fed increases interest rates by 25+ bps after June 2025 meeting?
+  Fed increases interest rates by 25+ bps after March 2025 meeting?
+  Fed increases interest rates by 25+ bps after May 2025 meeting?
+  Fed increases interest rates by 25+ bps after November 2024 meeting?
+  Fed increases interest rates by 25+ bps after October 2025 meeting?
+  Fed increases interest rates by 25+ bps after September 2024 meeting?
+  Fed increases interest rates by 25+ bps after September 2025 meeting?
+  Fed raises interest rates by 25+ bps after 2024 May meeting?
+  No change in Fed interest rates after 2024 July meeting?
+  No change in Fed interest rates after 2024 June meeting?
+  No change in Fed interest rates after 2024 May meeting?
+  No change in Fed interest rates after 2024 November meeting?
+  No change in Fed interest rates after 2024 September meeting?
+  No change in Fed interest rates after December 2024 meeting?
+  No change in Fed interest rates after December 2025 meeting?
+  No change in Fed interest rates after January 2025 meeting?
+  No change in Fed interest rates after January 2026 meeting?
+  No change in Fed interest rates after July 2025 meeting?
+  No change in Fed interest rates after June 2025 meeting?
+  No change in Fed interest rates after March 2025 meeting?
+  No change in Fed interest rates after May 2025 meeting?
+  No change in Fed interest rates after October 2025 meeting?
+  No change in Fed interest rates after September 2025 meeting?
+  Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?
+  Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?
+  Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?
+  Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?
+  Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?
+  Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?
+  Will the Fed increase interest rates by 25 bps after the June 2026 meeting?
+  Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?
+  Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?
+  Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?
+  Will there be no change in Fed interest rates after the April 2026 meeting?
+  Will there be no change in Fed interest rates after the June 2026 meeting?
+  Will there be no change in Fed interest rates after the March 2026 meeting?
+
+======================================================================
+CASOS AMBÍGUOS — decidir depois
+(mencionam 'meeting' mas não seguem o padrão dos 4 outcomes;
+ colocados TEMPORARIAMENTE em polymarket_fed_outros.parquet — NÃO é decisão)
+======================================================================
+  Fed cuts rates by 75 basis points in Sept meeting?
+  Fed rate cut by December 2025 meeting?
+  Fed rate cut by December meeting?
+  Fed rate cut by January 2026 meeting?
+  Fed rate cut by July meeting?
+  Fed rate cut by June meeting?
+  Fed rate cut by October 2025 meeting?
+  Fed rate cut by October meeting?
+  Fed rate cut by September meeting?
+  Will the FED change rates to another level after December meeting?
+  Will the FED change rates to another level after Nov meeting?
+
+======================================================================
+OUTROS — 244 mercados por categoria (→ polymarket_fed_outros.parquet)
+======================================================================
+
+[Contagem anual de cortes] — 16 mercados
+  Will 1 Fed rate cut happen in 2025?
+  Will 2 Fed rate cuts happen in 2025?
+  Will 3 Fed rate cuts happen in 2025?
+  Will 4 Fed rate cuts happen in 2025?
+  Will 5 Fed rate cuts happen in 2025?
+  Will 6 Fed rate cuts happen in 2025?
+  Will 7 Fed rate cuts happen in 2025?
+  Will 8+ Fed rate cuts happen in 2025?
+  Will Fed cut interest rates 0 times in 2024?
+  Will Fed cut interest rates 1 time in 2024?
+  Will Fed cut interest rates 2 times in 2024?
+  Will Fed cut interest rates 3 times in 2024?
+  Will Fed cut interest rates 4 times in 2024?
+  Will Fed cut interest rates 5 times in 2024?
+  Will Fed cut interest rates 6+ times in 2024?
+  Will no Fed rate cuts happen in 2025?
+
+[Corte até data (sem 'meeting' explícito)] — 8 mercados
+  Fed rate cut by December 18?
+  Fed rate cut by January 31?
+  Fed rate cut by July 31?
+  Fed rate cut by June 12?
+  Fed rate cut by March 20?
+  Fed rate cut by May 1?
+  Fed rate cut by November 7?
+  Fed rate cut by September 18?
+
+[Derivative / odds sobre probabilidades] — 18 mercados
+  'No change' or '25 bps cut' favored for Fed decision in January on December 10?
+  Fed Derivative: "25bps cut" Below 80% by December 5?
+  Fed Derivative: "25bps cut" Below 85% by December 5?
+  Fed Derivative: "25bps cut" Below 90% by December 5?
+  Fed Derivative: "No Change" flips "25bps cut" by December 9?
+  Fed Derivative: "No Change" or "25bp cut" favored on Monday?
+  Fed Derivative: "No Change" or "25bps cut" favored on December 9?
+  Fed Derivative: "No Change" or "25bps cut" favored on Friday?
+  Fed Derivative: Jan "25bps cut" over 20% on December 10?
+  Fed Derivative: Jan "25bps cut" over 25% on December 10?
+  Fed Derivative: Jan "25bps cut" over 30% on December 10?
+  Fed Derivative: Jan "25bps cut" over 40% on December 10?
+  Fed cuts 25 bps in March Odds >15% by February 13?
+  Judy Shelton Fed Chair Nomination Odds >10% by Feb 20?
+  Judy Shelton Fed Chair Nomination Odds >5% by Feb 20?
+  Judy Shelton Fed Chair Nomination Odds >5% by Friday?
+  March Fed Derivative: "25bps cut" flips "Pause" by Feb 28?
+  March Fed Derivative: Pause or Cut favored on Jan 28?
+
+[Dissidência de votos] — 42 mercados
+  Will Christopher Waller dissent the next Fed Decision?
+  Will Stephen Miran dissent the next Fed decision?
+  Will four or more people dissent the April Fed decision?
+  Will four or more people dissent the December Fed decision?
+  Will four or more people dissent the Fed decision?
+  Will four or more people dissent the January Fed decision?
+  Will four or more people dissent the June Fed decision?
+  Will four or more people dissent the March Fed decision?
+  Will four or more people dissent the October Fed decision?
+  Will four or more people dissent the September Fed decision?
+  Will no one dissent October Fed decision?
+  Will no one dissent September Fed decision?
+  Will no one dissent the April Fed decision?
+  Will no one dissent the December Fed decision?
+  Will no one dissent the Fed decision?
+  Will no one dissent the January Fed decision?
+  Will no one dissent the June Fed decision?
+  Will no one dissent the March Fed decision?
+  Will one person dissent the April Fed decision?
+  Will one person dissent the December Fed decision?
+  Will one person dissent the Fed decision?
+  Will one person dissent the January Fed decision?
+  Will one person dissent the June Fed decision?
+  Will one person dissent the March Fed decision?
+  Will one person dissent the October Fed decision?
+  Will one person dissent the September Fed decision?
+  Will three people dissent the April Fed decision?
+  Will three people dissent the December Fed decision?
+  Will three people dissent the Fed decision?
+  Will three people dissent the January Fed decision?
+  Will three people dissent the June Fed decision?
+  Will three people dissent the March Fed decision?
+  Will three people dissent the October Fed decision?
+  Will three people dissent the September Fed decision?
+  Will two people dissent the April Fed decision?
+  Will two people dissent the December Fed decision?
+  Will two people dissent the Fed decision?
+  Will two people dissent the January Fed decision?
+  Will two people dissent the June Fed decision?
+  Will two people dissent the March Fed decision?
+  Will two people dissent the October Fed decision?
+  Will two people dissent the September Fed decision?
+
+[Dissidência de votos (combo resultado x dissidências)] — 10 mercados
+  Will the December 2025 FOMC decision result in a 25bp cut with >2 dissents?
+  Will the December 2025 FOMC decision result in a 25bp cut with ≤2 dissents?
+  Will the December 2025 FOMC decision result in any other outcome?
+  Will the December 2025 FOMC decision result in no change with >2 dissents?
+  Will the December 2025 FOMC decision result in no change with ≤2 dissents?
+  Will the January 2026 FOMC decision result in a 25bp cut with <2 dissents?
+  Will the January 2026 FOMC decision result in a 25bp cut with ≥2 dissents?
+  Will the January 2026 FOMC decision result in any other outcome?
+  Will the January 2026 FOMC decision result in no change with <2 dissents?
+  Will the January 2026 FOMC decision result in no change with ≥2 dissents?
+
+[Fed Chair / pessoas específicas] — 102 mercados
+  Fed governor resigns by October 31?
+  Jerome Powell federally charged by August 31?
+  Jerome Powell federally charged in 2025?
+  Jerome Powell out as Fed Chair by August 31?
+  Jerome Powell out as Fed Chair by July 31?
+  Jerome Powell out as Fed Chair by June 30, 2026?
+  Jerome Powell out as Fed Chair by March 31, 2026?
+  Jerome Powell out as Fed Chair by May 14, 2026?
+  Jerome Powell out as Fed Chair by May 15, 2026?
+  Jerome Powell out as Fed Chair by May 16, 2026?
+  Jerome Powell out as Fed Chair by May 31, 2026?
+  Jerome Powell out as Fed Chair by September 30?
+  Jerome Powell out as Fed Chair in 2025?
+  Kevin Warsh Fed Chair nomination withdrawn by May 15?
+  Kevin Warsh cuts rates at first Fed meeting?
+  Lisa Cook out as Fed Governor by  October 31?
+  Lisa Cook out as Fed Governor by December 31?
+  Lisa Cook out as Fed Governor by February 28?
+  Lisa Cook out as Fed Governor by November 30?
+  Lisa Cook out as Fed Governor by September 30?
+  No Trump announcement of next Fed Chair by June 30?
+  Will Christopher Waller be confirmed as Fed Chair?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by December 31, 2025?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by February 14, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by February 28, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by February 6, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by January 16, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by January 23, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by January 31, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by January 9, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by June 30, 2026?
+  Will Donald Trump announce a new nominee for Chair of the Federal Reserve by March 31, 2026?
+  Will Jerome Powell be confirmed as Fed Chair?
+  Will Jerome Powell depart as Fed Chair after July 3?
+  Will Jerome Powell depart as Fed Chair before May 15?
+  Will Jerome Powell depart as Fed Chair between June 13 and June 19?
+  Will Jerome Powell depart as Fed Chair between June 20 and June 26?
+  Will Jerome Powell depart as Fed Chair between June 27 and July 3?
+  Will Jerome Powell depart as Fed Chair between June 6 and June 12?
+  Will Jerome Powell depart as Fed Chair between May 15 and May 22?
+  Will Jerome Powell depart as Fed Chair between May 23 and May 29?
+  Will Jerome Powell depart as Fed Chair between May 30 and June 5?
+  Will Jerome Powell depart as Fed Chair by June 30 2026?
+  Will Jerome Powell depart as Fed Chair by May 15 2026?
+  Will Jerome Powell depart as Fed Chair by May 16 2026?
+  Will Jerome Powell depart as Fed Chair by May 31 2026?
+  Will Judy Shelton be confirmed as Fed Chair?
+  Will Kevin Hassett be confirmed as Fed Chair?
+  Will Kevin Warsh be confirmed as Fed Chair?
+  Will Lisa Cook vote at the next FOMC meeting?
+  Will Michelle Bowman be confirmed as Fed Chair?
+  Will Powell wear a purple tie at FOMC?
+  Will Rick Reider be confirmed as Fed Chair?
+  Will Scott Bessent be confirmed as Fed Chair?
+  Will Stephen Miran be confirmed as Fed Chair?
+  Will Trump announce Arthur Laffer as next Fed Chair in 2025?
+  Will Trump announce Arthur Laffer as next Fed Chair?
+  Will Trump announce Chamath Palihapitiya as next Fed Chair in 2025?
+  Will Trump announce Chris Waller as next Fed Chair in 2025?
+  Will Trump announce Elon Musk as next Fed Chair in 2025?
+  Will Trump announce Howard Lutnick as next Fed Chair in 2025?
+  Will Trump announce Judy Shelton as next Fed Chair in 2025?
+  Will Trump announce Judy Shelton as next Fed Chair?
+  Will Trump announce Kevin Hassett as next Fed Chair in 2025?
+  Will Trump announce Kevin Hassett as next Fed Chair?
+  Will Trump announce Kevin Warsh as next Fed Chair in 2025?
+  Will Trump announce Kevin Warsh as next Fed Chair?
+  Will Trump announce Larry Kudlow as next Fed Chair in 2025?
+  Will Trump announce Larry Kudlow as next Fed Chair?
+  Will Trump announce Michelle Bowman as next Fed Chair in 2025?
+  Will Trump announce Rick Rieder as next Fed Chair in 2025?
+  Will Trump announce Roger W. Ferguson Jr. as next Fed Chair in 2025?
+  Will Trump announce Ron Paul as next Fed Chair in 2025?
+  Will Trump announce Scott Bessent as next Fed Chair in 2025?
+  Will Trump nominate Arthur Laffer as the next Fed chair?
+  Will Trump nominate Barron Trump as the next Fed chair?
+  Will Trump nominate Bill Pulte as the next Fed chair?
+  Will Trump nominate Christopher Waller as the next Fed chair?
+  Will Trump nominate David Malpass as the next Fed chair?
+  Will Trump nominate David Zervos as the next Fed chair?
+  Will Trump nominate Howard Lutnick as the next Fed chair?
+  Will Trump nominate James B. Bullard as the next Fed chair?
+  Will Trump nominate Janet Yellen as the next Fed chair?
+  Will Trump nominate Jerome Powell as the next Fed chair?
+  Will Trump nominate Judy Shelton as the next Fed chair?
+  Will Trump nominate Kevin Hassett as the next Fed chair?
+  Will Trump nominate Kevin Warsh as the next Fed chair?
+  Will Trump nominate Larry Kudlow as the next Fed chair?
+  Will Trump nominate Larry Lindsey as the next Fed chair?
+  Will Trump nominate Lorie K. Logan as the next Fed chair?
+  Will Trump nominate Marc Sumerlin as the next Fed chair?
+  Will Trump nominate Michelle Bowman as the next Fed chair?
+  Will Trump nominate Philip Jefferson as the next Fed chair?
+  Will Trump nominate Rick Rieder as the next Fed chair?
+  Will Trump nominate Ron Paul as the next Fed chair?
+  Will Trump nominate Scott Bessent as the next Fed chair?
+  Will Trump nominate Stephen Miran as the next Fed chair?
+  Will Trump nominate himself as the next Fed chair?
+  Will Trump nominate no one before 2027?
+  Will Trump refrain from announcing a next Fed Chair in 2025?
+  Will trump try to fire Powell as Fed Chair before he leaves?
+  archWill Trump nominate James Bullard as the next Fed chair?
+
+[Horizonte anual / emergência] — 6 mercados
+  Fed emergency rate cut in 2024?
+  Fed emergency rate cut in 2025?
+  Fed emergency rate cut in August?
+  Fed rate cut in 2025?
+  Fed rate hike in 2024?
+  Fed rate hike in 2025?
+
+[Outros (sem categoria específica)] — 2 mercados
+  Fed abolished in 2025?
+  Will Fed end QT before May?
+
+[Sequências multi-reunião] — 40 mercados
+  Will the Fed Cut–Cut–Cut in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Cut–Cut–Cut in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Cut–Cut–Cut in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Cut–Cut–Cut in the next three decisions (Oct–Dec–Jan)?
+  Will the Fed Cut–Cut–Pause in 2025?
+  Will the Fed Cut–Cut–Pause in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Cut–Cut–Pause in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Cut–Cut–Pause in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Cut–Cut–Pause in the next three decisions (Oct–Dec–Jan)?
+  Will the Fed Cut–Pause–Cut in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Cut–Pause–Cut in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Cut–Pause–Cut in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Cut–Pause–Cut in the next three decisions (Oct–Dec–Jan)?
+  Will the Fed Cut–Pause–Pause in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Cut–Pause–Pause in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Cut–Pause–Pause in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Cut–Pause–Pause in the next three decisions (Oct–Dec–Jan)?
+  Will the Fed Pause–Cut–Cut in 2025?
+  Will the Fed Pause–Cut–Cut in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Pause–Cut–Cut in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Pause–Cut–Cut in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Pause–Cut–Cut in the next three decisions (Oct–Dec–Jan)?
+  Will the Fed Pause–Cut–Pause in 2025?
+  Will the Fed Pause–Cut–Pause in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Pause–Cut–Pause in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Pause–Cut–Pause in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Pause–Cut–Pause in the next three decisions (Oct–Dec–Jan)?
+  Will the Fed Pause–Pause–Cut in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Pause–Pause–Cut in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Pause–Pause–Cut in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed Pause–Pause–Pause in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed Pause–Pause–Pause in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed Pause–Pause–Pause in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed cut-cut-cut in 2025?
+  Will the Fed cut-pause-cut in 2025
+  Will the Fed cut-pause-pause in 2025?
+  Will the Fed decide differently in the next three decisions (Dec–Jan–Mar)?
+  Will the Fed decide differently in the next three decisions (Jan–Mar–Apr)?
+  Will the Fed decide differently in the next three decisions (Mar–Apr–Jun)?
+  Will the Fed decide differently in the next three decisions (Oct–Dec–Jan)?
