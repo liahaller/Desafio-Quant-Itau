@@ -38,15 +38,43 @@ De onde vêm os dados do poly no mock: API real · snapshot histórico · dados 
 
 **Decisão:** API CLOB oficial do Polymarket (endpoint `/prices-history`).
 
-## 3. Mapeamento cenário → ativos (Camada 2) 🔴
-Como estimar a matriz de retornos condicionais. Regredir retorno do ativo contra o quê (mudança de probabilidade? dummy de resolução?).
+## 3. Sensibilidade (β) por view 🔴
+Cada view estima internamente o β que converte seu sinal (divergência, spread, probabilidade) em magnitude de retorno pro Q. Cada ideia da Camada 1 olha seu próprio mercado do poly (histórico + probabilidade atual) e monta P e Q sozinha — a sensibilidade vive dentro da view, não numa tabela central compartilhada.
 
-**Decisão:** _(a registrar)_
+Fecha **junto com a Decisão 4**, por família (estimar o β e fabricar o Q são a mesma operação). Em aberto: a **forma da regressão** que cada família usa para extrair a magnitude do histórico — mudança de probabilidade vs. dummy de resolução, possivelmente diferente por família.
+
+(Nota de nomenclatura: no `Mapa_de_camadas.md` "Camada 2" = **camada tática** — o que o grupo congelou foi a tática, não esta estimação.)
+
+**Decisão:** _(a registrar junto com a Decisão 4)_
 
 ## 4. Tradução probabilidade → vetor Q 🔴
-Como converter probabilidade do poly em retorno esperado (unidade que o BL exige). Ponte entre "65% de corte" e um número de retorno por ativo.
+Como cada view converte a probabilidade do poly em retorno esperado (a unidade que o BL exige) — a ponte entre "65% de corte" e um número de retorno. Não é fórmula única: cada view traz sua própria âncora acadêmica e monta o Q a partir do histórico do seu mercado. Fecha **junto com a Decisão 3**, por família (estimar o β e fabricar o Q são a mesma operação). As 5 views estruturais se agrupam em 2 famílias:
 
-**Decisão:** _(a registrar)_
+**Família A — divergência + sensibilidade** (esqueleto comum: `Q = sensibilidade × (prob_poly − prob_mercado)`, forma relativa par/cesta):
+
+| View | Âncora | Sinal do poly | Q natural | Falta decidir |
+|------|--------|---------------|-----------|---------------|
+| **2.3 Fed** | Bernanke-Kuttner (surpresa de juros → setores duration-sensitive) | divergência poly vs Fed Funds futures | `β_setor × (prob_poly − prob_FedFunds)`; tech/RE vs defensivos | de onde vem `β_setor` (sensibilidade estreita) |
+| **2.2 Inflação** | Fisher / breakeven | divergência poly-CPI vs breakeven TIPS | quase mecânico: Δinflação × duration → TIP vs TLT; não precisa de regressão | duration/maturidade usada como conversor |
+| **2.4 Eleitoral** | Pástor-Veronesi (cestas por candidato) | divergência prob-implícita-no-spread-da-cesta vs prob poly | gap até o "preço justo" da cesta na prob do poly; cesta ganhadora vs perdedora | montar as cestas (gargalo) + modelo de valor justo da cesta a p% |
+| **3.1 Sentimento macro** | índice agregado de vários mercados | divergência de nível índice vs preço em juros/bolsa | tilt amplo SPY/TLT (regime de fundo) | é view ou é contexto/prior? granularidade do índice |
+
+**Família B — série temporal** (não encaixa no template de divergência):
+
+| View | Âncora | Sinal do poly | Q natural | Falta decidir |
+|------|--------|---------------|-----------|---------------|
+| **1.2 Momentum** | Time-series momentum / sticky expectations | derivada (tendência da prob), não divergência | direcional pelo sinal da tendência; ajusta beta/setor | sem âncora de divergência → magnitude é o ponto fraco; é estrutural ou tático? |
+
+**Escopo v1:** a **camada tática** (velocidade/derivada, event-driven 3.2, PEAD 1.1) fica fora do v1 — depende de alta frequência que a API do poly não entrega. As views estruturais não são bloqueadas: cada uma estima seu próprio β (2.3 via β estreita de surpresa de juros; 2.2 nem precisa de regressão — converte via duration). Falta próprio de cada view: 2.4 depende de montar as cestas; 3.1 de definir view vs. prior; 1.2 (momentum) precisa de discussão à parte (pode sair junto com a tática).
+
+**Perguntas de reunião:**
+1. Adotam o template compartilhado da Família A (`Q = sens × divergência`, relativa) como esqueleto comum, especializando view a view só o benchmark e a sensibilidade?
+2. Quais views entram no v1? (2.2 e 2.3 são as mais diretas; 2.4 depende das cestas; 3.1 depende de view-vs-prior.)
+3. 1.2 momentum: view estrutural (precisa de magnitude) ou reclassifica p/ tática?
+
+Cada template ainda tem **parâmetros numéricos** (as `β`, a duration, o "preço justo da cesta") que vêm de decisão humana (regra CLAUDE.md §6) — não inventados.
+
+**Decisão:** _(a registrar — tudo acima em aberto)_
 
 ## 5. Definição operacional de "surpresa" (PEAD, 1.1) 🔴
 Fórmula da surpresa. `1 − prob_atribuída`? Contínua ou por threshold?
