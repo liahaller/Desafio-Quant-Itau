@@ -86,10 +86,18 @@ Fórmula da surpresa. `1 − prob_atribuída`? Contínua ou por threshold?
 
 **Decisão:** sem objeto — o PEAD (1.1) pertence à camada tática, adiada e removida do escopo em reunião (decisão 10, registrada 2026-07-09). Reabrir se/quando a tática for retomada.
 
-## 6. Forma funcional do Ω reativo 🔴
+## 6. Forma funcional do Ω reativo 🟡
 Como volume, estabilidade, convergência e proximidade de evento viram um número de confiança. Versão mínima para o mock vs. versão completa.
 
-**Decisão:** _(a registrar)_
+**Decisão:** _(a registrar — delegada à Lia)_
+
+**Contexto (registrado pela Lia em 08/07/2026 no branch dela; incorporado de `Decisoes_pendentes_LIA.md` em 2026-07-14):**
+- A reunião do grupo delegou esta decisão à Lia.
+- Critério proposto para fechar (protocolo de calibração, em vez de escolha arbitrária):
+  1. **O que a matemática já determina:** a confiança `c ∈ (0,1]` escala o baseline de He-Litterman — `Omega_ii = diag(P·tau·Sigma·P')_ii / c` — de modo que `c = 1` recupera o BL clássico e `c → 0` recolhe ao prior.
+  2. **O que a semântica determina:** estrutura multiplicativa `c = portao(volume) × f(estabilidade) × g(proximidade)` — volume é veto (mercado sem liquidez invalida o preço; soma ponderada permitiria compensação indevida); convergência fica fora do v1 (Decisão 7).
+  3. **O que o dado decide:** janela da estabilidade, forma/horizonte do decaimento de proximidade e threshold de volume saem de teste de monotonicidade no histórico — faixas de confiança maiores devem apresentar erro realizado da probabilidade menor; empates são resolvidos pela forma com menos parâmetros.
+- Dependências: histórico do Polymarket via pipeline do Paulo (Decisão 2: `/prices-history` entrega preço; disponibilidade de **volume** a confirmar com o Paulo).
 
 ## 7. Convergência entre fontes (polls, casas de aposta) 🟡
 Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
@@ -170,4 +178,4 @@ Opções mapeadas:
 
 ---
 
-**Próximo passo:** reunião decide (a) a entrada das **views candidatas B, C, E e G** (docs em `Informações_uteis/views/`; G já nasce reserva; F e H foram descartadas em sessão — registro em `Informações_uteis/Pesquisa_embasamento_novas_ideias.md`) e (b) a entrada da **camada tática reformulada** com 3 candidatas (1.3 prêmio de anúncios, drift pós-FOMC e gap de fim de semana — docs em `Informações_uteis/táticas/`; código pronto, dono = Felipe desde 2026-07-11; reabre parcialmente a decisão 10: faltam entrada e orçamentos). Pendências da 3.1 (horizonte — reunião; mercado/bid-ask — Paulo, agora também condição da decisão 9) e decisões 6, 11 e 12 seguem abertas (9 fechada em 2026-07-11: opção A; 12 com encaminhamento: fecha com o perfil de lags real).
+**Próximo passo:** reunião decide (a) a entrada das **views candidatas B, C, E e G** (docs em `Informações_uteis/views/`; G já nasce reserva; F e H foram descartadas em sessão — registro em `Informações_uteis/Pesquisa_embasamento_novas_ideias.md`) e (b) a entrada da **camada tática reformulada** com 3 candidatas (1.3 prêmio de anúncios, drift pós-FOMC e gap de fim de semana — docs em `Informações_uteis/táticas/`; código pronto, dono = Felipe desde 2026-07-11; reabre parcialmente a decisão 10: faltam entrada e orçamentos). Pendências da 3.1 (horizonte — reunião; mercado/bid-ask — Paulo, agora também condição da decisão 9) e decisões 6, 11 e 12 seguem abertas (6 agora 🟡: delegada à Lia, protocolo de calibração proposto — bloco incorporado de `Decisoes_pendentes_LIA.md` em 2026-07-14; 9 fechada em 2026-07-11: opção A; 12 com encaminhamento: fecha com o perfil de lags real).

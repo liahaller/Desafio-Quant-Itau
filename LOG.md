@@ -1,5 +1,29 @@
 # LOG de sessões
 
+## 2026-07-14 — Felipe
+
+**Feito:**
+- Criado `Para_Paulo_e_Lia.md` (raiz): briefing consolidado para os outros donos. Parte 1 = como funcionam TODAS as views (2.2/2.3/2.4/3.1 fechadas + candidatas B/C/E/G) e as 3 táticas reformuladas, com os mercados do Polymarket e dados que cada uma exige (inclui colinha-tabela de dados para o Paulo). Parte 2 = pendências deles (fonte: `pauta_reuniao_outros.md`): condição crítica bid/ask no CLOB, cobertura de mercados, fontes FRED/ZQ/probit, requisitos do backtest (Paulo); decisão 6, validação do `diagnostics`, nota Ω↔tática, SWZ no relatório (Lia); decisão 11a/11b (calibração); avisos de merge.
+- **Decisão 6 sincronizada do branch da Lia:** incorporado ao `Decisoes_pendentes.md` o bloco de contexto que a Lia registrou em `Decisoes_pendentes_LIA.md` (08/07/2026) — delegação da decisão à Lia + protocolo de calibração proposto (baseline He-Litterman escalado por confiança c; estrutura multiplicativa com volume como veto; parâmetros por teste de monotonicidade no histórico) + dependência de volume do poly (confirmar com Paulo). Status da 6: 🔴 → 🟡 (segue ABERTA — nada fechado; o resto do arquivo da Lia é fork defasado, nada mais era novo).
+- Nenhum código tocado; nenhuma decisão fechada.
+
+**Quebrou / aprendido:**
+- `Decisoes_pendentes_LIA.md` é um fork antigo do arquivo principal (anterior ao fechamento das decisões 1/3/4/5/8 e sem as 9–12) — só a seção 6 tinha conteúdo novo. Consolidar branches de decisões exige diff manual, não substituição.
+
+**Pendente:**
+- Inalterado (decisões 6 — agora 🟡 —, 11, 12; entrada B/C/E/G e da camada tática; condições de dado do Paulo; τ/δ). O briefing só consolida — as fontes da verdade seguem `Decisoes_pendentes.md` e os docs de views/táticas.
+- ~~`pauta_reuniao_outros.md` e `Para_Paulo_e_Lia.md` ainda citam a decisão 6 como 🔴~~ — atualizados na mesma sessão (6 → 🟡, delegação + protocolo + dependência de volume do poly referenciados; item de volume adicionado como dependência ao Paulo).
+- ~~Destino do `Decisoes_pendentes_LIA.md`~~ — arquivo removido pelo Felipe na mesma sessão (conteúdo já incorporado).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Fable 5.
+- **Contexto consumido:** ~120k tokens (~12% de janela de 1M; sessão passou por sumarização de contexto).
+- **Prompt inicial (verbatim):** "Passe por todas as Views que montamos e decisões que fizemos quero que você monte um arquivo para a lia e o paulo. O arquivo deve ter duas partes: Informações impotantes sobre TODAS as views e mercados quer precisamos usar (eles precisarão saber como funciona as views, o que elas precisam para poder levantar os dados do polymarket). A segunda parte é com as pendencias(decisões que eles precisam fazer) que eu não entro. use principalmente c:\Users\felip\Documents\Pessoal\Desafio-Quant-Itau\pauta_reuniao_outros.md como fonte para essa parte. Sea completo."
+- **Iterações até aceitar:** 1 em todas as entregas (briefing `Para_Paulo_e_Lia.md`, sincronização da decisão 6 do branch da Lia, atualização de status na pauta/briefing — nenhuma rodada de correção).
+- **Erros da IA:** nenhum do modelo (2 Edits falharam por perda de estado de arquivo no harness após a sumarização de contexto — reaplicados após releitura, sem mudança de conteúdo).
+- **Decisões escaladas:** — (nenhuma fechada; decisão 6 apenas sincronizada 🔴→🟡 com registro da Lia, segue aberta).
+- **Tags:** —
+
 ## 2026-07-11 (sessão 3) — Felipe
 
 **Feito:**
