@@ -276,3 +276,31 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
 - **Decisões escaladas:** — (nenhuma nova; observação sobre janela de
   backtest registrada acima, sem alterar `Decisoes_pendentes.md`).
 - **Tags:** `[PROMPT-CHAVE]`
+
+---
+
+## Sessão 2026-07-22 — Paulo
+
+**O que foi feito:**
+- Mapeamento exploratório de mercados do Polymarket úteis como views para o modelo Black-Litterman.
+- Definida estratégia de filtro: mercados recorrentes e gerais (macro, risco de mercado, energia, tech, saúde, câmbio) — não específicos por empresa.
+- Gerada lista de 30 mercados candidatos com estimativa de volume médio em USD e mapeamento para os ETFs do portfólio (XLK, XLU, XLP, XLF, XLE, XLV, TIP, TLT, SPY).
+- Criado `scripts/explorar_mercados_polymarket.py` para download futuro dos mercados via Gamma API (top 100 por volume).
+- Identificado que o acesso à internet está bloqueado no sandbox do Claude Code — download real fica pendente.
+
+**O que quebrou:**
+- Sandbox sem acesso à rede: chamadas à Gamma API falharam com `NameResolutionError`. WebFetch também bloqueado (`ECONNREFUSED`).
+
+**Pendente:**
+- Download real dos 30 mercados via `scripts/explorar_mercados_polymarket.py` (requer terminal externo ou liberação de rede no Claude Code).
+- Definição de quais dos 30 serão efetivamente usados como views (decisão metodológica — Felipe/reunião).
+- Tarefas 2 e 3 seguem pausadas.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Sonnet 4.6.
+- **Contexto consumido:** ~15k tokens (~7% da janela).
+- **Prompt inicial (verbatim):** "quero q vc me ajude a achar 10-15 mercados que vao ser uteis para ajudar nas views dos nossos etfs. me ajude a filtrar isso, nao gaste muitos tokens, como devemos fazer isso?"
+- **Iterações até aceitar:** 0 rodadas de correção de código (sessão exploratória, sem implementação).
+- **Erros da IA:** volumes estimados são aproximações da base de conhecimento do modelo, não dados reais da API.
+- **Decisões escaladas:** — (nenhuma nova em `Decisoes_pendentes.md`).
+- **Tags:** —
