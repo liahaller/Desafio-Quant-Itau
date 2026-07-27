@@ -108,6 +108,27 @@ Opções levantadas (trade-offs a discutir em reunião):
 
 **Decisão:** _(a registrar)_
 
+## 10. Extensão do universo de eventos FOMC — reuniões antigas e mercados "cut by date" 🟡
+Descoberta em 2026-07-27: as reuniões antigas do FOMC (dez/2023, jan/2024,
+mar/2024) **não** têm o tag "Fed Rates" (id 100196) que o pipeline usava — só
+tags gerais (interest-rates=131, fed=159). Por isso o dataset começa em
+mai/2024.
+
+**Testado e revertido (por instrução do Paulo, 2026-07-27):** as 3 reuniões
+antigas (December 2023, January 2024, March 2024) foram incluídas via padrão
+de slug `fed-interest-rates-<mês>-<ano>` nas tags gerais, mas **não deram certo**
+(dados de baixa qualidade / volume muito baixo). Foram **removidas** — o
+dataset permanece com 18 reuniões, de mai/2024 em diante. A extensão da
+descoberta foi revertida no `download_polymarket_fed.py`.
+
+**Mantido:** coluna `volume` (volume total lifetime por mercado, do Gamma) no
+`reunioes.parquet`, exibida no dashboard.
+
+**Em aberto (NÃO decidido):** os mercados **cumulativos** "Fed rate cut by
+<data>?" (ex.: evento 903089, dez/2023) são estrutura diferente — medem se
+houve corte *até* a reunião, não o desfecho *da* reunião. Continuam em
+`outros`/ambíguos. Ver também a Decisão 9 (overlap) e a 8 (janela de backtest).
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.

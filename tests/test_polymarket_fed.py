@@ -1,6 +1,7 @@
-"""Testes de validação do dataset de probabilidades do Polymarket (Fed/FOMC).
+"""Testes de validação da base de reuniões do Polymarket (Fed/FOMC).
 
-Valida o arquivo gerado por src/data_pipeline/download_polymarket_fed.py.
+Valida o arquivo polymarket_fed_reunioes.parquet — só os mercados de desfecho
+por reunião do FOMC, gerado por src/data_pipeline/separar_mercados_fed.py.
 
 Rodar: pytest tests/test_polymarket_fed.py
 """
@@ -11,11 +12,11 @@ import pandas as pd
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DATASET_PATH = REPO_ROOT / "data" / "polymarket_fed_probabilities.parquet"
+DATASET_PATH = REPO_ROOT / "data" / "polymarket_fed_reunioes.parquet"
 
-# Cobertura real observada na descoberta (Etapa 1, 2026-07-08):
-# evento mais antigo com dados começa em 2023-12-07.
-EXPECTED_MAX_START = pd.Timestamp("2023-12-31")
+# Cobertura da base de reuniões: primeiro ponto em 2024-04-04, último em
+# 2026-06-17 (18 reuniões, May 2024 → June 2026).
+EXPECTED_MAX_START = pd.Timestamp("2024-04-30")
 EXPECTED_MIN_END = pd.Timestamp("2026-06-01")
 
 
@@ -29,7 +30,14 @@ def dataset() -> pd.DataFrame:
 
 def test_columns(dataset):
     """A tabela longa tem exatamente as colunas do formato acordado."""
-    assert list(dataset.columns) == ["data", "mercado", "probabilidade", "evento_id"]
+    assert list(dataset.columns) == [
+        "data", "mercado", "probabilidade", "volume", "evento_id"
+    ]
+
+
+def test_volume_non_negative(dataset):
+    """Volume total por mercado é numérico e não-negativo."""
+    assert (dataset["volume"] >= 0).all()
 
 
 def test_no_nan(dataset):

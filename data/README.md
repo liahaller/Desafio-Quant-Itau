@@ -24,37 +24,46 @@ Histórico diário de preços ajustados dos 9 ativos da camada estrutural
 - **Linhas:** 51.129 (5.681 datas × 9 tickers)
 - **Validação:** `pytest tests/test_etf_prices.py`
 
-## `polymarket_fed_probabilities.parquet`
+## `polymarket_fed_reunioes.parquet`
 
-Histórico de probabilidades dos mercados de decisão do Fed/FOMC no Polymarket
-(Decisão 2, fechada: Path B — Gamma API + CLOB API, sem provedores pagos).
+Histórico de probabilidades dos mercados de **decisão direta por reunião** do
+FOMC no Polymarket (Decisão 2, fechada: Gamma API + CLOB API, sem provedores
+pagos). Contém apenas os mercados de desfecho de cada reunião (corte/alta de
+25/50/75 bps, sem mudança); mercados acessórios (Fed Chair, dissidência,
+cortes acumulados) foram descartados.
 
-- **Gerado por:** `src/data_pipeline/download_polymarket_fed.py`
 - **Fonte:** Polymarket — Gamma API (catálogo, tag "Fed Rates", id 100196) +
   CLOB API `/prices-history` (`interval=all`, `fidelity=720`)
-- **Granularidade:** pontos a cada ~12h — é a mais fina que a API gratuita
-  devolve para mercados já resolvidos (720 min; 180/60/10 voltam vazios)
+- **Granularidade:** 1 ponto a cada 12h (00:00 e 12:00 UTC) — é a mais fina
+  que a API gratuita devolve para mercados já resolvidos. Alguns intervalos de
+  24/36/48h são leituras faltantes pontuais, não outra granularidade.
 - **Probabilidade:** preço do token "Yes" de cada mercado (0 a 1)
 - **Formato:** tabela única, formato longo
 
 | Coluna | Tipo | Descrição |
 |---|---|---|
 | `data` | datetime | Timestamp do ponto de preço (UTC) |
-| `mercado` | string | Pergunta do mercado (ex. "Fed rate cut by March 20?") |
+| `mercado` | string | Pergunta do mercado (ex. "Fed decreases interest rates by 25 bps after March 2025 meeting?") |
 | `probabilidade` | float | Preço do token Yes ∈ [0, 1] |
-| `evento_id` | string | ID do evento Polymarket (agrupa mercados da mesma reunião) |
+| `volume` | float | Volume total (lifetime) do mercado em USD, do Gamma — constante por mercado, repetido em cada ponto |
+| `evento_id` | string | ID do evento Polymarket (agrupa os desfechos da mesma reunião) |
 
-- **Cobertura real (descoberta em 2026-07-08):** primeiro evento em
-  **2023-12-06**; primeiro ponto de preço em **2023-12-07**; último ponto em
-  2026-06-17. Sem lacunas > 6 meses entre eventos consecutivos.
-- **Volume:** 85 eventos Fed/FOMC filtrados (título com "fed"/"fomc"), dos
-  quais 83 com dados de preço; 385 mercados percorridos, 331 com histórico
-  (54 voltaram vazios); 65.606 linhas.
-- **Atenção — overlap:** mercados de reuniões diferentes do FOMC negociam
-  simultaneamente (82 de 82 pares de eventos consecutivos com overlap de
-  datas). A regra de encadeamento/recorte está em aberto em
-  `Decisoes_pendentes.md`.
-- **Cache:** respostas brutas das APIs em `cache/` (tags.json,
-  fed_events.json, prices_history/{token_id}.json) — reexecutar o script não
-  refaz chamadas já cacheadas.
-- **Validação:** `pytest tests/test_polymarket_fed.py`
+- **Cobertura:** 18 reuniões do FOMC, de **May 2024** a **June 2026**; 76
+  mercados de desfecho; 16.338 linhas. Range de datas: 2024-04-04 → 2026-06-17.
+  As reuniões antigas (dez/2023, jan/2024, mar/2024) foram testadas e removidas
+  — ver Decisão 10 em `Decisoes_pendentes.md`.
+- **Regeneração:** `src/data_pipeline/download_polymarket_fed.py` (baixa da API
+  e recria o cache local) → `src/data_pipeline/separar_mercados_fed.py` (separa
+  reuniões dos demais mercados). O cache bruto e os datasets intermediários
+  (`polymarket_fed_probabilities.parquet`, `polymarket_fed_outros.parquet`)
+  foram removidos por serem regeneráveis por esses scripts.
+
+## `dashboard_reunioes_fed.html`
+
+Dashboard estático (arquivo único, abre no navegador sem servidor) com a lista
+das 18 reuniões do FOMC por data; ao selecionar uma reunião, mostra o gráfico
+das probabilidades de cada desfecho ao longo do tempo.
+
+- **Gerado por:** `scripts/gerar_dashboard_reunioes.py`
+- **Entrada:** `polymarket_fed_reunioes.parquet`
+- **Regeneração:** `python scripts/gerar_dashboard_reunioes.py`

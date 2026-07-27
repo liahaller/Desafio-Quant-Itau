@@ -256,12 +256,20 @@ def build_table(events: list[dict]) -> pd.DataFrame:
                 n_empty_history += 1
                 continue
             mercado = market.get("question") or market.get("slug")
+            # Volume total (lifetime) do mercado, direto do Gamma. volumeNum é
+            # numérico; volume vem como string em alguns eventos. Constante por
+            # mercado — repetido em cada ponto da série.
+            volume_raw = market.get("volumeNum")
+            if volume_raw is None:
+                volume_raw = market.get("volume")
+            volume = float(volume_raw) if volume_raw not in (None, "") else 0.0
             for point in history:
                 rows.append(
                     {
                         "data": pd.Timestamp(point["t"], unit="s"),
                         "mercado": mercado,
                         "probabilidade": float(point["p"]),
+                        "volume": volume,
                         "evento_id": str(event["id"]),
                     }
                 )

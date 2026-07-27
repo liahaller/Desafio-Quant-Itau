@@ -304,3 +304,40 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
 - **Erros da IA:** volumes estimados são aproximações da base de conhecimento do modelo, não dados reais da API.
 - **Decisões escaladas:** — (nenhuma nova em `Decisoes_pendentes.md`).
 - **Tags:** —
+
+## Sessão 2026-07-27 — Paulo
+
+**O que foi feito:**
+- Criado dashboard estático das reuniões do FOMC (`scripts/gerar_dashboard_reunioes.py`
+  → `data/dashboard_reunioes_fed.html`): lista de reuniões por data à esquerda,
+  clique exibe o gráfico das probabilidades de cada desfecho ao longo do tempo.
+- Confirmada a granularidade dos dados: 1 ponto a cada 12h (00:00 e 12:00 UTC);
+  gaps de 24/36/48h são leituras faltantes pontuais.
+- Limpeza do repositório (a pedido): mantidos só `polymarket_fed_reunioes.parquet`
+  + dashboard + scripts que os geram + pipeline ETF. Removidos cache/,
+  intermediários (`probabilities`/`outros`), previews antigas e logs.
+- Adicionada coluna `volume` (volume total lifetime por mercado, do Gamma) ao
+  pipeline de download e ao `reunioes.parquet`; exibida no dashboard.
+- Rede do sandbox voltou a funcionar — re-download real dos dados executado.
+- Testadas 3 reuniões antigas (dez/2023, jan/2024, mar/2024), fora do tag
+  "Fed Rates"; **removidas a pedido** (baixa qualidade/volume). Extensão da
+  descoberta revertida no `download_polymarket_fed.py`.
+- Teste `tests/test_polymarket_fed.py` repontado para `reunioes.parquet`
+  (colunas + volume não-negativo); 5 passed, 1 xfailed.
+
+**O que quebrou:**
+- Leitura do parquet falhava com o Python do anaconda (pyarrow 19); resolvido
+  usando o `.venv` (pyarrow 24).
+
+**Pendente:**
+- Mercados cumulativos "Fed rate cut by <data>?" (estrutura diferente) seguem
+  em aberto — Decisão 10 em `Decisoes_pendentes.md`.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Sonnet 4.6.
+- **Contexto consumido:** ~55% da janela.
+- **Prompt inicial (verbatim):** "sem gastar muitos tokens, veja as reunioes que eu tenho. eu so quero todas as reunioes do fed. sem falar quantos cuts vao ter e etc... o dashboard deve ser simples. uma lista com DATA de todos os mercados de reuniao e eu aperto em qual quero display. simples. so quero isso"
+- **Iterações até aceitar:** ~2 rodadas (dashboard aceito de primeira; reuniões antigas incluídas e depois revertidas).
+- **Erros da IA:** exibi "March 2026 vol=$0" numa checagem intermediária por usar `first` em vez da soma — artefato de display, corrigido; nenhum código quebrado.
+- **Decisões escaladas:** Decisão 10 (extensão do universo de eventos FOMC).
+- **Tags:** —
