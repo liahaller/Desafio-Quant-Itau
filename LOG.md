@@ -153,3 +153,96 @@ seção 3.
 - **Decisões escaladas:** 6 (contexto e protocolo de calibração
   registrados; decisão segue aberta, delegada à Lia).
 - **Tags:** —
+
+## 2026-07-20 — Lia
+
+**Feito:**
+- Lidos `Para_Paulo_e_Lia.md` e `pauta_reuniao_outros.md` (adicionados
+  pela Lia nesta sessão). Confirmado que a Decisão 10 já registrada
+  (camada tática reformulada realocada ao Felipe; módulo da Lia
+  reduzido a "Ω reativo · Relatório") bate com o combinado em reunião.
+  Sinalizados dois pontos que ficam para a Lia decidir, sem ação
+  tomada: (a) destino de `lia/camada_tatica.py` e
+  `lia/matriz_relacao.py` — código da camada tática antiga, que o
+  desenho novo do Felipe não parece reaproveitar; (b) a tabela de posse
+  no `CLAUDE.md` ainda lista a camada tática como módulo da Lia,
+  desatualizada frente à Decisão 10.
+- Levantamento da API do Polymarket (CLOB, Gamma, Data API) para checar
+  se dá pra obter volume histórico por mercado — dependência da
+  calibração da Decisão 6. Resultado: não há endpoint pronto de volume
+  histórico; `/prices-history` (CLOB) só dá preço; Gamma só dá volume
+  agregado atual/24h; o caminho viável é agregar trades individuais do
+  `/trades`/`/activity` da Data API. Registrado em
+  `Decisoes_pendentes.md`, seção 6.
+- Avaliado se esse levantamento permite fechar a Decisão 6: **não**. A
+  fonte de volume é tecnicamente acessível, mas o protocolo da Decisão
+  6 amarra os parâmetros numéricos (janela, decaimento, threshold) a um
+  teste de monotonicidade sobre dado histórico real, que ainda não
+  existe no pipeline (o Paulo precisa implementar a agregação de trades
+  primeiro). Fechar agora exigiria inventar esses números — proibido
+  pela regra 1 do `CLAUDE.md`. Decisão 6 segue 🟡, sem fechamento.
+
+**Quebrou:** nada.
+
+- Destino de `lia/matriz_relacao.py` esclarecido pela Lia: apoiar a
+  Decisão 3 (Camada 2 do Felipe) como evidência exploratória de "qual
+  mercado do Polymarket tem mais relação com qual ativo" — registrada
+  a Decisão 9 em `Decisoes_pendentes.md` (janela, passo e série do
+  Polymarket ainda em aberto, sem default inventado).
+- Testada a API do Polymarket na prática (Bash local): `clob.polymarket.com`
+  e `gamma-api.polymarket.com` **não resolvem pelo DNS padrão desta
+  rede** (NXDOMAIN), mas resolvem normalmente via DNS público (8.8.8.8)
+  — bloqueio/filtro do resolver local, não domínio fora do ar.
+  Contorno funcional: `curl --resolve <host>:443:<ip>` (ou configurar
+  DNS público). Achado relevante pro Paulo montar o pipeline.
+- Confirmado que `/prices-history` (CLOB) funciona normalmente para
+  mercados **ativos** (testado com dado real de um mercado do Fed,
+  jul/2026 — série diária de ~120 pontos). Para o mercado presidencial
+  de 2024 (resolvido), o mesmo endpoint devolveu histórico **vazio**
+  em várias combinações de parâmetros (`interval=max`, `1d`, `1w`,
+  `1m`; `startTs`/`endTs` explícitos deram erro "interval too long").
+  Indício de que mercados resolvidos/antigos podem não ficar
+  disponíveis por esse endpoint do jeito testado — bate com a
+  "condição crítica" já sinalizada em `Para_Paulo_e_Lia.md` (bid/ask
+  histórico das views 2.4/3.1/C/E/G). Investigação aprofundada é
+  mandato do Paulo; não insisti além disso pra não duplicar o
+  trabalho dele.
+- Rodado um demo exploratório (`scratchpad`, fora do repositório —
+  não é pipeline oficial nem calibração final) com dado 100% real:
+  retornos das 9 ETFs via yfinance × série do mercado ativo do Fed via
+  CLOB, `calcular_matriz_relacao` com duas janelas candidatas (10 e 20
+  dias). Resultado: o ranking de relação muda de forma relevante entre
+  as duas janelas (XLF lidera com janela 10, XLV com janela 20) —
+  evidência concreta de por que o parâmetro não pode ser chutado
+  (reforça a Decisão 9).
+
+**Pendente:**
+- Passar o levantamento de API (DNS + comportamento de mercados
+  resolvidos) para o Paulo — ele decide como resolver.
+- Depois que o volume histórico estiver disponível: rodar
+  `lia/calibracao_omega.py` com dado real e só então fechar a Decisão
+  6.
+- Fechar a Decisão 9 (janela/passo/série do Polymarket da matriz de
+  relação) em reunião ou com critério de dado, como foi feito na
+  Decisão 6.
+- Avaliar se/quando atualizar a tabela de posse no `CLAUDE.md`.
+- Itens 2–5 da lista "LIA" em `Para_Paulo_e_Lia.md`: validar
+  `diagnostics`, nota de interação Ω ↔ camada tática, SWZ no
+  relatório.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Fable 5.
+- **Contexto consumido:** ~35% da janela, estimativa.
+- **Prompt inicial (verbatim):** "esses arquivos que eu adicionei devem
+  ser levados em consideração antes de fazer qualquer coisa. Decidimos
+  passar a camada tática para o felipe. o que da minha parte eu posso
+  fazer agora?"
+- **Iterações até aceitar:** 1 (levantamento de API aceito de primeira;
+  a IA recusou fechar a Decisão 6 por falta de dado real e a recusa foi
+  mantida, sem repetição de pedido); demo da matriz aceito de primeira
+  após a Lia esclarecer o objetivo via pergunta de esclarecimento.
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** 6 (dependência de volume tornada concreta;
+  decisão segue aberta) e 9 (nova — matriz de relação; contexto e
+  achados registrados, decisão aberta).
+- **Tags:** —

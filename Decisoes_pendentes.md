@@ -77,6 +77,19 @@ Como volume, estabilidade, convergência e proximidade de evento viram um númer
 - Dependências: histórico do Polymarket via pipeline do Paulo (Decisão 2:
   `/prices-history` entrega preço; disponibilidade de **volume** a
   confirmar com o Paulo).
+- **Levantamento de API (20/07/2026, Lia):** não existe endpoint pronto
+  de volume histórico. `/prices-history` (CLOB) só devolve `{t, p}` —
+  confirma a observação do Felipe em `Para_Paulo_e_Lia.md`. A Gamma API
+  (`/markets`, `/events`) traz `volume`/`volume_24hr`, mas só o agregado
+  no momento da consulta, não uma série temporal. O caminho viável é a
+  **Data API** (`data-api.polymarket.com`): `/trades` (ou `/activity`)
+  devolve trades individuais com `timestamp`, `price`, `size`
+  (`usdcSize` em `/activity`) — dá pra reconstruir volume diário
+  agregando por janela de tempo, mas não vem pronto; é trabalho de
+  pipeline (paginação, filtro por `condition_id`/token, bucketização).
+  **Ainda não implementado.** Continua dependendo do Paulo construir
+  essa agregação antes de a calibração poder rodar com dado real —
+  **isso não fecha a decisão**, só torna a dependência concreta.
 
 ## 7. Convergência entre fontes (polls, casas de aposta) 🟡
 Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
@@ -91,6 +104,20 @@ Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
 - **Σ_bl posterior (He & Litterman)** — incorpora a incerteza das views; com confiança zero os pesos encolhem para `w_mkt/(1+τ)` (sobra caixa implícito).
 
 Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?). O esqueleto atual é irrestrito (BL padrão) e deixa a escolha do Σ para o chamador.
+
+**Decisão:** _(a registrar)_
+
+## 9. Matriz de relação ativos × mercados do Polymarket (insumo candidato à Camada 2) 🟡
+Parâmetros em aberto de `lia/matriz_relacao.py` (distance correlation em janela móvel, ativos × mercados × tempo).
+
+**Contexto (registrado em 20/07/2026):** construída na sessão de 06/07 como infraestrutura da camada tática antiga — a Decisão 10 realocou essa camada pro Felipe, com desenho que não reaproveita a matriz. Retomada agora com objetivo mais estreito: usar a matriz como evidência exploratória de "qual mercado do Polymarket tem mais relação com qual ativo", pra apoiar a Decisão 3 (mapeamento cenário→ativo, módulo do Felipe) — não substitui a decisão dele, só informa.
+
+**Em aberto:**
+- `janela` (nº de períodos por janela móvel): sem default de propósito, o código já impõe isso — vem de decisão registrada, não de escolha arbitrária.
+- `passo`: default 1 no código, não confirmado se é o desejado.
+- Série do Polymarket a usar: variação de probabilidade (Δp) ou nível (p)?
+
+Enquanto esses três não fecham, qualquer resultado da matriz é exploratório/provisório (testado com múltiplas janelas candidatas), não uma calibração final.
 
 **Decisão:** _(a registrar)_
 
