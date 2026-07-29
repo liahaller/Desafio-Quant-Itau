@@ -333,5 +333,7 @@ mercado RESOLVIDO, onde só fidelity=720 devolve qualquer dado.)
 ## Commit
 
 ```
-<preenchido no push final desta sessão — ver LOG.md>
+F1 (início):  48cb12e..fe15206  Paulo -> Paulo
+Final (F2–F10): fe15206..fb8b402  Paulo -> Paulo   (HEAD fb8b4029ada726303dcca423cbb46c9e3bcdad6c)
+branch: Paulo
 ```
