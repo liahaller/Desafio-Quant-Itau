@@ -341,3 +341,79 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
 - **Erros da IA:** exibi "March 2026 vol=$0" numa checagem intermediária por usar `first` em vez da soma — artefato de display, corrigido; nenhum código quebrado.
 - **Decisões escaladas:** Decisão 10 (extensão do universo de eventos FOMC).
 - **Tags:** —
+
+## Sessão 2026-07-27 (2) — Paulo
+
+**O que foi feito:**
+- Criado `data/GUIA_DE_USO.md`: mini-guia em markdown para o grupo carregar/
+  consumir os datasets. Cobre ambiente (`.venv`), leitura dos dois parquets
+  (`etf_prices_daily`, `polymarket_fed_reunioes`) com snippets de `read_parquet`/
+  `pivot`/retornos e filtro por `evento_id`, abertura do dashboard, comandos de
+  regeneração do pipeline e regras de convivência (não regenerar em outros
+  branches, mudança de esquema só via `Decisoes_pendentes.md`).
+- Documentação apenas; nenhuma mudança em código de pipeline ou dados.
+
+**O que quebrou:**
+- Nada.
+
+**Pendente:**
+- Sem novidades. Decisões 3–9 seguem aguardando reunião; Decisão 10 (mercados
+  cumulativos) segue em aberto.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~10% da janela.
+- **Prompt inicial (verbatim):** "faca um mini guia em markdown de como as pessoas do grupo devem usar / puxar esses dados"
+- **Iterações até aceitar:** 0 rodadas de correção (guia aceito de primeira).
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** — (nenhuma nova).
+- **Tags:** —
+
+## Sessão 2026-07-29 — Paulo
+
+**O que foi feito:**
+- Copiados para o repo (`docs/`) os pedidos recebidos: `Pedido_Paulo_dados.md`
+  e `Para_Paulo_e_Lia.md` (commit d614376).
+- Executado o `Pedido_Paulo_dados.md` inteiro, medindo ao vivo contra a API do
+  Polymarket (VPN necessária — os hosts estavam bloqueados na rede local):
+  - `scripts/explorar_clob_bidask.py`: seção 1 (bid/ask). **Achado central: não
+    há bid/ask histórico** — `/prices-history` dá série única `{t,p}`;
+    `/orderbook-history` vazio; book real-time some na resolução (404); fallback
+    = proxy via `data-api /trades` (tem `side`). Escalado como Decisão 11.
+  - `scripts/levantar_mercados_pedido.py`: seções 2–4. Mediu os 9 mercados
+    (existência, datas, volume do endpoint, resolução, dias sem trade) + Notas
+    A/B/C (buckets crus do CPI; rules NBER vs two-pronged; terminal, não one-touch).
+  - Fontes externas: FRED via CSV público (sem chave — T10YIE/DGS10/DTB3) e
+    Open dos 9 ETFs no yfinance, ambos confirmados.
+- Entregável consolidado em `docs/RESPOSTA_Pedido_Paulo_dados.md` (formato da
+  seção 4 do pedido), com tudo etiquetado medido vs [DOC] vs pendente. Cópia em
+  `~/Downloads/` para envio ao autor do pedido.
+- Retornos crus salvos em `data/raw/clob_exploracao/` (entrega física, seção 6).
+
+**O que quebrou:**
+- DNS não resolvia os hosts do Polymarket (Claude Code e máquina do Paulo) até
+  ligar a VPN. Depois disso, tudo rodou.
+- Primeira tentativa do script falhou: mercado resolvido no Gamma exige
+  `closed=true` (sem isso, `/markets?slug=` volta vazio) — corrigido.
+
+**Pendente:**
+- Decisão 11 (fonte da série do poly: série única vs proxy de `/trades`) —
+  aguarda reunião.
+- M9 (midterms 2022): `/prices-history` vem vazio (mercado velho) — sem série.
+- Pontas da seção 3: sintaxe do contrato ZQ específico (mês/dezembro) no
+  yfinance e calendários FOMC/CPI (decisão de fonte).
+- Nada commitado ainda nesta sessão (por instrução do Paulo).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~55% da janela.
+- **Prompt inicial (verbatim):** "faca um mini guia em markdown de como as pessoas do grupo devem usar / puxar esses dados"
+- **Iterações até aceitar:** ~3 rodadas (guia → cópia dos pedidos → execução da
+  seção 1 → md consolidado com todas as seções medidas).
+- **Erros da IA:** (1) primeira versão da seção 1 ficou documental por eu supor
+  sem rede; resolvido rodando de verdade após a VPN. (2) no levantamento, o M9
+  pegou por engano os mercados de 2026 (maior volume) em vez do de 2022 —
+  corrigido medindo o mercado 2022 específico.
+- **Decisões escaladas:** Decisão 11 (não há bid/ask histórico no Polymarket).
+- **Tags:** `[PROMPT-CHAVE]` (execução do `Pedido_Paulo_dados.md` — candidato a
+  teste de reprodutibilidade).

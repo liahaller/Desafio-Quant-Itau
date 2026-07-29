@@ -129,6 +129,28 @@ descoberta foi revertida no `download_polymarket_fed.py`.
 houve corte *até* a reunião, não o desfecho *da* reunião. Continuam em
 `outros`/ambíguos. Ver também a Decisão 9 (overlap) e a 8 (janela de backtest).
 
+## 11. Fonte da série de preço do Polymarket — não há bid/ask histórico 🔴
+Levantado em 2026-07-29 (resposta ao `docs/Pedido_Paulo_dados.md`, medido ao
+vivo). A API gratuita do Polymarket **não entrega bid/ask histórico**:
+- `/prices-history` (CLOB) devolve **uma série única** `{t, p}` — sem bid nem ask.
+- `/orderbook-history` responde `{"count":0,"data":[]}` (vazio) para os tokens
+  testados.
+- `/book`, `/midpoint`, `/price`, `/spread` só existem em tempo real e retornam
+  **404** para mercados já resolvidos (o book é apagado na resolução).
+- Há histórico de **trades individuais com lado** (`data-api /trades`, campo
+  `side` BUY/SELL) — dá para reconstruir um **proxy** de midpoint/bid-ask.
+
+Isso afeta as views que exigem midpoint (o doc do Felipe cita 2.4, 3.1, C, E, G).
+Opções levantadas (trade-offs a discutir em reunião — NÃO decidido):
+- Usar a série única do `/prices-history` como está (comporta-se como último
+  trade; em mercado fino a série fica em degraus/stale).
+- Reconstruir um proxy de midpoint a partir do fluxo de `data-api /trades`
+  (tem `side` e `size`) — mais trabalho de pipeline, decisão de forma.
+- Desligar as views defasadas que dependem de midpoint.
+
+Interliga com a Decisão 9 (overlap) e com o `poly_preprocessing` do Felipe
+(midpoint bid/ask). **Decisão:** _(a registrar)_
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.
