@@ -148,6 +148,20 @@ Opções levantadas (trade-offs a discutir em reunião — NÃO decidido):
   (tem `side` e `size`) — mais trabalho de pipeline, decisão de forma.
 - Desligar as views defasadas que dependem de midpoint.
 
+**Novos fatos medidos (2026-07-29, follow-up do pedido — NÃO alteram a decisão,
+só informam o trade-off):**
+- A série do `/prices-history`, medida ao vivo em 2 mercados vivos, **bate com o
+  `midpoint`**, não com o último trade (corrige a inferência anterior). Em mercado
+  fino de baixo volume o `/book` volta **vazio** (sem bid/ask nem em tempo real).
+- O fallback `data-api /trades` é **capado em ~20.000 trades** (limit 10000 +
+  offset 10000; `offset>10000` → HTTP 400; params de tempo ignorados). Para
+  mercado grande (ex.: M5/Trump) isso cobre só a cauda recente, **não** a vida
+  inteira → o proxy de midpoint via trades **não** é viável para mercados grandes;
+  para médios (ex.: M4/recessão) 99,8% das janelas de 12h têm BUY e SELL (proxy
+  viável dentro da janela alcançável, que trunca os ~4 meses iniciais).
+- M9 (Senado 2022) está morto pelas **duas** vias (`/prices-history` vazio e
+  `/trades` = 0 trades).
+
 Interliga com a Decisão 9 (overlap) e com o `poly_preprocessing` do Felipe
 (midpoint bid/ask). **Decisão:** _(a registrar)_
 

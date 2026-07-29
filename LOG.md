@@ -417,3 +417,58 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
 - **Decisões escaladas:** Decisão 11 (não há bid/ask histórico no Polymarket).
 - **Tags:** `[PROMPT-CHAVE]` (execução do `Pedido_Paulo_dados.md` — candidato a
   teste de reprodutibilidade).
+
+## Sessão 2026-07-29 (2) — Paulo
+
+**O que foi feito:**
+- Executado o `FOLLOWUP_Pedido_Paulo_dados.md` inteiro (F1–F10), medindo ao vivo
+  contra a API do Polymarket/yfinance/Fed (VPN ligada):
+  - **F1:** push das 7 commits locais da branch `Paulo` (`48cb12e..fe15206`) —
+    scripts e `data/raw/` que estavam só na máquina foram para o `origin/Paulo`.
+  - **F2/F3/F9:** `scripts/followup_ids_series.py` (+`_extra`) — IDs (conditionId,
+    tokenIds Yes/No, slugs) dos 9 mercados + buckets de M1/M3; séries cruas salvas
+    (125 arquivos em `data/raw/clob_exploracao/`); contagem de lacunas 12h de
+    M2/M5/M6/M8 (todos 0% ausentes).
+  - **F4:** `scripts/followup_trades_dim.py` — dimensionamento do `data-api /trades`.
+    **Achado central:** limit e offset capados em 10000 → só ~20k trades mais
+    recentes; timestamp ignorado; não cobre vida inteira de mercado grande. M4:
+    99,8% das janelas 12h têm BUY+SELL (proxy viável na janela). M9/2022 = 0 trades.
+  - **F5:** `scripts/followup_live_price.py` — a série do `/prices-history` bate com
+    **midpoint** (medido em 2 mercados vivos), não com último trade.
+  - **F6:** nenhuma sintaxe de contrato ZQ mensal funciona no yfinance (só `ZQ=F`).
+  - **F7:** `scripts/followup_calendars.py` — `data/raw/fomc_dates.csv` (48 linhas,
+    2022–2027, raspado do Fed; data exata via PDF do statement) e
+    `data/raw/cpi_release_dates.csv` (15 linhas, via rules do Polymarket; BLS deu 403).
+  - **F8:** `scripts/followup_cpi_sweep.py` — 17 meses de CPI US (dez/24→jul/26),
+    com as mudanças de formato (3→4→5→6→9 buckets; grade sobe em mar/26; jul/26 vira
+    buckets de deflação). Séries de bucket salvas com prefixo `CPI_`.
+  - **F10:** granularidade em mercado vivo — fina (600s) só nos últimos ~30 dias;
+    12h para a vida inteira.
+- Entregável: `docs/RESPOSTA_FOLLOWUP_Pedido_Paulo_dados.md` (formato F1–F10 do
+  pedido) + cópia em `~/Downloads/` para envio.
+
+**O que quebrou:**
+- BLS bloqueia bot (HTTP 403) — datas de CPI vieram das rules dos mercados.
+- 1ª passada do F2 pegou mercados errados por busca-por-volume (M5 é slug de
+  mercado, não evento; M9 pegou Câmara 2026 em vez do Senado 2022) — corrigido no
+  `followup_ids_series_extra.py`.
+- 1ª versão do F7 marcou reuniões com "*" como extraordinárias (na verdade é SEP) e
+  incluiu o "notation vote" de 22/08/2025 — corrigido.
+
+**Pendente:**
+- Decisão 11 atualizada com os fatos medidos (série = midpoint; teto de 20k no
+  /trades) — segue aberta, aguarda reunião.
+- CPI jan/2025 sem data de release (descrição vazia); CPI abr/2025 não existe como
+  evento US separado; typo na fonte do release de dez/2025 (rules dizem "2025").
+- ZQ contrato específico e escolha de fonte de calendário: decisão do grupo.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~60% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP_Pedido_Paulo_dados.md' responda e faca tudo e gere um md para mandar"
+- **Iterações até aceitar:** ~3 rodadas internas de correção (F2 mercados errados;
+  F7 tipo de reunião + notation vote; F7 parse de CPI).
+- **Erros da IA:** (1) busca-por-volume pegou mercados errados no M5/M9 — corrigido;
+  (2) rótulo de reunião FOMC ("*"=SEP, não extraordinária) e notation vote — corrigido.
+- **Decisões escaladas:** — (nenhuma nova; Decisão 11 atualizada com medições).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up — reprodutibilidade).
