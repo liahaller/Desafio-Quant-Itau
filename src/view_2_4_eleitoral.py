@@ -22,6 +22,22 @@ expandida encerrada em t−1 do rebalanceamento (sem lookahead) é
 responsabilidade do chamador, assim como o teste de defasagem obrigatório.
 Literatura (Pástor-Veronesi) só sanity check a posteriori; nunca inverte β.
 
+⚠️ LIMITAÇÃO DE AMOSTRA (medida, 2026-07-29/30): a view fica com UM ÚNICO
+episódio. O robustness em 2022 morreu pelas duas vias — o mercado do Senado
+2022 existe e teve US$ 1,77M de volume, mas o `/prices-history` devolve série
+vazia e o `/trades` devolve 0. Não é decisão a tomar; é limitação a declarar
+no relatório e argumento na hora de dosar o peso desta view. (Cuidado com o
+diretório do Paulo: há dois arquivos `M9_midterms_2022_*` e o de 713 linhas
+é o mercado da CÂMARA 2026, pego por engano na busca por volume — ele
+sinalizou isso no F3. O M9 verdadeiro é o de `{"history":[]}`.)
+
+⚠️ DEFASAGEM MEDIDA (2026-07-30, `scripts/perfil_defasagem_k.py`): no episódio
+2024 a associação entre Δp e retorno se concentra no lag 0 (SPY, XLF, XLK e
+TLT, com os sinais do "Trump trade"); em lag ≥ 1 os coeficientes fortes são
+compatíveis com acaso. Ou seja, k ≈ 0 — exatamente a hipótese que a decisão
+3.2 antecipou, e que faz esta view não ligar por construção. NÃO está
+decidido o que fazer (view contemporânea vs sair do v1): é pauta de reunião.
+
 ⚠️ Responsabilidades do BACKTEST (não desta função, que só vê dados até t):
   - Desligar a view no último dia ANTES do primeiro tick de resolução
     (5–6/nov/2024: Δp = +0,4 fabricaria alfa — espec item 0).

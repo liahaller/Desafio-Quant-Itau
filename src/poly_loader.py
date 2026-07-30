@@ -149,6 +149,31 @@ def daily_preopen(serie):
     return preopen.set_axis(preopen.index.tz_convert(None).normalize())
 
 
+def load_cpi_releases(path):
+    """Calendário de divulgação do CPI, com o erro de ano da fonte corrigido.
+
+    O `cpi_release_dates.csv` do Paulo vem das *rules* dos próprios mercados
+    do Polymarket (o BLS bloqueia raspagem — F7). Uma linha traz erro de
+    digitação DA FONTE: o CPI de dez/2025 aparece com divulgação em
+    2025-01-13, quando o certo é 2026-01-13 (confirmado pela série do
+    mercado `december-inflation-us-monthly`, que termina nessa data). O
+    Paulo manteve o arquivo cru e sinalizou, que é o procedimento certo —
+    a correção é aqui, no tratamento.
+
+    A regra é geral, não uma exceção com data cravada: **divulgação nunca
+    precede o mês de referência**; quando precede, é ano errado, e soma-se
+    um ano. Qualquer recorrência futura do mesmo typo cai na mesma regra.
+
+    Devolve o DataFrame ordenado por data (o arquivo cru está fora de ordem,
+    consequência do mesmo typo).
+    """
+    releases = pd.read_csv(path, parse_dates=["release_date"])
+    referencia = pd.to_datetime(releases["mes_referencia"], format="%B %Y")
+    ano_errado = releases["release_date"] < referencia
+    releases.loc[ano_errado, "release_date"] += pd.DateOffset(years=1)
+    return releases.sort_values("release_date").reset_index(drop=True)
+
+
 # `0pt3` -> 0.3 ; `1pt0` -> 1.0
 _DECIMAL = re.compile(r"(\d+)pt(\d+)")
 # CPI: `...-increase-by-0pt3`, `...-decrease-by-0pt2`, `...-stay-flat-0pt0-in`

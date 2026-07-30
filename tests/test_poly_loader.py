@@ -19,6 +19,7 @@ from poly_loader import (
     SLOT_SECONDS,
     bucket_value,
     daily_preopen,
+    load_cpi_releases,
     load_history,
     load_pmf,
     series_by_slot,
@@ -121,6 +122,18 @@ def test_daily_preopen_nao_preenche_buraco(tmp_path):
     escrever(arquivo, [(T0, 0.20), (T0 + 4 * SLOT_SECONDS, 0.40)])  # falta 09/01
     diaria = daily_preopen(series_by_slot(arquivo))
     assert list(diaria.index) == [pd.Timestamp("2025-01-08"), pd.Timestamp("2025-01-10")]
+
+
+def test_load_cpi_releases_corrige_ano_e_ordena(tmp_path):
+    csv = tmp_path / "cpi_release_dates.csv"
+    csv.write_text(
+        "release_date,time_et,mes_referencia,fonte\n"
+        "2025-01-13,8:30 AM,December 2025,Polymarket rules\n"   # typo da fonte
+        "2025-03-12,8:30 AM,February 2025,Polymarket rules\n",  # linha correta
+        encoding="utf-8")
+    releases = load_cpi_releases(csv)
+    assert list(releases["release_date"]) == [pd.Timestamp("2025-03-12"),
+                                              pd.Timestamp("2026-01-13")]
 
 
 def test_bucket_value_cpi_incluindo_inversao_de_sinal():
