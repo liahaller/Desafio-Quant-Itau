@@ -246,3 +246,48 @@ seção 3.
   decisão segue aberta) e 9 (nova — matriz de relação; contexto e
   achados registrados, decisão aberta).
 - **Tags:** —
+
+## 2026-07-30 — Lia
+
+**Feito:**
+- Commit das mudanças pendentes da branch Lia (commit `124d478`):
+  `Decisoes_pendentes.md`, `LOG.md`, `Para_Paulo_e_Lia.md`,
+  `pauta_reuniao_outros.md`. Os diretórios `lia/__pycache__/` e
+  `lia/tests/__pycache__/` ficaram de fora de propósito (bytecode
+  gerado; não versionar). O repo não tem `.gitignore`.
+- Merge da `origin/main` na branch Lia (commit `f473297`), autorizado
+  explicitamente pela Lia sobrepondo a regra 6 do `CLAUDE.md` ("nunca
+  faz merge entre branches"). A IA sinalizou o conflito com a regra e
+  só prosseguiu após confirmação. Merge limpo, sem conflitos: trouxe a
+  atualização do `CLAUDE.md` (regra 1 agora tria decisões em 3
+  categorias em vez de parar em qualquer dúvida; tabela de posse reduz
+  o módulo da Lia a "Ω reativo · Relatório", com a camada tática
+  realocada ao Felipe; regra 4 pede respostas concisas). O
+  `Decisoes_pendentes.md` da Lia foi preservado — a main não o tocou
+  desde o ancestral comum.
+
+**Quebrou:** nada.
+
+**Pendente:**
+- `git push` da branch Lia não foi feito — commit e merge estão só
+  locais.
+- `__pycache__` seguem untracked; sem `.gitignore` (sugerida a criação,
+  não executada — fica a critério da Lia).
+- Continuam as pendências da sessão de 20/07 (Decisão 6 esperando
+  volume real do Paulo; Decisão 9 aberta; itens 2–5 da lista "LIA" em
+  `Para_Paulo_e_Lia.md`).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8 (sessão iniciou em Sonnet 5,
+  trocada para Opus 4.8 logo no começo).
+- **Contexto consumido:** ~15% da janela, estimativa.
+- **Prompt inicial (verbatim):** "faz o commit das minhas mudanças na
+  minha branch Lia"
+- **Iterações até aceitar:** 1 (commit aceito de primeira; o merge
+  exigiu uma confirmação de override da regra 6, não uma correção de
+  resultado).
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** — (nenhuma decisão nova em
+  `Decisoes_pendentes.md`; a autorização de merge foi pontual, não
+  metodológica).
+- **Tags:** —
