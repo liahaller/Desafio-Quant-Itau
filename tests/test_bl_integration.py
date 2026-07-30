@@ -18,8 +18,33 @@ W_MKT = np.array([0.5, 0.3, 0.2])
 TAU, DELTA = 0.05, 2.5  # sintéticos
 
 
-def _view(P, Q, nome):
-    return ViewResult(P=np.asarray(P, dtype=float), Q=Q, diagnostics={"view": nome})
+def _view(P, Q, nome, horizonte=1):
+    return ViewResult(P=np.asarray(P, dtype=float), Q=Q,
+                      diagnostics={"view": nome, "horizonte_q_dias": horizonte})
+
+
+def test_stack_rejeita_horizontes_misturados():
+    """DECISAO-4.1: Q de 1 dia e Q acumulado em k dias não somam."""
+    evento = _view([1.0, -1.0, 0.0], 0.02, "2.3_fed", horizonte=1)
+    defasada = _view([0.0, 1.0, -1.0], 0.03, "2.4_eleitoral", horizonte=3)
+    try:
+        stack_views([evento, defasada], n_assets=3)
+        assert False, "deveria rejeitar horizontes diferentes"
+    except ValueError as erro:
+        assert "DECISAO-4.1" in str(erro)
+
+    # horizonte não declarado também não se mistura com horizonte declarado
+    sem_horizonte = ViewResult(P=np.zeros(3), Q=0.01, diagnostics={"view": "2.2"})
+    try:
+        stack_views([evento, sem_horizonte], n_assets=3)
+        assert False, "deveria rejeitar horizonte não declarado junto de declarado"
+    except ValueError:
+        pass
+
+    # mesmo horizonte passa
+    P, Q, _ = stack_views([evento, _view([0.0, 1.0, -1.0], 0.03, "b", horizonte=1)],
+                          n_assets=3)
+    assert P.shape == (2, 3)
 
 
 def test_stack_filtra_none_e_preserva_ordem():

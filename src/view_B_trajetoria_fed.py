@@ -80,6 +80,7 @@ def build_view(assets, e_zq_dez_bps, betas,
     Q = float(surpresa_bps * (P @ betas))
     return ViewResult(P=P, Q=Q, diagnostics={
         "view": "B_trajetoria_fed",
+        "horizonte_q_dias": 1,  # mesmo β de event-study de 1 dia da 2.3 (4.1)
         "caminho": caminho,
         "e_poly_bps": e_poly_bps,
         "e_zq_dez_bps": e_zq_dez_bps,

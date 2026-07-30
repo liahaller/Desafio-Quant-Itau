@@ -104,6 +104,9 @@ def build_view(assets, e_ff_bps, betas,
     Q = float(surpresa_bps * (P @ betas))
     return ViewResult(P=P, Q=Q, diagnostics={
         "view": "2.3_fed",
+        # β vem de event-study com retornos DIÁRIOS dos dias de FOMC -> o Q é
+        # o movimento de 1 dia (o do anúncio). Ver decisão 4.1.
+        "horizonte_q_dias": 1,
         "caminho": caminho,
         "e_poly_bps": e_poly_bps,
         "e_ff_bps": e_ff_bps,

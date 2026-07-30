@@ -155,6 +155,11 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
         "e_poly": e_poly,                      # base anual, comparável ao breakeven
         "e_poly_declarado": e_poly_declarado,  # como veio do mercado
         "cpi_frequencia": cpi_frequencia,
+        # TODO(DECISAO-4.1): o Q desta view é o repricing TOTAL do fechamento
+        # do gap, sem horizonte definido — quanto tempo o breakeven leva para
+        # convergir é decisão do grupo. Declarado como None de propósito: a
+        # integração recusa empilhar horizonte não declarado com os demais.
+        "horizonte_q_dias": None,
         "breakeven_10y": breakeven_10y,
         "divergencia": divergencia,
         "duration": duration,

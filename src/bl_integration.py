@@ -38,10 +38,25 @@ def stack_views(view_results, n_assets):
     Retorna (P (k, n), Q (k,), diagnostics list) com k = nº de views
     ativas, na ordem da lista de entrada; ou (None, None, []) se nenhuma
     view está ativa. O Ω da Lia deve ser (k, k) nesta MESMA ordem.
+
+    Rejeita views com `horizonte_q_dias` diferentes entre si (decisão 4.1).
+    O que a checagem NÃO cobre, e segue pendente: mesmo com todas as views
+    no mesmo horizonte, esse horizonte precisa bater com o de Σ e π (hoje
+    diários) — só a escolha do horizonte-alvo fecha isso.
     """
     active = [r for r in view_results if r is not None]
     if not active:
         return None, None, []
+    # DECISAO-4.1: empilhar Q de horizontes diferentes é somar km/h com km —
+    # não dá erro, só devolve peso errado. Enquanto a reconciliação não fecha,
+    # a mistura FALHA ALTO em vez de passar silenciosa.
+    horizontes = {r.diagnostics.get("horizonte_q_dias", "não declarado") for r in active}
+    if len(horizontes) > 1:
+        raise ValueError(
+            f"views ativas com horizontes de Q diferentes: {sorted(map(str, horizontes))} — "
+            "TODO(DECISAO-4.1): a reconciliação de horizonte precisa fechar antes de "
+            "empilhar views defasadas (Q acumulado em k dias) com views de evento (1 dia)"
+        )
     for r in active:
         if np.asarray(r.P).shape != (n_assets,):
             raise ValueError(
