@@ -2,6 +2,10 @@
 
 **Status:** 🟢 fechada em reunião (2026-07-09) · **Exceção à Família A**: não usa o template `Q = sensibilidade × divergência` com sensibilidade estimada — é tradução mecânica (`Q = duration × Δinflação`, sem regressão) · fecha as decisões 3 e 4 para esta view.
 
+> ⚠️ **Correção de frequência (2026-07-30).** Os itens 1 e 2 abaixo foram escritos supondo mercado de CPI **anual** (buckets ≤3,6% / 3,7% / 3,8%…). O Paulo mediu (Nota A, 27/07) que os mercados do Polymarket são de variação **MENSAL** do CPI-U (0,0% a 0,5%), e a grade muda mês a mês (3 a 9 faixas, com inversão de sinal em jul/2026). O código passou a exigir `cpi_frequencia` e anualiza os valores dos buckets — `(1+π)^12 − 1`, aplicado aos VALORES e não à média — antes de comparar com o breakeven. Sem isso a divergência ficava negativa em ~2 pp para sempre, por unidade.
+>
+> **Fica para a reunião** (mesma família da decisão 3.3): anualizar um único mês multiplica o ruído por ~12, e a comparação segue sendo "expectativa de 1 mês" contra "média implícita de 10 anos". Amortecer isso é decisão do grupo.
+
 ## A ideia
 
 O mercado embute uma inflação esperada no **breakeven** (yield nominal − yield real dos TIPS). O Polymarket dá probabilidades sobre o CPI. Quando a inflação implícita no poly diverge do breakeven, existe uma reprecificação esperada que o mercado de títulos ainda não pagou: poly acima do breakeven → long TIP / short TLT; abaixo → o inverso.

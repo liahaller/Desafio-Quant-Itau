@@ -18,6 +18,25 @@ Unidades: TODAS as grandezas de inflação (valores dos buckets, threshold,
 breakeven, vol) em fração decimal (0.037 = 3.7%). Q sai em fração decimal,
 consistente com os retornos do BL.
 
+FREQUÊNCIA (corrigido em 2026-07-30, por instrução do Felipe em sessão):
+a espec foi escrita supondo mercado de CPI **anual** (buckets 3,7% / 3,8% /
+≤3,6%), mas o Paulo mediu (Nota A, 2026-07-27) que os mercados do Polymarket
+são de variação **MENSAL** do CPI-U (0,0% a 0,5%). Comparar 0,3% mensal com
+um breakeven de 10 anos de 2,3% produzia divergência negativa permanente de
+~2 pp — a view ficaria comprada em TLT contra TIP para sempre, por unidade,
+não por sinal. Por isso `cpi_frequencia` é argumento OBRIGATÓRIO: quem chama
+declara a unidade do mercado, e a view anualiza antes de comparar. A
+anualização entra nos VALORES DOS BUCKETS, não na média — anualizar depois
+seria desigualdade de Jensen ((1+E[π])^12 != E[(1+π)^12]).
+
+⚠️ O que a correção de unidade NÃO resolve (item de reunião, mesma família da
+decisão 3.3 "prazos que não batem"): mesmo com as duas pontas anualizadas,
+comparamos a expectativa de UM mês com a média implícita de DEZ ANOS, e
+anualizar um mês multiplica o ruído por ~12 (0,1 pp mensal vira ~1,2 pp
+anual). O sinal fica correto em unidade e nervoso em magnitude. Qualquer
+amortecimento (escalar, suavizar, comparar com breakeven curto) é decisão do
+grupo — não é assumido aqui.
+
 Pré-processamento (decisão 9): a view normaliza as probs cruas e aplica a
 correção de favorite-longshot (stub até a decisão 11a — a view FALHA ALTO
 até lá; para testes sintéticos injeta-se `fl_correction` identidade). O
@@ -35,6 +54,24 @@ from views_common import ViewResult
 # hardcodar ticker na lógica; o default É a decisão.
 LONG_ASSET = "TIP"
 SHORT_ASSET = "TLT"
+
+
+def annualize_monthly(pi_mensal):
+    """Variação mensal do CPI -> taxa anual equivalente: (1+π)^12 - 1.
+
+    Composição, não multiplicação por 12: é a taxa que, repetida 12 meses,
+    dá o mesmo acumulado. Aceita escalar ou array (os valores dos buckets).
+    """
+    return (1.0 + np.asarray(pi_mensal, dtype=float)) ** 12 - 1.0
+
+
+def _to_anual(valores, cpi_frequencia):
+    """Converte para base anual conforme a frequência declarada pelo chamador."""
+    if cpi_frequencia == "mensal":
+        return annualize_monthly(valores)
+    if cpi_frequencia == "anual":
+        return np.asarray(valores, dtype=float)
+    raise ValueError(f"cpi_frequencia deve ser 'mensal' ou 'anual': {cpi_frequencia!r}")
 
 
 def _pair_P(assets, long_asset, short_asset):
@@ -60,7 +97,7 @@ def expected_inflation_from_binary(prob_yes, prob_no, threshold, cpi_vol,
     return threshold + cpi_vol * norm.ppf(p_yes)
 
 
-def build_view(assets, breakeven_10y, duration,
+def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
                bucket_probs=None, bucket_values=None,
                binary_prob=None, binary_threshold=None, cpi_vol=None,
                fl_correction=favorite_longshot,
@@ -75,8 +112,14 @@ def build_view(assets, breakeven_10y, duration,
       breakeven_10y    : float — T10YIE na data, fração decimal.
       duration         : float — duration do breakeven 10a (~8; valor vem
                          de decisão registrada, não default de código).
+      cpi_frequencia   : 'mensal' ou 'anual' — unidade do mercado de CPI que
+                         alimenta a view. OBRIGATÓRIO (ver docstring do
+                         módulo): os mercados entregues são MENSAIS e o
+                         breakeven é anual; sem declarar, a comparação sai
+                         errada em ~2 pp sem dar erro.
       bucket_probs     : probs CRUAS dos buckets de CPI (ou None).
-      bucket_values    : valor de cada bucket (aberto já resolvido — 11b).
+      bucket_values    : valor de cada bucket (aberto já resolvido — 11b),
+                         na unidade declarada em `cpi_frequencia`.
       binary_prob      : tupla (p_sim, p_nao) CRUA do mercado binário (ou None).
       binary_threshold : threshold X do binário "CPI > X".
       cpi_vol          : vol histórica do CPI para o fallback.
@@ -85,13 +128,20 @@ def build_view(assets, breakeven_10y, duration,
     Retorna ViewResult (P, Q, diagnostics) ou None se não há mercado de CPI.
     """
     if bucket_probs is not None:
-        e_poly = pmf_mean(bucket_probs, bucket_values, fl_correction)
+        # anualiza os VALORES antes da média (Jensen: (1+E[π])^12 != E[(1+π)^12])
+        e_poly = pmf_mean(bucket_probs, _to_anual(bucket_values, cpi_frequencia),
+                          fl_correction)
+        e_poly_declarado = pmf_mean(bucket_probs, bucket_values, fl_correction)
         caminho = "pmf"
     elif binary_prob is not None:
         if binary_threshold is None or cpi_vol is None:
             raise ValueError("fallback binário exige binary_threshold e cpi_vol")
-        e_poly = expected_inflation_from_binary(binary_prob[0], binary_prob[1],
-                                                binary_threshold, cpi_vol, fl_correction)
+        # aqui a normal é montada na unidade declarada (threshold e vol vêm
+        # nela) e a média sai depois — anualizar a média é aproximação, não
+        # identidade, mas o caminho binário já é o degrau degradado da cascata.
+        e_poly_declarado = expected_inflation_from_binary(
+            binary_prob[0], binary_prob[1], binary_threshold, cpi_vol, fl_correction)
+        e_poly = float(_to_anual(e_poly_declarado, cpi_frequencia))
         caminho = "binario"
     else:
         return None  # cascata item 0: sem mercado de CPI -> view desativada
@@ -102,7 +152,9 @@ def build_view(assets, breakeven_10y, duration,
     return ViewResult(P=P, Q=float(Q), diagnostics={
         "view": "2.2_inflacao",
         "caminho": caminho,
-        "e_poly": e_poly,
+        "e_poly": e_poly,                      # base anual, comparável ao breakeven
+        "e_poly_declarado": e_poly_declarado,  # como veio do mercado
+        "cpi_frequencia": cpi_frequencia,
         "breakeven_10y": breakeven_10y,
         "divergencia": divergencia,
         "duration": duration,
