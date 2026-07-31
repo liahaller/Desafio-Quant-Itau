@@ -26,6 +26,12 @@ família do pacote de sensibilidade) para deixar isso medido, não assumido.
 
 Uso:
     python scripts/perfil_defasagem_k.py --dados <dir raw> --precos <parquet>
+
+Onde está o dado: os arquivos crus vivem no branch `Paulo`, não neste. Para
+rodar sem fazer merge, extraia para um diretório temporário e aponte com
+`--dados` / `--precos`:
+
+    git archive origin/Paulo data/ | tar -x -C <dir temporario>
 """
 
 import argparse

@@ -25,6 +25,12 @@ duration que a reunião fechar dá a dispersão em Q.
 
 Uso:
     python scripts/sensibilidade_reuniao.py --dados <dir do clob_exploracao>
+
+Onde está o dado: os arquivos crus vivem no branch `Paulo`, não neste. Para
+rodar sem fazer merge, extraia para um diretório temporário e aponte com
+`--dados` / `--precos`:
+
+    git archive origin/Paulo data/ | tar -x -C <dir temporario>
 """
 
 import argparse

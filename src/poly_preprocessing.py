@@ -26,7 +26,9 @@ Peças:
                          2.4 (eleitoral) e 3.1 (recessão).
 
 Funções puras: recebem arrays, devolvem arrays. As séries de midpoint cruas
-vêm do pipeline do Paulo (`/prices-history` por tokenId, um arquivo por token).
+vêm do pipeline do Paulo (`/prices-history` por tokenId, um arquivo por token)
+e são lidas e alinhadas por `poly_loader` — é ele que abre os JSONs, alinha os
+tokens no slot de 12h e monta a matriz de buckets. Aqui só entra matemática.
 """
 
 import numpy as np
