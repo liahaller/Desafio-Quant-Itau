@@ -8,24 +8,12 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from poly_preprocessing import (
-    midpoint_price,
     normalize_probs,
     favorite_longshot,
     open_bucket_value,
     pmf_mean,
     binary_prob_series,
 )
-
-
-def test_midpoint():
-    """Midpoint é a média simples de bid e ask; bid > ask é rejeitado."""
-    mid = midpoint_price([0.40, 0.50], [0.44, 0.52])
-    assert np.allclose(mid, [0.42, 0.51])
-    try:
-        midpoint_price([0.60], [0.55])
-        assert False, "deveria rejeitar bid > ask"
-    except ValueError:
-        pass
 
 
 def test_normalize_binario():
@@ -63,16 +51,20 @@ def test_pmf_mean():
 
 
 def test_binary_prob_series():
-    """Midpoints (0.60, 0.30) normalizam para p_sim = 2/3; default (stub 11a) falha alto."""
+    """Par (0.60, 0.30) normaliza para p_sim = 2/3; sem o No, a série passa direto;
+    shapes desalinhados e o default (stub 11a) falham alto."""
     identidade = lambda p: np.asarray(p, dtype=float)  # sintético (decisão 11a pendente)
-    p = binary_prob_series(
-        bid_yes=[0.58, 0.40], ask_yes=[0.62, 0.44],
-        bid_no=[0.28, 0.48], ask_no=[0.32, 0.52],
-        fl_correction=identidade,
-    )
+    p = binary_prob_series([0.60, 0.42], [0.30, 0.50], fl_correction=identidade)
     assert np.allclose(p, [0.6 / 0.9, 0.42 / 0.92])
+    so_yes = binary_prob_series([0.60, 0.42], fl_correction=identidade)
+    assert np.allclose(so_yes, [0.60, 0.42])
     try:
-        binary_prob_series([0.58], [0.62], [0.28], [0.32])  # default = stub da 11a
+        binary_prob_series([0.60, 0.42], [0.30], fl_correction=identidade)
+        assert False, "deveria rejeitar p_yes e p_no desalinhados"
+    except ValueError:
+        pass
+    try:
+        binary_prob_series([0.60], [0.30])  # default = stub da 11a
         assert False, "deveria levantar NotImplementedError"
     except NotImplementedError:
         pass
@@ -89,10 +81,9 @@ def test_stubs_falham_alto():
 
 
 if __name__ == "__main__":
-    test_midpoint()
     test_normalize_binario()
     test_normalize_pmf_por_linha()
     test_pmf_mean()
     test_binary_prob_series()
     test_stubs_falham_alto()
-    print("poly_preprocessing: 6 testes OK")
+    print("poly_preprocessing: 5 testes OK")
