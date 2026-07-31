@@ -117,7 +117,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dados", default="data/raw/clob_exploracao")
     parser.add_argument("--precos", default="data/etf_prices_daily.parquet")
-    parser.add_argument("--saida", default="Dump/Perfil_defasagem_k.md")
+    parser.add_argument("--saida", default="Dump/analises/Perfil_defasagem_k.md")
     args = parser.parse_args()
 
     saida = []

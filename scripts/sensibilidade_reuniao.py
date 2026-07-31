@@ -136,7 +136,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dados", default="data/raw/clob_exploracao",
                         help="diretório com os JSONs crus do /prices-history")
-    parser.add_argument("--saida", default="Dump/Sensibilidade_decisoes_1.1_1.2_6.1.md",
+    parser.add_argument("--saida", default="Dump/analises/Sensibilidade_decisoes_1.1_1.2_6.1.md",
                         help="arquivo markdown de saída")
     args = parser.parse_args()
     diretorio = Path(args.dados)

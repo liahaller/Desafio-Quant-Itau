@@ -74,6 +74,6 @@ decisão registrada).
 
 Com H diário e as views defasadas usando `k > 1`, o fator `H/k` **encolhe** o Q das views
 defasadas — que são justamente as que dependem da tese de defasagem. Combinado com o perfil
-de defasagem medido (`Dump/Perfil_defasagem_k.md`, onde o dado não sustenta a defasagem no
+de defasagem medido (`Dump/analises/Perfil_defasagem_k.md`, onde o dado não sustenta a defasagem no
 episódio eleitoral), pode ser que a decisão certa não seja "como converter", e sim **quais
 views sobrevivem à conversão**. Vale olhar os dois documentos na mesma sessão.

@@ -204,7 +204,7 @@ intradiário, que o Paulo mediu existir só nos ~30 dias mais recentes de mercad
 backtest. Para efeito de decisão dá no mesmo: não há como ligar as views defasadas com base nisso.
 
 **Encaminhamento.** A opção (a) da lista acima já foi executada — o gráfico está na mesa
-(`Dump/Perfil_defasagem_k.md`). O que a reunião decide agora não é mais "qual critério de k", e sim **o que
+(`Dump/analises/Perfil_defasagem_k.md`). O que a reunião decide agora não é mais "qual critério de k", e sim **o que
 fazer com views cuja premissa o dado não sustentou** (ver 3.2 e a nova 7.3).
 
 ---
@@ -258,7 +258,7 @@ prazo definido** (é o repricing total, sem dizer em quantos dias); as de Fed re
 defasadas respondem **em k dias**; e a matriz de risco que entra no modelo é **diária**. Ou seja, hoje o
 modelo soma quatro prazos diferentes. No código, cada view passou a **declarar** o seu prazo e a integração
 **recusa juntar prazos diferentes** — antes ela somava em silêncio. A proposta completa está em
-`Dump/Proposta_4.1_horizontes.md`.
+`Dump/reuniao/Proposta_4.1_horizontes.md`.
 
 **O que sobrou para a reunião:** duas perguntas, e nenhum número foi proposto (regra do projeto).
 Viraram os itens **7.1 e 7.2** do bloco novo.
