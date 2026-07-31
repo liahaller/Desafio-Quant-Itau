@@ -1,5 +1,29 @@
 # LOG de sessões
 
+## 2026-07-31 — Felipe
+
+**Feito:**
+- **`Dump/` organizado em 3 subpastas** (9 arquivos, nenhum criado nem apagado): `trocas/` (5 — pedidos e respostas com o Paulo: `FOLLOWUP`, `FOLLOWUP2`, `RESPOSTA`, `RESPOSTA_FOLLOWUP`; mais `Pergunta_Lia_omega_volume.md`), `analises/` (2 saídas de script — `Perfil_defasagem_k.md`, `Sensibilidade_decisoes_1.1_1.2_6.1.md`) e `reuniao/` (2 — `Pauta_reuniao_explicada.md`, `Proposta_4.1_horizontes.md`).
+- Movido com `git mv`: o git detectou os 9 como rename, **histórico preservado** em todos.
+- **5 referências de path atualizadas** para não quebrar: `--saida` default de `scripts/perfil_defasagem_k.py` e `scripts/sensibilidade_reuniao.py` (agora apontam para `Dump/analises/`), e 3 citações internas nos dois docs de `reuniao/`.
+- Commit `e50a35c` no branch `Felipe`; branch empurrada para `origin/Felipe` (estava 17 commits à frente).
+
+**Quebrou / aprendido:**
+- Nada quebrou. Um tropeço de processo: o primeiro commit saiu com os renames e os scripts, mas **sem** as edições de path dentro dos dois `.md` de `reuniao/` (o `git mv` deixa a modificação de conteúdo unstaged). Corrigido por `--amend` antes do push — o commit publicado está completo.
+- Escolha deliberada: **os 7 `Dump/...` citados em entradas antigas do `LOG.md` não foram reescritos**. É registro histórico e os caminhos valiam na data da entrada; reescrever seria mexer no passado do log.
+
+**Pendente:**
+- Nada aberto por esta sessão. Nenhuma decisão nova, nenhuma alteração em `Decisoes_pendentes.md` — sessão puramente organizacional, sem toque em metodologia ou módulo de outro membro.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~40k tokens (~20% de janela de 200k).
+- **Prompt inicial (verbatim):** "da uma organizada no dump, com pastas pra separar os arquivos"
+- **Iterações até aceitar:** 1 (agrupamento aceito de primeira; as duas instruções seguintes foram commit e push, não correção).
+- **Erros da IA:** 1 — staging incompleto no primeiro commit (edições de conteúdo dos `.md` renomeados ficaram de fora); detectado pelo próprio `git status` e corrigido por amend antes de qualquer push.
+- **Decisões escaladas:** —
+- **Tags:** —
+
 ## 2026-07-30 (sessão 2) — Felipe
 
 **Feito:**
