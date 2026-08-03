@@ -472,3 +472,55 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
   (2) rótulo de reunião FOMC ("*"=SEP, não extraordinária) e notation vote — corrigido.
 - **Decisões escaladas:** — (nenhuma nova; Decisão 11 atualizada com medições).
 - **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up — reprodutibilidade).
+
+## Sessão 2026-08-02 — Paulo
+
+**O que foi feito:**
+- Executado o `FOLLOWUP2_Pedido_Paulo_dados.md` inteiro (G1–G6), ao vivo (VPN
+  ligada), com entrega física dos dados:
+  - **G1:** `scripts/g1_open_etfs.py` — Open diário (auto_adjust=True) dos 9 ETFs
+    entregue como arquivo irmão `data/etf_open_daily.parquet` (coluna
+    `preco_abertura`), reindexado às datas EXATAS do close: 51.129 linhas,
+    2003-12-05→2026-07-08, **0 Open ausente, alinhamento 100%**. `data/README.md`
+    atualizado.
+  - **G2:** `scripts/g2_fred.py` — 3 séries do FRED salvas cruas em `data/raw/`
+    (`fred_T10YIE.csv` 6.152, `fred_DGS10.csv` 16.848, `fred_DTB3.csv` 18.934).
+    **Achado que corrige a nota do Felipe:** o `fredgraph.csv` marca ausente como
+    **campo VAZIO**, não `"."` (linha presente, valor vazio).
+  - **G3:** `scripts/g3_token_no.py` — token No de M4 e M5. Em ambos **No = 1 − Yes
+    exato** (soma 1,000). M5: grelha idêntica ponto a ponto (614/614). M4: mesmos
+    slots de 12h, mas timestamp exato só casa em 472/716 (No amostrado em segundos
+    diferentes dentro do slot). Séries No salvas cruas (sufixo `_NO`).
+  - **G4:** `scripts/g4_cpi_holes.py` — abr/2025 = **lacuna real**; jan/2026 =
+    **buraco da busca** (mercado existe: `january-inflation-us-monthly`, 5 buckets,
+    série salva); fev/2026 = **lacuna real** (após ~9 buscas). Removidos arquivos
+    salvos por engano em matches de ano errado.
+  - **G5:** só disponibilidade (espera spec do Ω com a Lia). **Não há endpoint de
+    série de volume** (clob/gamma/data-api → 404 ou vazio; só agregados-snapshot no
+    Gamma). Derivável do `data-api /trades` (`size`+`timestamp`) mas sob o teto de
+    20k trades → incompleto p/ mercado grande.
+  - **G6:** não medido (condicional à reunião). Typo de dez/2025: **mantido cru**
+    (`2025-01-13`), correção fica com o Felipe no tratamento.
+- Entregável: `docs/RESPOSTA_FOLLOWUP2_Pedido_Paulo_dados.md` (formato G1–G6 +
+  Bloqueios + Commit) + cópia em `~/Downloads/`.
+
+**O que quebrou:**
+- 1ª passada do G4 casou mercados de ano errado (april-us-monthly = 2026;
+  february-monthly = 2025) — desambiguado pelas datas da série e corrigido; probe
+  manual confirmou fev/2026 inexistente.
+- G3 M5 não resolve por `/events` (é slug de MERCADO) — ajustado para `/markets`.
+
+**Pendente:**
+- G5: levantar a série de volume de fato depende da spec do Ω (Lia).
+- G6: levantar datas de CPI 2022–2024 depende de decisão de reunião.
+- Correção do release de dez/2025 (2025-01-13 → 2026-01-13): a cargo do Felipe (tratamento).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~55% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP2_Pedido_Paulo_dados.md' preciso responder esse md em formato de md para mandar para o felipe. responda absolutamente tudo da forma que ele precisa"
+- **Iterações até aceitar:** ~2 rodadas internas (G3 M5 via /markets; G4 desambiguação de ano + probe fev/2026).
+- **Erros da IA:** G4 1ª passada rotulou mercados de ano errado como achados —
+  detectado pelas datas e corrigido antes da entrega.
+- **Decisões escaladas:** — (nenhuma nova).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up 2 — reprodutibilidade).

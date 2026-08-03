@@ -24,6 +24,31 @@ Histórico diário de preços ajustados dos 9 ativos da camada estrutural
 - **Linhas:** 51.129 (5.681 datas × 9 tickers)
 - **Validação:** `pytest tests/test_etf_prices.py`
 
+## `etf_open_daily.parquet`
+
+Arquivo **irmão** do `etf_prices_daily.parquet` com o **preço de abertura**
+(`Open`) diário dos mesmos 9 ativos, na mesma janela e no **mesmo alinhamento
+de datas** — para as táticas que operam na abertura (gap de fim de semana,
+prêmio de anúncio na véspera → saída na abertura).
+
+- **Gerado por:** `scripts/g1_open_etfs.py`
+- **Fonte:** Yahoo Finance via `yfinance`, frequência diária
+- **Base do Open:** ajustado (`auto_adjust=True`) — **a mesma base do close** que
+  está no `etf_prices_daily.parquet`. Escolhido para consistência interna (não
+  misturar close ajustado com open cru, o que geraria retorno intradiário falso
+  em dia de dividendo); a decisão metodológica final é do grupo.
+- **Formato:** tabela única, formato longo
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `data` | datetime | Data do pregão (sem timezone) |
+| `ticker` | string | Um de: XLK, XLU, XLP, XLF, XLE, XLV, TIP, TLT, SPY |
+| `preco_abertura` | float | Preço de **abertura** ajustado (`auto_adjust=True`) |
+
+- **Período coberto:** 2003-12-05 → 2026-07-08 (idêntico ao arquivo de close).
+- **Linhas:** 51.129 (5.681 datas × 9 tickers) — reindexado às datas EXATAS do
+  arquivo de close; **0 dias com Open ausente**, alinhamento 100%.
+
 ## `polymarket_fed_reunioes.parquet`
 
 Histórico de probabilidades dos mercados de **decisão direta por reunião** do
