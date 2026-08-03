@@ -209,4 +209,4 @@ tratamento**. Só existe essa uma linha (não há duplicata).
   responderam.
 
 ## Commit
-`7ea4e86` (+ `2a6a450` deste preenchimento) — branch `Paulo`, push para `origin/Paulo`.
+`7ea4e86` (dados + entregável) e `4882670` (este preenchimento do hash) — branch `Paulo`, push para `origin/Paulo`.
