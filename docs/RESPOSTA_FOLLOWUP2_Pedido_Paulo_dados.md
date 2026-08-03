@@ -209,4 +209,4 @@ tratamento**. Só existe essa uma linha (não há duplicata).
   responderam.
 
 ## Commit
-<preenchido no push — ver rodapé>
+`7ea4e86` (+ `2a6a450` deste preenchimento) — branch `Paulo`, push para `origin/Paulo`.
