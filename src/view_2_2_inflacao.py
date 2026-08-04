@@ -74,11 +74,30 @@ def _to_anual(valores, cpi_frequencia):
     raise ValueError(f"cpi_frequencia deve ser 'mensal' ou 'anual': {cpi_frequencia!r}")
 
 
-def _pair_P(assets, long_asset, short_asset):
-    """Linha P do par +1/-1 alinhada à lista de ativos (Sigma|P| = 2)."""
+def _pair_P(assets, long_asset, short_asset, duration_long, duration_short):
+    """Linha P do par, CASADA EM DURATION e normalizada com Sigma|P| = 2.
+
+    Medido em 2026-08-04 (`Dump/analises/Convergencia_2_2.md`): o par +1/-1
+    ingênuo NÃO é aposta de inflação. TIP responde ao juro de 10 anos com
+    duration empírica de ~5 anos e TLT com ~16 — a perna do TLT domina, e a
+    oscilação de juros abafa o sinal. Na prática o par cru deu coeficiente
+    NEGATIVO contra a divergência (-0,077), enquanto o breakeven, medido
+    direto, deu +0,0063 com t +3,42. A tese estava certa e o instrumento
+    errado.
+
+    Casar duration = vender `d_long / d_short` de TLT por unidade de TIP, para
+    que um deslocamento paralelo da curva se cancele e sobre o componente de
+    inflação. As durations vêm MEDIDAS (`market_inputs.empirical_duration`),
+    nunca de constante no código.
+    """
+    if duration_long <= 0 or duration_short <= 0:
+        raise ValueError(
+            f"durations devem ser positivas: {duration_long}, {duration_short}")
+    hedge = duration_long / duration_short  # unidades de short por unidade de long
+    escala = 2.0 / (1.0 + hedge)            # mantém Sigma|P| = 2
     P = np.zeros(len(assets))
-    P[assets.index(long_asset)] = 1.0
-    P[assets.index(short_asset)] = -1.0
+    P[assets.index(long_asset)] = escala
+    P[assets.index(short_asset)] = -escala * hedge
     return P
 
 
@@ -98,6 +117,8 @@ def expected_inflation_from_binary(prob_yes, prob_no, threshold, cpi_vol,
 
 
 def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
+               duration_long, duration_short,
+               dias_ate_divulgacao, divergencia_media=0.0,
                bucket_probs=None, bucket_values=None,
                binary_prob=None, binary_threshold=None, cpi_vol=None,
                fl_correction=favorite_longshot,
@@ -146,21 +167,38 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
     else:
         return None  # cascata item 0: sem mercado de CPI -> view desativada
 
+    if dias_ate_divulgacao < 1:
+        raise ValueError(
+            f"dias_ate_divulgacao deve ser >= 1: {dias_ate_divulgacao} — o "
+            "horizonte da view é o calendário de divulgação do CPI (decisão 7.2)")
     divergencia = e_poly - breakeven_10y
-    Q = duration * divergencia
-    P = _pair_P(list(assets), long_asset, short_asset)
+    # DECISAO-7.4: a divergência entra DEMEANADA. Medido: a média é +2,03 pp
+    # com desvio de 2,26 pp — do tamanho de toda a variação do sinal. É o
+    # descasamento estrutural entre inflação de 1 mês anualizada e breakeven de
+    # 10 anos, não informação; sem removê-la a view fica comprada em inflação
+    # por aritmética. `divergencia_media` vem de janela EXPANSIVA no chamador
+    # (sem lookahead); 0.0 só para teste sintético.
+    divergencia_liquida = divergencia - divergencia_media
+    # DECISAO-7.2: o repricing se distribui até a divulgação, data em que o
+    # mercado do poly resolve e a informação vira pública. Medido: o breakeven
+    # anda na direção do poly até lá (+0,0063, t +3,42) e o coeficiente cai na
+    # reta final, que é o que a regra prevê. Dividir pelos dias que faltam faz
+    # o Q ser de UM dia — o H da decisão 1 — e a view apertar conforme a data
+    # chega.
+    Q = duration * divergencia_liquida / dias_ate_divulgacao
+    P = _pair_P(list(assets), long_asset, short_asset, duration_long, duration_short)
     return ViewResult(P=P, Q=float(Q), diagnostics={
         "view": "2.2_inflacao",
         "caminho": caminho,
         "e_poly": e_poly,                      # base anual, comparável ao breakeven
         "e_poly_declarado": e_poly_declarado,  # como veio do mercado
         "cpi_frequencia": cpi_frequencia,
-        # TODO(DECISAO-4.1): o Q desta view é o repricing TOTAL do fechamento
-        # do gap, sem horizonte definido — quanto tempo o breakeven leva para
-        # convergir é decisão do grupo. Declarado como None de propósito: a
-        # integração recusa empilhar horizonte não declarado com os demais.
-        "horizonte_q_dias": None,
+        "horizonte_q_dias": 1,                 # decisão 7.2 + H = 1 dia
         "breakeven_10y": breakeven_10y,
         "divergencia": divergencia,
+        "divergencia_media": divergencia_media,
+        "divergencia_liquida": divergencia_liquida,
+        "dias_ate_divulgacao": dias_ate_divulgacao,
         "duration": duration,
+        "hedge_duration": duration_long / duration_short,
     })
