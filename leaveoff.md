@@ -35,7 +35,7 @@ tentado.
 | **Parâmetros** | H = 1 dia · δ = 3,0 · τ = 1/504 · balde aberto = meia largura · faixa faltante = carrega · sem FL (γ = 1,0) · custo 2 bps/lado |
 | **Fonte de juros** | DTB3 do FRED (o ZQ não tem fonte grátis) |
 | **Suíte** | 134 testes verdes |
-| **Branch** | `Felipe`, worktree limpa, **21 commits à frente do `origin/Felipe`** (não empurrado) |
+| **Branch** | `Felipe`, worktree limpa, **23 commits à frente do `origin/Felipe`** — ⚠️ **push bloqueado por permissão**, ver seção 5 |
 
 ---
 
@@ -126,10 +126,34 @@ Item de revisão aberto na lista de tarefas, **prioridade D7 (τ e δ)**, que
 encosta no módulo de risco da Lia. Depois: D2 (corte das defasadas), D3
 (entrada da camada tática), D6 (DTB3 no lugar do ZQ).
 
-### 5. Duas perguntas em aberto para o dono
-- **`Decisoes_pendentes.md` segue intocado** (instrução vigente desde 27/07, não
-  revogada). As 13 decisões estão só no `LOG.md`. Entram lá como fechadas?
-- **`origin/Felipe` está 21 commits atrás.** Empurrar?
+### 5. ⚠️ O PUSH ESTÁ BLOQUEADO — resolver antes de qualquer coisa
+
+`git push origin Felipe` falha com **403**:
+
+```
+remote: Permission to liahaller/Desafio-Quant-Itau.git denied to Gruppy-FelipeM
+```
+
+**Causa:** o repositório é da Lia (`liahaller/Desafio-Quant-Itau`); o `git` local
+está com o usuário `menusoids-p` / felipe.menusier@gmail.com, mas a credencial
+que o push usa é a conta **`Gruppy-FelipeM`** (é a conta ativa do `gh auth`), e
+essa conta **não tem permissão de escrita** no repo. Sessões anteriores
+empurraram com credencial diferente, ou o acesso da `Gruppy-FelipeM` foi
+removido.
+
+**Saídas (escolha do dono — não mexer em credencial por conta própria):**
+1. `gh auth switch` / `gh auth login` para a conta com acesso, e repetir o push.
+2. Pedir à Lia acesso de escrita para `Gruppy-FelipeM`.
+3. Empurrar pelo terminal próprio, se o Credential Manager estiver com a conta
+   certa fora do Claude Code.
+
+**Estado:** branch `Felipe` **23 commits à frente do `origin/Felipe`**, worktree
+limpa. Nada se perdeu — está tudo commitado localmente. Mas **nada da maratona
+chegou ao repositório compartilhado**: o Paulo e a Lia ainda não veem nenhuma
+das decisões, nem o código novo.
+
+*(Resolvido: `Decisoes_pendentes.md` recebeu as 13 decisões como seção 9, em
+tabela, marcadas como provisórias.)*
 
 ---
 
