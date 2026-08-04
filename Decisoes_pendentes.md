@@ -76,4 +76,29 @@ Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavanca
 
 ---
 
+## 9. Maratona de 2026-08-04 — 13 decisões 🟢 (provisórias)
+
+Fechadas pelo Felipe com autorização do grupo, para não travar a entrega.
+**Provisórias: o grupo revisa depois** — prioridade em τ/δ, que encosta no
+módulo da Lia. Justificativa e números de cada uma no `LOG.md` (sessão 2 de
+04/08); medições em `Dump/analises/`.
+
+| Item | Decisão |
+|---|---|
+| Prazo da carteira (H) | 1 dia |
+| Views ativas | 2.2 · 2.3 · B |
+| Views fora | 2.4, 3.1, C, E, G |
+| Camada tática | entra: prêmio de anúncio condicionado à incerteza + drift pós-FOMC |
+| Tática fora | gap de fim de semana |
+| Balde aberto | ponto médio extrapolado (meia largura da grade) |
+| Faixa faltante na PMF | carrega a última leitura, depois renormaliza |
+| Favorite-longshot | sem correção no v1 (γ = 1,0); γ ∈ {1,0; 1,1; 1,25} como robustez |
+| Surpresa de juros | ΔDTB3 do FRED (o ZQ não tem fonte grátis); falta `DFF` para a expectativa |
+| δ | 3,0 (medido no nosso SPY) |
+| τ | 1/T, T = janela do Σ; Ω ancorado em `diag(P·τΣ·Pᵀ)` |
+| Custo de transação | 2 bps/lado sobre o giro + financiamento e aluguel declarados; métrica do relatório = custo de breakeven |
+| Horizonte da 2.2 | divergência demeanada, repricing dividido pelos pregões até a divulgação |
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.
