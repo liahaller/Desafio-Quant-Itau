@@ -27,6 +27,7 @@ da 2.4.
 """
 
 import numpy as np
+import pandas as pd
 from scipy.stats import norm
 
 from views_common import P_from_betas, ViewResult
@@ -47,6 +48,39 @@ def p_curve_probit(spread, alpha, beta_spread):
     `spread` em pontos percentuais, na convenção da tabela usada.
     """
     return float(norm.cdf(alpha + beta_spread * spread))
+
+
+def curve_spread(dgs10, dtb3):
+    """Spread 10a−3m em PONTOS PERCENTUAIS, a partir das séries cruas do FRED.
+
+    `dgs10` e `dtb3` são as Series de `market_loader.load_fred` — mesma
+    unidade do arquivo (4.25 = 4,25%), que é a convenção em que os
+    coeficientes do probit são publicados. Data em que qualquer uma das
+    pontas está sem leitura (feriado: campo vazio no CSV → NaN) sai do
+    resultado; nada é preenchido, mesma disciplina do `poly_loader`.
+    """
+    return (dgs10 - dtb3).dropna()
+
+
+def p_curve_at(spread, data, alpha, beta_spread):
+    """`p_curva` para o rebalanceamento da data D, sem lookahead.
+
+    Usa a ÚLTIMA leitura ESTRITAMENTE ANTERIOR a D — nunca a do próprio dia.
+    O H.15 (fonte do DGS10/DTB3) publica a taxa de D depois do fechamento de
+    D, então a decisão tomada na abertura de D só pode enxergar D−1. É a
+    contraparte da regra das 12:00 UTC do `poly_loader.daily_preopen`: lá o
+    dado é intradiário e o corte é a pré-abertura; aqui o dado é diário e
+    publicado tarde, então o corte é o dia anterior.
+
+    Fim de semana e feriado caem por consequência (a data simplesmente não
+    está no índice): usa-se a última leitura boa, que é o que o mercado tinha
+    em mãos. Data anterior ao início da série levanta erro — a view não pode
+    inventar benchmark.
+    """
+    disponivel = spread[spread.index < pd.Timestamp(data)]
+    if disponivel.empty:
+        raise ValueError(f"sem leitura de spread anterior a {data} — série começa em {spread.index[0].date()}")
+    return p_curve_probit(float(disponivel.iloc[-1]), alpha, beta_spread)
 
 
 def build_view(assets, betas, k, p_poly=None, p_curva=None, market_asset=MARKET_ASSET):

@@ -6,11 +6,12 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 from scipy.stats import norm
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from view_3_1_recessao import build_view, p_curve_probit
+from view_3_1_recessao import build_view, curve_spread, p_curve_at, p_curve_probit
 
 # Números do exemplo da espec (item 6), β em fração/ponto de probabilidade.
 ASSETS = ["SPY", "XLK", "XLP", "TLT"]
@@ -67,10 +68,52 @@ def test_probabilidades_invalidas_rejeitadas():
         pass
 
 
+def test_spread_descarta_data_sem_as_duas_pontas():
+    """Feriado vem como campo vazio no CSV do FRED (NaN depois da leitura):
+    a data sai do spread em vez de virar zero ou ser preenchida."""
+    datas = pd.to_datetime(["2026-07-06", "2026-07-07", "2026-07-08"])
+    dgs10 = pd.Series([4.30, np.nan, 4.35], index=datas)
+    dtb3 = pd.Series([3.70, 3.72, np.nan], index=datas)
+    spread = curve_spread(dgs10, dtb3)
+    assert spread.index.tolist() == [datas[0]]
+    assert np.isclose(spread.iloc[0], 0.60)
+
+
+def test_p_curva_nao_usa_a_leitura_do_proprio_dia():
+    """Sem lookahead: o H.15 publica a taxa de D depois do fechamento de D,
+    então o rebalanceamento de D enxerga D−1. A leitura de D é uma armadilha
+    plantada (spread absurdo); se entrasse, o p mudaria."""
+    datas = pd.to_datetime(["2026-07-07", "2026-07-08"])
+    spread = pd.Series([1.00, -5.00], index=datas)
+    p = p_curve_at(spread, "2026-07-08", alpha=-0.5, beta_spread=-1.0)
+    assert np.isclose(p, p_curve_probit(1.00, alpha=-0.5, beta_spread=-1.0))
+
+
+def test_p_curva_pula_fim_de_semana_e_feriado():
+    """Segunda usa a leitura de sexta (a última que o mercado tinha)."""
+    spread = pd.Series([1.00, 1.20], index=pd.to_datetime(["2026-07-02", "2026-07-03"]))
+    p_segunda = p_curve_at(spread, "2026-07-06", alpha=-0.5, beta_spread=-1.0)
+    assert np.isclose(p_segunda, p_curve_probit(1.20, alpha=-0.5, beta_spread=-1.0))
+
+
+def test_p_curva_sem_historico_falha_alto():
+    """Data anterior ao início da série: erro, nunca benchmark inventado."""
+    spread = pd.Series([1.00], index=pd.to_datetime(["2026-07-07"]))
+    try:
+        p_curve_at(spread, "2003-01-02", alpha=-0.5, beta_spread=-1.0)
+        assert False, "deveria falhar sem leitura anterior à data"
+    except ValueError:
+        pass
+
+
 if __name__ == "__main__":
     test_probit_curva()
     test_sanity_check_de_sinal_espec_item_6()
     test_divergencia_zero_q_zero()
     test_sem_mercado_view_desativada()
     test_probabilidades_invalidas_rejeitadas()
-    print("view_3_1_recessao: 5 testes OK")
+    test_spread_descarta_data_sem_as_duas_pontas()
+    test_p_curva_nao_usa_a_leitura_do_proprio_dia()
+    test_p_curva_pula_fim_de_semana_e_feriado()
+    test_p_curva_sem_historico_falha_alto()
+    print("view_3_1_recessao: 9 testes OK")
