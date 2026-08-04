@@ -82,13 +82,11 @@ def test_premio_dia_sem_anuncio_dormente():
     assert tatica_premio_anuncios.build_overlay(ASSETS, 0.2) is None
 
 
-def test_premio_default_falha_alto_ate_decisao_11():
-    """Sem fl_correction injetada, o stub da decisão 11a deve estourar."""
-    try:
-        tatica_premio_anuncios.build_overlay(ASSETS, 0.2, announcement_pmf=[0.5, 0.5])
-        assert False, "deveria levantar NotImplementedError (TODO DECISAO-11a)"
-    except NotImplementedError:
-        pass
+def test_premio_default_sem_correcao_fl():
+    """Decisão 1.1 (fechada 2026-08-04): default γ = 1,0 (identidade) — a
+    tática monta o overlay em vez de estourar."""
+    assert tatica_premio_anuncios.build_overlay(
+        ASSETS, 0.2, announcement_pmf=[0.5, 0.5]) is not None
 
 
 # --- drift pós-FOMC ----------------------------------------------------------

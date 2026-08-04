@@ -66,14 +66,12 @@ def test_sem_mercado_view_desativada():
     assert build_view(ASSETS, 0.03, 8.0, cpi_frequencia="anual") is None
 
 
-def test_default_falha_alto_ate_decisao_11():
-    """Sem fl_correction injetada, o stub da decisão 11a deve estourar."""
-    try:
-        build_view(ASSETS, 0.03, 8.0, cpi_frequencia="anual",
+def test_default_sem_correcao_fl():
+    """Decisão 1.1 (fechada 2026-08-04): default γ = 1,0 (identidade) — a PMF
+    [0,5; 0,5] sobre 3% e 4% dá E_poly = 3,5%."""
+    v = build_view(ASSETS, 0.03, 8.0, cpi_frequencia="anual",
                    bucket_probs=[0.5, 0.5], bucket_values=[0.03, 0.04])
-        assert False, "deveria levantar NotImplementedError (TODO DECISAO-11a)"
-    except NotImplementedError:
-        pass
+    assert np.isclose(v.diagnostics["e_poly"], 0.035)
 
 
 def test_bucket_aberto_nao_resolvido_rejeitado():

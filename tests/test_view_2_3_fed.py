@@ -92,14 +92,14 @@ def test_sem_mercado_view_desativada():
     assert build_view(ASSETS, e_ff_bps=-10.0, betas=BETAS) is None
 
 
-def test_default_falha_alto_ate_decisao_11():
-    """Sem fl_correction injetada, o stub da decisão 11a deve estourar."""
-    try:
-        build_view(ASSETS, e_ff_bps=-10.0, betas=BETAS,
+def test_default_sem_correcao_fl():
+    """Decisão 1.1 (fechada 2026-08-04): sem fl_correction injetada o default
+    é γ = 1,0 (identidade) — E_poly = média crua normalizada, e a surpresa é
+    a diferença contra o E_FF."""
+    v = build_view(ASSETS, e_ff_bps=-10.0, betas=BETAS,
                    bucket_probs=[0.5, 0.5], bucket_deltas_bps=[-25.0, 0.0])
-        assert False, "deveria levantar NotImplementedError (TODO DECISAO-11a)"
-    except NotImplementedError:
-        pass
+    assert np.isclose(v.diagnostics["e_poly_bps"], -12.5)
+    assert np.isclose(v.diagnostics["surpresa_bps"], -2.5)
 
 
 if __name__ == "__main__":
