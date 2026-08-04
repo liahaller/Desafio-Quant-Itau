@@ -1,4 +1,4 @@
-# FOLLOW-UP 3 — um item só: `G7`, base de ajuste dos dois parquets de ETF
+# FOLLOW-UP 3 — `G7` (base de ajuste dos dois parquets) e `G8` (uma série do FRED)
 
 > **Para o Claude do Paulo:** o follow-up 2 fechou o que faltava. Conferi **arquivo por arquivo** contra o
 > `origin/Paulo` (@ `a9be92b`) e **tudo bate**: G1 (51.129 linhas, 9 tickers, 2003-12-05 → 2026-07-08, merge com o
@@ -7,8 +7,9 @@
 > (5 arquivos de jan/2026 presentes) e G6 (a linha crua de dez/2025 está lá; a correção de ano é minha e já roda
 > no tratamento). **Nada disso precisa ser refeito.**
 >
-> Apareceu **uma coisa só**, e ela só dá para ver cruzando os dois arquivos de preço — por isso não caiu em
-> nenhuma conferência anterior. É rápida de resolver e não muda nada do que já foi entregue.
+> Apareceu **uma coisa** que só dá para ver cruzando os dois arquivos de preço — por isso não caiu em nenhuma
+> conferência anterior (é o `G7`). É rápida de resolver e não muda nada do que já foi entregue. E entrou **um
+> pedido novo pequeno** (`G8`): mais uma série do FRED, no mesmo formato das três que você já baixou.
 >
 > Regras de sempre: **você levanta e reporta, não decide nada**; campo não medido vai como `?`; dado cru não se
 > normaliza. **Push com hash** no fim.
@@ -83,6 +84,39 @@ Um `NÃO` me poupa isso; um `SIM` com o tamanho do deslocamento também serve.
 
 ---
 
+## G8 — `DFF` (taxa efetiva de fed funds) do FRED
+
+**Por que preciso.** O contrato ZQ não tem fonte grátis (você mediu isso no F6 — o yfinance não entrega
+contrato mensal), então a expectativa de juros da view 2.3 vai sair do próprio FRED: o **excesso do T-bill de
+3 meses sobre a taxa efetiva corrente** é a mudança de juros que o mercado já tem embutida. Tenho o `DTB3`
+(veio no G2); falta o outro lado da subtração.
+
+**O que fazer.** Exatamente o que você já fez no G2, com um ID a mais:
+
+```
+https://fred.stlouisfed.org/graph/fredgraph.csv?id=DFF
+```
+
+Mesmo formato dos outros três (`observation_date,DFF`), **cru**, sem preencher buraco nem converter unidade,
+salvo em `data/raw/fred_DFF.csv`.
+
+**O que reportar** — o mesmo bloco do G2:
+
+```
+=== G8 — DFF ===
+linhas:         <n>
+primeira data:  <YYYY-MM-DD>
+última data:    <YYYY-MM-DD>
+campos vazios:  <n>
+```
+
+**Opcional, com teto de 15 minutos — não gaste sessão nisso.** Se sobrar tempo depois do G7 e do G8: o Nasdaq
+Data Link (ex-Quandl) tem tier grátis com chave, e *pode* ter fed funds futures do CME. Se der para baixar uma
+série de teste em 15 minutos, reporte o que saiu; se pedir cartão, plano pago ou mais tempo que isso, **pare e
+escreva `?`**. Não é bloqueio — o caminho do FRED acima já resolve.
+
+---
+
 ## O que continua parado (sem ação sua por enquanto)
 
 - **G5 (série de volume no tempo):** segue esperando a spec do Ω com a Lia — `Dump/trocas/Pergunta_Lia_omega_volume.md`.
@@ -94,7 +128,7 @@ Um `NÃO` me poupa isso; um `SIM` com o tamanho do deslocamento também serve.
 
 ## Formato da devolução
 
-O bloco `=== G7 — BASE DE AJUSTE ===` preenchido, mais:
+Os blocos `=== G7 — BASE DE AJUSTE ===` e `=== G8 — DFF ===` preenchidos, mais:
 
 ```
 ## Bloqueios
