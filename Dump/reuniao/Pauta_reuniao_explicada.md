@@ -14,6 +14,11 @@ Ordem: da que trava mais coisa para a que trava menos.
 > o que antes era opinião: `Sensibilidade_decisoes_1.1_1.2_6.1.md`, `Perfil_defasagem_k.md` e
 > `Proposta_4.1_horizontes.md`. As seções marcadas **MEDIDA** mudaram por causa deles — em dois casos a
 > medição **inverte** o que esta pauta dizia. Nada foi decidido: só deixou de ser achismo.
+>
+> **Terceira atualização em 04/08, com a entrega do `Open` diário (G1) e do FRED (G2).** Pela primeira vez as
+> **três táticas** foram confrontadas com o dado — `Dump/analises/Premissa_taticas.md`. As seções **2.2 e 2.3**
+> mudaram por causa disso, e o que mudou é desconfortável: **a âncora acadêmica da tática fundadora não
+> aparece na nossa amostra**. Nada foi decidido aqui também.
 
 ---
 
@@ -115,7 +120,7 @@ função que calcula os pesos.
 
 ---
 
-## 2.2 A camada tática entra?
+## 2.2 A camada tática entra? ⚠️ MEDIDA — as três premissas foram ao dado (04/08)
 
 **O que é.** Três estratégias curtas que rodam **por cima** da carteira principal, sem substituí-la:
 (a) comprar SPY na véspera de anúncio macro, porque dia de anúncio historicamente paga um prêmio;
@@ -127,11 +132,48 @@ de segunda.
 relatório, e o item (b) em particular obriga o backtest a acompanhar posições dia a dia por semanas seguidas
 — bem mais pesado de programar do que o resto.
 
+**⚠️ O que a medição de 04/08 mostrou.** Com o preço de **abertura** finalmente entregue, deu para medir a
+premissa de cada uma das três sobre 22 anos de bolsa, **sem escolher nenhum parâmetro** (o tamanho da aposta
+entra multiplicando, então o que se mede é o retorno por unidade de orçamento). Os três resultados:
+
+- **(a) Prêmio de véspera de anúncio — a âncora não aparece na nossa amostra.** A tese (Savor & Wilson) é que
+  dia de anúncio agendado paga um prêmio por carregar o risco do evento. Medindo o SPY de fechamento a
+  fechamento: em dia de **FOMC**, +0,062% contra **+0,060%** dos demais dias do mesmo período — ou seja,
+  praticamente o mesmo número (36 eventos, 2022–2026). Em dia de **CPI**, o retorno médio é **negativo**
+  (−0,394%, 13 eventos, e a amostra é curta porque o calendário de CPI só começa em 2025). **Não é prova de
+  que o efeito não existe** — 36 eventos é pouco e o efeito da literatura é medido em décadas —, mas é o
+  contrário do que a espec desta tática supõe, e ela é a **candidata-fundadora** da camada.
+- **(b) Gap de fim de semana — a tática entra depois do salto, e o que sobra troca de sinal.** O pulo do fim
+  de semana acontece **na abertura**, e a tática só consegue comprar aí; o que ela captura é o pedaço do dia
+  depois da abertura. Medindo se esse pedaço **continua** o pulo: no SPY sim, mas fraco (+0,13 de correlação);
+  em energia e financeiro também; **em consumo defensivo é o oposto** (−0,25, e é o número mais forte da
+  tabela), em tecnologia idem. E o dia de reabertura, por si só, **não rende nada diferente** de um dia
+  qualquer (+0,015% nos dois casos). Tradução: a tática não vive do dia, vive **inteira** do sinal do
+  Polymarket — e o tilt por setor pode estar apontando contra o comportamento típico do setor.
+- **(c) Drift pós-Fed — o livro de renda fixa nunca roda inteiro.** A literatura de títulos fala em ~50 dias
+  úteis de drift. Só que o Fed se reúne a cada **29 a 40 dias úteis**, e a nossa própria regra manda fechar a
+  posição na véspera da reunião seguinte: nos **47 de 47** intervalos do calendário, a janela de 50 dias é
+  cortada antes do fim. Na prática o "livro de 50 dias" é um livro de ~29 dias com outro nome. O livro de
+  ações (15 dias) nunca é cortado. **A direção do drift continua não testável** — ela depende da surpresa
+  de juros, que vem do contrato ZQ, que segue sem fonte (decisão 6.2).
+
+**Ressalva de dado, já endereçada.** Os dois arquivos de preço (fechamento e abertura) foram baixados com três
+semanas de diferença, e um dividendo no meio desalinhou a base de ajuste de **TIP e TLT** — as médias
+intradiárias desses dois estão contaminadas (as correlações e tudo que usa só fechamento, não). Já foi pedido
+ao Paulo re-gerar os dois no mesmo download (`Dump/trocas/FOLLOWUP3_Pedido_Paulo_dados.md`). Nada disso muda
+os três achados acima, que são de SPY e de calendário.
+
+**O que isso faz com a decisão.** Não mata nenhuma das três — mas troca a pergunta. Antes era "vale a pena
+gastar esforço numa camada a mais?"; agora é **"vale a pena gastar esforço numa camada cuja âncora principal
+não se reproduziu no nosso período?"**. As saídas: (i) camada fora do v1; (ii) só a de fim de semana e a
+pós-Fed, que dependem do sinal do poly e não de um prêmio médio; (iii) camada dentro, com a fragilidade da
+(a) declarada no relatório.
+
 **Se não decidir.** O código existe, mas fica inerte. Sem prejuízo pro resto.
 
 ---
 
-## 2.3 Qual o tamanho de cada aposta tática
+## 2.3 Qual o tamanho de cada aposta tática ⚠️ ATUALIZADA — uma das "miudezas" foi medida
 
 **O que é.** Decidido que a camada entra, falta o número: quanto do dinheiro vai em cada tilt. Três botões
 sem valor — o teto da compra de SPY em dia de anúncio, o tamanho dos livros de ações e de renda fixa da
@@ -145,6 +187,13 @@ vira decoração.
 expectativa da véspera sai do futuro de juros ou do próprio Polymarket; se surpresa pequena entra com
 posição cheia ou proporcional; se a posição de fim de semana desmonta no mesmo dia ou ao longo de vários; e
 quem manda quando um tilt tático e um rebalanceamento caem no mesmo dia.
+
+**⚠️ A primeira miudeza deixou de ser escolha (medido em 04/08).** Os **50 dias** do livro de renda fixa
+**não cabem**: o Fed se reúne a cada 29 a 40 dias úteis e a regra da própria tática fecha a posição na véspera
+da reunião seguinte — logo os 50 dias são cortados em **100% dos intervalos** do calendário entregue. Ou a
+reunião adota explicitamente "**o livro de RF vai até a véspera do próximo FOMC**" (que é o que o código já
+faz na prática), ou escolhe um número que caiba (≤ 29). Manter "50" na espec só cria a ilusão de uma janela
+que nunca acontece. Os 15 dias do livro de ações não têm esse problema.
 
 ---
 
@@ -514,8 +563,8 @@ usar um breakeven de prazo mais curto — é decisão do grupo.
 | **1.2** | **Valor do balde aberto** — a que mais move o número na view de inflação (chega a valer mais que o próprio sinal) | **View 2.2.** Fechar junto com a 6.1 |
 | **1.1** | **Correção do viés** — quase irrelevante na inflação, decisiva em recessão/eleitoral (mediana 20,5% → 15,5%) | **Views 3.1 e 2.4.** Pode ser decidida separada da 1.2 |
 | 2.1 | Quais das 4 views extras entram | Montagem do backtest — **ver 7.3, que praticamente responde esta** |
-| 2.2 | Camada tática entra? | Escopo do projeto |
-| 2.3 | Tamanho das apostas táticas | Táticas ficam inertes |
+| **2.2** | **Camada tática entra?** — medida: o prêmio de anúncio **não aparece** na amostra (FOMC +0,062% vs +0,060%); o gap de fds troca de sinal entre setores; o drift pós-Fed segue sem insumo | **Escopo do projeto — a pergunta virou "vale a camada com a âncora principal não reproduzida?"** |
+| 2.3 | Tamanho das apostas táticas — os **50 dias** do livro de RF não cabem entre dois FOMCs (47 de 47 cortados) | Táticas ficam inertes; a janela de RF vira "até a véspera do próximo FOMC" ou ≤ 29 dias |
 | 2.4 | τ e δ | Resultado final (alinhar δ com a Lia) |
 | ~~3.1~~ | ~~Critério do atraso k~~ → **medido: k ≈ 0 na eleitoral; na recessão o dado não sustenta a tese** | Virou a 7.3 |
 | **3.2** | **Fallback com k = 0** — deixou de ser hipótese, é o caso real | **View eleitoral — decidir nesta reunião** |
