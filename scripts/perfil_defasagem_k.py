@@ -44,6 +44,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from market_loader import load_etf_prices  # noqa: E402
 from poly_loader import daily_preopen, series_by_slot  # noqa: E402
 from sensibilidade_reuniao import fl_power  # noqa: E402
 from views_common import lag_regression  # noqa: E402
@@ -62,9 +63,7 @@ MERCADOS = {
 
 def retornos_diarios(caminho_parquet):
     """Retornos diários dos 9 ETFs, tabela larga indexada por data."""
-    precos = pd.read_parquet(caminho_parquet)
-    largo = precos.pivot(index="data", columns="ticker", values="preco_ajustado")
-    return largo.pct_change().dropna()
+    return load_etf_prices(caminho_parquet).pct_change().dropna()
 
 
 def alinhar(p_diario, retornos):
