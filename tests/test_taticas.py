@@ -9,13 +9,20 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import tatica_drift_pos_fomc
 import tatica_gap_fds
 import tatica_premio_anuncios
-from taticas_common import OverlayResult, apply_overlays
+from market_loader import adjustment_gap
+from taticas_common import (
+    OverlayResult,
+    apply_overlays,
+    close_to_close_returns,
+    intraday_returns,
+)
 
 ASSETS = ["SPY", "TIP", "TLT", "XLK"]
 
@@ -159,6 +166,52 @@ def test_gap_dormente_e_beta_desalinhado():
         pass
 
 
+# --- janelas de retorno das táticas (dado sintético) ---
+
+DATAS = pd.to_datetime(["2026-07-06", "2026-07-07", "2026-07-08"])
+
+
+def _tabela(valores):
+    return pd.DataFrame(valores, index=DATAS, columns=["SPY", "TLT"])
+
+
+def test_janelas_de_retorno():
+    """intradiário = abertura->fechamento do MESMO dia; close-to-close pula o
+    primeiro pregão (não há D-1)."""
+    abertura = _tabela([[100.0, 90.0], [101.0, 91.0], [102.0, 92.0]])
+    fechamento = _tabela([[101.0, 90.9], [101.0, 91.0], [100.0, 92.0]])
+    intra = intraday_returns(abertura, fechamento)
+    assert np.isclose(intra.loc[DATAS[0], "SPY"], 0.01)
+    assert np.isclose(intra.loc[DATAS[0], "TLT"], 0.01)
+    assert np.isclose(intra.loc[DATAS[2], "SPY"], 100.0 / 102.0 - 1)
+
+    c2c = close_to_close_returns(fechamento)
+    assert len(c2c) == len(DATAS) - 1
+    assert np.isclose(c2c.loc[DATAS[2], "SPY"], 100.0 / 101.0 - 1)
+
+
+def test_janela_intradiaria_rejeita_grid_diferente():
+    """Abertura e fechamento de universos/datas diferentes é erro, não join."""
+    abertura = _tabela([[100.0, 90.0], [101.0, 91.0], [102.0, 92.0]])
+    try:
+        intraday_returns(abertura[["SPY"]], _tabela([[1.0, 1.0]] * 3))
+        assert False, "deveria rejeitar universos diferentes"
+    except ValueError:
+        pass
+
+
+def test_adjustment_gap_pega_base_de_ajuste_diferente():
+    """Caso real do dado (2026-08-04): a abertura de um ticker vem de um pull
+    com um ex-dividendo a mais e fica ~1% abaixo o tempo todo. A mediana da
+    razão denuncia; o ticker sem descasamento fica no ruído."""
+    fechamento = _tabela([[100.0, 90.0], [101.0, 91.0], [102.0, 92.0]])
+    abertura = fechamento.copy()
+    abertura["TLT"] = abertura["TLT"] * 0.99
+    gap = adjustment_gap(abertura, fechamento)
+    assert np.isclose(gap["SPY"], 0.0)
+    assert np.isclose(gap["TLT"], -0.01)
+
+
 if __name__ == "__main__":
     test_apply_overlays_soma_e_ignora_dormentes()
     test_apply_overlays_rejeita_dw_desalinhado()
@@ -173,4 +226,7 @@ if __name__ == "__main__":
     test_gap_caso_conhecido()
     test_gap_multiplas_views_somam()
     test_gap_dormente_e_beta_desalinhado()
-    print("taticas (common + 1.3 + drift + gap_fds): 13 testes OK")
+    test_janelas_de_retorno()
+    test_janela_intradiaria_rejeita_grid_diferente()
+    test_adjustment_gap_pega_base_de_ajuste_diferente()
+    print("taticas (common + 1.3 + drift + gap_fds + janelas): 16 testes OK")

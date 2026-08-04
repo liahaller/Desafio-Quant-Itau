@@ -35,10 +35,37 @@ from typing import NamedTuple
 
 import numpy as np
 
+from market_loader import check_same_grid
+
 
 class OverlayResult(NamedTuple):
     dw: np.ndarray
     diagnostics: dict
+
+
+def intraday_returns(abertura, fechamento):
+    """Retorno `abertura(D) → fechamento(D)`: a janela do gap de fim de semana.
+
+    Entradas são as tabelas largas de `market_loader.load_etf_prices` (datas ×
+    tickers).
+
+    ⚠️ Esta é a única janela das três táticas que MISTURA os dois arquivos, e
+    os dois entregues **não estão na mesma base de ajuste** (medido em
+    2026-08-04: TIP −1,15%, TLT −0,40%; ver `market_loader.adjustment_gap`).
+    Enquanto os arquivos não vierem do mesmo pull, o retorno intradiário
+    desses dois tickers está contaminado — passe `adjustment_gap` antes de
+    ler o resultado. As janelas de fechamento a fechamento não sofrem.
+    """
+    check_same_grid(abertura, fechamento)
+    return fechamento / abertura - 1.0
+
+
+def close_to_close_returns(fechamento):
+    """Retorno `fechamento(D−1) → fechamento(D)`: a janela do prêmio de
+    anúncios (1.3) e o passo diário do drift pós-FOMC, que abre no close de D.
+    """
+    return fechamento.pct_change().iloc[1:]
+
 
 
 def apply_overlays(w_bl, overlay_results):

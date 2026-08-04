@@ -17,9 +17,11 @@ CONFERIDO no dado entregue (`origin/Paulo` @ a9be92b, follow-up 2, G1 e G2):
     - `etf_open_daily.parquet`   : `preco_abertura`
     Os dois em base AJUSTADA (`auto_adjust=True`), 9 tickers × 5.681 datas =
     51.129 linhas, 2003-12-05 → 2026-07-08, **mesmo grid de datas** (merge
-    externo dá 0 sobra dos dois lados) e zero abertura ausente. A base comum
-    é o que permite retorno intradiário (`abertura → fechamento` do mesmo
-    dia) sem falso retorno em dia de dividendo.
+    externo dá 0 sobra dos dois lados) e zero abertura ausente.
+    ⚠️ Mas **não na mesma base de ajuste**: os arquivos foram baixados com
+    ~3 semanas de diferença e um ex-dividendo no meio reescalou a história
+    de um só. Ver `adjustment_gap` — misturar abertura e fechamento fabrica
+    retorno intradiário em TIP e TLT.
 
   FRED — CSV público (`fredgraph.csv?id=<ID>`), cru, cabeçalho
   `observation_date,<ID>`:
@@ -58,6 +60,45 @@ def load_etf_prices(path):
             f"esperava uma coluna de valor além de {CHAVES_ETF}; achei {valor}"
         )
     return precos.pivot(index="data", columns="ticker", values=valor[0]).sort_index()
+
+
+def adjustment_gap(abertura, fechamento):
+    """Mediana de `abertura/fechamento − 1` por ticker: detector de base
+    de ajuste diferente entre os dois parquets.
+
+    MEDIDO em 2026-08-04, e o motivo desta função existir: os dois arquivos
+    NÃO estão na mesma base. O `etf_prices_daily.parquet` foi gerado em
+    2026-07-09 (commit `48cb12e`) e o `etf_open_daily.parquet` em 2026-08-02
+    (`7ea4e86`); entre um download e outro passou um ex-dividendo, e o
+    `auto_adjust=True` reescala TODA a história anterior à data-ex. O
+    resultado é um degrau: até ~2026-06-01 a abertura fica sistematicamente
+    abaixo do fechamento, e depois disso a razão vai a 1.
+
+        TIP −1,15%  ·  TLT −0,40%   (os dois pagam mensalmente)
+        demais 7 tickers: −0,13% a +0,05% (ruído intradiário normal)
+
+    Consequência: `abertura(D) → fechamento(D)` em TIP e TLT vira retorno
+    FABRICADO de +1,15% / +0,40% por dia em toda a amostra antiga (e o
+    espelho no overnight). Fechamento contra fechamento não é afetado.
+
+    Não é bug do pipeline do Paulo (módulo dele; nada aqui mexe nisso) — é
+    consequência de baixar os dois arquivos em datas diferentes. O conserto
+    é re-baixar os dois no mesmo pull; a observação está registrada no
+    `LOG.md` para o dono do módulo.
+
+    Sem número mágico: a função devolve a medida, quem lê decide o que é
+    tolerável.
+    """
+    check_same_grid(abertura, fechamento)
+    return (abertura / fechamento).median() - 1.0
+
+
+def check_same_grid(abertura, fechamento):
+    """Falha alto se as duas tabelas largas não descrevem o mesmo grid."""
+    if not abertura.index.equals(fechamento.index):
+        raise ValueError("abertura e fechamento em grids de data diferentes")
+    if list(abertura.columns) != list(fechamento.columns):
+        raise ValueError("abertura e fechamento com universos diferentes")
 
 
 def load_fred(path):
