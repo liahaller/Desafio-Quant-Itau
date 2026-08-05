@@ -101,4 +101,21 @@ módulo da Lia. Justificativa e números de cada uma no `LOG.md` (sessão 2 de
 
 ---
 
+## 10. Sessão de 2026-08-05 — 2 decisões do backtest 🟢 (provisórias)
+
+Tomadas pelo Felipe em sessão, no mesmo regime da seção 9 (**provisórias, o
+grupo revisa**). As duas saíram de o loop de backtest ter rodado e batido nelas —
+nenhuma foi escolhida no vazio. Números em `Dump/analises/Backtest_v1.md`.
+
+| Item | Decisão | Por que precisa de revisão do grupo |
+|---|---|---|
+| **Duration do breakeven (view 2.2)** | **medida** no par que a view monta (`market_inputs.breakeven_duration`), janela expansiva — deu **8,31 a 8,38** | A espec supunha "~8" e o LOG de 09/07 deixou o valor exato como decisão humana. O dado confirmou o palpite, mas a fonte mudou: agora é medição, não referência do instrumento. |
+| **Teto de alavancagem** | **Σ\|w\| com teto**, varrido em {1, 2, 3, 5} — sem teto o backtest vai à ruína (Σ\|w\| mediana 24, máx 264) | ⚠️ **Encosta no módulo da Lia.** Teto é dimensionamento de risco, mesma família do δ — e pelo `Pergunta_Lia_omega_volume.md` risco é módulo dela. Além disso o teto é remendo no lugar do Ω: com `c = 1` a view é confiada tanto quanto o prior, e é daí que vem a alavancagem. |
+
+**Questão de desenho aberta, não decidida:** o teto corta a carteira inteira ou
+só o TILT da view, deixando a perna de mercado intacta? Hoje corta tudo, e é a
+explicação mais provável de a carteira perder do comprar-e-segurar SPY.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

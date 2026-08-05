@@ -1,5 +1,60 @@
 # LOG de sessões
 
+## 2026-08-05 (sessão 3) — Felipe
+
+**Contexto da sessão:** retomada pelo `leaveoff.md` da sessão 2. Três frentes, na ordem em que o leaveoff mandava: destravar o push, despachar os recados, implementar o I5.
+
+**Push destravado.** O 403 era de conta: o `git` local está com `menusoids-p`, mas a credencial do push vem do `gh auth`, que estava na `Gruppy-FelipeM` (sem escrita no repo da Lia). O `gh auth login --web` trava sem terminal interativo, então rodei o **device flow do GitHub por curl** e o dono autorizou o código no browser. Conta ativa agora é `menusoids-p`, com `push: true` confirmado pela API. **24 commits empurrados** (`a4edcb6..1faa09b`) — a maratona inteira chegou ao repo compartilhado. A `Gruppy-FelipeM` continua no keyring, inativa.
+
+**Dois recados escritos** (o `FOLLOWUP3` já estava pronto e segue sem enviar):
+- **`Dump/trocas/PEDIDO_G9_payrolls_Paulo.md`** (novo) — G9a calendário de divulgação do Employment Situation (com o 403 do BLS já sinalizado e o release calendar do FRED como plano B) e G9b varredura dos mercados de payrolls no Polymarket, mesmo procedimento do G4. Justificativa nos números reais: a tática de prêmio roda com **19 eventos** (7 FOMC + 12 CPI) e a PMF do poly só existe de 2025, então esticar a janela para trás não traz evento nenhum — payrolls é o único jeito barato de aumentar a amostra. Três itens específicos pedidos: buckets ou binário, se a série chega ao slot pré-abertura, e quais termos de busca acharam.
+- **Régua do Ω anexada ao `Pergunta_Lia_omega_volume.md`** (seção 4) — o Ω vem como **multiplicador de confiança** sobre `diag(P·τΣ·Pᵀ)`, não variância absoluta. Três argumentos: o τ se cancela na razão `τΣ/Ω` (revisão futura do τ não recalibra o módulo dela), sobra confiança relativa (que é o que o protocolo dela produz), e some a armadilha de escala. Cita o encaixe exato — `omega_fallback(P, sigma, tau, confianca=None)` — e a conversão caso ela já tenha algo em escala absoluta.
+
+**I5 implementado — a entrega final roda ponta a ponta:**
+- **`src/backtest.py`** (novo) — motor puro, sem plumbing de dado: `derived_weights` (o drift do dia, contra o qual o giro é medido — D8), `transaction_cost`, `carry_cost` (financiamento e aluguel declarados, hoje 0,0), `cap_leverage`, `reversal_share`, `run_backtest` e `summary` com o **custo de breakeven** como métrica do relatório.
+- **`scripts/backtest_v1.py`** (novo) — liga no dado real do Paulo, com as três regras de não-lookahead aplicadas por dia (PMF no slot das 12:00 UTC; breakeven e curva da última leitura estritamente anterior; média da divergência e durations em janela expansiva).
+- **`tests/test_backtest.py`** (novo, 24 testes) — inclui o **obrigatório do D8**: ir de `w = 0` a `w = 1` cobra exatamente `c`. **Suíte: 158 testes verdes** (153 → 158).
+
+**Resultado do backtest** (`Dump/analises/Backtest_v1.md`) — 353 pregões, 2025-02-10 a 2026-07-08, **só a view 2.2 ativa** (a 2.3 e a B ficam fora por insumo que não chegou: DFF/G8 e ZQ de dezembro — não é cascata, é dado ausente), camada tática desligada por falta de orçamento:
+
+| | Σ\|w\| ≤ 1 | ≤ 2 | ≤ 3 | ≤ 5 |
+|---|---|---|---|---|
+| retorno líquido | +8,6% | +7,4% | +6,1% | +3,5% |
+| sharpe | 0,71 | 0,59 | 0,47 | 0,26 |
+| giro diário médio | 0,22 | 0,36 | 0,50 | 0,78 |
+| giro desfeito em 1–2 pregões | 33% | 32% | 32% | 32% |
+| custo de breakeven | 13,3 bps | 8,1 | 5,8 | 3,6 |
+
+**Benchmark (comprar e segurar SPY): +26,2%.** A carteira **perde por 17,6 pp** no teto mais apertado, e a distância cresce conforme o teto afrouxa.
+
+**Achado central: o custo não é o culpado.** O retorno **bruto** já é +10,3%, e o breakeven de 13,3 bps é **6,7× a premissa de 2 bps** — há folga larga de custo. O mecanismo mais provável é mecânico: o teto escala TODAS as pontas junto, inclusive a de SPY que vem do prior, e com a view ativa em 74% dos pregões parte do orçamento sai do SPY numa janela em que o SPY fez +26%. **Questão de desenho registrada e não decidida:** o teto corta a carteira inteira ou só o tilt da view?
+
+**As duas checagens obrigatórias do D8, respondidas:** giro diário médio de 0,22 (teto 1) e **33% dele desfeito em 1–2 pregões**. É material, mas com 6,7× de folga de custo **não é o que está segurando o resultado** — entra como insumo da revisão condicional do D1 (banda de não-negociação), não como veredito sobre o H = 1 dia.
+
+**Duas decisões escaladas** (registradas na **seção 10** do `Decisoes_pendentes.md`, provisórias):
+- **D11 — duration do breakeven MEDIDA**, não cravada. Regressão do retorno do par (o mesmo `pair_P` da view) contra o Δbreakeven, janela expansiva: **8,31 a 8,38** na amostra. O dado confirmou o "~8" da espec — o palpite estava certo e agora é medição.
+- **D12 — teto de alavancagem.** Sem teto o backtest vai à **ruína** dentro da amostra: Σ|w| mediana **24**, máximo **264**. Causa estrutural, não numérica — o I3b casou a duration do par TIP/TLT justamente para cancelar o movimento de juros, e `w ∝ Δμ/(δσ²)` numa direção de variância pequena explode por construção. ⚠️ **Encosta no módulo da Lia** (teto é dimensionamento de risco, mesma família do δ) e é **remendo no lugar do Ω**: com `c = 1` a view é confiada tanto quanto o prior, e é daí que vem a alavancagem.
+
+**Observação para o dono do módulo do Paulo:** nenhuma nova. O G7 não afeta este backtest (é fechamento contra fechamento; o G7 só contamina `abertura→fechamento`, janela das táticas).
+
+**Pendente:**
+- **Os três recados seguem sem enviar** — `FOLLOWUP3` (G7+G8) e `PEDIDO_G9` ao Paulo, régua do Ω à Lia. Escritos e commitados, não despachados.
+- **O que cada resposta muda no backtest:** o **G8/`DFF`** destrava a view 2.3 e o backtest deixa de rodar com uma view só; o **Ω da Lia** é o que mexe direto na alavancagem (um `c > 1` encolhe o tilt e dispensaria o teto); o **G7** não muda nada aqui; o **G9/payrolls** não muda nada enquanto a camada tática estiver desligada.
+- **Camada tática desligada** por falta dos orçamentos (`orcamento_max`, `orcamento_acoes`, `orcamento_rf`) — parâmetros de reunião, não inventados. O script já está ligado neles: passar `--orcamento-*` liga a camada sem tocar em código.
+- **View B sem caminho:** precisa do ZQ de dezembro, que não tem fonte grátis (F6) e **não está pedido a ninguém**.
+- **I6 inalterado** e `e_ff_bps` da 2.3 incompleto até o `DFF` chegar.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~135k tokens.
+- **Prompt inicial (verbatim):** "A ultima sessão foi longa e levantou varias coisas para fazer. Quero retomar de onde parei nela. Fiz ele montar leaveoff.md. Leia e me fale de onde retomamos"
+- **Iterações até aceitar:** nenhuma correção do dono sobre o conteúdo. 3 correções minhas apanhadas pela execução: teste de breakeven escrito com retornos aleatórios (a estratégia sintética perdia no bruto e o breakeven saía negativo — trocado por retornos determinísticos), crash de cp1252 no print do console (o arquivo já saía em utf-8), e o `|` do rótulo `Σ|w|` quebrando a tabela markdown.
+- **Erros da IA:** nenhum de conteúdo. Um número herdado errado: o `leaveoff.md` dizia 23 commits à frente e eram 24 (o commit do próprio leaveoff), corrigido na leitura do git.
+- **Decisões escaladas:** 2 (seção 10 do `Decisoes_pendentes.md`: duration medida e teto de alavancagem).
+- **Tags:** `[PROMPT-CHAVE]` — o padrão desta sessão é **"implementar até rodar revela o parâmetro que ninguém tinha decidido"**: o I5 não descobriu um bug, descobriu que duas decisões numéricas (duration da 2.2, teto de risco) tinham passado despercebidas por nunca terem sido exercitadas. Escrever o loop foi o que forçou as duas à superfície.
+
+---
+
 ## 2026-08-04 (sessão 2) — Felipe
 
 **Contexto da sessão:** o grupo liberou o Felipe a fechar sozinho as decisões que estavam travadas em reunião, por causa da proximidade da entrega. Sessão inteira dedicada a isso — uma maratona de decisões, cada uma apresentada com explicação leiga, o que afeta, recomendação e consequência, e **medida antes de fechar sempre que havia dado para medir**. Todas as decisões desta sessão são **provisórias e marcadas para revisão do grupo** (instrução explícita do dono).

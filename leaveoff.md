@@ -1,178 +1,119 @@
-# Leave-off — sessão de 2026-08-04 (sessão 2, Felipe)
+# Leave-off — sessão de 2026-08-05 (sessão 3, Felipe)
 
 Ponto de retomada para a próxima sessão. **Leia também** a entrada
-`## 2026-08-04 (sessão 2) — Felipe` do `LOG.md`, que traz os números de cada
-decisão; este arquivo é o resumo operacional.
+`## 2026-08-05 (sessão 3) — Felipe` do `LOG.md`, que traz os números; este
+arquivo é o resumo operacional.
 
 ---
 
-## Contexto que mudou o modo de trabalhar
+## O que mudou nesta sessão
 
-O grupo **liberou o Felipe a fechar sozinho** as decisões que estavam travadas
-em reunião, por causa da proximidade da entrega. Todas as decisões desta sessão
-são **provisórias e marcadas para revisão do grupo** — a instrução do dono foi
-"vamos construindo com elas, depois o grupo volta e olha com mais calma".
+1. **O push destravou** — a maratona inteira chegou ao repo compartilhado.
+2. **Os dois recados que faltavam foram escritos** (nenhum dos três enviado).
+3. **O I5 está pronto e rodando no dado real** — a entrega final existe.
 
-**Princípio dado pelo dono, que vale para as próximas sessões:**
+O princípio do dono continua valendo:
+
 > Cortar view é ruim. É melhor fazer algo mais complexo para manter a view do
 > que simplesmente tirá-la.
 
-Na prática: antes de recomendar tirar qualquer view, esgotar os redesenhos
-(reestimar β na janela negociável, virar contemporânea com a natureza
-declarada, trocar o benchmark por um termômetro externo) e dizer qual foi
-tentado.
-
 ---
 
-## Estado do v1 depois da maratona
+## Estado do v1
 
 | | |
 |---|---|
-| **Views ativas** | 2.2 inflação · 2.3 Fed · B trajetória do Fed |
-| **Views fora** | 2.4 eleitoral · 3.1 recessão · C geopolítica · E tarifas · G fiscal |
-| **Táticas ativas** | prêmio de anúncio condicionado à incerteza · drift pós-FOMC |
-| **Tática fora** | gap de fim de semana |
-| **Parâmetros** | H = 1 dia · δ = 3,0 · τ = 1/504 · balde aberto = meia largura · faixa faltante = carrega · sem FL (γ = 1,0) · custo 2 bps/lado |
-| **Fonte de juros** | DTB3 do FRED (o ZQ não tem fonte grátis) |
-| **Suíte** | 134 testes verdes |
-| **Branch** | `Felipe`, worktree limpa, **23 commits à frente do `origin/Felipe`** — ⚠️ **push bloqueado por permissão**, ver seção 5 |
+| **Views que RODAM hoje** | **só a 2.2 inflação** |
+| **Views bloqueadas por dado** | 2.3 (falta `DFF`/G8) · B (precisa do ZQ de dezembro, sem fonte e **sem pedido a ninguém**) |
+| **Camada tática** | desligada — faltam os orçamentos (parâmetro de reunião) |
+| **Parâmetros** | H = 1 dia · δ = 3,0 · τ = 1/504 · duration da 2.2 = **medida, 8,31–8,38** · teto Σ\|w\| varrido em {1,2,3,5} · custo 2 bps/lado |
+| **Suíte** | 158 testes verdes |
+| **Branch** | `Felipe`, sincronizada com `origin/Felipe` ✅ · conta `gh` = `menusoids-p` |
 
 ---
 
-## O que foi decidido (13 decisões)
+## O resultado do backtest
 
-Todas em `LOG.md` com o número que sustenta cada uma. Resumo:
+353 pregões (2025-02-10 → 2026-07-08), só a 2.2 ativa (74% dos dias):
 
-- **D1** H = 1 dia.
-- **D2** views poly-defasadas fora (só ~23% do efeito sobrevive na janela negociável).
-- **D2b** 3.1 fora — o sinal que existe é **direcional** e o P dela é neutro em mercado por construção.
-- **D2c** redesenho tentado nas quatro; 2.4 **reprovou fora da amostra** no mercado da Câmara 2026; C tem o mecanismo (XLE r = +0,54 no gap) mas não na janela negociável; E e G têm 13 e 3 dias de dado.
-- **D3** camada tática **entra redesenhada** — o prêmio de anúncio aparece quando se condiciona à incerteza da PMF (+0,383% vs −0,704%, t de Welch +2,10).
-- **D3b** gap de fim de semana fora (condicionar achou significância, mas com sinal de reversão).
-- **D4** balde aberto = ponto médio extrapolado; faixa faltante = carrega a última leitura e renormaliza.
-- **D5** sem correção de favorite-longshot no v1, com γ ∈ {1,0; 1,1; 1,25} como robustez.
-- **D6** ZQ substituído por ΔDTB3 (36 reuniões, 7/7 sinais coerentes com Bernanke-Kuttner).
-- **D7** δ = 3,0 (medido no nosso SPY) e τ = 1/T, com o Ω ancorado em `diag(P·τΣ·Pᵀ)`.
-- **D8** custo 2 bps/lado + financiamento + aluguel declarados; a métrica do relatório é o **custo de breakeven**.
-- **D9** divergência demeanada e horizonte = pregões até a divulgação do CPI.
-- **D10** quatro limitações declaradas; 5.3 (petróleo) virou munição do D2c; payrolls virou D3c.
+| | Σ\|w\| ≤ 1 | ≤ 2 | ≤ 3 | ≤ 5 |
+|---|---|---|---|---|
+| retorno líquido | +8,6% | +7,4% | +6,1% | +3,5% |
+| sharpe | 0,71 | 0,59 | 0,47 | 0,26 |
+| giro diário médio | 0,22 | 0,36 | 0,50 | 0,78 |
+| giro desfeito em 1–2 pregões | 33% | 32% | 32% | 32% |
+| custo de breakeven | 13,3 bps | 8,1 | 5,8 | 3,6 |
 
----
+**Benchmark (comprar e segurar SPY): +26,2% — a carteira perde por 17,6 pp.**
 
-## O que foi implementado
-
-| Arquivo | O que é |
-|---|---|
-| `src/config.py` | **novo** — todos os parâmetros decididos num lugar só (I1) |
-| `src/market_inputs.py` | **novo** — Σ amostral, `w_mkt` do prior CAPM, duration empírica, Ω de fallback (I3/I4) |
-| `src/poly_preprocessing.py` | destravado: `favorite_longshot`, `favorite_longshot_pmf`, `carry_missing`, `bucket_values_with_open` (I2) |
-| `src/view_2_2_inflacao.py` | P casado em duration, divergência demeanada, Q dividido pelos dias até a divulgação (I3b + D9) |
-| `scripts/janela_negociavel.py` | **novo** — quanto do lag 0 sobra na janela negociável |
-| `scripts/premio_condicional.py` | **novo** — prêmio de anúncio por entropia da PMF |
-| `scripts/surpresa_fomc.py` | **novo** — ΔDTB3 como substituto do ZQ |
-| `scripts/convergencia_2_2.py` | **novo** — horizonte de convergência da 2.2 |
-| `scripts/nivel_divergencia_3_1.py` | **novo** — sinal de nível da 3.1 |
-| `scripts/gap_fds_condicionado.py` | **novo** — gap de fds condicionado |
-| `Dump/analises/*.md` | 6 relatórios novos, um por script |
-| `Dump/trocas/FOLLOWUP3_...md` | ganhou o **G8** (série `DFF` do FRED) |
-
-Duas decisões de módulo tomadas sozinho (categoria 2 do CLAUDE.md §1), com o
-motivo registrado no código:
-
-1. **`w_mkt` = 100% SPY (prior CAPM).** Não há dado de tamanho dos ETFs, e peso
-   igual entre SPY e sete setores dele contaria a bolsa duas vezes. Benefício
-   colateral: o benchmark do backtest vira comprar e segurar SPY.
-2. **Durations medidas, não copiadas da ficha do emissor** — TIP 5,09 anos e
-   TLT 14,53, estimadas contra a variação do DGS10.
+**O custo não é o culpado:** o bruto já é +10,3% e o breakeven é 6,7× a
+premissa. A explicação mais provável é mecânica — o teto escala todas as pontas
+junto, inclusive a de SPY do prior, e a view tira orçamento do SPY numa janela
+em que o SPY fez +26%.
 
 ---
 
 ## O que falta — em ordem
 
-### 1. `I5` — loop de backtest / rebalanceamento (**é a entrega final**)
-Andar nas datas, montar as views ativas, chamar `bl_weights_from_views`,
-aplicar custo e produzir a série de retorno. **Tudo de que ele depende já está
-pronto** (config, Σ, `w_mkt`, Ω de fallback, views com horizonte declarado).
+### 1. Despachar os três recados (nenhum foi enviado)
+- **`FOLLOWUP3`** ao Paulo — G7 (base de ajuste) + G8 (`DFF`).
+- **`PEDIDO_G9_payrolls_Paulo.md`** ao Paulo — calendário + mercados.
+- **Régua do Ω à Lia** — seção 4 do `Pergunta_Lia_omega_volume.md`.
 
-Duas checagens **obrigatórias**, vindas da pesquisa do D8:
-- reportar o **giro diário médio** na mesma tabela do resultado;
-- decompor **quanto do giro é reversão de posição em 1–2 dias** — é o mecanismo
-  que destruiu a estratégia GTAA diária citada na pesquisa;
-- teste unitário do motor de custo (ir de `w = 0` a `w = 1` num ativo tem de
-  cobrar exatamente `c`).
+**O que cada resposta muda no backtest:**
 
-**O D1 fica sob revisão condicional:** se o giro for alto e o custo de breakeven
-baixo, a saída **não** é abandonar H = 1 dia — é banda de não-negociação, que a
-pesquisa aponta como a mitigação simples mais eficaz.
+| resposta | efeito |
+|---|---|
+| **G8 / `DFF`** | destrava a **view 2.3** — o backtest deixa de rodar com uma view só |
+| **Ω da Lia** | mexe **direto na alavancagem**: `c > 1` encolhe o tilt e dispensaria o teto |
+| **G7** | **nada aqui** — este backtest é fechamento contra fechamento; o G7 só contamina `abertura→fechamento` (janela das táticas) |
+| **G9 / payrolls** | nada enquanto a camada tática estiver desligada |
 
-### 2. Três recados prontos, nenhum enviado
-- **`FOLLOWUP3` ao Paulo** — G7 (base de ajuste dos parquets) + G8 (`DFF`).
-- **Pedido de payrolls ao Paulo** (`D3c`) — calendário + mercados, mesmo
-  procedimento do G4. Aumenta a amostra da tática de prêmio, que hoje roda com
-  19 eventos.
-- **Régua do Ω para a Lia** — o Ω precisa vir como **multiplicador de
-  confiança** sobre `diag(P·τΣ·Pᵀ)`, não como variância absoluta. É interface,
-  não metodologia dela. Anexar ao `Dump/trocas/Pergunta_Lia_omega_volume.md`.
+### 2. A questão de desenho que o backtest abriu
+**O teto corta a carteira inteira ou só o TILT da view, deixando a perna de
+mercado intacta?** Hoje corta tudo, e é a explicação mais provável da
+underperformance. Registrada na seção 10 do `Decisoes_pendentes.md`, **não
+decidida**. É o primeiro item a testar na próxima sessão — é uma linha de código
+e pode mudar o resultado inteiro.
 
-### 3. Pendências de dado
-- **`I6`** — quando o G7 chegar, rerodar `market_loader.adjustment_gap` e
-  revalidar qualquer janela `abertura → fechamento` de TIP e TLT. Nenhuma
-  medição desta sessão depende disso (as janelas medidas terminam antes do
-  degrau de ~2026-06-01, e deslocamento constante não move covariância).
-- **`e_ff_bps` da view 2.3** fica incompleto até o `DFF` chegar. O β já roda.
+### 3. Ligar a camada tática
+O script já está ligado nos orçamentos: passar `--orcamento-premio`,
+`--orcamento-drift-acoes`, `--orcamento-drift-rf` liga sem tocar em código. Os
+valores são **parâmetro de reunião** — não foram inventados.
 
 ### 4. Revisão do grupo
-Item de revisão aberto na lista de tarefas, **prioridade D7 (τ e δ)**, que
-encosta no módulo de risco da Lia. Depois: D2 (corte das defasadas), D3
-(entrada da camada tática), D6 (DTB3 no lugar do ZQ).
+Seção 9 (13 decisões, prioridade D7 τ/δ) + **seção 10 nova** (duration medida e
+teto de alavancagem — o teto encosta no módulo de risco da Lia).
 
-### 5. ⚠️ O PUSH ESTÁ BLOQUEADO — resolver antes de qualquer coisa
+---
 
-`git push origin Felipe` falha com **403**:
+## Como rodar
+
+O dado do Paulo vive no branch `Paulo`, não neste:
 
 ```
-remote: Permission to liahaller/Desafio-Quant-Itau.git denied to Gruppy-FelipeM
+git archive origin/Paulo data/ | tar -x -C <dir temporario>
+python scripts/backtest_v1.py --raiz <dir temporario>
 ```
 
-**Causa:** o repositório é da Lia (`liahaller/Desafio-Quant-Itau`); o `git` local
-está com o usuário `menusoids-p` / felipe.menusier@gmail.com, mas a credencial
-que o push usa é a conta **`Gruppy-FelipeM`** (é a conta ativa do `gh auth`), e
-essa conta **não tem permissão de escrita** no repo. Sessões anteriores
-empurraram com credencial diferente, ou o acesso da `Gruppy-FelipeM` foi
-removido.
-
-**Saídas (escolha do dono — não mexer em credencial por conta própria):**
-1. `gh auth switch` / `gh auth login` para a conta com acesso, e repetir o push.
-2. Pedir à Lia acesso de escrita para `Gruppy-FelipeM`.
-3. Empurrar pelo terminal próprio, se o Credential Manager estiver com a conta
-   certa fora do Claude Code.
-
-**Estado:** branch `Felipe` **23 commits à frente do `origin/Felipe`**, worktree
-limpa. Nada se perdeu — está tudo commitado localmente. Mas **nada da maratona
-chegou ao repositório compartilhado**: o Paulo e a Lia ainda não veem nenhuma
-das decisões, nem o código novo.
-
-*(Resolvido: `Decisoes_pendentes.md` recebeu as 13 decisões como seção 9, em
-tabela, marcadas como provisórias.)*
+Roda em ~30 s e escreve `Dump/analises/Backtest_v1.md`.
 
 ---
 
 ## Armadilhas que a próxima sessão precisa saber
 
-- **A informação do Polymarket aterrissa no gap de abertura.** Apareceu em
-  todas as medições — tática de fim de semana, eleição 2024, recessão 2025,
-  Irã 2026. Qualquer tese nova que dependa de "a bolsa demora a absorver"
-  precisa ser testada na janela `abertura → fechamento`, não de fechamento a
-  fechamento.
+- **Sem teto, o backtest vai à ruína.** Σ|w| mediana 24, máximo 264. Não é bug:
+  o I3b casou a duration do par TIP/TLT para cancelar o movimento de juros, e
+  `w ∝ Δμ/(δσ²)` numa direção de variância pequena explode por construção.
+  Qualquer mexida no P da 2.2 precisa olhar esse número.
+- **`None` de view tem dois significados diferentes.** Cascata (não havia
+  mercado) e insumo que não chegou (2.3 e B) não são a mesma coisa — o script
+  declara as segundas em vez de deixá-las cair silenciosamente em `None`.
+- **A informação do Polymarket aterrissa no gap de abertura.** Continua valendo:
+  qualquer tese nova que dependa de "a bolsa demora a absorver" tem de ser
+  testada em `abertura → fechamento`.
 - **O arquivo `M9_midterms_2022_will-the-democratic-party*` é o mercado da
-  Câmara 2026** (355 dias), não de 2022. Foi puxado por engano pelo Paulo e é o
-  único teste fora da amostra que o projeto tem.
-- **Medir a coisa certa e medir bem são falhas independentes.** O erro desta
-  sessão foi classificar a 3.1 como view defasada e cortá-la medindo `Δp`
-  quando o sinal dela é de nível. A conclusão sobreviveu; o fundamento não.
-- **O dado do Paulo vive no branch `Paulo`, não neste.** Para rodar os scripts
-  sem merge:
-  ```
-  git archive origin/Paulo data/ | tar -x -C <dir temporario>
-  ```
-  e apontar `--dados`, `--precos`, `--abertura` etc. para lá.
+  Câmara 2026**, não de 2022 — o único teste fora da amostra que o projeto tem.
+- **`gh auth login --web` trava sem terminal interativo.** Se a credencial
+  desandar de novo, o caminho que funcionou foi o **device flow por curl** (o
+  dono autoriza o código no browser), não o comando interativo.
