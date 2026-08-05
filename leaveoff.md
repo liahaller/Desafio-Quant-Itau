@@ -55,10 +55,13 @@ em que o SPY fez +26%.
 
 ## O que falta — em ordem
 
-### 1. Despachar os três recados (nenhum foi enviado)
+### 1. Esperar as respostas — os três recados FORAM ENVIADOS em 05/08 ✅
 - **`FOLLOWUP3`** ao Paulo — G7 (base de ajuste) + G8 (`DFF`).
 - **`PEDIDO_G9_payrolls_Paulo.md`** ao Paulo — calendário + mercados.
 - **Régua do Ω à Lia** — seção 4 do `Pergunta_Lia_omega_volume.md`.
+
+Nada a despachar. A próxima sessão trabalha no que **não** depende deles
+(item 2 abaixo) e integra as respostas conforme chegarem.
 
 **O que cada resposta muda no backtest:**
 

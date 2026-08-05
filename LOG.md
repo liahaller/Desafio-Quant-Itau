@@ -38,7 +38,7 @@
 **Observação para o dono do módulo do Paulo:** nenhuma nova. O G7 não afeta este backtest (é fechamento contra fechamento; o G7 só contamina `abertura→fechamento`, janela das táticas).
 
 **Pendente:**
-- **Os três recados seguem sem enviar** — `FOLLOWUP3` (G7+G8) e `PEDIDO_G9` ao Paulo, régua do Ω à Lia. Escritos e commitados, não despachados.
+- **Os três recados foram ENVIADOS pelo dono em 05/08** (`FOLLOWUP3` com G7+G8 e `PEDIDO_G9` ao Paulo, régua do Ω à Lia). Aguardando resposta — nada a despachar.
 - **O que cada resposta muda no backtest:** o **G8/`DFF`** destrava a view 2.3 e o backtest deixa de rodar com uma view só; o **Ω da Lia** é o que mexe direto na alavancagem (um `c > 1` encolhe o tilt e dispensaria o teto); o **G7** não muda nada aqui; o **G9/payrolls** não muda nada enquanto a camada tática estiver desligada.
 - **Camada tática desligada** por falta dos orçamentos (`orcamento_max`, `orcamento_acoes`, `orcamento_rf`) — parâmetros de reunião, não inventados. O script já está ligado neles: passar `--orcamento-*` liga a camada sem tocar em código.
 - **View B sem caminho:** precisa do ZQ de dezembro, que não tem fonte grátis (F6) e **não está pedido a ninguém**.
