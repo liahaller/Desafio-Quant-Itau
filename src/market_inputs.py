@@ -96,6 +96,36 @@ def empirical_duration(returns, yield_changes, asset):
     return float(-beta[1] * 100.0)
 
 
+def breakeven_duration(pair_returns, breakeven_changes):
+    """Duration do BREAKEVEN para a view 2.2: retorno do par por unidade de
+    variação do breakeven de 10 anos, estimado no próprio dado.
+
+    Decidido em sessão (Felipe, 2026-08-05) no lugar do "~8" da espec, que
+    nunca virou número fechado (LOG 2026-07-09: "valor exato da duration por
+    decisão humana"). O motivo é o mesmo de `empirical_duration`: 8 é a
+    duration de REFERÊNCIA do instrumento, e o que a view precisa é a
+    sensibilidade do PAR que ela de fato monta — que mudou quando o I3b casou
+    as durations de TIP e TLT. Medir mantém as duas pontas consistentes.
+
+    `pair_returns`      : retorno diário do par (retornos @ P da view 2.2).
+    `breakeven_changes` : Δ do breakeven na MESMA unidade da divergência
+                          (fração decimal), alinhado por data.
+
+    Devolve o coeficiente b de `r_par = a + b·Δbreakeven`. O sinal esperado é
+    POSITIVO: poly mais inflacionista que o título ⇒ o breakeven sobe ⇒ o par
+    (comprado no indexado) ganha. Coeficiente negativo é sinal de que o par
+    está invertido, e a função deixa passar de propósito — quem lê decide, o
+    número não é censurado aqui.
+    """
+    par = pd.concat([pd.Series(pair_returns).rename("r"),
+                     pd.Series(breakeven_changes).rename("dbe")], axis=1).dropna()
+    if len(par) < 60:
+        raise ValueError(f"amostra curta para duration do breakeven: {len(par)} pregões")
+    X = np.column_stack([np.ones(len(par)), par["dbe"].to_numpy()])
+    beta, *_ = np.linalg.lstsq(X, par["r"].to_numpy(), rcond=None)
+    return float(beta[1])
+
+
 def market_weights(assets, market_asset=MARKET_ASSET):
     """w_mkt do prior CAPM: todo o peso no ativo de mercado.
 

@@ -16,8 +16,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from backtest import (  # noqa: E402
-    BPS, carry_cost, derived_weights, reversal_share, run_backtest, summary,
-    transaction_cost)
+    BPS, cap_leverage, carry_cost, derived_weights, reversal_share,
+    run_backtest, summary, transaction_cost)
 from views_common import ViewResult  # noqa: E402
 from taticas_common import OverlayResult  # noqa: E402
 
@@ -195,6 +195,35 @@ def test_breakeven_e_o_custo_que_zera_o_retorno():
     no_breakeven = run_backtest(r, montar, w_mkt, custo_bps=breakeven)
     assert no_breakeven.diario["r_bruto"].sum() - no_breakeven.diario["custo"].sum() \
         == pytest.approx(0.0, abs=1e-12)
+
+
+def test_teto_de_alavancagem_corta_e_preserva_a_direcao():
+    """Escala todas as pontas pelo mesmo fator: Σ|w| bate o teto, razões ficam."""
+    w = np.array([4.0, -2.0, 2.0])       # Σ|w| = 8
+    cortado = cap_leverage(w, teto=2.0)
+    assert np.abs(cortado).sum() == pytest.approx(2.0)
+    assert cortado / np.abs(cortado).sum() == pytest.approx(w / np.abs(w).sum())
+
+
+def test_teto_nao_mexe_em_carteira_abaixo_dele():
+    w = np.array([0.6, -0.2, 0.1])
+    assert cap_leverage(w, teto=3.0) == pytest.approx(w)
+    assert cap_leverage(w, teto=None) == pytest.approx(w)  # None = D8 literal
+
+
+def test_teto_no_loop_limita_todo_dia():
+    """Com view agressiva o BL estoura; com teto a carteira fica dentro dele."""
+    r = _retornos(escala=0.002)
+    view = ViewResult(P=np.array([0.0, 1.0, -1.0]), Q=0.01,
+                      diagnostics={"view": "sintetica", "horizonte_q_dias": 1})
+
+    def montar(_data):
+        return _sigma(), [view], []
+
+    solto = run_backtest(r, montar, np.array([1.0, 0.0, 0.0]))
+    preso = run_backtest(r, montar, np.array([1.0, 0.0, 0.0]), teto_alavancagem=2.0)
+    assert solto.diario["alavancagem"].max() > 2.0
+    assert preso.diario["alavancagem"].max() == pytest.approx(2.0)
 
 
 def test_data_fora_da_tabela_falha_alto():

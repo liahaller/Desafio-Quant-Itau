@@ -5,12 +5,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from bl_integration import bl_weights_from_views  # noqa: E402
 from market_inputs import (  # noqa: E402
-    equal_weights, market_weights, omega_fallback, sample_covariance)
+    breakeven_duration, equal_weights, market_weights, omega_fallback,
+    sample_covariance)
 
 ATIVOS = ["SPY", "TIP", "TLT"]
 
@@ -104,3 +106,18 @@ def test_sem_view_a_carteira_e_o_benchmark():
     w, _ = bl_weights_from_views(sigma, w_mkt, tau=0.002, delta=3.0,
                                  view_results=[None, None])
     assert np.allclose(w, w_mkt)
+
+
+def test_breakeven_duration_recupera_o_coeficiente_plantado():
+    """Par que rende 6x o Δbreakeven mais ruído -> duration medida ~ 6."""
+    rng = np.random.default_rng(1)
+    dbe = pd.Series(rng.normal(scale=0.0005, size=400),
+                    index=pd.bdate_range("2024-01-01", periods=400))
+    par = 6.0 * dbe + rng.normal(scale=1e-5, size=400)
+    assert breakeven_duration(par, dbe) == pytest.approx(6.0, rel=0.05)
+
+
+def test_breakeven_duration_exige_amostra():
+    curta = pd.Series(np.zeros(30), index=pd.bdate_range("2024-01-01", periods=30))
+    with pytest.raises(ValueError, match="amostra curta"):
+        breakeven_duration(curta, curta)

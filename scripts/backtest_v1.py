@@ -48,8 +48,8 @@ import view_2_2_inflacao  # noqa: E402
 from backtest import run_backtest, summary  # noqa: E402
 from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # noqa: E402
                     DRIFT_JANELA_RF, SIGMA_JANELA_PREGOES, TAU)
-from market_inputs import (daily_returns, empirical_duration,  # noqa: E402
-                           market_weights, sample_covariance)
+from market_inputs import (breakeven_duration, daily_returns,  # noqa: E402
+                           empirical_duration, market_weights, sample_covariance)
 from market_loader import load_etf_prices, load_fred  # noqa: E402
 from poly_loader import (bucket_value, daily_preopen, load_cpi_releases,  # noqa: E402
                          load_pmf)
@@ -97,13 +97,12 @@ class MontadorV1:
     """
 
     def __init__(self, retornos, breakeven, dgs10, mercados, pmfs,
-                 duration_breakeven, fomc=None, surpresas=None, orcamentos=None):
+                 fomc=None, surpresas=None, orcamentos=None):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
         self.mercados = mercados          # data de divulgação -> prefixo
         self.pmfs = pmfs                  # prefixo -> (probs, valores)
-        self.duration_breakeven = duration_breakeven
         self.fomc = fomc if fomc is not None else pd.DatetimeIndex([])
         self.surpresas = surpresas if surpresas is not None else pd.Series(dtype=float)
         self.orcamentos = orcamentos or {}
@@ -128,6 +127,21 @@ class MontadorV1:
         return (empirical_duration(r, dy, view_2_2_inflacao.LONG_ASSET),
                 empirical_duration(r, dy, view_2_2_inflacao.SHORT_ASSET))
 
+    def _duration_breakeven(self, data, duration_long, duration_short):
+        """Duration do breakeven MEDIDA no par que a view monta, expansiva.
+
+        Decidida em sessão no lugar do "~8" da espec (ver
+        `market_inputs.breakeven_duration`). O par depende das durations do
+        dia, então o P é remontado aqui — é o mesmo `pair_P` que a view usa,
+        não uma cópia da fórmula.
+        """
+        P = view_2_2_inflacao.pair_P(
+            list(ASSETS), view_2_2_inflacao.LONG_ASSET,
+            view_2_2_inflacao.SHORT_ASSET, duration_long, duration_short)
+        r = self.retornos[self.retornos.index < data]
+        return breakeven_duration(pd.Series(r.to_numpy() @ P, index=r.index),
+                                  self.breakeven.diff().reindex(r.index))
+
     def _view_2_2(self, data, pregoes):
         """View 2.2 do dia, ou None se não há mercado de CPI vivo (cascata)."""
         futuras = [r for r in self.mercados if r >= data]
@@ -150,10 +164,11 @@ class MontadorV1:
             return None  # é o dia da divulgação: o mercado resolve, a view sai
 
         duration_long, duration_short = self._durations(data)
+        duration = self._duration_breakeven(data, duration_long, duration_short)
         # D9: a divergência entra demeanada, com a média de janela EXPANSIVA.
         media = float(np.mean(self.divergencias)) if self.divergencias else 0.0
         view = view_2_2_inflacao.build_view(
-            list(ASSETS), breakeven_10y=breakeven, duration=self.duration_breakeven,
+            list(ASSETS), breakeven_10y=breakeven, duration=duration,
             cpi_frequencia="mensal", duration_long=duration_long,
             duration_short=duration_short, dias_ate_divulgacao=faltam,
             divergencia_media=media, bucket_probs=linha, bucket_values=valores)
@@ -214,13 +229,16 @@ class MontadorV1:
 
 
 def main():
+    # O console do Windows abre em cp1252 e engasga no Σ dos rótulos; o
+    # arquivo de saída já vai em utf-8.
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raiz", default=".",
                         help="diretório com data/ extraído do branch Paulo")
-    parser.add_argument("--duration-breakeven", type=float, required=True,
-                        help="duration do breakeven de 10 anos (view 2.2) — "
-                             "parâmetro de decisão humana, sem default")
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
+    parser.add_argument("--tetos", type=float, nargs="+", default=[1.0, 2.0, 3.0, 5.0],
+                        help="tetos de Σ|w| a varrer — o teto é decisão humana, "
+                             "então o script reporta vários em vez de cravar um")
     parser.add_argument("--orcamento-premio", type=float, default=None)
     parser.add_argument("--orcamento-drift-acoes", type=float, default=None)
     parser.add_argument("--orcamento-drift-rf", type=float, default=None)
@@ -248,46 +266,94 @@ def main():
                   "drift_acoes": args.orcamento_drift_acoes,
                   "drift_rf": args.orcamento_drift_rf}
     montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
-                          args.duration_breakeven, fomc, surpresas, orcamentos)
+                          fomc, surpresas, orcamentos)
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
     primeira_pmf = min(probs.index.min() for probs, _ in pmfs.values())
     inicio = max(retornos.index[SIGMA_JANELA_PREGOES], primeira_pmf)
     datas = retornos.index[retornos.index >= inicio]
+    w_mkt = market_weights(ASSETS)
 
-    resultado = run_backtest(retornos, montador, market_weights(ASSETS),
-                             datas=datas, tau=TAU, delta=DELTA,
-                             custo_bps=args.custo_bps)
-    tabela = summary(resultado, benchmark=retornos["SPY"])
+    colunas = {}
+    for teto in args.tetos:
+        resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
+                                 delta=DELTA, custo_bps=args.custo_bps,
+                                 teto_alavancagem=teto)
+        # o `|` precisa vir escapado: é nome de coluna de tabela markdown
+        colunas[f"Σ\\|w\\| ≤ {teto:g}"] = summary(resultado, benchmark=retornos["SPY"])
+        montador.divergencias.clear()  # a média expansiva recomeça a cada rodada
+    tabela = pd.DataFrame(colunas)
 
+    # A duration medida é a decisão desta sessão — sai no relatório, não fica só
+    # dentro do loop. Vem dos diagnostics da última rodada (é a mesma em todas:
+    # o teto corta o peso, não a view).
+    durations = [d["duration"] for dia in resultado.diagnostics.values()
+                 for d in dia["views"]]
+
+    tatica_ligada = [f"{k} = {v}" for k, v in orcamentos.items() if v is not None]
     linhas = ["# Backtest do v1 — BL com as views ativas (I5)\n",
               "> Gerado por `scripts/backtest_v1.py`. Benchmark = comprar e "
               "segurar SPY (consequência do `w_mkt` do prior CAPM). Custo de "
               f"**{args.custo_bps:.1f} bps por lado** sobre o giro contra o peso "
-              "derivado (D8).\n",
+              "derivado (D8). Uma coluna por teto de alavancagem — **o teto é "
+              "decisão humana; a varredura mede, não escolhe.**\n",
               f"- janela: **{datas[0].date()} a {datas[-1].date()}** "
               f"({len(datas)} pregões)",
-              f"- views ativas no v1: 2.2 inflação — **2.3 e B fora por insumo "
-              f"que não chegou** (DFF/G8 e ZQ de dezembro)",
-              f"- camada tática: "
-              + ("desligada (orçamentos são decisão de reunião)"
-                 if not any(v is not None for v in orcamentos.values())
-                 else ", ".join(f"{k} = {v}" for k, v in orcamentos.items()
-                                if v is not None)) + "\n",
-              "| métrica | valor |", "|---|---|"]
-    for nome, valor in tabela.items():
-        linhas.append(f"| {nome} | {valor:,.4f} |")
+              "- views ativas: **2.2 inflação**. A 2.3 e a B ficam fora por "
+              "insumo que não chegou (DFF/G8 e ZQ de dezembro), não por cascata",
+              f"- duration do breakeven: **medida** no par da própria view, "
+              f"janela expansiva — variou de **{min(durations):.2f} a "
+              f"{max(durations):.2f}** na amostra (a espec supunha \"~8\"; o dado "
+              f"confirmou, e agora o número é medido em vez de suposto)",
+              "- camada tática: "
+              + (", ".join(tatica_ligada) if tatica_ligada
+                 else "**desligada** — os orçamentos são parâmetro de reunião") + "\n",
+              "| métrica | " + " | ".join(tabela.columns) + " |",
+              "|---" * (len(tabela.columns) + 1) + "|"]
+    for nome, linha in tabela.iterrows():
+        linhas.append(f"| {nome} | " + " | ".join(f"{v:,.4f}" for v in linha) + " |")
 
     linhas.append("\n## Giro — as duas checagens obrigatórias do D8\n")
-    linhas.append(f"- **giro diário médio:** {tabela['giro diário médio']:.4f} "
-                  "(fração do patrimônio negociada por dia, somando os dois lados)")
-    linhas.append(f"- **fração do giro desfeita em 1–2 pregões:** "
-                  f"{tabela['giro desfeito em 1–2 pregões']:.3f} — é o mecanismo "
-                  "que destruiu a GTAA diária da pesquisa do D8. Alto aqui **não** "
-                  "manda abandonar o H = 1 dia; manda testar banda de não-negociação.")
-    linhas.append(f"- **custo de breakeven:** "
-                  f"{tabela['custo de breakeven (bps por lado)']:.2f} bps por lado "
-                  f"contra os {args.custo_bps:.1f} bps premissados.\n")
+    linhas.append("O custo não vem de negociar muito, vem de negociar contra si "
+                  "mesmo: **giro desfeito em 1–2 pregões** é o mecanismo que "
+                  "destruiu a GTAA diária citada na pesquisa do D8. Se ele for "
+                  "alto, a saída prevista **não** é abandonar o H = 1 dia — é "
+                  "banda de não-negociação.\n")
+    for coluna in tabela.columns:
+        c = tabela[coluna]
+        linhas.append(f"- **{coluna}:** giro diário médio {c['giro diário médio']:.3f} "
+                      f"· desfeito em 1–2 pregões {c['giro desfeito em 1–2 pregões']:.3f} "
+                      f"· custo de breakeven "
+                      f"{c['custo de breakeven (bps por lado)']:.2f} bps/lado "
+                      f"(premissa: {args.custo_bps:.1f})")
+
+    # Leitura dos números — descritiva, sem fechar decisão (CLAUDE.md §1).
+    aperto = tabela.columns[0]
+    c = tabela[aperto]
+    linhas.append("\n## Leitura\n")
+    linhas.append(
+        f"**A carteira perde do comprar-e-segurar SPY**: {c['retorno acumulado líquido'] * 100:+.1f}% "
+        f"contra {c['benchmark acumulado'] * 100:+.1f}% do benchmark no teto mais "
+        f"apertado, e a distância AUMENTA conforme o teto afrouxa.\n")
+    linhas.append(
+        f"**O custo não é o culpado.** O retorno BRUTO já é "
+        f"{c['retorno acumulado bruto'] * 100:+.1f}%, muito abaixo do benchmark, e o custo de "
+        f"breakeven ({c['custo de breakeven (bps por lado)']:.1f} bps/lado) é "
+        f"{c['custo de breakeven (bps por lado)'] / args.custo_bps:.1f}× a premissa de "
+        f"{args.custo_bps:.0f} bps. Há folga larga de custo; o problema é o retorno bruto.\n")
+    linhas.append(
+        f"**O mecanismo mais provável é mecânico, não da view.** O teto escala TODAS as "
+        f"pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com a view ativa em "
+        f"{c['views ativas por dia (média)'] * 100:.0f}% dos pregões, parte do orçamento de "
+        f"Σ|w| sai do SPY para o par TIP/TLT — numa janela em que o SPY fez "
+        f"{c['benchmark acumulado'] * 100:+.1f}%, reduzir exposição a ele custa caro por si só. "
+        f"**Questão de desenho em aberto (não decidida aqui):** o teto deve cortar a carteira "
+        f"inteira ou só o TILT da view, deixando a perna de mercado intacta?\n")
+    linhas.append(
+        f"**Giro desfeito em 1–2 pregões: {c['giro desfeito em 1–2 pregões'] * 100:.0f}%.** Um terço "
+        f"do que se negocia é desfeito em dois pregões. É material, mas com a folga de custo "
+        f"acima não é o que está segurando o resultado — entra como insumo da revisão "
+        f"condicional do D1 (banda de não-negociação), não como veredito sobre o H.\n")
 
     Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")

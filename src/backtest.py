@@ -109,6 +109,30 @@ def carry_cost(w, financiamento_bps_ano=FINANCIAMENTO_SPREAD_BPS_ANO,
             + aluguel_bps_ano * BPS * vendido) / pregoes_por_ano
 
 
+def cap_leverage(w, teto=None):
+    """Normaliza a carteira quando Σ|w| passa do `teto` (None = sem teto).
+
+    Decidido em sessão (Felipe, 2026-08-05) porque a D8 previu peso
+    IRRESTRITO mas não previu RUÍNA: medido no dado real, o BL com Σ amostral
+    e o Ω de fallback neutro põe Σ|w| em mediana 24 e máximo 264, e o
+    patrimônio vira negativo dentro da amostra. A causa é estrutural, não
+    numérica — o I3b casou a duration do par TIP/TLT justamente para cancelar
+    o movimento de juros, e `w ∝ Δμ/(δσ²)` numa direção de variância pequena
+    explode por construção.
+
+    Escala TODAS as pontas pelo mesmo fator, o que preserva a direção da
+    carteira e só corta o tamanho. O teto é parâmetro humano — varrer vários e
+    reportar (como já se faz com γ e com o custo) é a leitura honesta.
+    """
+    w = np.asarray(w, dtype=float)
+    if teto is None:
+        return w
+    if teto <= 0:
+        raise ValueError("teto de alavancagem deve ser positivo")
+    bruta = float(np.abs(w).sum())
+    return w if bruta <= teto else w * (teto / bruta)
+
+
 def reversal_share(trades, janela=2):
     """Fração do giro total que é DESFEITA nos `janela` pregões seguintes.
 
@@ -134,7 +158,7 @@ def reversal_share(trades, janela=2):
 
 
 def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELTA,
-                 custo_bps=CUSTO_BPS_POR_LADO, w_inicial=None):
+                 custo_bps=CUSTO_BPS_POR_LADO, teto_alavancagem=None, w_inicial=None):
     """Anda nas datas e devolve o BacktestResult.
 
     retornos   : DataFrame (datas × ativos) de retornos diários, colunas na
@@ -146,6 +170,10 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  carteira do dia é exatamente `w_mkt` (caso neutro da D8).
     w_mkt      : (n,) pesos de mercado — prior do BL e ponto de partida.
     datas      : subconjunto de `retornos.index` a percorrer; None = todas.
+    teto_alavancagem : Σ|w| máximo carregado (None = irrestrito, a D8 literal).
+                 O corte é aplicado DEPOIS da camada tática, sobre a carteira
+                 que de fato vai a mercado — e portanto o giro e o custo são
+                 medidos já no peso cortado.
     w_inicial  : peso já carregado antes da primeira data. None = zeros, ou
                  seja, a primeira montagem paga o custo de entrar na carteira.
 
@@ -177,6 +205,7 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         omega = None if P is None else omega_fallback(P, sigma, tau)
         w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
         w_alvo, diag_taticas = apply_overlays(w_bl, overlay_results or ())
+        w_alvo = cap_leverage(w_alvo, teto_alavancagem)
 
         custo, giro = transaction_cost(w_alvo, w_derivado, custo_bps)
         carrego = carry_cost(w_alvo)

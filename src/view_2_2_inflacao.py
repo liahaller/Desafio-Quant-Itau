@@ -74,7 +74,7 @@ def _to_anual(valores, cpi_frequencia):
     raise ValueError(f"cpi_frequencia deve ser 'mensal' ou 'anual': {cpi_frequencia!r}")
 
 
-def _pair_P(assets, long_asset, short_asset, duration_long, duration_short):
+def pair_P(assets, long_asset, short_asset, duration_long, duration_short):
     """Linha P do par, CASADA EM DURATION e normalizada com Sigma|P| = 2.
 
     Medido em 2026-08-04 (`Dump/analises/Convergencia_2_2.md`): o par +1/-1
@@ -186,7 +186,7 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
     # o Q ser de UM dia — o H da decisão 1 — e a view apertar conforme a data
     # chega.
     Q = duration * divergencia_liquida / dias_ate_divulgacao
-    P = _pair_P(list(assets), long_asset, short_asset, duration_long, duration_short)
+    P = pair_P(list(assets), long_asset, short_asset, duration_long, duration_short)
     return ViewResult(P=P, Q=float(Q), diagnostics={
         "view": "2.2_inflacao",
         "caminho": caminho,
