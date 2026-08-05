@@ -1,0 +1,297 @@
+"""Backtest do v1 — liga o motor do I5 no dado real do Paulo. Felipe.
+
+O motor (`src/backtest.py`) é puro; toda a plumbing de dado mora aqui, que é
+onde a responsabilidade de NÃO OLHAR O FUTURO também mora. Três regras que
+este arquivo aplica em cada montagem do dia D:
+
+  - a PMF é o slot das **12:00 UTC de D** (07:00/08:00 em Nova York), anterior
+    tanto ao CPI (8:30 ET) quanto à abertura;
+  - o breakeven e a curva vêm da última leitura **estritamente anterior** a D;
+  - a média da divergência (D9) e a duration empírica são de janela
+    **EXPANSIVA** — só com o que já tinha acontecido em D.
+
+## O que roda e o que não roda hoje
+
+| view | estado | por quê |
+|---|---|---|
+| **2.2 inflação** | **roda** | PMF de CPI + T10YIE + calendário, tudo entregue |
+| 2.3 Fed | **bloqueada** | `e_ff_bps` = DTB3 − DFF, e o **DFF é o G8**, ainda não entregue |
+| B trajetória | **bloqueada** | precisa do ZQ de dezembro, que **não tem fonte grátis** (F6) |
+
+As duas bloqueadas não são cascata (mercado ausente) — é insumo que não
+chegou. Por isso o script as declara em vez de deixá-las cair em `None`
+silenciosamente: `None` significaria "não havia mercado", que é mentira.
+
+## Camada tática
+
+Desligada por padrão. Os orçamentos (`--orcamento-*`) são **parâmetros de
+reunião** (CLAUDE.md §6 — não se inventa número de modelo), então sem eles a
+camada não entra e o backtest mede só o BL. Passar qualquer um liga a tática
+correspondente.
+
+Uso (o dado vive no branch `Paulo`, não neste):
+
+    git archive origin/Paulo data/ | tar -x -C /tmp/dadospaulo
+    python scripts/backtest_v1.py --raiz /tmp/dadospaulo --duration-breakeven <d>
+"""
+
+import argparse
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+import view_2_2_inflacao  # noqa: E402
+from backtest import run_backtest, summary  # noqa: E402
+from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # noqa: E402
+                    DRIFT_JANELA_RF, SIGMA_JANELA_PREGOES, TAU)
+from market_inputs import (daily_returns, empirical_duration,  # noqa: E402
+                           market_weights, sample_covariance)
+from market_loader import load_etf_prices, load_fred  # noqa: E402
+from poly_loader import (bucket_value, daily_preopen, load_cpi_releases,  # noqa: E402
+                         load_pmf)
+from poly_preprocessing import bucket_values_with_open, carry_missing  # noqa: E402
+import tatica_drift_pos_fomc  # noqa: E402
+import tatica_premio_anuncios  # noqa: E402
+
+PONTOS_PERCENTUAIS = 100.0
+
+
+def mercados_de_cpi(releases, diretorio):
+    """(data de divulgação -> prefixo dos arquivos) — o slug sai da coluna
+    `fonte` do calendário do Paulo, nunca de adivinhação por nome de arquivo.
+    """
+    pares = {}
+    for _, linha in releases.iterrows():
+        fonte = str(linha["fonte"])
+        if "(" not in fonte:
+            continue
+        prefixo = f"CPI_{fonte[fonte.index('(') + 1: fonte.rindex(')')]}_"
+        if list(Path(diretorio).glob(f"{prefixo}*.json")):
+            pares[pd.Timestamp(linha["release_date"])] = prefixo
+    return dict(sorted(pares.items()))
+
+
+def pmf_diaria(diretorio, prefixo):
+    """(probs por data, valores dos buckets em fração MENSAL) de um mercado.
+
+    Aplica as regras fechadas: faixa faltante herda a última leitura (D4/6.1)
+    e faixa aberta entra a meia largura para fora (D4/1.2). Os valores saem em
+    fração decimal mensal — a view anualiza sozinha (`cpi_frequencia`).
+    """
+    pmf = daily_preopen(carry_missing(load_pmf(diretorio, prefixo))).dropna(how="all")
+    valores = bucket_values_with_open(
+        np.array([bucket_value(c) for c in pmf.columns], dtype=float))
+    return pmf, valores / PONTOS_PERCENTUAIS
+
+
+class MontadorV1:
+    """Monta `(sigma, views, overlays)` de um dia. Chamado em ordem de data.
+
+    Guarda estado de propósito: a média da divergência (D9) é EXPANSIVA, então
+    depende do que já foi visto — e só do que já foi visto. Recalcular por
+    janela fechada seria mais puro e olharia o futuro.
+    """
+
+    def __init__(self, retornos, breakeven, dgs10, mercados, pmfs,
+                 duration_breakeven, fomc=None, surpresas=None, orcamentos=None):
+        self.retornos = retornos
+        self.breakeven = breakeven
+        self.dgs10 = dgs10
+        self.mercados = mercados          # data de divulgação -> prefixo
+        self.pmfs = pmfs                  # prefixo -> (probs, valores)
+        self.duration_breakeven = duration_breakeven
+        self.fomc = fomc if fomc is not None else pd.DatetimeIndex([])
+        self.surpresas = surpresas if surpresas is not None else pd.Series(dtype=float)
+        self.orcamentos = orcamentos or {}
+        self.divergencias = []            # histórico para a média expansiva
+
+    # --- insumos ------------------------------------------------------------
+
+    def _ultimo_antes(self, serie, data):
+        """Última leitura ESTRITAMENTE anterior a `data` (sem lookahead)."""
+        anteriores = serie[serie.index < data].dropna()
+        return float(anteriores.iloc[-1]) if len(anteriores) else None
+
+    def _durations(self, data):
+        """Duration empírica de TIP e TLT com o dado anterior a `data`.
+
+        Medidas, não copiadas da ficha do emissor — mesma decisão de módulo do
+        `market_inputs`. Expansiva: em cada rebalanceamento usa toda a história
+        disponível até ali, e nada além.
+        """
+        r = self.retornos[self.retornos.index < data]
+        dy = self.dgs10.diff().reindex(r.index)
+        return (empirical_duration(r, dy, view_2_2_inflacao.LONG_ASSET),
+                empirical_duration(r, dy, view_2_2_inflacao.SHORT_ASSET))
+
+    def _view_2_2(self, data, pregoes):
+        """View 2.2 do dia, ou None se não há mercado de CPI vivo (cascata)."""
+        futuras = [r for r in self.mercados if r >= data]
+        if not futuras:
+            return None
+        release = min(futuras)
+        probs, valores = self.pmfs[self.mercados[release]]
+        if data not in probs.index:
+            return None  # sem leitura pré-abertura nesse dia
+        linha = probs.loc[data].to_numpy(dtype=float)
+        if not np.isfinite(linha).all() or linha.sum() <= 0:
+            return None  # PMF incompleta -> cascata, não chute
+
+        breakeven = self._ultimo_antes(self.breakeven, data)
+        if breakeven is None:
+            return None
+        faltam = int(pregoes.slice_indexer(data, release).stop
+                     - pregoes.slice_indexer(data, release).start) - 1
+        if faltam < 1:
+            return None  # é o dia da divulgação: o mercado resolve, a view sai
+
+        duration_long, duration_short = self._durations(data)
+        # D9: a divergência entra demeanada, com a média de janela EXPANSIVA.
+        media = float(np.mean(self.divergencias)) if self.divergencias else 0.0
+        view = view_2_2_inflacao.build_view(
+            list(ASSETS), breakeven_10y=breakeven, duration=self.duration_breakeven,
+            cpi_frequencia="mensal", duration_long=duration_long,
+            duration_short=duration_short, dias_ate_divulgacao=faltam,
+            divergencia_media=media, bucket_probs=linha, bucket_values=valores)
+        if view is not None:
+            self.divergencias.append(view.diagnostics["divergencia"])
+        return view
+
+    # --- camada tática ------------------------------------------------------
+
+    def _premio(self, data):
+        orcamento = self.orcamentos.get("premio")
+        if orcamento is None:
+            return None
+        pmf_do_dia = None
+        if data in self.mercados:                       # dia de divulgação do CPI
+            probs, _ = self.pmfs[self.mercados[data]]
+            if data in probs.index:
+                pmf_do_dia = probs.loc[data].to_numpy(dtype=float)
+        if pmf_do_dia is None or not np.isfinite(pmf_do_dia).all() or pmf_do_dia.sum() <= 0:
+            return None                                 # dormente (cascata)
+        return tatica_premio_anuncios.build_overlay(
+            list(ASSETS), orcamento, announcement_pmf=pmf_do_dia)
+
+    def _drift(self, data):
+        acoes, rf = self.orcamentos.get("drift_acoes"), self.orcamentos.get("drift_rf")
+        if acoes is None or rf is None or not len(self.fomc):
+            return None
+        passados = self.fomc[self.fomc < data]
+        futuros = self.fomc[self.fomc >= data]
+        if not len(passados) or passados[-1] not in self.surpresas.index:
+            return None
+        pregoes = self.retornos.index
+        conta = lambda a, b: int(pregoes.slice_indexer(a, b).stop  # noqa: E731
+                                 - pregoes.slice_indexer(a, b).start) - 1
+        desde = conta(passados[-1], data)
+        ate_proximo = conta(data, futuros[0]) if len(futuros) else None
+        # DRIFT_JANELA_RF = None significa "até a véspera do próximo FOMC"
+        # (config): sem calendário à frente não há janela, e inventar uma seria
+        # cravar o número da literatura sem decisão.
+        janela_rf = DRIFT_JANELA_RF
+        if janela_rf is None:
+            if ate_proximo is None or ate_proximo < 1:
+                return None
+            janela_rf = ate_proximo
+        return tatica_drift_pos_fomc.build_overlay(
+            list(ASSETS), dias_desde_fomc=desde,
+            surpresa_bps=float(self.surpresas[passados[-1]]),
+            orcamento_acoes=acoes, orcamento_rf=rf,
+            janela_acoes=DRIFT_JANELA_ACOES, janela_rf=janela_rf,
+            dias_ate_proximo_fomc=ate_proximo)
+
+    def __call__(self, data):
+        pregoes = self.retornos.index
+        sigma = sample_covariance(self.retornos, data=data)
+        views = [self._view_2_2(data, pregoes)]
+        overlays = [self._premio(data), self._drift(data)]
+        return sigma, views, overlays
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--raiz", default=".",
+                        help="diretório com data/ extraído do branch Paulo")
+    parser.add_argument("--duration-breakeven", type=float, required=True,
+                        help="duration do breakeven de 10 anos (view 2.2) — "
+                             "parâmetro de decisão humana, sem default")
+    parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
+    parser.add_argument("--orcamento-premio", type=float, default=None)
+    parser.add_argument("--orcamento-drift-acoes", type=float, default=None)
+    parser.add_argument("--orcamento-drift-rf", type=float, default=None)
+    parser.add_argument("--saida", default="Dump/analises/Backtest_v1.md")
+    args = parser.parse_args()
+
+    raiz = Path(args.raiz)
+    precos = load_etf_prices(raiz / "data/etf_prices_daily.parquet")[list(ASSETS)]
+    retornos = daily_returns(precos)
+    breakeven = load_fred(raiz / "data/raw/fred_T10YIE.csv") / PONTOS_PERCENTUAIS
+    dgs10 = load_fred(raiz / "data/raw/fred_DGS10.csv")
+    releases = load_cpi_releases(raiz / "data/raw/cpi_release_dates.csv")
+    diretorio = raiz / "data/raw/clob_exploracao"
+    mercados = mercados_de_cpi(releases, diretorio)
+    pmfs = {p: pmf_diaria(diretorio, p) for p in set(mercados.values())}
+
+    fomc = pd.to_datetime(pd.read_csv(raiz / "data/raw/fomc_dates.csv")["date"])
+    fomc = pd.DatetimeIndex(sorted(fomc))
+    # D6: ΔDTB3 do dia do FOMC no lugar da variação do ZQ (que não tem fonte
+    # grátis). É a surpresa REALIZADA, insumo do drift — não da view 2.3.
+    dtb3 = load_fred(raiz / "data/raw/fred_DTB3.csv")
+    surpresas = (dtb3.diff() * PONTOS_PERCENTUAIS).reindex(fomc).dropna()
+
+    orcamentos = {"premio": args.orcamento_premio,
+                  "drift_acoes": args.orcamento_drift_acoes,
+                  "drift_rf": args.orcamento_drift_rf}
+    montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
+                          args.duration_breakeven, fomc, surpresas, orcamentos)
+
+    # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
+    primeira_pmf = min(probs.index.min() for probs, _ in pmfs.values())
+    inicio = max(retornos.index[SIGMA_JANELA_PREGOES], primeira_pmf)
+    datas = retornos.index[retornos.index >= inicio]
+
+    resultado = run_backtest(retornos, montador, market_weights(ASSETS),
+                             datas=datas, tau=TAU, delta=DELTA,
+                             custo_bps=args.custo_bps)
+    tabela = summary(resultado, benchmark=retornos["SPY"])
+
+    linhas = ["# Backtest do v1 — BL com as views ativas (I5)\n",
+              "> Gerado por `scripts/backtest_v1.py`. Benchmark = comprar e "
+              "segurar SPY (consequência do `w_mkt` do prior CAPM). Custo de "
+              f"**{args.custo_bps:.1f} bps por lado** sobre o giro contra o peso "
+              "derivado (D8).\n",
+              f"- janela: **{datas[0].date()} a {datas[-1].date()}** "
+              f"({len(datas)} pregões)",
+              f"- views ativas no v1: 2.2 inflação — **2.3 e B fora por insumo "
+              f"que não chegou** (DFF/G8 e ZQ de dezembro)",
+              f"- camada tática: "
+              + ("desligada (orçamentos são decisão de reunião)"
+                 if not any(v is not None for v in orcamentos.values())
+                 else ", ".join(f"{k} = {v}" for k, v in orcamentos.items()
+                                if v is not None)) + "\n",
+              "| métrica | valor |", "|---|---|"]
+    for nome, valor in tabela.items():
+        linhas.append(f"| {nome} | {valor:,.4f} |")
+
+    linhas.append("\n## Giro — as duas checagens obrigatórias do D8\n")
+    linhas.append(f"- **giro diário médio:** {tabela['giro diário médio']:.4f} "
+                  "(fração do patrimônio negociada por dia, somando os dois lados)")
+    linhas.append(f"- **fração do giro desfeita em 1–2 pregões:** "
+                  f"{tabela['giro desfeito em 1–2 pregões']:.3f} — é o mecanismo "
+                  "que destruiu a GTAA diária da pesquisa do D8. Alto aqui **não** "
+                  "manda abandonar o H = 1 dia; manda testar banda de não-negociação.")
+    linhas.append(f"- **custo de breakeven:** "
+                  f"{tabela['custo de breakeven (bps por lado)']:.2f} bps por lado "
+                  f"contra os {args.custo_bps:.1f} bps premissados.\n")
+
+    Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
+    sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")
+
+
+if __name__ == "__main__":
+    main()
