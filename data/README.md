@@ -5,7 +5,9 @@
 Histórico diário de preços ajustados dos 9 ativos da camada estrutural
 (Decisão 1, fechada em `Decisoes_pendentes.md`).
 
-- **Gerado por:** `src/data_pipeline/download_prices.py` (parâmetros em `config/data_config.json`)
+- **Gerado por:** `scripts/g7_reajuste_etfs.py` (re-pull conjunto com o open — ver nota abaixo).
+  Pipeline original: `src/data_pipeline/download_prices.py` (parâmetros em `config/data_config.json`)
+- **Data/hora do download:** 2026-08-06T20:56:33+00:00 (UTC) — **mesmo pull** do `etf_open_daily.parquet`
 - **Fonte:** Yahoo Finance via `yfinance`, frequência diária
 - **Preço:** adjusted close (splits e dividendos já incorporados — `auto_adjust=True`)
 - **Formato:** tabela única, formato longo
@@ -16,12 +18,12 @@ Histórico diário de preços ajustados dos 9 ativos da camada estrutural
 | `ticker` | string | Um de: XLK, XLU, XLP, XLF, XLE, XLV, TIP, TLT, SPY |
 | `preco_ajustado` | float | Preço de fechamento ajustado |
 
-- **Período coberto:** 2003-12-05 → 2026-07-08 (janela comum aos 9 tickers;
+- **Período coberto:** 2003-12-05 → 2026-08-06 (janela comum aos 9 tickers;
   o limite inferior é a estreia do TIP, o ETF mais novo do universo).
   O histórico anterior dos demais tickers (SPY desde 1993, setoriais desde
   1998, TLT desde 2002) é descartado no recorte para garantir datas 100%
   alinhadas entre os 9 tickers, sem NaN.
-- **Linhas:** 51.129 (5.681 datas × 9 tickers)
+- **Linhas:** 51.318 (5.702 datas × 9 tickers)
 - **Validação:** `pytest tests/test_etf_prices.py`
 
 ## `etf_open_daily.parquet`
@@ -31,12 +33,16 @@ Arquivo **irmão** do `etf_prices_daily.parquet` com o **preço de abertura**
 de datas** — para as táticas que operam na abertura (gap de fim de semana,
 prêmio de anúncio na véspera → saída na abertura).
 
-- **Gerado por:** `scripts/g1_open_etfs.py`
+- **Gerado por:** `scripts/g7_reajuste_etfs.py` — **mesmo pull** do
+  `etf_prices_daily.parquet` (Open e Close saem do mesmo `yf.download`).
+  Substitui o `scripts/g1_open_etfs.py`, que baixava o open num pull separado.
+- **Data/hora do download:** 2026-08-06T20:56:33+00:00 (UTC) — **mesmo pull** do close
 - **Fonte:** Yahoo Finance via `yfinance`, frequência diária
 - **Base do Open:** ajustado (`auto_adjust=True`) — **a mesma base do close** que
-  está no `etf_prices_daily.parquet`. Escolhido para consistência interna (não
-  misturar close ajustado com open cru, o que geraria retorno intradiário falso
-  em dia de dividendo); a decisão metodológica final é do grupo.
+  está no `etf_prices_daily.parquet`, garantida por virem do MESMO pull.
+  Antes (follow-up 3, G7): open e close vinham de pulls em datas diferentes
+  (09/jul e 02/ago), o que colocava TIP e TLT em bases de ajuste diferentes
+  (ex-dividendos mensais entram no `auto_adjust` só do arquivo mais recente).
 - **Formato:** tabela única, formato longo
 
 | Coluna | Tipo | Descrição |
@@ -45,9 +51,9 @@ prêmio de anúncio na véspera → saída na abertura).
 | `ticker` | string | Um de: XLK, XLU, XLP, XLF, XLE, XLV, TIP, TLT, SPY |
 | `preco_abertura` | float | Preço de **abertura** ajustado (`auto_adjust=True`) |
 
-- **Período coberto:** 2003-12-05 → 2026-07-08 (idêntico ao arquivo de close).
-- **Linhas:** 51.129 (5.681 datas × 9 tickers) — reindexado às datas EXATAS do
-  arquivo de close; **0 dias com Open ausente**, alinhamento 100%.
+- **Período coberto:** 2003-12-05 → 2026-08-06 (idêntico ao arquivo de close).
+- **Linhas:** 51.318 (5.702 datas × 9 tickers) — mesmas datas EXATAS do
+  arquivo de close (mesmo pull); **0 dias com Open ausente**, alinhamento 100%.
 
 ## `polymarket_fed_reunioes.parquet`
 

@@ -2,6 +2,48 @@
 
 ---
 
+## 2026-08-06 — Paulo — FOLLOWUP3 (G7): unificar a base de ajuste dos dois parquets de ETF
+
+**O que foi feito:**
+- Respondido o `FOLLOWUP3_Pedido_Paulo_dados.md` (item único G7). O Felipe mediu que
+  `etf_open_daily.parquet` e `etf_prices_daily.parquet` estavam em bases de ajuste
+  diferentes: a razão abertura/fechamento de **TIP (−1,15%)** e **TLT (−0,41%)** ficava
+  num degrau em vez do ruído intradiário dos outros 7. Causa: os dois arquivos saíram de
+  pulls em datas diferentes (close 09/jul, open 02/ago) e o `auto_adjust=True` reescala
+  toda a história a cada ex-dividendo — TIP e TLT distribuem mensalmente.
+- **Conserto:** novo `scripts/g7_reajuste_etfs.py` — um único `yf.download(..., auto_adjust=True)`
+  e salva Open e Close a partir do MESMO objeto `raw`. Fonte/universo/janela inalterados
+  (yfinance, mesmos 9, período máximo comum); só a base passou a ser compartilhada. Formato
+  mantido (dois arquivos irmãos em formato longo).
+- **Resultado (ao vivo):** teste do G7 passou — TIP +0,000% e TLT −0,023%, todos os 9 dentro
+  de ± 0,1%. Janela esticou de 2003-12-05→2026-07-08 para **2003-12-05→2026-08-06** (+21
+  pregões; 51.129→51.318 linhas/arquivo), 0 NaN, mesmas datas nos dois arquivos.
+- **Fechamento mudou? SIM, só TIP e TLT** — deslocamento de NÍVEL de toda a história
+  (TIP ≈ −1,869%, TLT ≈ −0,791% nas 5.681 datas comuns; os outros 7 = 0,000%). Reportado ao
+  Felipe porque as medições dele de `k`/sensibilidade em cima do close de TIP/TLT precisam ser
+  refeitas; os outros 7 ficam.
+- `data/README.md` atualizado com a data/hora do download de cada arquivo (pedido do Felipe:
+  registrar timestamp para comparabilidade) e a nova janela/linhas.
+- Entregável: `docs/RESPOSTA_FOLLOWUP3_Pedido_Paulo_dados.md` (bloco `=== G7 ===` + Bloqueios +
+  Commit) + cópia em `~/Downloads/`.
+
+**O que quebrou:** nada. `pytest tests/test_etf_prices.py` segue passando (6 passed; o teste não
+fixa contagem de linhas nem data final).
+
+**Pendente:** G5 (série de volume, espera spec do Ω da Lia) e G6 (CPI 2022–2024, condicional à
+reunião) — inalterados desde o follow-up 2.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~45% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP3_Pedido_Paulo_dados.md' responda esse follow up 3 e crie uma resposta em md"
+- **Iterações até aceitar:** 1 rodada (execução direta; correção de dead-code num ternário do script antes de rodar).
+- **Erros da IA:** nenhum de método. Deixei um `if False` residual no comparador e um typo ("fechabelo") no MD — ambos corrigidos antes do commit.
+- **Decisões escaladas:** — (nenhuma nova; G7 é re-pull, não decisão metodológica).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up 3 — reprodutibilidade).
+
+---
+
 ## 2026-07-08/09 — Paulo — Organização: separação dos mercados Fed (passo de preparação, NÃO é decisão metodológica)
 
 **O que foi feito:**
