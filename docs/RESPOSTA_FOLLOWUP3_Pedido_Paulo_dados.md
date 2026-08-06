@@ -101,5 +101,5 @@ Nenhum. G7 rodou de ponta a ponta ao vivo, os dois arquivos saíram do mesmo pul
 ## Commit
 
 ```
-<preenchido no push>  (branch Paulo)
+87721ae  (branch Paulo)
 ```
