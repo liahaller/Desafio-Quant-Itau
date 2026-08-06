@@ -566,3 +566,55 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
   detectado pelas datas e corrigido antes da entrega.
 - **Decisões escaladas:** — (nenhuma nova).
 - **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up 2 — reprodutibilidade).
+
+## Sessão 2026-08-06 (G9) — Paulo
+
+**O que foi feito:**
+- Executado o `PEDIDO_G9_payrolls_Paulo.md` (calendário de payrolls + varredura de
+  mercados de payrolls no Polymarket), ao vivo, VPN ligada.
+- **G9a (calendário): BLOCKED.** As duas fontes nomeadas falharam: BLS `empsit.htm`
+  = **403** (bot-block do servidor, independe de VPN); FRED página
+  `fred.stlouisfed.org/release/dates?rid=50` = **000** (Akamai recusa a conexão por
+  esta rede, mesmo com VPN); FRED API `api.stlouisfed.org` = alcançável mas exige
+  **api_key** (não temos). `api.bls.gov` responde 200 mas só dá **valores** da série,
+  não datas de release. **Não fabriquei datas por regra** ("1ª sexta" tem exceções +
+  atrasos do shutdown de 2025). Byproduto: 5 datas de release + hora **8:30 AM ET**
+  extraídas do texto da regra de mercados do Polymarket (não é o calendário completo).
+- **G9b (varredura): POSITIVO.** `scripts/g9b_payrolls_polymarket.py` — 4 termos
+  (`payrolls`, `nonfarm`, `jobs report`, `unemployment rate`) no `/public-search`,
+  séries cruas via `/prices-history` (fidelity=720). Achado: **existe mercado mensal
+  de emprego US de 2025 em diante, em duas famílias multi-bucket** —
+  `how-many-jobs-added-in-<mês>` (NFP, 5–8 buckets, análogo direto ao CPI) e
+  `<mês>-unemployment-rate` (US, 4–9 buckets, mesmo relatório) — mais binários
+  `*-prints-negative` (jun/jul 2025) e meta de release-timing (out/2025, shutdown).
+  Grade de buckets **varia de tamanho** ao longo do tempo (como no CPI). Séries
+  multi-bucket **alcançam o dia do release** (slot de 12h anterior existe). Cobertura
+  janela 2025-01→2026-08: 15 meses com multi-bucket US (2 perturbados pelo shutdown:
+  set/nov 2025), 3 só binário/meta (jun/jul/out 2025), lacunas reais abr+mai 2025
+  (ago/2026 é o mês corrente, esperado). Filtrei mercados estrangeiros (Japão, México,
+  Brasil, UK, Índia, Canadá) que a busca por "unemployment rate" trouxe.
+- Artefatos: `data/raw/clob_exploracao/G9_payrolls_*.json` (234 séries cruas),
+  `data/raw/payrolls_polymarket_markets.csv` (33 linhas, resumo medido),
+  `docs/RESPOSTA_PEDIDO_G9_payrolls_Paulo.md` (formato G9a + G9b + Bloqueios + Commit).
+
+**O que quebrou:**
+- 1ª passada do `head -120` matou o script por SIGPIPE (série truncada) — re-rodado com
+  redirect a arquivo.
+- Atribuição de mês de referência via texto da regra falhava (jan/2025 virou falso
+  negativo; mercados estrangeiros contaminavam) — corrigido: mês vem do nome no slug +
+  ano inferido da data da série (mesmo padrão de desambiguação do G4), e filtro US-only.
+
+**Pendente:**
+- G9a segue bloqueado até haver uma FRED API key **ou** uma rede sem o bloqueio do Akamai.
+- Sem relação com G9: G5 (spec do Ω com a Lia) e G6 (reunião) continuam parados.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~40% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/PEDIDO_G9_payrolls_Paulo.md' responda isso em um md"
+- **Iterações até aceitar:** ~2 rodadas internas (fix do SIGPIPE/head; correção da
+  atribuição de mês + filtro US-only e re-run).
+- **Erros da IA:** 1ª tabela de cobertura tinha jan/2025 como falso negativo e mercados
+  estrangeiros misturados — detectado pelas datas de série e corrigido antes da entrega.
+- **Decisões escaladas:** — (nenhuma nova; G9a é bloqueio de acesso a dado, não decisão metodológica).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do G9 — reprodutibilidade).

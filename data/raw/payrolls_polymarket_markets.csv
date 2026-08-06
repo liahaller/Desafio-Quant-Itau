@@ -1,0 +1,34 @@
+mes_referencia,familia,slug,title,estrutura,n_buckets,volume,release_regra,hora_et_regra,serie_first,serie_last,found_by
+?,release_timing_meta,next-bls-jobs-report-during-government-shutdown,Next BLS jobs report during government shutdown?,binário (Yes/No),1,97843.630572,?,?,2025-10-08,2025-11-13,jobs report
+April 2026,nfp_jobs_added,how-many-jobs-added-in-april-296,How many jobs added in April?,8 buckets,8,27887.747325,2026-05-08,8:30 AM,2026-04-08,2026-05-08,payrolls;nonfarm;jobs report
+April 2026,unemployment_rate,april-unemployment-rate-372,April Unemployment Rate,9 buckets,9,90148.990858,?,?,2026-04-05,2026-05-08,payrolls;nonfarm;unemployment rate
+August 2025,nfp_jobs_added,how-many-jobs-added-in-august-643,How many jobs added in August?,5 buckets,5,341765.492713,?,?,2025-07-29,2025-09-05,jobs report
+August 2025,nfp_prints_negative,august-jobs-report-prints-negative,August jobs report prints negative?,binário (Yes/No),1,31704.115169,?,?,2025-07-29,2025-09-05,jobs report
+August 2025,unemployment_rate,august-unemployment-rate,August Unemployment Rate,6 buckets,6,206392.84752,?,?,2025-08-13,2025-09-05,jobs report
+December 2024,nfp_jobs_added,how-many-jobs-added-in-december,How many jobs added in December?,6 buckets,6,227961.37018,?,?,2024-12-12,2025-01-10,payrolls;nonfarm
+December 2024,unemployment_rate,december-unemployment-rate,December Unemployment Rate,4 buckets,4,54480.33424,?,?,2024-12-12,2025-01-10,unemployment rate
+December 2025,nfp_jobs_added,how-many-jobs-added-in-december-853,How many jobs added in December?,7 buckets,7,18398.790639,?,?,2025-12-17,2026-01-09,payrolls;nonfarm;jobs report
+December 2025,unemployment_rate,december-unemployment-rate-938,December Unemployment Rate,6 buckets,6,74256.378521,?,?,2025-12-17,2026-01-09,payrolls;nonfarm;jobs report
+February 2025,unemployment_rate,february-unemployment-rate,February Unemployment Rate,5 buckets,5,224625.972601,?,?,2025-02-09,2025-03-07,unemployment rate
+February 2026,nfp_jobs_added,how-many-jobs-added-in-february-246,How many jobs added in February?,8 buckets,8,,2026-03-06,8:30 AM,2026-02-12,2026-03-06,payrolls;nonfarm;jobs report
+January 2025,nfp_jobs_added,how-many-jobs-added-in-january,How many jobs added in January?,6 buckets,6,138367.60674,?,?,2025-01-14,2025-02-07,payrolls;nonfarm
+January 2025,unemployment_rate,january-unemployment-rate,January Unemployment Rate,4 buckets,4,47880.147735,?,?,2025-01-14,2025-02-07,unemployment rate
+January 2026,nfp_jobs_added,how-many-jobs-added-in-january-321,How many jobs added in January?,7 buckets,7,307919.179125,?,?,2026-01-10,2026-02-11,payrolls;nonfarm;jobs report
+January 2026,unemployment_rate,january-unemployment-rate-333,January Unemployment Rate,6 buckets,6,101106.4679,?,?,2026-01-10,2026-02-11,payrolls;nonfarm;jobs report
+July 2025,nfp_prints_negative,july-jobs-report-prints-negative,July jobs report prints negative?,binário (Yes/No),1,4154.924488,?,?,2025-07-04,2025-08-01,jobs report
+July 2026,nfp_jobs_added,how-many-jobs-added-in-july-20260702221813246,How many jobs added in July?,6 buckets,6,27436.201928,2026-08-07,8:30 AM,2026-07-03,2026-08-06,payrolls;nonfarm
+July 2026,unemployment_rate,july-unemployment-rate-20260702221240753,July Unemployment Rate,9 buckets,9,41297.082328,?,?,2026-07-03,2026-08-06,unemployment rate
+June 2025,nfp_prints_negative,june-jobs-report-prints-negative,June jobs report prints negative?,binário (Yes/No),1,30672.167773,?,?,2025-07-03,2025-07-03,jobs report
+June 2026,nfp_jobs_added,how-many-jobs-added-in-june-20260605153057140,How many jobs added in June?,6 buckets,6,15950.259064,2026-07-02,8:30 AM,2026-06-06,2026-07-02,payrolls;nonfarm
+June 2026,unemployment_rate,june-unemployment-rate-734,June Unemployment Rate,9 buckets,9,38666.909204,?,?,2026-06-06,2026-07-02,unemployment rate
+March 2025,unemployment_rate,march-unemployment-rate,March Unemployment Rate,5 buckets,5,57366.479307,?,?,2025-03-08,2025-04-04,unemployment rate
+March 2026,unemployment_rate,march-unemployment-rate-561,March Unemployment Rate,9 buckets,9,308214.04737499997,?,?,2026-02-14,2026-03-28,payrolls;nonfarm;jobs report;unemployment rate
+May 2026,nfp_jobs_added,how-many-jobs-added-in-may-945,How many jobs added in May?,6 buckets,6,13160.732603999995,2026-06-05,8:30 AM,2026-05-09,2026-06-05,payrolls;nonfarm
+May 2026,unemployment_rate,may-unemployment-rate-168,May Unemployment Rate,9 buckets,9,23463.274149,?,?,2026-05-09,2026-06-05,unemployment rate
+November 2024,unemployment_rate,november-unemployment-rate,November Unemployment Rate,4 buckets,4,68388.367987,?,?,2024-11-15,2024-12-06,unemployment rate
+November 2025,nfp_jobs_added,how-many-jobs-added-in-november-693,How many jobs added in November?,7 buckets,7,22082.496897,?,?,2025-12-11,2025-12-16,jobs report
+November 2025,unemployment_rate,november-unemployment-rate-765,November Unemployment Rate,6 buckets,6,182318.980923,?,?,2025-11-19,2025-12-16,jobs report
+October 2024,unemployment_rate,unemployment-rate-over-4pt1-in-october,Unemployment rate over 4.1% in October?,binário (Yes/No),1,517210.602913,?,?,2024-10-09,2024-11-01,unemployment rate
+October 2025,outro,will-the-next-bls-employment-situation-report-be-released-by-october-3-2025-830-am-et,"Next BLS jobs report by Oct 3, 2025, 8:30 AM ET?",binário (Yes/No),1,73136.405751,?,?,2025-10-03,2025-10-03,jobs report
+September 2025,nfp_jobs_added,how-many-jobs-added-in-september-522,How many jobs added in September?,7 buckets,7,393331.04557,?,?,2025-09-07,2025-11-07,jobs report
+September 2025,unemployment_rate,september-unemployment-rate,September Unemployment Rate,6 buckets,6,347038.750501,?,?,2025-09-06,2025-11-07,jobs report
