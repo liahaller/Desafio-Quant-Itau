@@ -166,4 +166,4 @@ sua** — eu só reporto estrutura, volume e se a série alcança o dia do anún
 ## Commit
 
 - **Branch:** `Paulo`
-- **Hash:** `<PREENCHER_APOS_COMMIT>`
+- **Hash:** `6daebbf` (G9a via FRED API; G9b em `5c72edb`)
