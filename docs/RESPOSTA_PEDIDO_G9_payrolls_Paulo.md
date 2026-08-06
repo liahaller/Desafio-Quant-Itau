@@ -167,4 +167,4 @@ sua** — eu só reporto estrutura, volume e se a série alcança o dia do anún
 ## Commit
 
 - **Branch:** `Paulo`
-- **Hash:** `<PREENCHER_APOS_COMMIT>`
+- **Hash:** `5c72edb` (+ este preenchimento do hash em commit seguinte)
