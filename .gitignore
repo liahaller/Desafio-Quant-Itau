@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+
+# Segredos locais (NUNCA versionar chaves de API)
+config/secrets.json
+.env

@@ -604,8 +604,17 @@ ambíguos. Tarefas 2/3 seguem pausadas conforme instrução.
   negativo; mercados estrangeiros contaminavam) — corrigido: mês vem do nome no slug +
   ano inferido da data da série (mesmo padrão de desambiguação do G4), e filtro US-only.
 
+**Addendum (mesma sessão) — G9a DESTRAVADO:**
+- O Paulo forneceu uma **FRED API key** gratuita. Criado `scripts/g9a_payrolls_calendar.py`
+  (chave lida de `config/secrets.json`, **git-ignored** via novo `.gitignore`; a chave NÃO
+  é versionada). Gerado `data/raw/payrolls_release_dates.csv` — 23 datas, dez/2024→nov/2026,
+  mesmo cabeçalho do cpi_release_dates.csv. `release_date` medido; `mes_referencia` derivado
+  (mês−1) com a ressalva do **shutdown 2025** sinalizada CRU no CSV (gap de 76 dias
+  2025-09-05→2025-11-20). Validação cruzada: as 5 datas em comum com as regras dos mercados
+  (G9b) batem 100%. Doc G9a atualizado de "bloqueado" para "resolvido".
+
 **Pendente:**
-- G9a segue bloqueado até haver uma FRED API key **ou** uma rede sem o bloqueio do Akamai.
+- G9a: só resíduo o remanejo do shutdown 2025 (correção com o Felipe no tratamento).
 - Sem relação com G9: G5 (spec do Ω com a Lia) e G6 (reunião) continuam parados.
 
 **Uso de IA:**

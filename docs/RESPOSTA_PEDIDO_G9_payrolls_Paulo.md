@@ -2,65 +2,65 @@
 
 > **Do Paulo (pipeline de dados) para o Felipe.** Levantamento, não decisão. Campo não
 > medido vai como `?`; dado cru não normalizado. Sessão de 2026-08-06, VPN ligada,
-> medido ao vivo contra a API real do Polymarket.
+> medido ao vivo contra as APIs reais.
 >
 > **Resumo em uma linha:** o Polymarket **tem** mercado mensal de emprego dos EUA de 2025
-> em diante (em duas famílias, ambas multi-bucket) — a amostra pode de fato crescer. **Mas
-> o calendário oficial de release (G9a) ficou bloqueado**: BLS segue 403 e o FRED está
-> inalcançável por esta rede (detalhe em Bloqueios).
+> em diante (duas famílias, ambas multi-bucket) — a amostra pode de fato crescer. E o
+> **calendário oficial de release (G9a) foi destravado** via FRED API (chave gratuita) —
+> 23 datas, dez/2024→nov/2026. As 5 datas que os dois lados têm em comum batem 100%.
 
 ---
 
 ## G9a — Calendário de divulgação dos payrolls
 
-**Bloqueado nas duas fontes nomeadas (BLS e FRED).** Reporto qual falhou e como, conforme pedido.
+**Resolvido via FRED API** (a 2ª fonte do pedido), com uma chave gratuita. O BLS continuou
+403 e a *página* do FRED continua bloqueada por esta rede — mas a **API** do FRED
+(`api.stlouisfed.org`) é alcançável e, com chave, entrega o `release_id=50` inteiro.
 
 ```
 === G9a — CALENDÁRIO DE PAYROLLS ===
-Fonte usada:            NENHUMA das duas funcionou (ver abaixo)   (precisa de chave? ver abaixo)
-Arquivo salvo:          — (não gerado; não invento datas sem fonte)
-Nº de linhas:           ?
-Janela:                 ?
-Colunas:                (alvo, igual ao cpi_release_dates.csv: release_date, time_et, mes_referencia, fonte)
-Hora de divulgação:     8:30 AM ET   (declarada pela regra dos próprios mercados do Polymarket — ver G9b)
-Meses faltando no meio: ?  (não há calendário para medir buracos)
+Fonte usada:            https://api.stlouisfed.org/fred/release/dates?release_id=50   (precisa de chave? SIM — FRED API key gratuita)
+Arquivo salvo:          data/raw/payrolls_release_dates.csv
+Nº de linhas:           23
+Janela:                 December 2024 → November 2026  (mês de referência)
+Colunas:                release_date, time_et, mes_referencia, fonte
+Hora de divulgação:     8:30 AM ET  (o FRED não declara; hora padrão do BLS, confirmada pela regra dos mercados no G9b)
+Meses faltando no meio:  1 buraco real — nenhum release entre 2025-09-05 e 2025-11-20 (76 dias; shutdown de 2025)
 ```
+
+**Script:** `scripts/g9a_payrolls_calendar.py` (chave lida de `config/secrets.json`, que está
+no `.gitignore` — a chave **não** vai para o repositório).
+
+**O que é medido vs. derivado (honestidade):**
+- `release_date` = **MEDIDO** (data que o FRED lista para o release id 50).
+- `mes_referencia` = **DERIVADO** por `mês(release) − 1` (o Employment Situation sai no início
+  do mês seguinte). Regra determinística — **exceto na janela do shutdown de 2025**, onde o BLS
+  remanejou o cronograma e a derivação **não bate 1:1**. Marquei isso **cru** no CSV (coluna
+  `fonte` da linha 2025-11-20 traz `[ATENCAO: gap de 76 dias … shutdown …]`) — **a correção é
+  sua**, no tratamento, como combinado.
+- `time_et` = "8:30 AM": o FRED não declara hora; é a hora padrão do BLS, **confirmada** pela
+  regra dos mercados do Polymarket (G9b). Sinalizado na coluna `fonte`.
 
 **Tentativas, ao vivo (2026-08-06, VPN ligada):**
 
-| Fonte candidata | URL exata | Precisa de chave? | Resultado |
+| Fonte candidata | URL exata | Chave? | Resultado |
 |---|---|---|---|
-| **(1) BLS — schedule** | `https://www.bls.gov/schedule/news_release/empsit.htm` | NÃO | **HTTP 403** (bot-block do servidor; independe de VPN — igual ao G6 do follow-up 2) |
-| **(2a) FRED — página de release dates** | `https://fred.stlouisfed.org/release/dates?rid=50` (Employment Situation = release id 50) | NÃO | **Conexão falha (000)**: o DNS resolve para o Akamai, mas o handshake é recusado por esta rede, mesmo com VPN e User-Agent de browser |
-| **(2b) FRED — API** | `https://api.stlouisfed.org/fred/release/dates?release_id=50&file_type=json` | **SIM (api_key)** | **HTTP 400** = alcançável, mas exige `api_key` (não temos chave no projeto) |
+| (1) BLS — schedule | `www.bls.gov/schedule/news_release/empsit.htm` | NÃO | **403** (bot-block do servidor; independe de VPN) |
+| (2a) FRED — página | `fred.stlouisfed.org/release/dates?rid=50` | NÃO | **000** (Akamai recusa a conexão por esta rede, mesmo com VPN) |
+| **(2b) FRED — API** ✅ | `api.stlouisfed.org/fred/release/dates?release_id=50` | **SIM** | **200 — USADA** (chave FRED gratuita) |
 
-- O `api.bls.gov/publicAPI/v2` (API pública de séries do BLS) responde **200**, mas devolve os
-  **valores** da série (ex.: `CES0000000001`), **não as datas de divulgação** — não serve para o calendário.
-- **Não fabriquei o calendário por regra** (ex.: "primeira sexta-feira do mês"): a regra tem
-  exceções reais (feriados; e em 2025 os atrasos do *shutdown* — ver G9b), então uma data derivada
-  contaminaria a medição. Um `?` honesto aqui é melhor que um número inventado.
+- `api.bls.gov/publicAPI/v2` responde 200 mas só dá **valores** da série, não datas de release — não serve.
 
-**Byproduto parcial (não é o calendário oficial):** o texto da *regra* de alguns mercados de
-payrolls do Polymarket declara a data e hora do release. Consegui extrair **5** datas (as recentes),
-todas **8:30 AM ET** — batendo com a convenção do Employment Situation:
+**Validação cruzada (dois lados independentes batem 100%):** as 5 datas que a regra dos mercados
+do Polymarket declara (G9b) são idênticas às do FRED:
 
-| Mês de referência | Release (da regra do mercado) | Hora |
+| Mês de referência | FRED (G9a) | Regra do mercado (G9b) |
 |---|---|---|
-| February 2026 | 2026-03-06 | 8:30 AM ET |
-| April 2026 | 2026-05-08 | 8:30 AM ET |
-| May 2026 | 2026-06-05 | 8:30 AM ET |
-| June 2026 | 2026-07-02 | 8:30 AM ET |
-| July 2026 | 2026-08-07 | 8:30 AM ET |
-
-A maioria das descrições **não** traz a frase "released on … at … ET", então isso **não** reconstrói
-a janela inteira — fica como confirmação da hora (8:30 ET) e de 5 datas, não como o calendário.
-
-**Como destravar o G9a (decisão sua):** (a) uma **FRED API key** (grátis, registro no site do FRED)
-— destrava o `release_id=50` inteiro; ou (b) rodar o scrape do BLS/FRED de uma rede sem o bloqueio
-do Akamai. Fora isso, o G9a permanece `?`.
-
-> Script pronto que já tenta as duas fontes na ordem certa: `scripts/followup_calendars.py` (rota
-> FOMC/CPI) — o payroll seguiria o mesmo padrão assim que uma das fontes abrir.
+| February 2026 | 2026-03-06 | 2026-03-06 ✓ |
+| April 2026 | 2026-05-08 | 2026-05-08 ✓ |
+| May 2026 | 2026-06-05 | 2026-06-05 ✓ |
+| June 2026 | 2026-07-02 | 2026-07-02 ✓ |
+| July 2026 | 2026-08-07 | 2026-08-07 ✓ |
 
 ---
 
@@ -156,15 +156,14 @@ sua** — eu só reporto estrutura, volume e se a série alcança o dia do anún
 
 ## Bloqueios
 
-- **G9a (calendário oficial): bloqueado.** BLS = **403** (bloqueio de bot do servidor, independe de
-  VPN); FRED página = **conexão recusada (000)** por esta rede (Akamai), mesmo com VPN; FRED API =
-  alcançável mas exige **api_key** (não temos). Não fabriquei datas por regra. **Destrava com uma FRED
-  API key** ou rodando de uma rede sem o bloqueio do Akamai. Byproduto: 5 datas + a hora 8:30 ET
-  confirmadas pela regra dos mercados (não é o calendário completo).
+- **G9a: destravado** com FRED API key gratuita (o BLS segue 403 e a *página* do FRED segue
+  bloqueada por esta rede, mas a **API** do FRED resolve). Único resíduo, **sinalizado e cru**: a
+  janela do **shutdown de 2025** (set–nov/2025) tem 1 release remanejado — o `mes_referencia`
+  derivado ali não bate 1:1; correção fica com o Felipe no tratamento.
 - **Sem relação com G9 (continuam parados):** G5 (volume no tempo) espera a spec do Ω com a Lia; G6
   (CPI 2022–2024) segue condicional à reunião.
 
 ## Commit
 
 - **Branch:** `Paulo`
-- **Hash:** `5c72edb` (+ este preenchimento do hash em commit seguinte)
+- **Hash:** `<PREENCHER_APOS_COMMIT>`
