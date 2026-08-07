@@ -1,5 +1,113 @@
 # LOG de sessões
 
+## 2026-08-07 (sessão 7) — Felipe
+
+**Contexto da sessão:** duas partes. (1) Leitura do estado das decisões a pedido
+do dono — o "9" citado na sessão 6 era ambíguo (seção 9 do branch `Felipe` × D9
+do branch `Paulo`), que é o próprio problema registrado no topo do
+`Decisoes_pendentes.md`. (2) Chegou o `RESPOSTA3` da Lia (midpoint + portão de
+volume): fechar tudo que ela pede ou corrige.
+
+**1. Os quatro pedidos dela, fechados.**
+
+- **Chaves derivadas em runtime (item 2):** já era o comportamento
+  (`aplicar_veto` monta `nomes` a partir de `view_results`). Mas o medo dela
+  tinha caso real: `VIEWS_ATIVAS` no `src/config.py` era constante escrita à
+  mão, **não lida por ninguém** e **desatualizada** (ainda listava a B, fora do
+  v1 desde 07/08). **Apagada**, com o motivo no lugar. Docstring do
+  `aplicar_veto` passou a dizer que a derivação é do `view_results`, para
+  ninguém "consertar" reintroduzindo constante.
+- **Piso × `score_coerencia` (item 3):** aceito o argumento de regimes disjuntos.
+  Compromisso escrito dos dois lados do meu: comentário em
+  `view_2_3_fed.py::SOMA_MINIMA` (**o piso é degrau e não vira rampa**) e bloco
+  na seção 12 do `Decisoes_pendentes.md`, com a contrapartida dela (o único
+  portão binário da régua dela continua sendo o volume) e a ressalva de poder
+  discriminante.
+- **G5 `0` × `NaN` (item 4):** é decisão do **Paulo** (D12 do branch dele), não
+  minha. Repassei a decisão dela com o raciocínio do midpoint semeado em
+  `Dump/trocas/FOLLOWUP5_Pedido_Paulo_dados.md`. Não fechei nada no módulo dele.
+- **Protocolo anti-overfit (item 6):** registrado na seção 10 como **posição
+  dela, não fechada** — é de grupo. Concordo e levo assim para a reunião.
+
+**2. Decisão 6a fechada — pela DONA dela, não por mim.** No `RESPOSTA3` a Lia
+declara que colapsa PMF→`p` do lado dela, a partir da `serie_janela` (opção 1).
+Marcada 🟢 com escopo explícito: fechou **quem calcula** (a pergunta de
+interface); a **forma** do colapso segue dela, com duas candidatas em teste.
+Nada muda no meu módulo — `dp_variacao_janela` continua `NaN` em multi-bucket.
+
+**3. A correção que motivou o retorno: renormalizar a `serie_janela` crua não
+reproduz o `p` da view.** Ela pretende colapsar sobre a série "renormalizada".
+Entre a série crua e o que a view consome rodam três passos, e dois mudam o
+número:
+
+| Passo | Efeito que ela não vê |
+|---|---|
+| `carry_missing` (D6.1) | faixa faltante **herda a última leitura**; renormalizar a linha crua espalha a massa da ausente nas presentes — o tratamento que a 6.1 rejeitou |
+| piso de 0,9 (seção 12) | linha degenerada **mata o dia**; renormalizada, ela vira PMF de aparência normal e entra na medição de um dia em que não houve view |
+| `daily_preopen` | `serie_janela` tem 2 slots/dia (00:00 e 12:00 UTC), a view vê 1 — o `p_t − p_{t−1}` dela é de 12 h, o da view é de 24 h |
+
+Conserto é de uma linha do lado dela (`carry_missing` é `pmf.ffill()`, e ela
+pode importar). Ofereci entregar um `serie_janela_tratada` pronto no
+`diagnostics` **se ela quiser** — não fiz, porque volta a pôr tratamento meu
+dentro do insumo da régua dela, que é de onde ela fugiu no 6a.
+
+**Quebrou / aprendido:**
+- **Constante morta é a pior forma do bug que ela descreveu:** `VIEWS_ATIVAS`
+  não quebrava nada porque ninguém a lia — e estava errada havia uma sessão
+  inteira. O pedido dela ("derive as chaves") era sobre um risco que eu achava
+  que não existia no meu código, e existia num arquivo ao lado.
+- **Aceitar o pedido não é o mesmo que ele estar completo.** Os quatro itens
+  dela fechavam sem trabalho; o que valeu a sessão foi o passo 1 da lista *dela*
+  (colapso sobre a série renormalizada), que não era pedido nenhum e teria
+  produzido um `p` diferente do da view sem ninguém perceber.
+- **Achado operacional:** não existe `data/` na árvore do branch `Felipe` — os
+  parquets e os CSVs do FRED estão commitados no branch `Paulo`, e trocar de
+  branch os apaga daqui. **O backtest não roda no estado atual** até os dados
+  serem restaurados. Não mexi: puxar `data/` do branch dele mistura arquivo de
+  outro dono e é decisão do dono da sessão.
+
+**Pendente:**
+
+*Envio (do dono):*
+- `RESPOSTA3_Lia_portao_renormalizacao.md` (Lia) e `FOLLOWUP5_Pedido_Paulo_dados.md`
+  (Paulo). O FOLLOWUP5 é o **único item que ainda bloqueia a régua dela**.
+
+*Depende de terceiros:*
+- **D12 do branch `Paulo`** (`0` × `NaN` do G5) — agora com a resposta dela na mão.
+- **D9 do branch `Paulo`** (overlap dos mercados de FOMC) — segue sem recado meu.
+- **Régua do `c`** (Lia): colapso, portão, monotonicidade, entrega.
+
+*Reunião (grupo):*
+- Protocolo anti-overfit da Lia (seção 10) — forma × nível × teto.
+- Nível e escopo do teto; revisão das provisórias 9/10/11/12; esquema de
+  numeração das decisões; orçamentos da camada tática.
+
+*Trabalho meu:*
+- Restaurar/combinar o acesso ao `data/` (sem isso nada roda).
+- Curva do `c` vetorial; semear a média expansiva da 2.3 com histórico
+  pré-janela; banda de não-negociação.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~50k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "na ultima sessão você falou de uma decisão 9 e
+  de decisões provisórias, me ajude a entender melhor o estado das decisões e do
+  projeto agora. O que ja foi feito o que esta congelado, o que ja pode ser feito
+  etc. e também me explique por que algumas decisões estão como provisórias"
+- **Iterações até aceitar:** 1 — sem rodada de correção. O segundo prompt do dono
+  ("feche tudo que ela pede ou corrige") mudou de tarefa, não corrigiu a anterior.
+- **Erros da IA:** nenhum apanhado nesta sessão. Suíte re-rodada após as três
+  edições de código: **179 verdes**.
+- **Decisões escaladas:** 1 marcada 🟢 (**6a**, fechada pela DONA dela no
+  `RESPOSTA3` — registrei, não decidi); 2 posições registradas sem fechar
+  (protocolo anti-overfit na seção 10; compromisso de interface do piso na seção
+  12); 1 repassada ao dono (**D12 do `Paulo`**).
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"ler o que o outro lado vai
+  FAZER, não só o que ele PEDE"**: os quatro pedidos fechavam sem trabalho, e o
+  único erro real da troca estava no plano dela, num passo que não era pergunta.
+
+---
+
 ## 2026-08-07 (sessão 6) — Felipe
 
 **Contexto da sessão:** chegaram as duas respostas (Lia — decisão 6a e pedido de

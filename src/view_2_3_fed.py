@@ -46,6 +46,15 @@ MARKET_ASSET = "SPY"
 # 801 dias vêm degenerados, 24 deles com soma < 0,5 (mercado sem preço no
 # livro). Renormalizar uma soma de 0,001 fabrica PMF sem lastro; abaixo do
 # piso a view SAI pela cascata, como se não houvesse mercado.
+#
+# ⚠️ COMPROMISSO DE INTERFACE com o Ω da Lia (RESPOSTA3, 2026-08-07): este piso
+# é DEGRAU e não vira rampa. Ele e o `score_coerencia` dela (que pune
+# `−|soma − 1|`, bilateral) só não contam duas vezes porque os regimes são
+# disjuntos: soma < 0,9 mata a view aqui e ela nem chega ao Ω; soma ≥ 0,9 é
+# território só dela. Transformar o piso em gradiente reintroduz a dupla
+# punição — e o teste de monotonicidade dela NÃO pegaria (os dois ingredientes
+# se movem juntos). Do lado dela, a contrapartida é que o único portão binário
+# da régua continua sendo o volume.
 SOMA_MINIMA = 0.9
 
 

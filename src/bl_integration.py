@@ -93,6 +93,10 @@ def aplicar_veto(view_results, ativa, incerteza=None):
     levanta exceção — veta a view errada, o backtest roda igual e o número sai
     diferente sem avisar. Com chave por nome, o mesmo erro vira ValueError.
 
+    A lista de chaves válidas é DERIVADA de `view_results` a cada chamada, não
+    de constante escrita à mão (pedido dela de 2026-08-07): o nome vive só onde
+    a view o emite, então a validação cobre todos os lugares em que ele existe.
+
     Devolve `(view_results, incerteza)` já alinhados entre si: a lista com os
     vetados virados None, e o `incerteza` como VETOR na ordem de `stack_views`,
     reduzido aos sobreviventes, pronto para `omega_fallback`.

@@ -89,7 +89,7 @@ Como volume, estabilidade, convergência e proximidade de evento viram um númer
 
 **Decisão:** _(a registrar)_
 
-### 6a. Como colapsar uma PMF multi-bucket no `p` que alimenta o `score_estabilidade` 🔴
+### 6a. Como colapsar uma PMF multi-bucket no `p` que alimenta o `score_estabilidade` 🟢
 Surgiu na implementação do `diagnostics` (sessão de 2026-08-07), depois da resposta da Lia.
 
 **Contexto:** a Lia definiu `dp_variacao_janela` como "desvio-padrão das diferenças `p_t − p_{t−1}`". Em view binária o `p` é inequívoco. **Em mercado multi-bucket não existe um `p`** — a leitura de um slot é um vetor de 5 a 9 faixas. Hoje o campo sai `NaN` nesses mercados (`src/poly_loader.py::diagnostics_qualidade`), e a série crua completa vai em `serie_janela`.
@@ -106,7 +106,18 @@ Surgiu na implementação do `diagnostics` (sessão de 2026-08-07), depois da re
 
 **Fato de interface a comunicar junto (não é decisão):** entre a série crua e o que a view consome roda o `carry_missing` (D4/6.1). Ou seja, **a view nunca vê o buraco** que o `diagnostics` reporta — o modelo já o tapou carregando a última leitura. Isso muda como ela lê `n_slots_esperados − n_pontos`.
 
-**Decisão:** _(a registrar — depende da Lia)_
+**Decisão (declarada pela DONA da decisão em 2026-08-07, `RESPOSTA3`):
+opção 1 — ela colapsa do lado dela, a partir da `serie_janela`.** O
+`dp_variacao_janela` continua saindo `NaN` de propósito em mercado multi-bucket
+e **nada muda no meu módulo**. A forma do colapso segue dela (duas candidatas em
+teste); o que fechou aqui é **quem calcula**, que era a pergunta de interface.
+
+⚠️ **Ressalva de reprodução, levantada por mim no retorno (não é decisão):** ela
+pretende colapsar sobre a `serie_janela` **renormalizada**, e a `serie_janela` é
+CRUA — renormalizar a linha crua **não** reproduz o `p` que a view consome. Entre
+uma e outra rodam o `carry_missing` (D6.1: faixa sem preço herda a última
+leitura, em vez de a massa dela ser espalhada nas presentes) e, na 2.3, o piso de
+soma 0,9 (a linha degenerada mata o dia em vez de virar PMF renormalizada).
 
 ## 7. Convergência entre fontes (polls, casas de aposta) 🟡
 Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
@@ -222,6 +233,24 @@ grupo.** Ela também corrige o alvo: **δ = 3,0 não é parâmetro livre, é
 observável** (medido no nosso SPY), então não é ele que precisa fechar junto com
 a escala do `c` — é o teto.
 
+**Segunda posição da Lia (`RESPOSTA3`, 2026-08-07) — protocolo anti-overfit,
+registrado, NÃO fechado (é do grupo):** com o excesso agora positivo (+2,68 pp),
+um `c` global alto passa a ser **custo** e não conserto — e ela levanta o risco
+de processo de eu e ela alternarmos ajustes olhando o resultado ("ela calibra o
+`c`, o grupo mexe o teto vendo o número, ela recalibra vendo o número"), que
+vira overfit em dois passos sem nenhum dos lados perceber. Proposta dela:
+
+1. a **forma** do `c` sai do teste de monotonicidade (erro realizado da
+   probabilidade) e **não é revisitada por resultado de backtest**;
+2. o **nível** global é escolhido **uma única vez**, na conversa de risco, junto
+   com o teto;
+3. se o resultado depois desagradar, mexe-se no **teto**, não na régua.
+
+**O Felipe concorda e leva assim para a reunião.** Ela também registra que o
+número do escopo (teto no tilt +2,68 pp × teto de carteira −7,91 pp na mesma
+alavancagem de 1,90) responde a "questão de desenho aberta" acima com medição,
+não com opinião — mas **a escolha continua do grupo**.
+
 ---
 
 ## 11. Sessão de 2026-08-07 (sessão 5) — view B fora do v1 🟢 (provisória)
@@ -300,6 +329,27 @@ Com a PMF é view de verdade.
 |---|---|---|
 | **`E_FF` da 2.3** | **`DTB3 − DFF`, com a surpresa DEMEANADA por janela expansiva** (mesma construção da D7.4 da 2.2) | A espec (item 2) diz que `E_FF` nunca degrada e sai do ZQ. Não há ZQ grátis (F6). O substituto tem horizonte de ~3 meses contra uma reunião, e a demeanagem trata o viés de nível **sem** consertar o descasamento em si. |
 | **PMF degenerada** | soma crua `< 0,9` → **view desativada no dia** (cascata), `SOMA_MINIMA` em `view_2_3_fed.py` | Piso escolhido sobre o medido (27 de 801 dias ruins, 24 deles com soma < 0,5), não sobre teoria. Na janela do v1 ele **não mordeu nenhum dia** (soma ficou em 0,969–1,013) — está lá para o dado futuro. |
+
+**Compromisso de interface com o Ω da Lia (`RESPOSTA3`, 2026-08-07) — escrito
+dos dois lados, a pedido dela:** o piso de 0,9 e o `score_coerencia` dela
+(`−|soma − 1|`) **não** são dois cortes na mesma coisa, porque os regimes são
+**disjuntos** — soma crua < 0,9 mata a view na minha cascata (ela nem chega ao
+Ω, não existe `c` para ela); soma ≥ 0,9 é território só do score dela. A
+assimetria é a favor: meu corte é só por baixo, o dela é bilateral (a soma de
+1,32 medida no mercado de cortes do Fed passa inteira pela cascata e só o score
+dela pega).
+
+O compromisso que mantém isso verdadeiro: **o meu piso não vira rampa** (está
+comentado em `view_2_3_fed.py::SOMA_MINIMA`) e **o único portão binário da régua
+dela continua sendo o volume**. No dia em que qualquer um dos dois lados mudar,
+isso vira dupla contagem — e o teste de monotonicidade dela **não pegaria**, por
+os dois ingredientes se moverem juntos.
+
+**Ressalva dela, registrada:** com a soma da 2.3 entre 0,969 e 1,013 na janela do
+v1, o ingrediente de coerência tem pouca variação; se ele reprovar no teste de
+monotonicidade, pode ser **falta de poder discriminante**, não sinal errado — ela
+vai reportar a distinção em vez de deixar o relatório concluir que "o desarranjo
+não prevê erro".
 
 **Opções descartadas (registradas para a ata):** (A) usar cru — mantém viés de
 +4,89 bps e a view fica do mesmo lado em 83% dos dias; (C) escalar a âncora por

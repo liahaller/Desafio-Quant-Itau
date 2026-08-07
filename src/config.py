@@ -37,8 +37,15 @@ TAU = 1.0 / SIGMA_JANELA_PREGOES
 # --- Views ativas no v1 -----------------------------------------------------
 # D2/D2b/D2c: as poly-defasadas saíram (2.4 reprovou fora da amostra no
 # mercado da Câmara 2026; C tem 27+45 obs; E tem 13 dias; G tem 3). A 3.1 saiu
-# porque o sinal que existe é direcional e o P dela é neutro em mercado.
-VIEWS_ATIVAS = ("2.2_inflacao", "2.3_fed", "B_trajetoria_fed")
+# porque o sinal que existe é direcional e o P dela é neutro em mercado. A B
+# saiu do v1 em 2026-08-07 (seção 11, provisória): restam 2.2 e 2.3.
+#
+# Não existe LISTA de nomes aqui, de propósito (pedido da Lia, 2026-08-07): o
+# conjunto de views vivas em cada dia é DERIVADO de `view_results` em tempo de
+# execução (`bl_integration.aplicar_veto`). A tupla que morava nesta linha era
+# constante escrita à mão, não era lida por ninguém e já estava desatualizada
+# (ainda listava a B) — que é exatamente o "nome vivendo em três lugares" que
+# ela levantou.
 
 # --- Camada tática ----------------------------------------------------------
 # D3: entra redesenhada. A de prêmio só dispara em anúncio INCERTO (a âncora
