@@ -292,3 +292,23 @@ def test_data_fora_da_tabela_falha_alto():
 def test_w_mkt_desalinhado_falha_alto():
     with pytest.raises(ValueError, match="não alinha"):
         run_backtest(_retornos(), _sem_views, np.array([1.0, 0.0]))
+
+
+def test_reset_preserva_a_semente_da_2_3():
+    """`reset()` entre rodadas apaga a rodada, NUNCA a semente pré-janela.
+
+    Se um dia alguém trocar a restauração por `.clear()`, a varredura volta
+    silenciosamente a demeanar a 2.3 por 0,0 no primeiro pregão — sem erro,
+    só com outro resultado. É o único ponto onde a semente pode sumir.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+    from backtest_v1 import MontadorV1  # noqa: E402
+
+    m = MontadorV1(_retornos(), pd.Series(dtype=float), pd.Series(dtype=float),
+                   {}, {})
+    m._semente_2_3 = [1.0, 2.0]
+    m.surpresas_2_3 = [1.0, 2.0, 99.0]   # 99 = surpresa da rodada que passou
+    m.divergencias = [0.5]
+    m.reset()
+    assert m.surpresas_2_3 == [1.0, 2.0]
+    assert m.divergencias == []

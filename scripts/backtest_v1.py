@@ -52,13 +52,15 @@ import view_2_2_inflacao  # noqa: E402
 import view_2_3_fed  # noqa: E402
 from backtest import run_backtest, summary  # noqa: E402
 from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # noqa: E402
-                    DRIFT_JANELA_RF, SIGMA_JANELA_PREGOES, TAU)
+                    DRIFT_JANELA_RF, FL_GAMMA_V1, FL_GAMMA_VARREDURA,
+                    SIGMA_JANELA_PREGOES, TAU)
 from market_inputs import (breakeven_duration, daily_returns,  # noqa: E402
                            empirical_duration, market_weights, sample_covariance)
 from market_loader import load_etf_prices, load_fred  # noqa: E402
 from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # noqa: E402
                          load_cpi_releases, load_fomc_pmf, load_pmf)
-from poly_preprocessing import bucket_values_with_open, carry_missing  # noqa: E402
+from poly_preprocessing import (bucket_values_with_open, carry_missing,  # noqa: E402
+                                favorite_longshot_pmf)
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
 
@@ -130,7 +132,7 @@ class MontadorV1:
 
     def __init__(self, retornos, breakeven, dgs10, mercados, pmfs,
                  fomc=None, surpresas=None, orcamentos=None,
-                 fomc_pmfs=None, e_ff=None):
+                 fomc_pmfs=None, e_ff=None, gamma=FL_GAMMA_V1):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
@@ -141,22 +143,72 @@ class MontadorV1:
         self.fomc_pmfs = fomc_pmfs or {}  # data da reunião -> (probs, valores, cru)
         self.e_ff = e_ff if e_ff is not None else pd.Series(dtype=float)
         self.orcamentos = orcamentos or {}
+        # γ do favorite-longshot: 1,0 no v1 (D1.1) — as views recebem SEMPRE a
+        # correção de PMF, que em γ = 1,0 é a identidade e em γ ≠ 1 renormaliza
+        # sobre as faixas. É o que torna a coluna de robustez γ confiável.
+        self.gamma = gamma
         self.divergencias = []            # histórico para a média expansiva (2.2)
         self.surpresas_2_3 = []           # idem, para a demeanagem da 2.3
+        self._semente_2_3 = []            # histórico PRÉ-janela, ver `semear_2_3`
+        self._datas_pre = []              # datas da semente, para re-semear no γ
+
+    def semear_2_3(self, datas_pre):
+        """Pré-preenche a média expansiva da 2.3 com o histórico ANTERIOR à janela.
+
+        Decisão do dono em 2026-08-07 (refinamento da seção 12). Sem semente a
+        média nasce vazia no primeiro pregão do backtest: o dia 1 demeana por
+        0,0 (viés inteiro do proxy passa cru) e os primeiros meses usam um zero
+        estimado com meia dúzia de pontos. O efeito medido era o sinal ficar do
+        mesmo lado em 78% dos dias, contra 45%/55% no levantamento completo.
+
+        **Não é lookahead:** tudo que entra aqui é estritamente anterior ao
+        primeiro dia negociado, e a média segue expansiva dali em diante. Roda
+        pelo MESMO `_view_2_3` do backtest — semeia exatamente os dias em que a
+        view teria existido, sem duplicar a fórmula da surpresa.
+
+        A 2.2 não tem semente porque não tem o que semear: a janela começa na
+        primeira PMF de CPI (2025-02-08), então não existe dia anterior a ela.
+        """
+        pregoes = self.retornos.index
+        self._datas_pre = datas_pre
+        self._semente_2_3 = []
+        self.surpresas_2_3.clear()
+        for data in datas_pre:
+            self._view_2_3(data, pregoes)
+        self._semente_2_3 = list(self.surpresas_2_3)
+        return len(self._semente_2_3)
+
+    def set_gamma(self, gamma):
+        """Troca o γ do favorite-longshot e RE-SEMEIA a média da 2.3.
+
+        A semente é feita de surpresas, e a surpresa depende de γ: manter a
+        semente de γ = 1,0 numa rodada de γ = 1,25 demeanaria a janela por uma
+        média que aquele γ nunca produziria. É a única armadilha da coluna de
+        robustez, e ela não daria erro nenhum.
+        """
+        self.gamma = gamma
+        self.semear_2_3(self._datas_pre)
 
     def reset(self):
-        """Zera os históricos expansivos antes de uma nova passada nas datas.
+        """Volta os históricos expansivos ao estado do primeiro pregão.
 
         Obrigatório entre rodadas da varredura: sem isso a média expansiva da
         rodada seguinte já começa com a série INTEIRA da anterior — inclusive
         dias posteriores à data que está sendo montada, que é lookahead puro.
         Mora aqui, e não no laço, para uma view nova não reintroduzir o bug
         por esquecimento (foi assim que ele apareceu com a 2.3).
+
+        Restaura a semente em vez de zerar: ela é histórico pré-janela, não
+        resíduo da rodada anterior.
         """
         self.divergencias.clear()
-        self.surpresas_2_3.clear()
+        self.surpresas_2_3[:] = self._semente_2_3
 
     # --- insumos ------------------------------------------------------------
+
+    def _fl(self, probs):
+        """Correção de favorite-longshot das views, no γ desta rodada."""
+        return favorite_longshot_pmf(probs, self.gamma)
 
     def _ultimo_antes(self, serie, data):
         """Última leitura ESTRITAMENTE anterior a `data` (sem lookahead)."""
@@ -219,6 +271,7 @@ class MontadorV1:
             list(ASSETS), breakeven_10y=breakeven, duration=duration,
             cpi_frequencia="mensal", duration_long=duration_long,
             duration_short=duration_short, dias_ate_divulgacao=faltam,
+            fl_correction=self._fl,
             divergencia_media=media, bucket_probs=linha, bucket_values=valores)
         if view is not None:
             self.divergencias.append(view.diagnostics["divergencia"])
@@ -241,10 +294,12 @@ class MontadorV1:
         pela cascata em vez de estourar — é condição de dado num loop diário,
         não erro de chamada.
 
-        ⚠️ Quantos eventos são "suficientes" NÃO é decisão fechada: aqui vale o
-        piso do próprio `estimate_betas` (2, o mínimo algébrico). O nº usado sai
-        nos diagnostics (`n_eventos_beta`) para a reunião ver com que amostra
-        cada dia foi montado.
+        Quantos eventos são "suficientes" foi FECHADO em 2026-08-07 (decisão
+        12b): sem piso adicional no v1 — vale o do próprio `estimate_betas` (2,
+        o mínimo algébrico). Motivo: na janela o β nunca foi estimado com menos
+        de 25 eventos, então qualquer piso menor não desativa pregão nenhum, e
+        cravar um número seria threshold sem medição. O nº usado continua saindo
+        nos diagnostics (`n_eventos_beta`).
         """
         dias = self.surpresas.index[self.surpresas.index < data].intersection(self.retornos.index)
         if len(dias) < 2:
@@ -280,7 +335,8 @@ class MontadorV1:
         media = float(np.mean(self.surpresas_2_3)) if self.surpresas_2_3 else 0.0
         view = view_2_3_fed.build_view(
             list(ASSETS), e_ff_bps=e_ff, betas=betas, bucket_probs=linha,
-            bucket_deltas_bps=valores, surpresa_media=media)
+            bucket_deltas_bps=valores, surpresa_media=media,
+            fl_correction=self._fl)
         if view is not None:
             self.surpresas_2_3.append(view.diagnostics["surpresa_bps"])
             view.diagnostics.update({
@@ -341,7 +397,7 @@ class MontadorV1:
         return sigma, views, overlays
 
 
-def carregar(raiz, orcamentos=None):
+def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1):
     """(retornos, montador, datas, w_mkt) — toda a plumbing de dado do v1.
 
     Separado do `main` para as varreduras irmãs (ex.: `curva_c.py`) rodarem o
@@ -373,12 +429,15 @@ def carregar(raiz, orcamentos=None):
 
     montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
                           fomc, surpresas, orcamentos or {},
-                          fomc_pmfs=fomc_pmfs, e_ff=e_ff)
+                          fomc_pmfs=fomc_pmfs, e_ff=e_ff, gamma=gamma)
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
     primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
     inicio = max(retornos.index[SIGMA_JANELA_PREGOES], primeira_pmf)
     datas = retornos.index[retornos.index >= inicio]
+    # A média expansiva da 2.3 entra semeada com o que existe ANTES da janela
+    # (dado passado, não lookahead) — ver `MontadorV1.semear_2_3`.
+    montador.semear_2_3(retornos.index[retornos.index < inicio])
     return retornos, montador, datas, market_weights(ASSETS)
 
 
@@ -398,6 +457,10 @@ def main():
     parser.add_argument("--tetos", type=float, nargs="+", default=[1.0, 2.0, 3.0, 5.0],
                         help="tetos de Σ|w| a varrer — o teto é decisão humana, "
                              "então o script reporta vários em vez de cravar um")
+    parser.add_argument("--gammas", type=float, nargs="+",
+                        default=list(FL_GAMMA_VARREDURA),
+                        help="grade de γ do favorite-longshot para a coluna de "
+                             "robustez (D1.1 fixa o v1 em γ = 1,0)")
     parser.add_argument("--orcamento-premio", type=float, default=None)
     parser.add_argument("--orcamento-drift-acoes", type=float, default=None)
     parser.add_argument("--orcamento-drift-rf", type=float, default=None)
@@ -444,6 +507,11 @@ def main():
               "- views ativas: **2.2 inflação** e **2.3 Fed** (esta desde "
               "2026-08-07: PMF de decisão por reunião + `DTB3 − DFF` demeanado). "
               "A B fica fora por decisão 11, não por cascata",
+              f"- demeanagem da 2.3: média expansiva **semeada** com "
+              f"{len(montador._semente_2_3)} pregões anteriores à janela "
+              "(2024-04 a 2025-02, dado passado — não lookahead). Sem semente o "
+              "primeiro dia demeana por 0,0; o sinal líquido sai 22% positivo, "
+              "contra 34% com semente",
               f"- duration do breakeven: **medida** no par da própria view, "
               f"janela expansiva — variou de **{min(durations):.2f} a "
               f"{max(durations):.2f}** na amostra (a espec supunha \"~8\"; o dado "
@@ -563,6 +631,48 @@ def main():
         "No corte de carteira essa parcela mistura duas coisas — o tilt da view **e** o pedaço "
         "da perna de mercado que o corte tirou; no corte de tilt ela é só a view. A diferença "
         "entre as duas é a conta do que o escopo do teto cobra por si só.\n")
+
+    # --- robustez γ (promessa da seção 9) -----------------------------------
+    # A D1.1 fecha o v1 em γ = 1,0 (sem correção): 9 mercados resolvidos não
+    # calibram curva própria. A promessa da seção 9 é REPORTAR o resultado
+    # também em γ = 1,1 e 1,25 — não escolher entre eles.
+    teto_ref = min(args.tetos)
+    gamma_linhas = {}
+    for g in args.gammas:
+        montador.set_gamma(g)   # re-semeia: a semente depende de γ
+        res = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
+                           delta=DELTA, custo_bps=args.custo_bps,
+                           teto_alavancagem=teto_ref, teto_no_tilt=True)
+        gamma_linhas[g] = summary(res, benchmark=retornos["SPY"])
+        montador.reset()
+    montador.set_gamma(FL_GAMMA_V1)
+
+    linhas.append("\n## Robustez γ (favorite-longshot) — promessa da seção 9\n")
+    linhas.append(
+        f"O v1 roda em **γ = {FL_GAMMA_V1:g}** (D1.1: sem correção — 9 mercados "
+        "resolvidos não calibram curva própria, e importar γ de aposta esportiva "
+        "mexeria a mediana sem âncora no nosso dado). A coluna existe para "
+        "**reportar**, não para escolher: se o resultado só sobrevive em um γ, "
+        "isso tem de aparecer.\n")
+    linhas.append(f"Medido no escopo de referência (**tilt ≤ {teto_ref:g}**), com a "
+                  "semente da 2.3 recalculada em cada γ — a surpresa depende dele.\n")
+    linhas.append("| γ | excesso × SPY | líquido | sharpe | Σ\\|w\\| média | giro diário |")
+    linhas.append("|---|---|---|---|---|---|")
+    for g, s in gamma_linhas.items():
+        linhas.append(
+            f"| {g:g} | {s['excesso acumulado (líquido − benchmark)'] * 100:+.2f} pp | "
+            f"{s['retorno acumulado líquido'] * 100:+.1f}% | "
+            f"{s['sharpe anualizado (excesso zero)']:.2f} | "
+            f"{s['alavancagem média (Σ|w|)']:.2f} | {s['giro diário médio']:.3f} |")
+    excs = [s["excesso acumulado (líquido − benchmark)"] for s in gamma_linhas.values()]
+    linhas.append(
+        f"\n**Faixa do excesso na varredura: {min(excs) * 100:+.2f} pp a "
+        f"{max(excs) * 100:+.2f} pp** — "
+        + ("o sinal do resultado **não** depende do γ nesta janela.\n"
+           if min(excs) * max(excs) > 0 else
+           "⚠️ o sinal do resultado **muda** com o γ: a conclusão do v1 não é "
+           "robusta à correção de favorite-longshot, e isso vale mais que o "
+           "número central.\n"))
 
     Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")
