@@ -2,6 +2,48 @@
 
 ---
 
+## 2026-08-07 — Paulo — FOLLOWUP4 (G8): série DFF do FRED (o item que faltou no FOLLOWUP3)
+
+**O que foi feito:**
+- Executado o `G8` do `FOLLOWUP4_Pedido_Paulo_dados.md` — o item que ficou de fora da
+  resposta do FOLLOWUP3 (só o G7 tinha vindo). Baixada ao vivo a série **DFF**
+  (Effective Federal Funds Rate) do FRED via `fredgraph.csv?id=DFF`, mesmo caminho
+  público sem chave do G2, com um ID a mais.
+- Novo `scripts/g8_fred_dff.py` (clone do padrão do `g2_fred.py`). Salvo cru em
+  `data/raw/fred_DFF.csv`, mesmo formato dos outros três (`observation_date,DFF`),
+  sem renomear coluna, reindexar, preencher buraco ou converter unidade.
+- **Resultado medido:** 26.334 linhas, 1954-07-01 → 2026-08-05, **0 campos vazios**,
+  marca de ausente `(nenhum)`. Diferente do DTB3/DGS10, o DFF não tem buraco de
+  feriado (taxa diária de calendário, repete valor em fim de semana). Com isso a
+  view 2.3 do Felipe (`e_ff_bps = DTB3 − DFF`) tem os dois lados crus.
+- Entregável: `docs/RESPOSTA_FOLLOWUP4_Pedido_Paulo_dados.md` (bloco `=== G8 — DFF ===`
+  + ponto de processo aceito + Bloqueios + Commit) + cópia em `~/Downloads/`.
+
+**Ponto de processo (aceito):** o G8 era a 2ª metade do FOLLOWUP3 e não foi entregue
+nem sinalizado (o "Bloqueios: Nenhum" da resposta do G7 devia ter listado o DFF).
+Corrigido; item não entregue passa a entrar em Bloqueios.
+
+**O que quebrou:** nada. Rodou de primeira contra o FRED.
+
+**Pendente:**
+- **G5 (volume no tempo):** NÃO executado nesta sessão — escopo fechado no G8 por
+  instrução do Paulo. A spec da Lia (série 12h do `/trades`: `notional_usd`,
+  `n_trades`, `t_cobertura_min` com `NaN` antes do alcance do cap de 20k; escopo só
+  views 2.2/2.3/B) está entendida e executável; fica para a próxima sessão. Declarado
+  em Bloqueios do entregável.
+- **G6 (CPI 2022–2024):** condicional à reunião, sem mudança.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~30% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP4_Pedido_Paulo_dados.md' responda isso em um md. foque nas principais questoes dele: parte do g8"
+- **Iterações até aceitar:** 1 rodada (execução direta; DFF baixou de primeira).
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** — (nenhuma; G8 é re-pull de série, não decisão metodológica).
+- **Tags:** `[PROMPT-CHAVE]` (execução do G8 do follow-up 4 — reprodutibilidade).
+
+---
+
 ## 2026-08-06 — Paulo — FOLLOWUP3 (G7): unificar a base de ajuste dos dois parquets de ETF
 
 **O que foi feito:**
