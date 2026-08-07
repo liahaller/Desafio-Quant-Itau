@@ -216,7 +216,7 @@ if __name__ == "__main__":
     test_premio_pmf_uniforme_entropia_1()
     test_premio_certeza_total_posicao_zero()
     test_premio_dia_sem_anuncio_dormente()
-    test_premio_default_falha_alto_ate_decisao_11()
+    test_premio_default_sem_correcao_fl()
     test_drift_dovish_long_dois_livros()
     test_drift_janela_acoes_fecha_antes_da_rf()
     test_drift_truncagem_no_fomc_seguinte()
