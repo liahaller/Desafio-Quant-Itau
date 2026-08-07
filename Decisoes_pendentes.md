@@ -135,6 +135,19 @@ nenhuma foi escolhida no vazio. Números em `Dump/analises/Backtest_v1.md`.
 só o TILT da view, deixando a perna de mercado intacta? Hoje corta tudo, e é a
 explicação mais provável de a carteira perder do comprar-e-segurar SPY.
 
+**Posição da Lia (resposta de 2026-08-07), registrada — não fecha nada:** ela
+pede para **não** fechar o teto antes de o `c` entrar, porque hoje o teto está
+fazendo o trabalho do Ω. Argumento dela: a régua é produto de fatores em (0,1]
+na convenção de confiança, logo `c ≥ 1` sempre e o módulo dela **só tira peso,
+nunca adiciona** — parte da alavancagem cai por construção quando o `c` chegar,
+e calibrar o teto antes é ajustar remendo contra buraco que vai mudar de
+tamanho. Ordem que ela propõe: (1) entra o `c`; (2) mede-se Σ|w| de novo; (3)
+só então se decide se ainda precisa de teto e se ele corta a carteira toda ou
+só o tilt. **O Felipe concordou e leva assim para a reunião; a decisão segue do
+grupo.** Ela também corrige o alvo: **δ = 3,0 não é parâmetro livre, é
+observável** (medido no nosso SPY), então não é ele que precisa fechar junto com
+a escala do `c` — é o teto.
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.

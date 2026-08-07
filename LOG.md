@@ -1,5 +1,152 @@
 # LOG de sessões
 
+## 2026-08-07 (sessão 4) — Felipe
+
+**Contexto da sessão:** chegaram as **três respostas** dos recados enviados em 05/08 (G9 payrolls e
+FOLLOWUP3 do Paulo, régua do Ω da Lia). Sessão de ler, conferir, responder e implementar o que as
+respostas destravaram. Ordem definida com o dono depois da leitura: recado ao Paulo → `diagnostics`
+da Lia → re-rodar o backtest → tratar payrolls.
+
+**Leitura das respostas — o que a conferência achou:**
+- **G7 (base de ajuste dos parquets): confere, número por número.** Não aceitei o relatório: extraí os
+  dois parquets de `origin/Paulo` e o close antigo (`87721ae~1`) e refiz as medições. Bate exato
+  (TIP +0,0000% e TLT −0,0230% na razão abertura/fechamento; close novo/antigo −1,8692% e −0,7914%;
+  os outros 7 em 0,0000% nas 5.681 datas comuns). **O alfa fabricado de +1,15%/dia no TIP sumiu.**
+- **E o retrabalho que o Paulo anunciou é ~zero — medido.** Ele avisou que eu teria de refazer as
+  medições de `k`/sensibilidade porque o nível de TIP/TLT desceu. Medi nos **retornos** (que é o que
+  essas medições usam): média de |Δ| de 0,024 bps (TIP) e 0,011 bps (TLT), correlação 0,9992 e
+  0,99998. O deslocamento é constante em **todos os 5.680 dias menos um** — 2026-06-01, o
+  ex-dividendo que entrou no pull novo. Nada a refazer.
+- **⚠️ G8 (`DFF`) não veio e não foi declarado.** A resposta do `FOLLOWUP3` cobre só o G7; o arquivo
+  não existe em `origin/Paulo`; o commit se chama `followup3 (G7)` e **dois commits de G9 vieram
+  depois**. Pior: o `## Bloqueios` diz **"Nenhum"**. Só descobri cruzando a árvore do git.
+- **G9 (payrolls): entregue e útil.** O remap do shutdown é meu, como combinado.
+- **Lia:** destravou o G5 (spec do volume) e fechou o formato do `diagnostics`. Me corrigiu em duas
+  coisas, nas duas ela está certa (ver "Erros meus").
+
+**Recados escritos (2, commitados, ainda NÃO enviados):**
+- **`Dump/trocas/FOLLOWUP4_Pedido_Paulo_dados.md`** — cobra o **G8** (com a nota de processo: item
+  não entregue vai como `?` ou como bloqueio, nunca silêncio) e passa o **G5** com a spec da Lia
+  transcrita, amarrando o `t_cobertura_min` ao F4 dele (o cap de 20k que ele mesmo mediu) e com a
+  lista dos arquivos dos mercados das views ativas, para ele não adivinhar.
+- **`Dump/trocas/RESPOSTA_Lia_omega_diagnostics.md`** — `diagnostics` no ar, a pergunta da 6a, o fato
+  de interface do `carry_missing`, e o aceite da ordem dela em δ/teto.
+
+**`diagnostics` do Ω implementado** (`poly_loader.diagnostics_qualidade`, `poly_preprocessing.soma_faixas`,
+os campos nas 8 views, fusão no `MontadorV1`):
+- **Medido na série CRUA**, antes do `carry_missing` e do `daily_preopen`. Foi o ponto que quase passou
+  batido e é o que faz o campo valer algo: depois do tratamento não existe mais buraco para contar, e
+  sobra 1 ponto por dia em vez de 2.
+- **`janela_slots = None`** (vida inteira do mercado até a decisão): o tamanho da janela é output da
+  calibração da Lia — não inventei número (CLAUDE.md §6).
+- **`n_slots_esperados` truncado pelo nascimento do mercado**, para não confundir "buraco de leitura"
+  com "mercado não existia" e ligar o veto dela em cima de mercado íntegro.
+- **`omega_fallback(..., confianca=)` → `incerteza=`** a pedido da Lia. O nome dizia o oposto do que o
+  número faz — era a própria armadilha que eu descrevi no pedido original.
+- **`bl_integration.aplicar_veto`**: veto = view que SAI de P e Q (item 4c dela), reusando o filtro de
+  `None` que o `stack_views` já tinha. A função devolve o `incerteza` já reduzido aos sobreviventes,
+  porque a armadilha ali é o índice (os vetores dela vêm na ordem das views ATIVAS; a lista tem os
+  `None` da cascata intercalados).
+
+**Backtest re-rodado no dado do G7 — com atribuição, em 3 rodadas** (`Dump/analises/Backtest_v1.md`):
+
+| Rodada (teto ≤ 1) | Pregões | Líquido | Benchmark | Excesso |
+|---|---|---|---|---|
+| parquet antigo (05/08) | 353 | +8,61% | +26,20% | −17,59 pp |
+| parquet novo, **truncado** em 2026-07-08 | 353 | +9,43% | +26,20% | −16,77 pp |
+| parquet novo, janela cheia | 374 | +15,72% | +30,12% | −14,39 pp |
+
+- A linha 1 **reproduz o LOG de 05/08 exato** — checagem feita de propósito antes de sobrescrever o
+  relatório: confirma que o `diagnostics` não mexeu em número nenhum.
+- **Correção do dado: +0,82 pp** (com benchmark idêntico à 4ª casa, como tinha de ser). Cresce para
+  **+4,03 pp** no teto ≤ 5 — o par TIP/TLT é justamente o que a view 2.2 monta.
+- **21 pregões novos: +6,29 pp.** No sub-período a estratégia fez **+5,75% contra +3,11% do SPY**.
+- **O veredito de 05/08 continua de pé:** a carteira perde do SPY em toda a varredura e a distância
+  cresce com o teto. 21 pregões bons não são evidência contra 374 — anotado no próprio relatório.
+- **A duration medida (D11) não se moveu** (8,31 a 8,38): a correção é multiplicativa e some na
+  regressão, como previsto ao conferir o G7.
+
+**Payrolls tratados — a amostra da tática 1.3 quase dobrou (19 → 32 eventos):**
+- `poly_loader.load_payroll_releases`: remap do shutdown como **exceção declarada com validação** (não
+  é regra derivável como o typo de ano do CPI — é fato histórico). `2025-11-20` é o release de
+  **setembro**; `2025-12-16` é **combinado out+nov**; **outubro não ganha linha inventada**.
+- `premio_condicional.mercados_de_payroll`: **o casamento mercado→release é pela data em que a série
+  TERMINA**, não pelo nome do mês. Resolve três problemas de uma vez — a ambiguidade de ano que o
+  Paulo sinalizou (dez/2024 vs dez/2025), o desalinhamento do shutdown, e é o próprio critério que a
+  tática exige (série que não alcança o release não tem PMF pré-abertura). Set/2025 sai sozinho.
+- `load_pmf(..., ordenar=False)`: os arquivos de payrolls vêm **sem slug de balde** (só o tokenId),
+  então `bucket_value` quebraria. A entropia não usa valor de balde — por isso a tática foi escrita
+  em cima dela.
+- **Resultado: 7 FOMC + 13 CPI + 12 payrolls = 32 eventos.** Diferença incerto−previsível
+  **+1,099%** com **t de Welch subindo de +2,10 para +2,27**. Payrolls é família **independente**, não
+  usada para desenhar a tática — é a evidência mais forte que a 1.3 tem.
+
+**Duas ressalvas que a própria medição levantou, registradas no relatório:**
+- **O grupo "previsível" ganhou o choque tarifário** (2025-04-04, −5,9%). A checagem de robustez que
+  existia tirava o extremo só do grupo *incerto* — trabalha a favor da tese. Fiz a **simétrica**:
+  tirando o extremo dos dois lados a diferença cai para +0,896% mas o **t sobe para +2,34**.
+- **A entropia de payrolls vive numa faixa alta e estreita** (0,68–0,96) contra 0,07–0,78 do CPI: um
+  payroll "previsível" é mais incerto que um CPI "incerto". O corte é a mediana **de cada família**,
+  então cada split é interno e válido, mas o rótulo não é comparável entre elas. E, honestamente: nos
+  payrolls **os dois grupos são negativos** — o contraste está na direção certa, o nível não.
+
+**Quebrou / aprendido:**
+- **O teste unitário não pega fiação.** O `diagnostics` passou em 167 testes e o backtest quebrou na
+  primeira linha real (`pmfs.values()` desempacotado em 2 onde virou 3-tupla). Só o smoke run contra
+  o dado do Paulo achou. Lição para o resto da entrega: mudança de shape exige rodar no dado real.
+- **Conferir o dado do outro rendeu 3 achados** que o relatório não trazia: o G8 faltando, o
+  retrabalho do G7 sendo zero, e a data errada do `march-unemployment-rate-561`.
+
+**Observações para o dono do módulo do Paulo** (não toquei em nada dele):
+1. **`data/raw/fred_DFF.csv` não existe** e o `## Bloqueios` do `FOLLOWUP3` diz "Nenhum" — item não
+   entregue virou silêncio. Cobrado no `FOLLOWUP4`.
+2. **Erro de reporte no G9b:** o entregável diz que a série do `march-unemployment-rate-561` vai até
+   2026-03-28; o arquivo vai até **2026-04-03**, que é a data de release do G9a dele. **O dado está
+   certo, o entregável não.** Isso restaura o padrão "toda série resolvida termina no dia do release",
+   sem exceção — e foi esse padrão que virou a chave de casamento do tratamento.
+
+**Pendente:**
+- **Os dois recados estão escritos e commitados, mas NÃO enviados** — o envio é do dono.
+- **G8 é o gargalo:** sem `DFF` o backtest segue com 1 view de 3. A view B continua sem caminho (ZQ de
+  dezembro, sem fonte grátis, não pedido a ninguém).
+- **Decisão 6a aberta** (colapso da PMF no `p` do `score_estabilidade`) — depende da Lia; não bloqueia,
+  o fallback `c = 1` roda.
+- **Teto de alavancagem (D12):** posição da Lia registrada na seção 10; a ordem dela (c → medir Σ|w| →
+  decidir teto) vai para a reunião.
+- **Camada tática segue desligada** por falta dos orçamentos (parâmetro de reunião). O ganho de
+  amostra do G9 é da **medição**, não do backtest.
+- **Seção manual em `Backtest_v1.md`:** a atribuição das 3 rodadas é escrita à mão e re-rodar o script
+  a apaga. Avisado no topo da própria seção.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~150k tokens (estimativa da sessão inteira).
+- **Prompt inicial (verbatim):** "chegaram as respostas do paulo e da Lia. Vamos começar lendo a do G9
+  RESPOSTA_PEDIDO_G9_payrolls_Paulo.md. ela veio com o seguinte texto: Buraco real no calendário: não
+  há release entre 2025-09-05 e 2025-11-20 (76 dias) — é o shutdown de 2025. Como o BLS remanejou o
+  cronograma, a coluna mes_referencia (que eu derivo por "mês do release − 1") não bate 1:1 nessa
+  janela. Deixei isso marcado cru no próprio CSV ([ATENCAO: gap de 76 dias… shutdown…]) — a correção
+  fica com o Felipe no tratamento, como o pedido pediu."
+- **Iterações até aceitar:** nenhuma correção de conteúdo do dono. As intervenções dele foram de
+  enquadramento (perguntar o que era o passo 2, se as decisões de desenho estavam abertas, de onde vem
+  o dado do backtest) — e a de "as decisões estão em aberto?" **mudou a entrega**: gerou o registro da
+  6a, que eu tinha tratado só como nota de conversa.
+- **Erros da IA:** 5, todos apanhados antes de virar entrega. (1) Chamei `_soma_faixas` antes de
+  existir, ao mover a função para o módulo compartilhado. (2) **O grave:** deixei um `pmfs.values()`
+  desempacotado em 2 quando virou 3-tupla — passou em 167 testes unitários e só quebrou no dado real.
+  (3) Escrevi o arquivo de teste por heredoc e os escapes colapsaram (`\n` virou quebra de linha),
+  SyntaxError. (4) Igualdade de float num teste (0,92). (5) A nota do release combinado de 2025-12-16
+  não era gravada porque o mês derivado já saía certo — achado ao inspecionar a saída, não por teste.
+  Além disso, uma correção de rumo: comecei a implementar `janela_slots` com valor cravado e voltei
+  atrás — é parâmetro da Lia, não meu.
+- **Decisões escaladas:** 1 (**6a**, subitem da decisão 6). Nenhuma fechada.
+- **Tags:** `[PROMPT-CHAVE]` — o padrão desta sessão é **"conferir o dado do outro em vez de aceitar o
+  relatório"**. Re-medir o G7 em vez de confiar no resumo rendeu três achados que o entregável não
+  trazia (o G8 faltando, o retrabalho anunciado sendo zero, a data errada do G9b), e um deles mudou o
+  desenho do tratamento de payrolls.
+
+---
+
 ## 2026-08-05 (sessão 3) — Felipe
 
 **Contexto da sessão:** retomada pelo `leaveoff.md` da sessão 2. Três frentes, na ordem em que o leaveoff mandava: destravar o push, despachar os recados, implementar o I5.
