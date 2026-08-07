@@ -47,7 +47,7 @@ valor do bucket aberto (decisão 11b) é resolvido pelo CHAMADOR via
 import numpy as np
 from scipy.stats import norm
 
-from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean
+from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean, soma_faixas
 from views_common import ViewResult
 
 # Par da view (decisão 1 / espec da 2.2) — parametrizado só para não
@@ -199,6 +199,10 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
         "divergencia_media": divergencia_media,
         "divergencia_liquida": divergencia_liquida,
         "dias_ate_divulgacao": dias_ate_divulgacao,
+        # Ω da Lia: soma CRUA das faixas, sem virar |soma − 1| aqui — a forma
+        # funcional é da régua dela. NaN no caminho binário (não há grade).
+        "soma_faixas": soma_faixas(bucket_probs),
+        "dias_ate_evento": float(dias_ate_divulgacao),  # nome do contrato do Ω
         "duration": duration,
         "hedge_duration": duration_long / duration_short,
     })

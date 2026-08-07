@@ -8,7 +8,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from bl_integration import bl_weights_from_views, stack_views
+from bl_integration import aplicar_veto, bl_weights_from_views, stack_views
 from views_common import ViewResult
 
 SIGMA = np.array([[0.04, 0.01, 0.00],
@@ -101,3 +101,36 @@ if __name__ == "__main__":
     test_view_altista_tilta_na_direcao_certa()
     test_omega_obrigatorio_com_view_ativa()
     print("bl_integration: 5 testes OK")
+
+
+def test_aplicar_veto_alinha_com_as_views_ativas_nao_com_a_lista():
+    """A armadilha do índice: os vetores da Lia vêm na ordem das views ATIVAS,
+    a lista tem os None da cascata intercalados. Casar errado veta calado."""
+    views = [None, _view([1, -1, 0], 0.02, "A"), None, _view([0, 1, -1], 0.03, "B")]
+    # ativa = [A: sim, B: não] -> só B sai; os None da cascata não consomem entrada
+    saida, incerteza = aplicar_veto(views, [True, False], incerteza=[2.0, 9.0])
+    assert [r.diagnostics["view"] if r else None for r in saida] == [None, "A", None, None]
+    # o `c` do vetado sai junto — o que sobra tem de casar com o P empilhado
+    assert incerteza.tolist() == [2.0]
+    P, _, _ = stack_views(saida, n_assets=3)
+    assert P.shape[0] == len(incerteza)
+
+
+def test_aplicar_veto_rejeita_vetor_de_tamanho_errado():
+    views = [None, _view([1, -1, 0], 0.02, "A")]
+    for ruim in ([], [True, True]):
+        try:
+            aplicar_veto(views, ruim)
+            assert False, f"deveria rejeitar ativa={ruim}"
+        except ValueError:
+            pass
+
+
+def test_veto_total_devolve_a_carteira_de_mercado():
+    """Vetar todas as views é o limite exato de Ω -> infinito: w = w_mkt, sem
+    número mágico e sem resíduo (item 4c da resposta da Lia)."""
+    views = [_view([1, -1, 0], 0.02, "A")]
+    saida, _ = aplicar_veto(views, [False])
+    w, info = bl_weights_from_views(SIGMA, W_MKT, TAU, DELTA, saida)
+    assert info["P"] is None
+    assert np.allclose(w, W_MKT)

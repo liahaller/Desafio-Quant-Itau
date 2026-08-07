@@ -149,27 +149,34 @@ def equal_weights(assets):
     return np.full(len(assets), 1.0 / len(assets))
 
 
-def omega_fallback(P, sigma, tau, confianca=None):
+def omega_fallback(P, sigma, tau, incerteza=None):
     """Ω (k, k) diagonal na convenção He-Litterman: diag(P·τΣ·Pᵀ).
 
-    `confianca` : (k,) multiplicador por view — é ESTE o número que o Ω reativo
-                  da Lia deve entregar (>1 = menos confiança, <1 = mais).
-                  None = 1,0 em todas, que é o fallback neutro.
+    `incerteza` : (k,) multiplicador por view — é ESTE o número que o Ω reativo
+                  da Lia entrega. **Maior = MENOS confiança.** None = 1,0 em
+                  todas, que é o fallback neutro.
 
-    Enquanto o módulo dela não chega, o backtest roda com o fallback; quando
-    chegar, entra como `confianca` e nada mais muda. Se ela entregar em escala
-    absoluta, a conversão é dividir pela diagonal desta mesma fórmula.
+    O argumento se chamava `confianca`, o que dizia o OPOSTO do que o número
+    faz — renomeado a pedido da Lia (resposta de 2026-08-07, item 4a). As duas
+    convenções existem de verdade e são inversas (`c_dela ∈ (0,1]`, maior =
+    mais confiança; `c_meu = 1/c_dela`); ela entrega na convenção daqui, e o
+    nome agora não desmente o sinal. É exatamente a armadilha de escala que
+    motivou a régua: as duas parecem iguais e dão carteiras diferentes.
+
+    Ela garante `incerteza >= 1` por construção — a régua dela é produto de
+    fatores em (0,1] na convenção de confiança, então **só tira peso, nunca
+    adiciona**. Ou seja: este fallback é o TETO de confiança do modelo.
     """
     P = np.atleast_2d(np.asarray(P, dtype=float))
     variancias = np.diag(P @ (tau * np.asarray(sigma, dtype=float)) @ P.T)
-    if confianca is None:
-        confianca = np.ones(P.shape[0])
-    confianca = np.asarray(confianca, dtype=float)
-    if confianca.shape != (P.shape[0],):
+    if incerteza is None:
+        incerteza = np.ones(P.shape[0])
+    incerteza = np.asarray(incerteza, dtype=float)
+    if incerteza.shape != (P.shape[0],):
         raise ValueError(
-            f"confiança deve ter uma entrada por view: {confianca.shape} vs ({P.shape[0]},)")
-    if np.any(confianca <= 0):
-        raise ValueError("confiança tem de ser positiva — Ω é matriz de variância")
+            f"incerteza deve ter uma entrada por view: {incerteza.shape} vs ({P.shape[0]},)")
+    if np.any(incerteza <= 0):
+        raise ValueError("incerteza tem de ser positiva — Ω é matriz de variância")
     if np.any(variancias <= 0):
         raise ValueError("view com variância de prior nula — P sem exposição a risco")
-    return np.diag(variancias * confianca)
+    return np.diag(variancias * incerteza)

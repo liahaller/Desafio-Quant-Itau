@@ -19,6 +19,7 @@ from poly_loader import (
     SLOT_SECONDS,
     bucket_value,
     daily_preopen,
+    diagnostics_qualidade,
     load_cpi_releases,
     load_history,
     load_pmf,
@@ -153,3 +154,89 @@ def test_bucket_value_fed_e_bucket_aberto():
 def test_bucket_value_rejeita_slug_desconhecido():
     with pytest.raises(ValueError, match="não reconhecido"):
         bucket_value("us-recession-in-2025")
+
+
+# --- bloco de qualidade para o Ω da Lia --------------------------------------
+
+def _pmf_cru(n_slots, buracos=()):
+    """PMF crua sintética de 2 buckets na grade de 12h, com buracos marcados.
+
+    Buraco = linha inteira NaN (o slot não teve leitura em bucket nenhum), que
+    é o caso que `n_slots_esperados − n_pontos` tem de contar.
+    """
+    idx = pd.to_datetime(
+        [(T0 + i * SLOT_SECONDS) * 1_000_000_000 for i in range(n_slots)], utc=True)
+    frame = pd.DataFrame({"a": 0.4, "b": 0.6}, index=idx)
+    frame.iloc[list(buracos)] = float("nan")
+    return frame
+
+
+def test_diagnostics_conta_buraco_e_nao_conta_pre_nascimento():
+    """Buraco de leitura e 'mercado não existia' NÃO podem virar a mesma coisa.
+
+    A Lia calcula `esperados − pontos`; se a janela pedida for maior que a vida
+    do mercado, os slots que faltam por não-existência entrariam como buraco e
+    o veto dela ligaria em cima de mercado íntegro.
+    """
+    # 6 slots de vida (T0 .. T0+5), com o slot 2 vazio; decisão no último slot.
+    cru = _pmf_cru(6, buracos=(2,))
+    decisao = cru.index[-1]
+
+    inteiro = diagnostics_qualidade(cru, decisao)
+    assert inteiro["n_slots_esperados_janela"] == 6   # T0 até a decisão
+    assert inteiro["n_pontos_janela"] == 5            # o buraco não é ponto
+    assert inteiro["janela_slots"] is None            # vida inteira: sem janela cravada
+
+    # Janela de 20 slots num mercado que só viveu 6: esperados continua 6.
+    largo = diagnostics_qualidade(cru, decisao, janela_slots=20)
+    assert largo["n_slots_esperados_janela"] == 6
+    assert largo["n_pontos_janela"] == 5
+
+    # Janela curta que NÃO alcança o buraco: zero buraco.
+    curto = diagnostics_qualidade(cru, decisao, janela_slots=3)
+    assert curto["n_slots_esperados_janela"] == curto["n_pontos_janela"] == 3
+
+
+def test_diagnostics_idade_do_ultimo_ponto():
+    """Leitura velha tem de aparecer como idade > 0, não como ausência."""
+    cru = _pmf_cru(4, buracos=(3,))          # o slot da decisão está vazio
+    fresco = diagnostics_qualidade(_pmf_cru(4), cru.index[-1])
+    velho = diagnostics_qualidade(cru, cru.index[-1])
+    assert fresco["idade_ultimo_ponto_h"] == 0.0     # o ponto é o da decisão
+    assert velho["idade_ultimo_ponto_h"] == 12.0     # caiu para o slot anterior
+    # Sem NENHUM ponto na janela a idade é DESCONHECIDA, nunca 0 (regra da Lia).
+    vazio = diagnostics_qualidade(_pmf_cru(4, buracos=(0, 1, 2, 3)), cru.index[-1])
+    assert math.isnan(vazio["idade_ultimo_ponto_h"])
+    assert vazio["n_pontos_janela"] == 0
+
+
+def test_diagnostics_data_naive_vira_o_slot_pre_abertura():
+    """Data de pregão (naive) tem de casar com o slot das 12:00 UTC — o mesmo
+    ponto que `daily_preopen` entrega à view. Se divergir, o diagnóstico
+    descreveria um slot diferente do que a view usou."""
+    cru = _pmf_cru(4)
+    naive = pd.Timestamp(cru.index[-1]).tz_convert(None).normalize()
+    assert (diagnostics_qualidade(cru, naive)["serie_janela"]
+            == diagnostics_qualidade(cru, cru.index[-1])["serie_janela"])
+
+
+def test_diagnostics_dp_variacao_so_com_p_inequivoco():
+    """Colapsar PMF multi-bucket num escalar é transformação da régua da Lia,
+    não minha: sai NaN. Com uma coluna só o `p` é inequívoco e o número sai."""
+    multi = diagnostics_qualidade(_pmf_cru(6), _pmf_cru(6).index[-1])
+    assert math.isnan(multi["dp_variacao_janela"])
+
+    uma = _pmf_cru(6)[["a"]].copy()
+    uma.iloc[:, 0] = [0.40, 0.42, 0.40, 0.42, 0.40, 0.42]
+    saida = diagnostics_qualidade(uma, uma.index[-1])
+    assert saida["dp_variacao_janela"] == pytest.approx(
+        pd.Series([0.40, 0.42, 0.40, 0.42, 0.40, 0.42]).diff().std())
+
+
+def test_diagnostics_serie_janela_vem_crua():
+    """A Lia pediu a série crua para rejanelar sem ida e volta: os valores têm
+    de ser os do arquivo, não os já tratados."""
+    cru = _pmf_cru(3)
+    serie = diagnostics_qualidade(cru, cru.index[-1])["serie_janela"]
+    assert [t for t, _ in serie] == list(cru.index)
+    assert all(linha == {"a": 0.4, "b": 0.6} for _, linha in serie)

@@ -59,6 +59,23 @@ def normalize_probs(probs, axis=-1):
     return probs / total
 
 
+def soma_faixas(probs):
+    """Soma CRUA das faixas de uma PMF, para o `diagnostics` do Ω da Lia.
+
+    É o mesmo desarranjo que `normalize_probs` conserta — mas aqui ele é o
+    SINAL, não o defeito: cada bucket tem book próprio, e o quanto a soma se
+    afasta de 1 mede o desencontro entre eles (medido no cru: 0,92 a 1,33 no
+    mercado de cortes do Fed). A Lia pediu o valor cru, não `|soma − 1|`: a
+    forma funcional é da régua dela.
+
+    `None` (caminho binário da cascata, sem grade de faixas) devolve NaN, e
+    NaN em qualquer faixa propaga — desconhecido nunca vira 0 (regra dela).
+    """
+    if probs is None:
+        return float("nan")
+    return float(np.sum(np.asarray(probs, dtype=float)))
+
+
 def favorite_longshot(probs, gamma=FL_GAMMA_V1):
     """Correção de favorite-longshot de uma probabilidade BINÁRIA, elemento a
     elemento (cada entrada é um p independente, não um bucket de PMF).

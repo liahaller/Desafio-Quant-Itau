@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -15,6 +16,7 @@ from poly_preprocessing import (
     bucket_values_with_open,
     carry_missing,
     pmf_mean,
+    soma_faixas,
     binary_prob_series,
 )
 
@@ -125,3 +127,14 @@ if __name__ == "__main__":
     test_pmf_mean()
     test_binary_prob_series()
     print("poly_preprocessing: testes OK")
+
+
+def test_soma_faixas_vem_crua_e_desconhecido_nao_vira_zero():
+    """O desarranjo do livro é o SINAL do Ω da Lia — ela pediu a soma crua, não
+    |soma − 1|. Medido no dado do Paulo: 0,92 a 1,33 no mercado de cortes."""
+    assert soma_faixas([0.30, 0.62]) == pytest.approx(0.92)
+    assert soma_faixas([0.55, 0.45, 0.33]) == pytest.approx(1.33)
+    # caminho binário da cascata: não há grade de faixas -> NaN, nunca 0
+    assert np.isnan(soma_faixas(None))
+    # faixa sem leitura contamina a soma: desconhecido propaga, não some
+    assert np.isnan(soma_faixas([0.4, np.nan, 0.3]))

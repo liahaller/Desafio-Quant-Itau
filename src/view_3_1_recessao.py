@@ -120,5 +120,6 @@ def build_view(assets, betas, k, p_poly=None, p_curva=None, market_asset=MARKET_
         "p_curva": float(p_curva),
         "divergencia": divergencia,
         "horizonte_q_dias": k,  # Q herda o horizonte do β de absorção plena
+        "soma_faixas": float("nan"),  # binária: sem grade de faixas (Ω da Lia)
         "sum_P_beta": float(P @ betas),
     })

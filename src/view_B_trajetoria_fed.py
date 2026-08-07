@@ -28,7 +28,7 @@ bps; β em fração/bp (os da 2.3) → Q em fração decimal.
 
 import numpy as np
 
-from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean
+from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean, soma_faixas
 from views_common import P_from_betas, ViewResult
 
 MARKET_ASSET = "SPY"
@@ -85,5 +85,6 @@ def build_view(assets, e_zq_dez_bps, betas,
         "e_poly_bps": e_poly_bps,
         "e_zq_dez_bps": e_zq_dez_bps,
         "surpresa_bps": surpresa_bps,
+        "soma_faixas": soma_faixas(bucket_probs),  # cru, para o Ω da Lia
         "sum_P_beta": float(P @ betas),
     })

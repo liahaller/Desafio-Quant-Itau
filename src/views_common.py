@@ -139,6 +139,9 @@ def lagged_poly_view(view_name, assets, betas, k, p_series=None, market_asset="S
         "divergencia": divergencia,
         "k": k,
         "horizonte_q_dias": k,  # Q é retorno acumulado de k dias
+        # view binária não tem grade de faixas -> NaN, nunca 0 (regra do Ω da
+        # Lia: 0 é valor informativo na régua dela, zera o produto).
+        "soma_faixas": float("nan"),
         "sum_P_beta": float(P @ betas),
     })
 

@@ -199,8 +199,10 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         sigma = np.asarray(sigma, dtype=float)
 
         # O Ω tem de ser montado com o MESMO P que o BL vai empilhar, então o
-        # stack roda antes. `confianca=None` = fallback He-Litterman; é aqui
-        # que o vetor da Lia entra quando o módulo dela chegar, e nada mais muda.
+        # stack roda antes. `incerteza=None` = fallback He-Litterman, que é o
+        # TETO de confiança (a régua da Lia só tira peso, nunca adiciona). É
+        # aqui que o vetor dela entra, depois de passar por `aplicar_veto` —
+        # e nada mais muda.
         P, _, _ = stack_views(view_results, n_assets=len(ativos))
         omega = None if P is None else omega_fallback(P, sigma, tau)
         w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)

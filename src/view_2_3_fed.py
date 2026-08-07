@@ -28,7 +28,7 @@ decisão humana (pendência da espec) — entram como dado, nunca default aqui.
 
 import numpy as np
 
-from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean
+from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean, soma_faixas
 from views_common import P_from_betas, ViewResult
 
 # Centro da linha P (espec item 4: excesso sobre o mercado) — parametrizado
@@ -111,5 +111,6 @@ def build_view(assets, e_ff_bps, betas,
         "e_poly_bps": e_poly_bps,
         "e_ff_bps": e_ff_bps,
         "surpresa_bps": surpresa_bps,
+        "soma_faixas": soma_faixas(bucket_probs),  # cru, para o Ω da Lia
         "sum_P_beta": float(P @ betas),  # ∝ dispersão dos βs (espec item 5)
     })

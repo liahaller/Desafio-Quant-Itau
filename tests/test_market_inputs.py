@@ -84,16 +84,18 @@ def test_omega_fallback_e_a_variancia_do_prior():
     assert np.allclose(omega - np.diag(np.diag(omega)), 0.0)  # diagonal
 
 
-def test_omega_confianca_escala_a_diagonal():
+def test_omega_incerteza_escala_a_diagonal():
+    """Incerteza MAIOR = Ω maior = MENOS peso na view (o sinal que o nome do
+    argumento antigo, `confianca`, dizia ao contrário)."""
     sigma = np.diag([1e-4, 4e-4, 9e-4])
     P = np.array([[1.0, -1.0, 0.0]])
     base = omega_fallback(P, sigma, 0.002)
-    dobro = omega_fallback(P, sigma, 0.002, confianca=[2.0])
+    dobro = omega_fallback(P, sigma, 0.002, incerteza=[2.0])
     assert np.allclose(np.diag(dobro), 2 * np.diag(base))
     for ruim in ([0.0], [-1.0], [1.0, 1.0]):
         try:
-            omega_fallback(P, sigma, 0.002, confianca=ruim)
-            assert False, f"deveria rejeitar confiança {ruim}"
+            omega_fallback(P, sigma, 0.002, incerteza=ruim)
+            assert False, f"deveria rejeitar incerteza {ruim}"
         except ValueError:
             pass
 

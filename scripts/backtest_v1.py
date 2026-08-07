@@ -51,8 +51,8 @@ from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # no
 from market_inputs import (breakeven_duration, daily_returns,  # noqa: E402
                            empirical_duration, market_weights, sample_covariance)
 from market_loader import load_etf_prices, load_fred  # noqa: E402
-from poly_loader import (bucket_value, daily_preopen, load_cpi_releases,  # noqa: E402
-                         load_pmf)
+from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # noqa: E402
+                         load_cpi_releases, load_pmf)
 from poly_preprocessing import bucket_values_with_open, carry_missing  # noqa: E402
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
@@ -76,16 +76,22 @@ def mercados_de_cpi(releases, diretorio):
 
 
 def pmf_diaria(diretorio, prefixo):
-    """(probs por data, valores dos buckets em fração MENSAL) de um mercado.
+    """(probs por data, valores em fração MENSAL, série CRUA) de um mercado.
 
     Aplica as regras fechadas: faixa faltante herda a última leitura (D4/6.1)
     e faixa aberta entra a meia largura para fora (D4/1.2). Os valores saem em
     fração decimal mensal — a view anualiza sozinha (`cpi_frequencia`).
+
+    A série CRUA sai junto porque o `diagnostics` do Ω da Lia tem de ser medido
+    ANTES do tratamento: depois do `carry_missing` não há mais buraco para
+    contar, e depois do `daily_preopen` sobram 1 ponto por dia em vez de 2. O
+    que ela mede é a qualidade do dado que entrou, não a do já consertado.
     """
-    pmf = daily_preopen(carry_missing(load_pmf(diretorio, prefixo))).dropna(how="all")
+    cru = load_pmf(diretorio, prefixo)
+    pmf = daily_preopen(carry_missing(cru)).dropna(how="all")
     valores = bucket_values_with_open(
         np.array([bucket_value(c) for c in pmf.columns], dtype=float))
-    return pmf, valores / PONTOS_PERCENTUAIS
+    return pmf, valores / PONTOS_PERCENTUAIS, cru
 
 
 class MontadorV1:
@@ -148,7 +154,7 @@ class MontadorV1:
         if not futuras:
             return None
         release = min(futuras)
-        probs, valores = self.pmfs[self.mercados[release]]
+        probs, valores, cru = self.pmfs[self.mercados[release]]
         if data not in probs.index:
             return None  # sem leitura pré-abertura nesse dia
         linha = probs.loc[data].to_numpy(dtype=float)
@@ -174,6 +180,15 @@ class MontadorV1:
             divergencia_media=media, bucket_probs=linha, bucket_values=valores)
         if view is not None:
             self.divergencias.append(view.diagnostics["divergencia"])
+            # Bloco de qualidade da leitura (Ω da Lia). Mora aqui, e não dentro
+            # da view, porque a view recebe SNAPSHOT — quem tem a série é o
+            # montador. Para ela a diferença não existe: chega um dict só.
+            # A view ganha do bloco em caso de conflito (ela sabe o caminho da
+            # cascata que rodou; o montador não).
+            view.diagnostics.update({
+                **diagnostics_qualidade(cru, data, dias_ate_evento=faltam),
+                **view.diagnostics,
+            })
         return view
 
     # --- camada tática ------------------------------------------------------
@@ -184,7 +199,7 @@ class MontadorV1:
             return None
         pmf_do_dia = None
         if data in self.mercados:                       # dia de divulgação do CPI
-            probs, _ = self.pmfs[self.mercados[data]]
+            probs, _, _ = self.pmfs[self.mercados[data]]
             if data in probs.index:
                 pmf_do_dia = probs.loc[data].to_numpy(dtype=float)
         if pmf_do_dia is None or not np.isfinite(pmf_do_dia).all() or pmf_do_dia.sum() <= 0:
@@ -269,7 +284,7 @@ def main():
                           fomc, surpresas, orcamentos)
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
-    primeira_pmf = min(probs.index.min() for probs, _ in pmfs.values())
+    primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
     inicio = max(retornos.index[SIGMA_JANELA_PREGOES], primeira_pmf)
     datas = retornos.index[retornos.index >= inicio]
     w_mkt = market_weights(ASSETS)

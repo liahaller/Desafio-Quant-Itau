@@ -149,6 +149,76 @@ def daily_preopen(serie):
     return preopen.set_axis(preopen.index.tz_convert(None).normalize())
 
 
+def diagnostics_qualidade(pmf_cru, decisao, janela_slots=None, dias_ate_evento=np.nan):
+    """Bloco de qualidade da leitura para o Ω da Lia (spec dela de 2026-08-07).
+
+    Mede na série CRUA — saída de `load_pmf`, passo nativo de 12h, com NaN nos
+    buracos. É de propósito, e é o ponto central desta função: depois do
+    `carry_missing` não existe mais buraco para contar, e depois do
+    `daily_preopen` sobra 1 ponto por dia em vez de 2. O que a Lia mede é a
+    qualidade do dado que ENTROU, não a do dado já consertado.
+
+    Regra geral dela, aplicada em todos os campos: **desconhecido = NaN, nunca
+    0** — zero é valor informativo na régua (zera o produto).
+
+    `decisao`      : data do rebalanceamento (naive) ou o slot exato (tz-aware).
+                     Naive vira o slot das 12:00 UTC daquela data, que é o ponto
+                     pré-abertura que a view usa (regra de alinhamento do módulo).
+    `janela_slots` : N nominal. A janela é os N slots que terminam NO slot da
+                     decisão, inclusive — o slot da decisão é informação
+                     disponível, não lookahead. **None = vida inteira do mercado
+                     até a decisão**, e é o default de propósito: o tamanho da
+                     janela é output da calibração de monotonicidade da LIA, não
+                     número meu para cravar (CLAUDE.md §6). Mandando a série
+                     inteira, ela rejanela do lado dela sem ida e volta — que é
+                     exatamente o motivo pelo qual ela pediu `serie_janela` cru.
+
+    `n_slots_esperados_janela` é truncado pelo início da série: mercado que
+    nasceu há 3 slots espera 3, não N. É o que separa "buraco de leitura" de
+    "mercado ainda não existia" — a Lia calcula `esperados − pontos` e precisa
+    que a diferença seja só a primeira coisa.
+
+    `dp_variacao_janela` sai NaN em mercado multi-bucket: colapsar a PMF num
+    escalar `p` é transformação da régua dela, não minha (mesmo argumento com
+    que ela pediu `soma_faixas` cru). Só é calculado quando a série tem uma
+    coluna só, caso em que o `p` é inequívoco. Ver pergunta aberta no LOG.
+    """
+    decisao = pd.Timestamp(decisao)
+    if decisao.tz is None:
+        decisao = decisao.normalize().tz_localize("UTC") + pd.Timedelta(hours=12)
+    slot = pd.Timedelta(hours=12)
+    nascimento = pmf_cru.index.min() if len(pmf_cru.index) else decisao
+    inicio = nascimento if janela_slots is None else decisao - slot * (janela_slots - 1)
+
+    janela = pmf_cru[(pmf_cru.index >= inicio) & (pmf_cru.index <= decisao)]
+    # linha sem NENHUM bucket precificado não é leitura; é buraco com carimbo.
+    pontos = janela.dropna(how="all")
+
+    esperados = int((decisao - max(inicio, nascimento)) / slot) + 1
+
+    if len(pontos):
+        idade_h = (decisao - pontos.index[-1]) / pd.Timedelta(hours=1)
+    else:
+        idade_h = np.nan  # sem ponto na janela: idade é desconhecida, não 0
+
+    uma_coluna = pontos.shape[1] == 1 if pontos.ndim == 2 else True
+    if uma_coluna and len(pontos) > 1:
+        p = pontos.iloc[:, 0] if pontos.ndim == 2 else pontos
+        dp_variacao = float(p.diff().std())
+    else:
+        dp_variacao = np.nan
+
+    return {
+        "serie_janela": [(t, linha.to_dict()) for t, linha in pontos.iterrows()],
+        "n_pontos_janela": int(len(pontos)),
+        "n_slots_esperados_janela": esperados,
+        "janela_slots": None if janela_slots is None else int(janela_slots),
+        "idade_ultimo_ponto_h": float(idade_h),
+        "dp_variacao_janela": dp_variacao,
+        "dias_ate_evento": float(dias_ate_evento),
+    }
+
+
 def load_cpi_releases(path):
     """Calendário de divulgação do CPI, com o erro de ano da fonte corrigido.
 

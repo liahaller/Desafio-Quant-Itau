@@ -68,6 +68,43 @@ def stack_views(view_results, n_assets):
     return P, Q, [r.diagnostics for r in active]
 
 
+def aplicar_veto(view_results, ativa, incerteza=None):
+    """Aplica o vetor `ativa` do Ω da Lia: view vetada por liquidez vira None.
+
+    Veto é view que SAI de P e Q, não Ω gigante (decisão dela, item 4c da
+    resposta de 2026-08-07): é o limite exato de Ω → ∞, sem número mágico e
+    sem resíduo da view vetada empurrando peso.
+
+    A armadilha que esta função existe para fechar é o ÍNDICE: `ativa` e
+    `incerteza` vêm na ordem das views ATIVAS (a mesma de `stack_views`),
+    enquanto `view_results` tem intercalados os None das views que já nasceram
+    desativadas pela cascata. Casar os dois na mão erra CALADO — veta a view
+    errada, o backtest roda igual e o número sai diferente sem avisar.
+
+    Devolve `(view_results, incerteza)` já alinhados entre si: a lista com os
+    vetados virados None, e o `incerteza` reduzido aos sobreviventes, pronto
+    para `omega_fallback`.
+    """
+    ativa = list(ativa)
+    n = sum(r is not None for r in view_results)
+    if len(ativa) != n:
+        raise ValueError(f"`ativa` precisa de uma entrada por view ativa: {len(ativa)} vs {n}")
+    if incerteza is not None and len(incerteza) != n:
+        raise ValueError(
+            f"`incerteza` precisa de uma entrada por view ativa: {len(incerteza)} vs {n}")
+
+    saida, sobreviventes, i = [], [], 0
+    for r in view_results:
+        if r is None:
+            saida.append(None)  # já desativada pela cascata: o vetor dela não indexa aqui
+            continue
+        saida.append(r if ativa[i] else None)
+        if ativa[i] and incerteza is not None:
+            sobreviventes.append(incerteza[i])
+        i += 1
+    return saida, (None if incerteza is None else np.asarray(sobreviventes, dtype=float))
+
+
 def bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega=None):
     """Pesos de um rebalanceamento, ponta a ponta.
 
