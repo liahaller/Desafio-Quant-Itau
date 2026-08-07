@@ -109,7 +109,7 @@ def carry_cost(w, financiamento_bps_ano=FINANCIAMENTO_SPREAD_BPS_ANO,
             + aluguel_bps_ano * BPS * vendido) / pregoes_por_ano
 
 
-def cap_leverage(w, teto=None):
+def cap_leverage(w, teto=None, w_ref=None):
     """Normaliza a carteira quando Σ|w| passa do `teto` (None = sem teto).
 
     Decidido em sessão (Felipe, 2026-08-05) porque a D8 previu peso
@@ -123,14 +123,27 @@ def cap_leverage(w, teto=None):
     Escala TODAS as pontas pelo mesmo fator, o que preserva a direção da
     carteira e só corta o tamanho. O teto é parâmetro humano — varrer vários e
     reportar (como já se faz com γ e com o custo) é a leitura honesta.
+
+    `w_ref` = carteira que o corte NÃO toca. None (padrão) corta a carteira
+    inteira, inclusive a perna de mercado que vem do prior; `w_ref = w_mkt`
+    corta só o TILT (`w − w_mkt`). São as duas metades da questão de desenho
+    aberta na seção 10 do `Decisoes_pendentes.md` — medir as duas **não fecha a
+    D12**: o nível do teto segue esperando o `c` da Lia.
+
+    Cuidado de escala ao comparar: com `w_ref`, o teto limita `Σ|w − w_ref|` e
+    não `Σ|w|`. Com w_mkt = 100% SPY, um teto t no tilt deixa Σ|w| chegar a
+    1 + t. Por isso a tabela reporta a alavancagem MEDIDA em vez de supor que
+    ela é o teto — as colunas não são comparáveis pelo rótulo.
     """
     w = np.asarray(w, dtype=float)
     if teto is None:
         return w
     if teto <= 0:
         raise ValueError("teto de alavancagem deve ser positivo")
-    bruta = float(np.abs(w).sum())
-    return w if bruta <= teto else w * (teto / bruta)
+    base = np.zeros_like(w) if w_ref is None else np.asarray(w_ref, dtype=float)
+    tilt = w - base
+    bruta = float(np.abs(tilt).sum())
+    return w if bruta <= teto else base + tilt * (teto / bruta)
 
 
 def reversal_share(trades, janela=2):
@@ -158,7 +171,8 @@ def reversal_share(trades, janela=2):
 
 
 def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELTA,
-                 custo_bps=CUSTO_BPS_POR_LADO, teto_alavancagem=None, w_inicial=None):
+                 custo_bps=CUSTO_BPS_POR_LADO, teto_alavancagem=None,
+                 teto_no_tilt=False, w_inicial=None):
     """Anda nas datas e devolve o BacktestResult.
 
     retornos   : DataFrame (datas × ativos) de retornos diários, colunas na
@@ -174,6 +188,10 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  O corte é aplicado DEPOIS da camada tática, sobre a carteira
                  que de fato vai a mercado — e portanto o giro e o custo são
                  medidos já no peso cortado.
+    teto_no_tilt : False (padrão) = o teto corta a carteira inteira; True = corta
+                 só o desvio em relação a `w_mkt`, deixando a perna de mercado
+                 intacta. Muda o que o teto limita (`Σ|w − w_mkt|`, não `Σ|w|`)
+                 — ver `cap_leverage`.
     w_inicial  : peso já carregado antes da primeira data. None = zeros, ou
                  seja, a primeira montagem paga o custo de entrar na carteira.
 
@@ -207,16 +225,23 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         omega = None if P is None else omega_fallback(P, sigma, tau)
         w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
         w_alvo, diag_taticas = apply_overlays(w_bl, overlay_results or ())
-        w_alvo = cap_leverage(w_alvo, teto_alavancagem)
+        w_alvo = cap_leverage(w_alvo, teto_alavancagem, w_mkt if teto_no_tilt else None)
 
         custo, giro = transaction_cost(w_alvo, w_derivado, custo_bps)
         carrego = carry_cost(w_alvo)
         r_ativos = retornos.loc[data].to_numpy(dtype=float)
         r_bruto = float(w_alvo @ r_ativos)
+        # Atribuição do dia, exata por linearidade: r_bruto = mercado + tilt.
+        # `r_tilt` carrega TUDO que não é o prior — o tilt da view, a tática e,
+        # no teto de carteira, também o pedaço da perna de mercado que o corte
+        # tirou. É essa terceira parcela que a comparação dos dois escopos isola.
+        r_mercado = float(w_mkt @ r_ativos)
 
         linhas.append({
             "data": data,
             "r_bruto": r_bruto,
+            "r_mercado": r_mercado,
+            "r_tilt": r_bruto - r_mercado,
             "custo": custo,
             "carrego": carrego,
             "r_liquido": r_bruto - custo - carrego,
@@ -267,6 +292,12 @@ def summary(resultado, benchmark=None, pregoes_por_ano=PREGOES_POR_ANO):
             float(bruto.sum() / giro_total / BPS) if giro_total > 0 else float("nan")),
         "alavancagem média (Σ|w|)": float(diario["alavancagem"].mean()),
         "views ativas por dia (média)": float(diario["n_views"].mean()),
+        # Atribuição aditiva: a perna de mercado compõe (é uma carteira de
+        # verdade), o tilt entra como SOMA das contribuições diárias — não é
+        # uma carteira que se possa comprar, então compor não teria sentido.
+        # Por isso as duas linhas não fecham exatamente com o acumulado.
+        "perna de mercado (composta)": float((1.0 + diario["r_mercado"]).prod() - 1.0),
+        "tilt (soma das contribuições diárias)": float(diario["r_tilt"].sum()),
     }
     if benchmark is not None:
         b = pd.Series(benchmark).reindex(diario.index)

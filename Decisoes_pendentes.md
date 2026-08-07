@@ -135,6 +135,27 @@ nenhuma foi escolhida no vazio. Números em `Dump/analises/Backtest_v1.md`.
 só o TILT da view, deixando a perna de mercado intacta? Hoje corta tudo, e é a
 explicação mais provável de a carteira perder do comprar-e-segurar SPY.
 
+**Medida em 2026-08-07 (sessão 5) — a suspeita se confirma, e é quase tudo**
+(`Dump/analises/Backtest_v1.md`, seção "Onde o teto corta"; `run_backtest(...,
+teto_no_tilt=)`). Comparando a **Σ|w| medido igual**, que é a única comparação
+honesta entre os dois escopos:
+
+| Σ\|w\| medida | teto na carteira | teto só no tilt | diferença |
+|---|---|---|---|
+| 1,74 | −15,14 pp | −0,94 pp | **+14,19 pp** |
+| 2,48 | −15,92 pp | −1,91 pp | **+14,02 pp** |
+
+A parcela de tilt sai de **−11,84% para +0,35%**: no corte de carteira ela
+misturava o tilt da view com o pedaço da perna de SPY que o corte tirou. Ou
+seja, **o buraco de ~14 pp contra o SPY era o escopo do teto, não a view** — a
+view 2.2 sozinha fica perto de zero na janela. Segue perdendo do SPY nos dois
+escopos, mas por −0,94 pp em vez de −14,39 pp.
+
+**Isto mede, não decide.** O escopo continua sendo decisão do grupo, e a ordem
+da Lia (c → medir Σ|w| → decidir teto) não muda: o número acima só diz que a
+pergunta do escopo tem consequência de duas casas decimais, então vale decidir
+junto com o nível.
+
 **Posição da Lia (resposta de 2026-08-07), registrada — não fecha nada:** ela
 pede para **não** fechar o teto antes de o `c` entrar, porque hoje o teto está
 fazendo o trabalho do Ω. Argumento dela: a régua é produto de fatores em (0,1]

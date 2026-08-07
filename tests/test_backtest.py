@@ -226,6 +226,30 @@ def test_teto_no_loop_limita_todo_dia():
     assert preso.diario["alavancagem"].max() == pytest.approx(2.0)
 
 
+def test_teto_no_tilt_preserva_a_perna_de_mercado():
+    """Corta o desvio de w_mkt e deixa o prior inteiro (a outra metade da D12)."""
+    w_mkt = np.array([1.0, 0.0, 0.0])
+    w = np.array([0.5, 2.0, -2.0])                  # tilt = (-0,5; 2; -2), Σ|tilt| = 4,5
+    cortado = cap_leverage(w, teto=0.9, w_ref=w_mkt)
+    tilt = cortado - w_mkt
+    assert np.abs(tilt).sum() == pytest.approx(0.9)         # o teto morde o tilt
+    assert tilt / np.abs(tilt).sum() == pytest.approx((w - w_mkt) / 4.5)  # direção fica
+    assert np.abs(cortado).sum() > 0.9              # Σ|w| NÃO é o que está limitado
+
+
+def test_atribuicao_do_dia_fecha_com_o_bruto():
+    """r_bruto = perna de mercado + tilt, exato — é decomposição, não estimativa."""
+    r = _retornos(escala=0.002)
+    view = ViewResult(P=np.array([0.0, 1.0, -1.0]), Q=0.01,
+                      diagnostics={"view": "sintetica", "horizonte_q_dias": 1})
+    res = run_backtest(r, lambda _d: (_sigma(), [view], []), np.array([1.0, 0.0, 0.0]),
+                       teto_alavancagem=2.0)
+    d = res.diario
+    assert (d["r_mercado"] + d["r_tilt"]).to_numpy() == pytest.approx(d["r_bruto"].to_numpy())
+    # a perna de mercado é o benchmark: w_mkt = 100% do primeiro ativo
+    assert d["r_mercado"].to_numpy() == pytest.approx(r[r.columns[0]].to_numpy())
+
+
 def test_data_fora_da_tabela_falha_alto():
     r = _retornos()
     with pytest.raises(ValueError, match="fora da tabela"):

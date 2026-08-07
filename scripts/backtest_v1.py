@@ -243,6 +243,11 @@ class MontadorV1:
         return sigma, views, overlays
 
 
+def rotulo_teto(teto, no_tilt):
+    """Nome da coluna. `|` escapado — vira cabeçalho de tabela markdown."""
+    return f"tilt ≤ {teto:g}" if no_tilt else f"Σ\\|w\\| ≤ {teto:g}"
+
+
 def main():
     # O console do Windows abre em cp1252 e engasga no Σ dos rótulos; o
     # arquivo de saída já vai em utf-8.
@@ -289,14 +294,19 @@ def main():
     datas = retornos.index[retornos.index >= inicio]
     w_mkt = market_weights(ASSETS)
 
+    # Duas varreduras: o teto cortando a carteira inteira e cortando só o tilt.
+    # É a questão de desenho aberta na seção 10 do `Decisoes_pendentes.md` —
+    # medir as duas dá número à reunião sem fechar a D12.
     colunas = {}
-    for teto in args.tetos:
-        resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
-                                 delta=DELTA, custo_bps=args.custo_bps,
-                                 teto_alavancagem=teto)
-        # o `|` precisa vir escapado: é nome de coluna de tabela markdown
-        colunas[f"Σ\\|w\\| ≤ {teto:g}"] = summary(resultado, benchmark=retornos["SPY"])
-        montador.divergencias.clear()  # a média expansiva recomeça a cada rodada
+    for no_tilt in (False, True):
+        for teto in args.tetos:
+            resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
+                                     delta=DELTA, custo_bps=args.custo_bps,
+                                     teto_alavancagem=teto, teto_no_tilt=no_tilt)
+            # o `|` precisa vir escapado: é nome de coluna de tabela markdown
+            colunas[rotulo_teto(teto, no_tilt)] = summary(resultado,
+                                                          benchmark=retornos["SPY"])
+            montador.divergencias.clear()  # a média expansiva recomeça a cada rodada
     tabela = pd.DataFrame(colunas)
 
     # A duration medida é a decisão desta sessão — sai no relatório, não fica só
@@ -323,6 +333,9 @@ def main():
               "- camada tática: "
               + (", ".join(tatica_ligada) if tatica_ligada
                  else "**desligada** — os orçamentos são parâmetro de reunião") + "\n",
+              "- **duas varreduras de escopo do teto:** `Σ|w| ≤ t` corta a "
+              "carteira inteira; `tilt ≤ t` corta só `Σ|w − w_mkt|` e deixa a "
+              "perna de mercado do prior intacta\n",
               "| métrica | " + " | ".join(tabela.columns) + " |",
               "|---" * (len(tabela.columns) + 1) + "|"]
     for nome, linha in tabela.iterrows():
@@ -343,8 +356,9 @@ def main():
                       f"(premissa: {args.custo_bps:.1f})")
 
     # Leitura dos números — descritiva, sem fechar decisão (CLAUDE.md §1).
-    aperto = tabela.columns[0]
-    c = tabela[aperto]
+    teto0 = args.tetos[0]
+    c = tabela[rotulo_teto(teto0, False)]
+    t = tabela[rotulo_teto(teto0, True)]
     linhas.append("\n## Leitura\n")
     linhas.append(
         f"**A carteira perde do comprar-e-segurar SPY**: {c['retorno acumulado líquido'] * 100:+.1f}% "
@@ -357,18 +371,77 @@ def main():
         f"{c['custo de breakeven (bps por lado)'] / args.custo_bps:.1f}× a premissa de "
         f"{args.custo_bps:.0f} bps. Há folga larga de custo; o problema é o retorno bruto.\n")
     linhas.append(
-        f"**O mecanismo mais provável é mecânico, não da view.** O teto escala TODAS as "
-        f"pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com a view ativa em "
+        f"**O mecanismo suspeito era mecânico, não da view.** O teto de carteira escala TODAS "
+        f"as pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com a view ativa em "
         f"{c['views ativas por dia (média)'] * 100:.0f}% dos pregões, parte do orçamento de "
         f"Σ|w| sai do SPY para o par TIP/TLT — numa janela em que o SPY fez "
         f"{c['benchmark acumulado'] * 100:+.1f}%, reduzir exposição a ele custa caro por si só. "
-        f"**Questão de desenho em aberto (não decidida aqui):** o teto deve cortar a carteira "
-        f"inteira ou só o TILT da view, deixando a perna de mercado intacta?\n")
+        f"A seção seguinte mede o tamanho disso.\n")
     linhas.append(
         f"**Giro desfeito em 1–2 pregões: {c['giro desfeito em 1–2 pregões'] * 100:.0f}%.** Um terço "
         f"do que se negocia é desfeito em dois pregões. É material, mas com a folga de custo "
         f"acima não é o que está segurando o resultado — entra como insumo da revisão "
         f"condicional do D1 (banda de não-negociação), não como veredito sobre o H.\n")
+
+    linhas.append("\n## Onde o teto corta — carteira inteira × só o tilt\n")
+    linhas.append(
+        "Mesma varredura, dois escopos. `Σ|w| ≤ t` escala tudo; `tilt ≤ t` corta só "
+        "`Σ|w − w_mkt|` e entrega a perna de mercado inteira. **Isto mede, não decide:** "
+        "a D12 (nível do teto) segue esperando o `c` da Lia, na ordem que ela propôs — "
+        "entra o `c`, mede-se Σ|w| de novo, aí se decide o teto.\n")
+    linhas.append(
+        "> Os rótulos NÃO são comparáveis entre si. `tilt ≤ t` limita o desvio, não a "
+        "carteira: com w_mkt = 100% SPY, Σ|w| pode chegar a 1 + t. Compare pela "
+        "**alavancagem medida**, que é a coluna ao lado.\n")
+    linhas.append("| escopo | teto | Σ\\|w\\| medida | líquido | excesso | "
+                  "tilt (soma diária) | giro/dia |")
+    linhas.append("|---|---|---|---|---|---|---|")
+    for teto in args.tetos:
+        for escopo, no_tilt in (("carteira", False), ("só o tilt", True)):
+            k = tabela[rotulo_teto(teto, no_tilt)]
+            linhas.append(
+                f"| {escopo} | {teto:g} | {k['alavancagem média (Σ|w|)']:.2f} | "
+                f"{k['retorno acumulado líquido'] * 100:+.2f}% | "
+                f"{k['excesso acumulado (líquido − benchmark)'] * 100:+.2f} pp | "
+                f"{k['tilt (soma das contribuições diárias)'] * 100:+.2f}% | "
+                f"{k['giro diário médio']:.3f} |")
+
+    ganho = (t["excesso acumulado (líquido − benchmark)"]
+             - c["excesso acumulado (líquido − benchmark)"])
+    linhas.append(
+        f"\n**No teto {teto0:g}, preservar a perna de mercado muda o excesso em "
+        f"{ganho * 100:+.2f} pp** ({c['excesso acumulado (líquido − benchmark)'] * 100:+.2f} pp "
+        f"→ {t['excesso acumulado (líquido − benchmark)'] * 100:+.2f} pp), a um custo de "
+        f"alavancagem de {c['alavancagem média (Σ|w|)']:.2f} → "
+        f"{t['alavancagem média (Σ|w|)']:.2f} de Σ|w| médio. Com o escopo no tilt a carteira "
+        + ("**passa a bater** o comprar-e-segurar SPY"
+           if t["excesso acumulado (líquido − benchmark)"] > 0
+           else "**continua perdendo** do comprar-e-segurar SPY") + ".\n")
+    # Comparação a alavancagem IGUAL — a única honesta entre os dois escopos.
+    # Quando o teto morde todo dia, cortar o tilt em t e a carteira em 1 + t
+    # caem no mesmo Σ|w| medido; o script confere em vez de supor.
+    alav, exc = (tabela.loc["alavancagem média (Σ|w|)"],
+                 tabela.loc["excesso acumulado (líquido − benchmark)"])
+    pares = [(rotulo_teto(x, True), r)
+             for x in args.tetos
+             for r in (rotulo_teto(y, False) for y in args.tetos)
+             if abs(alav[r] - alav[rotulo_teto(x, True)]) < 1e-6]
+    if pares:
+        linhas.append("\n**A mesma comparação com Σ|w| IGUAL** (o rótulo engana, a "
+                      "alavancagem medida não):\n")
+        for rt, rc in pares:
+            linhas.append(f"- Σ|w| = **{alav[rt]:.2f}**: `{rc}` dá "
+                          f"{exc[rc] * 100:+.2f} pp de excesso, `{rt}` dá "
+                          f"{exc[rt] * 100:+.2f} pp — diferença de "
+                          f"**{(exc[rt] - exc[rc]) * 100:+.2f} pp** só por causa de "
+                          f"ONDE o teto corta, com o mesmo tamanho de carteira.")
+        linhas.append("")
+    linhas.append(
+        f"A parcela de tilt é o que separa os dois desenhos: {c['tilt (soma das contribuições diárias)'] * 100:+.2f}% "
+        f"no corte de carteira contra {t['tilt (soma das contribuições diárias)'] * 100:+.2f}% no corte de tilt. "
+        "No corte de carteira essa parcela mistura duas coisas — o tilt da view **e** o pedaço "
+        "da perna de mercado que o corte tirou; no corte de tilt ela é só a view. A diferença "
+        "entre as duas é a conta do que o escopo do teto cobra por si só.\n")
 
     Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")
