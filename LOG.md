@@ -1,5 +1,154 @@
 # LOG de sessões
 
+## 2026-08-07 (sessão 5) — Felipe
+
+**Contexto da sessão:** os dois recados da sessão 4 (`FOLLOWUP4` ao Paulo e
+`RESPOSTA_Lia_omega_diagnostics`) **foram enviados pelo dono** — a pendência de
+envio da sessão 4 está fechada. Sessão de fazer o que **não** depende das
+respostas: três frentes escolhidas por não terem dono externo no caminho.
+
+**1. Escopo do teto medido — a questão de desenho aberta da seção 10 virou número.**
+
+`cap_leverage(w, teto, w_ref)`: com `w_ref` o corte incide sobre `w − w_ref`.
+Sem ele, comportamento idêntico ao anterior. `run_backtest(..., teto_no_tilt=)`
+liga a variante, e o `backtest_v1.py` passou a varrer os **dois escopos**.
+
+Comparando a Σ|w| **medido igual** (a única comparação honesta — `tilt ≤ t`
+limita o desvio, não a carteira, e deixa Σ|w| chegar a 1 + t):
+
+| Σ\|w\| medida | teto na carteira | teto só no tilt | diferença |
+|---|---|---|---|
+| 1,74 | −15,14 pp | −0,94 pp | **+14,19 pp** |
+| 2,48 | −15,92 pp | −1,91 pp | **+14,02 pp** |
+
+- **O buraco de ~14 pp contra o SPY era o escopo do teto, não a view.** A
+  parcela de tilt sai de **−11,84% para +0,35%**: no corte de carteira ela
+  misturava o tilt da view com o pedaço da perna de SPY que o corte arrancava.
+  A view 2.2 sozinha fica **perto de zero** na janela — nem heroína nem vilã.
+- A carteira segue perdendo do SPY nos dois escopos, mas por −0,94 pp em vez de
+  −14,39 pp. O giro cai junto (0,219 → 0,141/dia).
+- **Atribuição saiu para o script** (`r_mercado`, `r_tilt` no diário, exatas por
+  linearidade). Era a seção escrita à mão que a re-rodada apagava.
+
+**2. Curva do `c` — o passo (2) da ordem da Lia, pré-executado** (`scripts/curva_c.py`
+→ `Dump/analises/Curva_c.md`; `run_backtest(..., incerteza=)` como ferramenta de
+**varredura**, o vetor de verdade continua vindo dela pelo `aplicar_veto`).
+
+| c | Σ\|w\| pedida (mediana) | teto 1 morde | ruína sem teto | excesso (carteira) |
+|---|---|---|---|---|
+| 1 | 195 | 74% | 36 dias | −14,39 pp |
+| 0,25 | 79 | 74% | 16 dias | −14,33 pp |
+| 0,05 | 19,5 | 74% | 3 dias | −14,33 pp |
+| 0,01 | 4,8 | 74% | 0 | −14,12 pp |
+
+- **O `c` encolhe menos do que parece:** com Ω = (1/c)·diag(P·τΣ·Pᵀ) o tilt
+  escala como **c/(1+c)**, não como `c`. Perto de `c = 1` metade do peso já vem
+  do prior. Dividir o `c` por 100 corta a Σ|w| por 40.
+- **O `c` não substitui o limitador de tamanho.** O teto morde em 74% dos
+  pregões em TODA a grade, e por isso o excesso quase não se move. É a resposta
+  ao passo (3) dela, com número. **Não contradiz a Lia** — o `c` de fato só tira
+  peso e a ordem dela segue certa; refina: os dois convivem, o teto não é só
+  remendo esperando o Ω.
+- **Correção de registro:** o "Σ|w| mediana 24, máx 264" da seção 10 subestima.
+  Sem teto o backtest morre no primeiro dia de ruína (2025-03-19 no dado de
+  hoje), então aquela estatística só cobria os 26 pregões até lá. Na carteira
+  **pedida** — que existe todo dia, por não depender de trajetória — é **195 de
+  mediana e 34.481 de máximo**. A conclusão que o número sustentava fica mais
+  forte, não mais fraca.
+
+**3. View B fora do v1 (decisão 11, provisória).** Estava registrada como
+"bloqueada esperando dado", o que não descrevia a situação:
+
+- **A perna do poly já estava entregue** e ninguém tinha visto:
+  `M3_fed_trajectory_*`, 9 faixas ("nenhum corte" a "8+ cortes em 2025"), ~690
+  leituras por faixa, 2024-12-29 a 2025-12-10.
+- **A perna do mercado não existe de graça, e isso já estava medido** no F6: todas
+  as sintaxes do contrato de dezembro voltam vazias no yfinance; só o contínuo
+  `ZQ=F` funciona e ele é o da frente. Alternativas são pagas.
+- Sai porque **duplica a 2.3** (β e P são os mesmos por desenho), **cobre metade
+  da janela** (~210 de 374 pregões) e **a view irmã está travada por um CSV
+  grátis** (o `DFF`). Comprar dado para a B enquanto a 2.3 espera o G8 inverte a
+  prioridade.
+- Substituto **mapeado e não decidido** (é metodológico, do grupo): forward de
+  dezembro extraído da curva de bills do FRED — tem precedente na seção 9
+  (`ΔDTB3` no lugar do ZQ), com a ressalva de que ninguém mediu o ruído de um
+  forward de 1 mês tirado de dois vértices interpolados.
+- **Libera a fila do Paulo:** a caça ao ZQ aparece em três pedidos (F6,
+  FOLLOWUP2, FOLLOWUP3) e agora não tem consumidor no v1.
+
+**Quebrou / aprendido:**
+- **Média de views ativas denunciou um artefato de float.** A coluna "dias acima
+  do teto" saiu 94% quando a view só existe em 74% dos pregões. Causa: nos dias
+  sem view o BL devolve `w_mkt` com erro de arredondamento (`inv(δΣ)π` não fecha
+  em 1,0 exato), e um `> teto` seco contava esses dias como se o teto mordesse.
+  Só apareceu porque havia um segundo número medindo a mesma coisa.
+- **Conferir número antigo contra medição nova rendeu a correção do 24/264** —
+  mesmo padrão da sessão 4, agora aplicado ao registro do próprio time.
+- A comparação entre escopos de teto **não pode ser feita pelo rótulo**: `tilt ≤ 1`
+  e `Σ|w| ≤ 1` são carteiras de tamanhos diferentes. Sem parear pela alavancagem
+  medida, o ganho de 14 pp seria lido como se viesse de graça.
+
+**Pendente:**
+
+*Bloqueado em terceiros (nada a fazer além de esperar):*
+- **G8 (`fred_DFF.csv`) — Paulo.** É o gargalo: sem ele o backtest roda com 1
+  view de 2. Já cobrado no FOLLOWUP4.
+- **G5 (spec do volume) — Paulo**, passado no FOLLOWUP4.
+- **Decisão 6a — Lia** (colapso da PMF no `p` do `score_estabilidade`). Não
+  bloqueia: o fallback `c = 1` roda.
+- **Régua do `c` — Lia.** A fiação está pronta (`aplicar_veto` +
+  `omega_fallback(incerteza=)`) e a curva já está medida: quando o vetor chegar,
+  é plugar e reportar.
+
+*Reunião (grupo):*
+- **D12 — nível E escopo do teto**, agora com número dos dois lados.
+- **Orçamentos da camada tática** (`--orcamento-premio`, `--orcamento-drift-*`).
+  Sem eles a camada não entra no backtest, apesar dos 32 eventos medidos na
+  sessão 4.
+- **Decisão 11** — confirmar a saída da B; se reabrir, decidir sobre o proxy de
+  forward da curva.
+- **Revisão das provisórias** das seções 9 e 10 (τ, δ, H = 1, custo, γ).
+
+*Trabalho meu, destravado quando o dado chegar:*
+- **Ligar a 2.3** e re-rodar as duas análises. Com 2 views o escalar de `c` deixa
+  de ser o `c` da view e vira média grosseira — a curva teria de virar vetorial.
+- **Banda de não-negociação** (revisão condicional do D1): o giro desfeito em
+  1–2 pregões está em 32–33% e continua não medido como banda.
+- **Seção manual do `Backtest_v1.md`**: a atribuição das 3 rodadas de 05/08
+  segue escrita à mão e é apagada a cada re-rodada. Menos crítica agora (a
+  atribuição corrente saiu para o script), mas ainda manual.
+- **DECISAO-4.1 (horizonte do Q) está dormente, não resolvida:** 2.2, 2.3 e B
+  declaram todas `horizonte_q_dias = 1`, então ligar a 2.3 **não** dispara o
+  `raise` do `stack_views`. Volta a morder se alguma view defasada (2.4) entrar.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~90k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "Na ultima sessão usamos as respostas que
+  recebbemos pra progredir no projeto, escrevemos uns recados para o paulo e Lia
+  que eu já mandei pra eles. Queria saber o que podemos fazer ou decidir enquanto
+  esperamos pela resposta"
+- **Iterações até aceitar:** 1 — nenhuma rodada de correção de conteúdo. As
+  intervenções do dono foram de condução ("sim, vamos lá", "vamos atacar o item
+  4", "me explique o problema e sua recomendação") e uma escolha de opção (B fora
+  do v1).
+- **Erros da IA:** 4, todos apanhados antes de virar entrega. (1) Contagem de
+  dias acima do teto poluída por erro de float — pega ao cruzar com a média de
+  views ativas. (2) `|` sem escape no cabeçalho da tabela gerada, que partia as
+  colunas em duas. (3) Afirmação imprecisa de que a fórmula `c/(1+c)` previa a
+  queda de **Σ|w|**, quando prevê a do **tilt** (Σ|w| carrega a perna de mercado
+  junto) — reescrita em vez de maquiada. (4) Data e estatísticas da primeira
+  ruína cravadas à mão no texto gerado; trocadas por valores calculados.
+- **Decisões escaladas:** 1 nova (**11**, view B fora do v1 — fechada por escolha
+  explícita do dono, provisória). Seção 10 ganhou duas medições e uma correção de
+  número; seção 9 teve a linha "Views ativas" anotada. Nenhuma outra fechada.
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"medir a pergunta em aberto
+  em vez de esperar a reunião respondê-la"**. As três frentes eram itens que
+  estavam parados esperando terceiros; nenhuma precisava de fato da resposta, e
+  duas mudaram o que a reunião vai discutir.
+
+---
+
 ## 2026-08-07 (sessão 4) — Felipe
 
 **Contexto da sessão:** chegaram as **três respostas** dos recados enviados em 05/08 (G9 payrolls e
