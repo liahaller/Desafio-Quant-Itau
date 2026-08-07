@@ -47,7 +47,8 @@ valor do bucket aberto (decisão 11b) é resolvido pelo CHAMADOR via
 import numpy as np
 from scipy.stats import norm
 
-from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean, soma_faixas
+from poly_preprocessing import (favorite_longshot, favorite_longshot_pmf,
+                                normalize_probs, pmf_mean, soma_faixas)
 from views_common import ViewResult
 
 # Par da view (decisão 1 / espec da 2.2) — parametrizado só para não
@@ -121,7 +122,7 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
                dias_ate_divulgacao, divergencia_media=0.0,
                bucket_probs=None, bucket_values=None,
                binary_prob=None, binary_threshold=None, cpi_vol=None,
-               fl_correction=favorite_longshot,
+               fl_correction=None,
                long_asset=LONG_ASSET, short_asset=SHORT_ASSET):
     """Monta a view 2.2 para uma data de rebalanceamento.
 
@@ -144,15 +145,21 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
       binary_prob      : tupla (p_sim, p_nao) CRUA do mercado binário (ou None).
       binary_threshold : threshold X do binário "CPI > X".
       cpi_vol          : vol histórica do CPI para o fallback.
-      fl_correction    : correção de favorite-longshot (default: stub 11a).
+      fl_correction    : correção de favorite-longshot. `None` (default) usa a
+                         do caminho da cascata: `favorite_longshot_pmf` na PMF
+                         (eleva cada faixa a γ e RENORMALIZA sobre as faixas) e
+                         `favorite_longshot` no binário. Passar a binária na PMF
+                         só é inócuo em γ = 1,0; em γ ≠ 1 o vetor deixa de somar
+                         1 e o E_poly sai escalado sem dar erro — exatamente o
+                         caso da coluna de robustez γ da seção 9.
 
     Retorna ViewResult (P, Q, diagnostics) ou None se não há mercado de CPI.
     """
     if bucket_probs is not None:
         # anualiza os VALORES antes da média (Jensen: (1+E[π])^12 != E[(1+π)^12])
-        e_poly = pmf_mean(bucket_probs, _to_anual(bucket_values, cpi_frequencia),
-                          fl_correction)
-        e_poly_declarado = pmf_mean(bucket_probs, bucket_values, fl_correction)
+        fl = fl_correction or favorite_longshot_pmf
+        e_poly = pmf_mean(bucket_probs, _to_anual(bucket_values, cpi_frequencia), fl)
+        e_poly_declarado = pmf_mean(bucket_probs, bucket_values, fl)
         caminho = "pmf"
     elif binary_prob is not None:
         if binary_threshold is None or cpi_vol is None:
@@ -161,7 +168,8 @@ def build_view(assets, breakeven_10y, duration, *, cpi_frequencia,
         # nela) e a média sai depois — anualizar a média é aproximação, não
         # identidade, mas o caminho binário já é o degrau degradado da cascata.
         e_poly_declarado = expected_inflation_from_binary(
-            binary_prob[0], binary_prob[1], binary_threshold, cpi_vol, fl_correction)
+            binary_prob[0], binary_prob[1], binary_threshold, cpi_vol,
+            fl_correction or favorite_longshot)
         e_poly = float(_to_anual(e_poly_declarado, cpi_frequencia))
         caminho = "binario"
     else:

@@ -138,3 +138,18 @@ def test_soma_faixas_vem_crua_e_desconhecido_nao_vira_zero():
     assert np.isnan(soma_faixas(None))
     # faixa sem leitura contamina a soma: desconhecido propaga, não some
     assert np.isnan(soma_faixas([0.4, np.nan, 0.3]))
+
+
+def test_pmf_mean_recusa_correcao_binaria_com_gamma():
+    """A binária numa PMF é inócua em γ = 1,0 e ERRADA em γ ≠ 1 — e γ ≠ 1 só
+    aparece na coluna de robustez (seção 9), então o erro só apareceria no
+    número final. Tem de falhar alto na hora."""
+    probs, valores = [0.5, 0.3, 0.2], [-50.0, -25.0, 0.0]
+    binaria_com_gamma = lambda p: favorite_longshot(p, gamma=1.25)  # noqa: E731
+    with pytest.raises(ValueError, match="não 1"):
+        pmf_mean(probs, valores, binaria_com_gamma)
+    # a correção CERTA passa: renormaliza sobre as faixas
+    esperado = float(favorite_longshot_pmf(normalize_probs(probs), 1.25)
+                     @ np.array(valores))
+    assert np.isclose(pmf_mean(probs, valores,
+                               lambda p: favorite_longshot_pmf(p, 1.25)), esperado)

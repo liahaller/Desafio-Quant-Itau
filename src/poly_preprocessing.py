@@ -176,7 +176,18 @@ def pmf_mean(probs, values, fl_correction=favorite_longshot_pmf):
         raise ValueError(f"probs e values devem alinhar: {probs.shape} vs {values.shape}")
     if np.any(np.isnan(values)):
         raise ValueError("values contém NaN — bucket aberto não resolvido (decisão 11b)")
-    p = fl_correction(normalize_probs(probs))
+    p = np.asarray(fl_correction(normalize_probs(probs)), dtype=float)
+    # Contrato acima, verificado: a correção tem de devolver PMF utilizável.
+    # A armadilha real é passar aqui a `favorite_longshot` BINÁRIA — inócua em
+    # γ = 1,0 (identidade), mas em γ ≠ 1 ela devolve p^γ/(p^γ+(1−p)^γ) faixa a
+    # faixa, que não soma 1, e a média sairia escalada SEM ERRO. Como γ ≠ 1 só
+    # aparece na coluna de robustez (seção 9), o silêncio duraria até o número
+    # final. Falha alto em vez disso.
+    if not np.isclose(p.sum(), 1.0, atol=1e-9):
+        raise ValueError(
+            f"fl_correction devolveu vetor que soma {p.sum():.6f}, não 1 — na PMF "
+            "use `favorite_longshot_pmf` (renormaliza sobre as faixas); a "
+            "`favorite_longshot` binária só vale no caminho de 2 buckets")
     return float(p @ values)
 
 

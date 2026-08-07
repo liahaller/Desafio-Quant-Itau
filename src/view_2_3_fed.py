@@ -34,7 +34,8 @@ decisão humana (pendência da espec) — entram como dado, nunca default aqui.
 
 import numpy as np
 
-from poly_preprocessing import favorite_longshot, normalize_probs, pmf_mean, soma_faixas
+from poly_preprocessing import (favorite_longshot, favorite_longshot_pmf,
+                                normalize_probs, pmf_mean, soma_faixas)
 from views_common import P_from_betas, ViewResult
 
 # Centro da linha P (espec item 4: excesso sobre o mercado) — parametrizado
@@ -89,7 +90,7 @@ def build_view(assets, e_ff_bps, betas,
                bucket_probs=None, bucket_deltas_bps=None,
                binary_prob=None, binary_delta_bps=None,
                surpresa_media=0.0, soma_minima=SOMA_MINIMA,
-               fl_correction=favorite_longshot, market_asset=MARKET_ASSET):
+               fl_correction=None, market_asset=MARKET_ASSET):
     """Monta a view 2.3 para uma data de rebalanceamento.
 
     Recebe só dados até a data (quem corta é o backtest — sem lookahead).
@@ -108,7 +109,14 @@ def build_view(assets, e_ff_bps, betas,
       surpresa_media   : média histórica da surpresa, de janela EXPANSIVA no
                          chamador — a surpresa entra DEMEANADA (ver abaixo).
       soma_minima      : piso da soma crua da PMF (`SOMA_MINIMA`).
-      fl_correction    : correção de favorite-longshot (default: stub 11a).
+      fl_correction    : correção de favorite-longshot. `None` (default) usa a
+                         do caminho da cascata: `favorite_longshot_pmf` na PMF
+                         (eleva cada faixa a γ e RENORMALIZA sobre as faixas) e
+                         `favorite_longshot` no binário (p^γ/(p^γ+(1−p)^γ)).
+                         Passar a binária na PMF só é inócuo em γ = 1,0; em
+                         γ ≠ 1 devolve vetor que não soma 1 e o E_poly sai
+                         escalado sem dar erro — que é justamente o caso da
+                         coluna de robustez γ ∈ {1,1; 1,25} da seção 9.
 
     Retorna ViewResult (P, Q, diagnostics) ou None se não há mercado de FOMC.
 
@@ -125,12 +133,14 @@ def build_view(assets, e_ff_bps, betas,
         soma = soma_faixas(bucket_probs)
         if not np.isfinite(soma) or soma < soma_minima:
             return None  # PMF degenerada -> cascata, não chute renormalizado
-        e_poly_bps = pmf_mean(bucket_probs, bucket_deltas_bps, fl_correction)
+        e_poly_bps = pmf_mean(bucket_probs, bucket_deltas_bps,
+                              fl_correction or favorite_longshot_pmf)
         caminho = "pmf"
     elif binary_prob is not None:
         if binary_delta_bps is None:
             raise ValueError("fallback binário exige binary_delta_bps (ex.: -25 para corte)")
-        p_yes = float(fl_correction(normalize_probs([binary_prob[0], binary_prob[1]]))[0])
+        fl = fl_correction or favorite_longshot
+        p_yes = float(fl(normalize_probs([binary_prob[0], binary_prob[1]]))[0])
         e_poly_bps = p_yes * binary_delta_bps
         caminho = "binario"
     else:
