@@ -94,21 +94,12 @@ def test_omega_obrigatorio_com_view_ativa():
         pass
 
 
-if __name__ == "__main__":
-    test_stack_filtra_none_e_preserva_ordem()
-    test_sem_view_ativa_volta_w_mkt()
-    test_confianca_zero_encosta_no_prior()
-    test_view_altista_tilta_na_direcao_certa()
-    test_omega_obrigatorio_com_view_ativa()
-    print("bl_integration: 5 testes OK")
-
-
-def test_aplicar_veto_alinha_com_as_views_ativas_nao_com_a_lista():
-    """A armadilha do índice: os vetores da Lia vêm na ordem das views ATIVAS,
-    a lista tem os None da cascata intercalados. Casar errado veta calado."""
+def test_aplicar_veto_casa_por_nome_e_ignora_os_none_da_cascata():
+    """Os dicts da Lia são chaveados por view; os None da cascata não aparecem
+    neles. O dict certo veta a view certa, qualquer que seja a posição."""
     views = [None, _view([1, -1, 0], 0.02, "A"), None, _view([0, 1, -1], 0.03, "B")]
-    # ativa = [A: sim, B: não] -> só B sai; os None da cascata não consomem entrada
-    saida, incerteza = aplicar_veto(views, [True, False], incerteza=[2.0, 9.0])
+    saida, incerteza = aplicar_veto(views, {"B": False, "A": True},  # ordem do dict é irrelevante
+                                    incerteza={"A": 2.0, "B": 9.0})
     assert [r.diagnostics["view"] if r else None for r in saida] == [None, "A", None, None]
     # o `c` do vetado sai junto — o que sobra tem de casar com o P empilhado
     assert incerteza.tolist() == [2.0]
@@ -116,21 +107,44 @@ def test_aplicar_veto_alinha_com_as_views_ativas_nao_com_a_lista():
     assert P.shape[0] == len(incerteza)
 
 
-def test_aplicar_veto_rejeita_vetor_de_tamanho_errado():
-    views = [None, _view([1, -1, 0], 0.02, "A")]
-    for ruim in ([], [True, True]):
+def test_aplicar_veto_rejeita_chave_que_nao_casa():
+    """O erro que a chave por nome existe para converter em exceção: dict com
+    view faltando, sobrando ou com nome errado não roda calado."""
+    views = [None, _view([1, -1, 0], 0.02, "A"), _view([0, 1, -1], 0.03, "B")]
+    for ruim in ({"A": True}, {"A": True, "B": True, "C": True}, {"A": True, "2.3_fed": True}):
         try:
             aplicar_veto(views, ruim)
             assert False, f"deveria rejeitar ativa={ruim}"
         except ValueError:
             pass
+    # incerteza é validada com o mesmo rigor de `ativa`
+    try:
+        aplicar_veto(views, {"A": True, "B": True}, incerteza={"A": 2.0})
+        assert False, "deveria rejeitar incerteza incompleta"
+    except ValueError:
+        pass
 
 
 def test_veto_total_devolve_a_carteira_de_mercado():
     """Vetar todas as views é o limite exato de Ω -> infinito: w = w_mkt, sem
     número mágico e sem resíduo (item 4c da resposta da Lia)."""
     views = [_view([1, -1, 0], 0.02, "A")]
-    saida, _ = aplicar_veto(views, [False])
+    saida, _ = aplicar_veto(views, {"A": False})
     w, info = bl_weights_from_views(SIGMA, W_MKT, TAU, DELTA, saida)
     assert info["P"] is None
     assert np.allclose(w, W_MKT)
+
+
+# O bloco fica no FIM do arquivo: estava no meio, e os 4 testes definidos
+# depois dele nunca rodavam por `python tests/test_bl_integration.py`.
+if __name__ == "__main__":
+    test_stack_rejeita_horizontes_misturados()
+    test_stack_filtra_none_e_preserva_ordem()
+    test_sem_view_ativa_volta_w_mkt()
+    test_confianca_zero_encosta_no_prior()
+    test_view_altista_tilta_na_direcao_certa()
+    test_omega_obrigatorio_com_view_ativa()
+    test_aplicar_veto_casa_por_nome_e_ignora_os_none_da_cascata()
+    test_aplicar_veto_rejeita_chave_que_nao_casa()
+    test_veto_total_devolve_a_carteira_de_mercado()
+    print("bl_integration: 9 testes OK")
