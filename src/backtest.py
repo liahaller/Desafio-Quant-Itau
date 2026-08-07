@@ -32,7 +32,9 @@ em vez de virarem análise avulsa:
     reversão alta é ruído sendo pago a 2 bps a volta.
 
 O D1 (H = 1 dia) fica sob revisão CONDICIONAL a esses dois números — e a saída
-prevista, se eles forem ruins, é banda de não-negociação, não abandonar o H.
+prevista, se eles forem ruins, é banda de não-negociação, não abandonar o H. Ela
+existe desde 2026-08-07 (`no_trade_band`, parâmetro `banda`), **desligada por
+padrão**: o nível é humano e a varredura vive em `scripts/curva_banda.py`.
 """
 
 from typing import NamedTuple
@@ -146,6 +148,34 @@ def cap_leverage(w, teto=None, w_ref=None):
     return w if bruta <= teto else base + tilt * (teto / bruta)
 
 
+def no_trade_band(w_alvo, w_derivado, banda=None):
+    """Não executa o Δw de um ativo quando ele é menor que `banda` (None = sem banda).
+
+    Saída prevista no D1 se o `reversal_share` for ruim: o custo não vem de
+    negociar muito, vem de negociar contra si mesmo, e o giro que se desfaz em
+    1–2 pregões é feito de ajustes pequenos. A banda mata esses e deixa passar o
+    reposicionamento grande.
+
+    **Por ativo** (escolha do dono, 2026-08-07), não por carteira: é o Δw pequeno
+    que é ruído, e uma regra sobre Σ|Δw| deixaria uma distorção grande num ativo
+    passar só porque o total do dia ficou pequeno.
+
+    O nível da banda é parâmetro humano — como o teto e o γ, aqui se varre e se
+    reporta (`scripts/curva_banda.py`), não se crava.
+
+    Roda DEPOIS do `cap_leverage`, por ser camada de execução: com banda, o Σ|w|
+    carregado pode passar do teto em até `banda × n_ativos` — não negociar é o
+    ponto, então o excesso é aceito e sai medido na coluna de alavancagem.
+    """
+    w_alvo = np.asarray(w_alvo, dtype=float)
+    if not banda:
+        return w_alvo
+    if banda < 0:
+        raise ValueError("banda de não-negociação não pode ser negativa")
+    w_derivado = np.asarray(w_derivado, dtype=float)
+    return np.where(np.abs(w_alvo - w_derivado) < banda, w_derivado, w_alvo)
+
+
 def reversal_share(trades, janela=2):
     """Fração do giro total que é DESFEITA nos `janela` pregões seguintes.
 
@@ -172,7 +202,7 @@ def reversal_share(trades, janela=2):
 
 def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELTA,
                  custo_bps=CUSTO_BPS_POR_LADO, teto_alavancagem=None,
-                 teto_no_tilt=False, incerteza=None, w_inicial=None):
+                 teto_no_tilt=False, incerteza=None, w_inicial=None, banda=None):
     """Anda nas datas e devolve o BacktestResult.
 
     retornos   : DataFrame (datas × ativos) de retornos diários, colunas na
@@ -200,6 +230,9 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  maior = MENOS confiança, e o `c ∈ (0,1]` dela entra como 1/c.
     w_inicial  : peso já carregado antes da primeira data. None = zeros, ou
                  seja, a primeira montagem paga o custo de entrar na carteira.
+    banda      : banda de não-negociação por ativo (None/0 = sem banda). Δw menor
+                 que ela não é executado — ver `no_trade_band`. Aplicada por
+                 último, sobre a carteira já cortada pelo teto.
 
     O retorno do dia D usa os pesos montados com dado ANTERIOR a D e os
     retornos DE D — o custo é cobrado nesse mesmo dia, no rebalanceamento que
@@ -233,6 +266,7 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
         w_pedido, diag_taticas = apply_overlays(w_bl, overlay_results or ())
         w_alvo = cap_leverage(w_pedido, teto_alavancagem, w_mkt if teto_no_tilt else None)
+        w_alvo = no_trade_band(w_alvo, w_derivado, banda)
 
         custo, giro = transaction_cost(w_alvo, w_derivado, custo_bps)
         carrego = carry_cost(w_alvo)

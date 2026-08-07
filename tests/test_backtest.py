@@ -16,8 +16,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from backtest import (  # noqa: E402
-    BPS, cap_leverage, carry_cost, derived_weights, reversal_share,
-    run_backtest, summary, transaction_cost)
+    BPS, cap_leverage, carry_cost, derived_weights, no_trade_band,
+    reversal_share, run_backtest, summary, transaction_cost)
 from views_common import ViewResult  # noqa: E402
 from taticas_common import OverlayResult  # noqa: E402
 
@@ -312,3 +312,38 @@ def test_reset_preserva_a_semente_da_2_3():
     m.reset()
     assert m.surpresas_2_3 == [1.0, 2.0]
     assert m.divergencias == []
+
+
+def test_banda_nao_negocia_ajuste_pequeno_e_deixa_passar_o_grande():
+    """A banda é por ATIVO: o Δw pequeno não é executado, o grande vai inteiro.
+
+    O "inteiro" importa — banda que negocia `Δw − banda` seria imposto sobre o
+    trade grande, não filtro de ruído, e mudaria o peso carregado todo dia.
+    """
+    w_derivado = np.array([0.50, 0.30, 0.20])
+    w_alvo = np.array([0.503, 0.42, 0.20])       # Δ = +0,003 · +0,12 · 0,0
+    w = no_trade_band(w_alvo, w_derivado, banda=0.01)
+    assert np.allclose(w, [0.50, 0.42, 0.20])
+    # sem banda (None ou 0) nada muda — é o v1 entregue
+    assert np.allclose(no_trade_band(w_alvo, w_derivado, None), w_alvo)
+    assert np.allclose(no_trade_band(w_alvo, w_derivado, 0.0), w_alvo)
+    with pytest.raises(ValueError, match="não pode ser negativa"):
+        no_trade_band(w_alvo, w_derivado, -0.01)
+
+
+def test_banda_reduz_giro_no_backtest():
+    """No loop, banda maior => giro menor. Monotonicidade, não nível.
+
+    Se o giro NÃO cair, a banda não está sendo aplicada contra o peso derivado
+    (é o erro fácil: comparar com o alvo de ontem, que já foi movido pelo
+    retorno do dia e nunca coincide com o que está carregado).
+    """
+    r = _retornos(n=60, seed=3)
+    w_mkt = np.array([1.0, 0.0, 0.0])
+    view = ViewResult(P=np.array([0.0, 1.0, -1.0]), Q=0.002,
+                      diagnostics={"view": "sintetica", "horizonte_q_dias": 1})
+    montar = lambda _data: (_sigma(), [view], [])  # noqa: E731
+    giros = [summary(run_backtest(r, montar, w_mkt, banda=b))["giro diário médio"]
+             for b in (None, 0.005, 0.05)]
+    assert giros[0] >= giros[1] >= giros[2]
+    assert giros[2] < giros[0]
