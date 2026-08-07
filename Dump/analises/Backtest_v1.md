@@ -3,7 +3,7 @@
 > Gerado por `scripts/backtest_v1.py`. Benchmark = comprar e segurar SPY (consequência do `w_mkt` do prior CAPM). Custo de **2.0 bps por lado** sobre o giro contra o peso derivado (D8). Uma coluna por teto de alavancagem — **o teto é decisão humana; a varredura mede, não escolhe.**
 
 - janela: **2025-02-10 a 2026-08-06** (374 pregões)
-- views ativas: **2.2 inflação**. A 2.3 e a B ficam fora por insumo que não chegou (DFF/G8 e ZQ de dezembro), não por cascata
+- views ativas: **2.2 inflação** e **2.3 Fed** (esta desde 2026-08-07: PMF de decisão por reunião + `DTB3 − DFF` demeanado). A B fica fora por decisão 11, não por cascata
 - duration do breakeven: **medida** no par da própria view, janela expansiva — variou de **8.31 a 8.38** na amostra (a espec supunha "~8"; o dado confirmou, e agora o número é medido em vez de suposto)
 - camada tática: **desligada** — os orçamentos são parâmetro de reunião
 
@@ -12,44 +12,44 @@
 | métrica | Σ\|w\| ≤ 1 | Σ\|w\| ≤ 2 | Σ\|w\| ≤ 3 | Σ\|w\| ≤ 5 | tilt ≤ 1 | tilt ≤ 2 | tilt ≤ 3 | tilt ≤ 5 |
 |---|---|---|---|---|---|---|---|---|
 | pregões | 374.0000 | 374.0000 | 374.0000 | 374.0000 | 374.0000 | 374.0000 | 374.0000 | 374.0000 |
-| retorno acumulado bruto | 0.1764 | 0.1809 | 0.1850 | 0.1917 | 0.3055 | 0.3093 | 0.3126 | 0.3199 |
-| retorno acumulado líquido | 0.1572 | 0.1498 | 0.1420 | 0.1248 | 0.2918 | 0.2821 | 0.2720 | 0.2525 |
-| retorno médio diário líquido | 0.0004 | 0.0004 | 0.0004 | 0.0003 | 0.0007 | 0.0007 | 0.0007 | 0.0007 |
-| vol anualizada | 0.0897 | 0.0939 | 0.1006 | 0.1194 | 0.1796 | 0.1818 | 0.1854 | 0.1963 |
-| sharpe anualizado (excesso zero) | 1.1423 | 1.0485 | 0.9395 | 0.7232 | 1.0495 | 1.0113 | 0.9665 | 0.8702 |
-| giro diário médio | 0.2192 | 0.3559 | 0.4933 | 0.7710 | 0.1413 | 0.2803 | 0.4197 | 0.7004 |
-| giro desfeito em 1–2 pregões | 0.3346 | 0.3296 | 0.3272 | 0.3249 | 0.3176 | 0.3203 | 0.3211 | 0.3214 |
-| custo pago (fração do patrimônio) | 0.0164 | 0.0266 | 0.0369 | 0.0577 | 0.0106 | 0.0210 | 0.0314 | 0.0524 |
-| custo de breakeven (bps por lado) | 20.5437 | 12.9831 | 9.6035 | 6.4455 | 54.9298 | 28.0313 | 18.9416 | 11.6791 |
-| alavancagem média (Σ|w|) | 1.0000 | 1.7380 | 2.4759 | 3.9501 | 1.7380 | 2.4759 | 3.2139 | 4.6854 |
-| views ativas por dia (média) | 0.7380 | 0.7380 | 0.7380 | 0.7380 | 0.7380 | 0.7380 | 0.7380 | 0.7380 |
+| retorno acumulado bruto | 0.2063 | 0.2681 | 0.3181 | 0.3944 | 0.3523 | 0.4174 | 0.4755 | 0.5341 |
+| retorno acumulado líquido | 0.1808 | 0.2221 | 0.2526 | 0.2919 | 0.3280 | 0.3705 | 0.4068 | 0.4273 |
+| retorno médio diário líquido | 0.0005 | 0.0006 | 0.0006 | 0.0007 | 0.0008 | 0.0009 | 0.0010 | 0.0010 |
+| vol anualizada | 0.0646 | 0.0970 | 0.1126 | 0.1379 | 0.1838 | 0.1892 | 0.1958 | 0.2092 |
+| sharpe anualizado (excesso zero) | 1.7669 | 1.4417 | 1.4049 | 1.3207 | 1.1315 | 1.2168 | 1.2723 | 1.2503 |
+| giro diário médio | 0.2853 | 0.4939 | 0.6800 | 1.0200 | 0.2421 | 0.4498 | 0.6369 | 0.9630 |
+| giro desfeito em 1–2 pregões | 0.3639 | 0.3528 | 0.3487 | 0.3440 | 0.3500 | 0.3536 | 0.3492 | 0.3446 |
+| custo pago (fração do patrimônio) | 0.0213 | 0.0369 | 0.0509 | 0.0763 | 0.0181 | 0.0336 | 0.0476 | 0.0720 |
+| custo de breakeven (bps por lado) | 17.8726 | 13.2404 | 11.2309 | 9.0855 | 36.0873 | 22.3073 | 17.5173 | 12.7796 |
+| alavancagem média (Σ|w|) | 1.0000 | 1.9040 | 2.7334 | 4.2803 | 1.9040 | 2.7334 | 3.5213 | 5.0267 |
+| views ativas por dia (média) | 1.6070 | 1.6070 | 1.6070 | 1.6070 | 1.6070 | 1.6070 | 1.6070 | 1.6070 |
 | perna de mercado (composta) | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 |
-| tilt (soma das contribuições diárias) | -0.1184 | -0.1140 | -0.1096 | -0.1010 | 0.0035 | 0.0070 | 0.0105 | 0.0191 |
+| tilt (soma das contribuições diárias) | -0.0962 | -0.0423 | -0.0012 | 0.0598 | 0.0399 | 0.0885 | 0.1305 | 0.1734 |
 | benchmark acumulado | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 | 0.3012 |
-| excesso acumulado (líquido − benchmark) | -0.1439 | -0.1514 | -0.1592 | -0.1764 | -0.0094 | -0.0191 | -0.0292 | -0.0487 |
+| excesso acumulado (líquido − benchmark) | -0.1204 | -0.0791 | -0.0486 | -0.0093 | 0.0268 | 0.0693 | 0.1056 | 0.1261 |
 
 ## Giro — as duas checagens obrigatórias do D8
 
 O custo não vem de negociar muito, vem de negociar contra si mesmo: **giro desfeito em 1–2 pregões** é o mecanismo que destruiu a GTAA diária citada na pesquisa do D8. Se ele for alto, a saída prevista **não** é abandonar o H = 1 dia — é banda de não-negociação.
 
-- **Σ\|w\| ≤ 1:** giro diário médio 0.219 · desfeito em 1–2 pregões 0.335 · custo de breakeven 20.54 bps/lado (premissa: 2.0)
-- **Σ\|w\| ≤ 2:** giro diário médio 0.356 · desfeito em 1–2 pregões 0.330 · custo de breakeven 12.98 bps/lado (premissa: 2.0)
-- **Σ\|w\| ≤ 3:** giro diário médio 0.493 · desfeito em 1–2 pregões 0.327 · custo de breakeven 9.60 bps/lado (premissa: 2.0)
-- **Σ\|w\| ≤ 5:** giro diário médio 0.771 · desfeito em 1–2 pregões 0.325 · custo de breakeven 6.45 bps/lado (premissa: 2.0)
-- **tilt ≤ 1:** giro diário médio 0.141 · desfeito em 1–2 pregões 0.318 · custo de breakeven 54.93 bps/lado (premissa: 2.0)
-- **tilt ≤ 2:** giro diário médio 0.280 · desfeito em 1–2 pregões 0.320 · custo de breakeven 28.03 bps/lado (premissa: 2.0)
-- **tilt ≤ 3:** giro diário médio 0.420 · desfeito em 1–2 pregões 0.321 · custo de breakeven 18.94 bps/lado (premissa: 2.0)
-- **tilt ≤ 5:** giro diário médio 0.700 · desfeito em 1–2 pregões 0.321 · custo de breakeven 11.68 bps/lado (premissa: 2.0)
+- **Σ\|w\| ≤ 1:** giro diário médio 0.285 · desfeito em 1–2 pregões 0.364 · custo de breakeven 17.87 bps/lado (premissa: 2.0)
+- **Σ\|w\| ≤ 2:** giro diário médio 0.494 · desfeito em 1–2 pregões 0.353 · custo de breakeven 13.24 bps/lado (premissa: 2.0)
+- **Σ\|w\| ≤ 3:** giro diário médio 0.680 · desfeito em 1–2 pregões 0.349 · custo de breakeven 11.23 bps/lado (premissa: 2.0)
+- **Σ\|w\| ≤ 5:** giro diário médio 1.020 · desfeito em 1–2 pregões 0.344 · custo de breakeven 9.09 bps/lado (premissa: 2.0)
+- **tilt ≤ 1:** giro diário médio 0.242 · desfeito em 1–2 pregões 0.350 · custo de breakeven 36.09 bps/lado (premissa: 2.0)
+- **tilt ≤ 2:** giro diário médio 0.450 · desfeito em 1–2 pregões 0.354 · custo de breakeven 22.31 bps/lado (premissa: 2.0)
+- **tilt ≤ 3:** giro diário médio 0.637 · desfeito em 1–2 pregões 0.349 · custo de breakeven 17.52 bps/lado (premissa: 2.0)
+- **tilt ≤ 5:** giro diário médio 0.963 · desfeito em 1–2 pregões 0.345 · custo de breakeven 12.78 bps/lado (premissa: 2.0)
 
 ## Leitura
 
-**A carteira perde do comprar-e-segurar SPY**: +15.7% contra +30.1% do benchmark no teto mais apertado, e a distância AUMENTA conforme o teto afrouxa.
+**A carteira perde do comprar-e-segurar SPY** no teto de carteira mais apertado: +18.1% contra +30.1% do benchmark (-12.04 pp).
 
-**O custo não é o culpado.** O retorno BRUTO já é +17.6%, muito abaixo do benchmark, e o custo de breakeven (20.5 bps/lado) é 10.3× a premissa de 2 bps. Há folga larga de custo; o problema é o retorno bruto.
+**Folga de custo.** O retorno BRUTO é +20.6% e o custo de breakeven (17.9 bps/lado) é 8.9× a premissa de 2 bps — o resultado não está sendo decidido pelo custo.
 
-**O mecanismo suspeito era mecânico, não da view.** O teto de carteira escala TODAS as pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com a view ativa em 74% dos pregões, parte do orçamento de Σ|w| sai do SPY para o par TIP/TLT — numa janela em que o SPY fez +30.1%, reduzir exposição a ele custa caro por si só. A seção seguinte mede o tamanho disso.
+**O escopo do teto é mecânico, não da view.** O teto de carteira escala TODAS as pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com 1.61 view(s) ativa(s) por pregão em média, parte do orçamento de Σ|w| sai do SPY para os pares das views — numa janela em que o SPY fez +30.1%, reduzir exposição a ele custa caro por si só. A seção seguinte mede o tamanho disso.
 
-**Giro desfeito em 1–2 pregões: 33%.** Um terço do que se negocia é desfeito em dois pregões. É material, mas com a folga de custo acima não é o que está segurando o resultado — entra como insumo da revisão condicional do D1 (banda de não-negociação), não como veredito sobre o H.
+**Giro desfeito em 1–2 pregões: 36%.** Um terço do que se negocia é desfeito em dois pregões. É material, mas com a folga de custo acima não é o que está segurando o resultado — entra como insumo da revisão condicional do D1 (banda de não-negociação), não como veredito sobre o H.
 
 
 ## Onde o teto corta — carteira inteira × só o tilt
@@ -60,66 +60,22 @@ Mesma varredura, dois escopos. `Σ|w| ≤ t` escala tudo; `tilt ≤ t` corta só
 
 | escopo | teto | Σ\|w\| medida | líquido | excesso | tilt (soma diária) | giro/dia |
 |---|---|---|---|---|---|---|
-| carteira | 1 | 1.00 | +15.72% | -14.39 pp | -11.84% | 0.219 |
-| só o tilt | 1 | 1.74 | +29.18% | -0.94 pp | +0.35% | 0.141 |
-| carteira | 2 | 1.74 | +14.98% | -15.14 pp | -11.40% | 0.356 |
-| só o tilt | 2 | 2.48 | +28.21% | -1.91 pp | +0.70% | 0.280 |
-| carteira | 3 | 2.48 | +14.20% | -15.92 pp | -10.96% | 0.493 |
-| só o tilt | 3 | 3.21 | +27.20% | -2.92 pp | +1.05% | 0.420 |
-| carteira | 5 | 3.95 | +12.48% | -17.64 pp | -10.10% | 0.771 |
-| só o tilt | 5 | 4.69 | +25.25% | -4.87 pp | +1.91% | 0.700 |
+| carteira | 1 | 1.00 | +18.08% | -12.04 pp | -9.62% | 0.285 |
+| só o tilt | 1 | 1.90 | +32.80% | +2.68 pp | +3.99% | 0.242 |
+| carteira | 2 | 1.90 | +22.21% | -7.91 pp | -4.23% | 0.494 |
+| só o tilt | 2 | 2.73 | +37.05% | +6.93 pp | +8.85% | 0.450 |
+| carteira | 3 | 2.73 | +25.26% | -4.86 pp | -0.12% | 0.680 |
+| só o tilt | 3 | 3.52 | +40.68% | +10.56 pp | +13.05% | 0.637 |
+| carteira | 5 | 4.28 | +29.19% | -0.93 pp | +5.98% | 1.020 |
+| só o tilt | 5 | 5.03 | +42.73% | +12.61 pp | +17.34% | 0.963 |
 
-**No teto 1, preservar a perna de mercado muda o excesso em +13.45 pp** (-14.39 pp → -0.94 pp), a um custo de alavancagem de 1.00 → 1.74 de Σ|w| médio. Com o escopo no tilt a carteira **continua perdendo** do comprar-e-segurar SPY.
+**No teto 1, preservar a perna de mercado muda o excesso em +14.72 pp** (-12.04 pp → +2.68 pp), a um custo de alavancagem de 1.00 → 1.90 de Σ|w| médio. Com o escopo no tilt a carteira **passa a bater** o comprar-e-segurar SPY.
 
 
 **A mesma comparação com Σ|w| IGUAL** (o rótulo engana, a alavancagem medida não):
 
-- Σ|w| = **1.74**: `Σ\|w\| ≤ 2` dá -15.14 pp de excesso, `tilt ≤ 1` dá -0.94 pp — diferença de **+14.19 pp** só por causa de ONDE o teto corta, com o mesmo tamanho de carteira.
-- Σ|w| = **2.48**: `Σ\|w\| ≤ 3` dá -15.92 pp de excesso, `tilt ≤ 2` dá -1.91 pp — diferença de **+14.02 pp** só por causa de ONDE o teto corta, com o mesmo tamanho de carteira.
+- Σ|w| = **1.90**: `Σ\|w\| ≤ 2` dá -7.91 pp de excesso, `tilt ≤ 1` dá +2.68 pp — diferença de **+10.59 pp** só por causa de ONDE o teto corta, com o mesmo tamanho de carteira.
+- Σ|w| = **2.73**: `Σ\|w\| ≤ 3` dá -4.86 pp de excesso, `tilt ≤ 2` dá +6.93 pp — diferença de **+11.79 pp** só por causa de ONDE o teto corta, com o mesmo tamanho de carteira.
 
-A parcela de tilt é o que separa os dois desenhos: -11.84% no corte de carteira contra +0.35% no corte de tilt. No corte de carteira essa parcela mistura duas coisas — o tilt da view **e** o pedaço da perna de mercado que o corte tirou; no corte de tilt ela é só a view. A diferença entre as duas é a conta do que o escopo do teto cobra por si só.
+A parcela de tilt é o que separa os dois desenhos: -9.62% no corte de carteira contra +3.99% no corte de tilt. No corte de carteira essa parcela mistura duas coisas — o tilt da view **e** o pedaço da perna de mercado que o corte tirou; no corte de tilt ela é só a view. A diferença entre as duas é a conta do que o escopo do teto cobra por si só.
 
-
-## De onde veio a mudança contra a rodada de 05/08 — atribuição medida
-
-> **Seção escrita à mão** (o resto do arquivo é gerado pelo script; re-rodar
-> `backtest_v1.py` apaga esta parte). Existe uma vez só: é a atribuição da
-> troca de dado do G7, não uma métrica recorrente. Todos os números abaixo são
-> do **escopo de carteira** (`Σ|w| ≤ 1`), que era o único que existia quando
-> foram medidos.
-
-A rodada anterior deu **+8,6%** no teto ≤ 1 contra **+26,2%** do benchmark. Esta
-dá **+15,7%** contra **+30,1%**. Duas coisas mudaram no dado ao mesmo tempo — o
-re-pull do G7 corrigiu o nível de TIP e TLT **e** esticou a janela em 21 pregões
-— então rodei as três combinações para não atribuir no chute:
-
-| Rodada (teto ≤ 1) | Pregões | Líquido | Benchmark | Excesso |
-|---|---|---|---|---|
-| parquet antigo (05/08) | 353 | +8,61% | +26,20% | −17,59 pp |
-| parquet novo, **truncado** em 2026-07-08 | 353 | +9,43% | +26,20% | −16,77 pp |
-| parquet novo, janela cheia | 374 | +15,72% | +30,12% | −14,39 pp |
-
-- **A correção do dado vale +0,82 pp** (linha 1 → 2), com o benchmark **idêntico**
-  até a 4ª casa. Era esperado que só mexesse na estratégia: o deslocamento de
-  nível atingiu só TIP e TLT, e o retorno close-a-close deles é igual ao antigo
-  em todos os pregões **menos um** — 2026-06-01, o ex-dividendo que entrou no
-  pull novo (TIP +115 bps, TLT +39 bps de diferença nesse dia). O par TIP/TLT é
-  exatamente o que a view 2.2 monta, então um dia errado nele passa direto para
-  o resultado. Efeito cresce com o teto: **+4,03 pp** no teto ≤ 5.
-- **Os 21 pregões novos valem +6,29 pp** de retorno acumulado (linha 2 → 3),
-  contra +3,92 pp do benchmark. Descontando a base, o retorno **do sub-período**
-  é de **+5,75% da estratégia contra +3,11% do SPY**: **na amostra nova a
-  estratégia bateu o benchmark**, e o excesso encolheu de −17,59 pp para
-  −14,39 pp.
-
-**O que isso NÃO muda:** o veredito da rodada anterior continua de pé. A carteira
-segue perdendo do comprar-e-segurar SPY em toda a varredura de teto, e a
-distância segue aumentando conforme o teto afrouxa — o mecanismo levantado em
-05/08 (o teto escala a perna de SPY junto com o tilt) não foi tocado por dado
-nenhum. 21 pregões bons não são evidência contra 374. **Ele agora está medido**
-na seção "Onde o teto corta", desta sessão: com o teto no tilt o excesso vai de
-−14,39 pp a −0,94 pp, e a parcela de tilt sai de −11,84% para +0,35%.
-
-**A duration medida (D11) não se moveu:** 8,31 a 8,38, os mesmos valores da
-rodada anterior. A correção do G7 é multiplicativa e constante, então some na
-regressão de retorno contra Δbreakeven — como previsto ao conferir o G7.

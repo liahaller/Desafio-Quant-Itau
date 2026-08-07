@@ -57,7 +57,7 @@ def rodada(retornos, montador, datas, w_mkt, c, teto, no_tilt, custo_bps):
     resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                              delta=DELTA, custo_bps=custo_bps, teto_alavancagem=teto,
                              teto_no_tilt=no_tilt, incerteza=1.0 / c)
-    montador.divergencias.clear()  # a média expansiva (D9) recomeça a cada rodada
+    montador.reset()  # as médias expansivas (D9 da 2.2, demeanagem da 2.3) recomeçam
     return resultado, summary(resultado, benchmark=retornos["SPY"])
 
 

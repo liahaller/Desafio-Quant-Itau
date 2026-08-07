@@ -51,10 +51,14 @@ def test_P_from_betas():
 
 def test_pmf_caso_conhecido():
     """Probs cruas [0.6, 0.3] nos buckets [−25, 0] → E_poly = −50/3 bps;
-    e_ff = −10 → surpresa = −20/3; Q = surpresa · Σ P·β."""
+    e_ff = −10 → surpresa = −20/3; Q = surpresa · Σ P·β.
+
+    `soma_minima` explícito: a soma deste caso é 0,9 — o piso decidido, e em
+    float `0.6 + 0.3 = 0.8999...`. O que o teste mede é a média da PMF crua,
+    não o portão de qualidade (esse tem teste próprio)."""
     r = build_view(ASSETS, e_ff_bps=-10.0, betas=BETAS,
                    bucket_probs=[0.6, 0.3], bucket_deltas_bps=[-25.0, 0.0],
-                   fl_correction=_fl_identidade)
+                   soma_minima=0.5, fl_correction=_fl_identidade)
     assert np.isclose(r.diagnostics["e_poly_bps"], -50.0 / 3.0)
     assert np.isclose(r.Q, (-50.0 / 3.0 + 10.0) * SUM_P_BETA)
     assert np.allclose(r.P, P_ESPERADO)
@@ -102,6 +106,37 @@ def test_default_sem_correcao_fl():
     assert np.isclose(v.diagnostics["surpresa_bps"], -2.5)
 
 
+def test_surpresa_demeanada_desloca_o_Q():
+    """Decisão de 2026-08-07: sem ZQ, o e_ff é DTB3−DFF (horizonte ~3 meses
+    contra uma reunião) e a surpresa entra demeanada. O Q tem de sair do
+    desvio, não do nível — e média = 0 reproduz a fórmula crua da espec."""
+    comum = dict(e_ff_bps=-10.0, betas=BETAS, bucket_probs=[0.8, 0.2],
+                 bucket_deltas_bps=[-25.0, 0.0], fl_correction=_fl_identidade)
+    cru = build_view(ASSETS, **comum)
+    liquido = build_view(ASSETS, surpresa_media=-4.0, **comum)
+    assert np.isclose(cru.Q, build_view(ASSETS, surpresa_media=0.0, **comum).Q)
+    # surpresa −10, média −4 -> líquida −6: mesma surpresa crua, Q menor em módulo
+    assert np.isclose(liquido.diagnostics["surpresa_bps"], -10.0)
+    assert np.isclose(liquido.diagnostics["surpresa_liquida"], -6.0)
+    assert np.isclose(liquido.Q, -6.0 * SUM_P_BETA)
+    assert abs(liquido.Q) < abs(cru.Q)
+    # e uma média MAIOR que a surpresa inverte o lado do tilt
+    invertido = build_view(ASSETS, surpresa_media=-20.0, **comum)
+    assert np.sign(invertido.Q) == -np.sign(cru.Q)
+
+
+def test_pmf_degenerada_desativa_a_view():
+    """Decisão de 2026-08-07: soma crua abaixo do piso -> cascata. Medido no
+    dado: 24 dos 27 dias ruins têm soma < 0,5 — renormalizar fabricaria PMF."""
+    comum = dict(e_ff_bps=-10.0, betas=BETAS, bucket_deltas_bps=[-25.0, 0.0],
+                 fl_correction=_fl_identidade)
+    assert build_view(ASSETS, bucket_probs=[0.0005, 0.0005], **comum) is None
+    assert build_view(ASSETS, bucket_probs=[0.5, 0.2], **comum) is None   # 0,7
+    assert build_view(ASSETS, bucket_probs=[0.5, 0.45], **comum) is not None  # 0,95
+    # o piso é parâmetro: quem varre sensibilidade não precisa editar o módulo
+    assert build_view(ASSETS, bucket_probs=[0.5, 0.2], soma_minima=0.5, **comum) is not None
+
+
 if __name__ == "__main__":
     test_estimate_betas_recupera_beta_exato()
     test_P_from_betas()
@@ -109,5 +144,7 @@ if __name__ == "__main__":
     test_fallback_binario()
     test_sanity_check_de_sinal_espec_item_6()
     test_sem_mercado_view_desativada()
-    test_default_falha_alto_ate_decisao_11()
-    print("view_2_3_fed: 7 testes OK")
+    test_default_sem_correcao_fl()
+    test_surpresa_demeanada_desloca_o_Q()
+    test_pmf_degenerada_desativa_a_view()
+    print("view_2_3_fed: 9 testes OK")

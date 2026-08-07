@@ -273,4 +273,65 @@ tem consumidor no v1.
 
 ---
 
+## 12 (branch `Felipe`). Sessão de 2026-08-07 (sessão 6) — `E_FF` da view 2.3 sem o ZQ 🟢 (provisória)
+
+> ⚠️ O número 12 já existe no branch `Paulo` com outro conteúdo — ver o aviso
+> de numeração no topo.
+
+Fechada pelo Felipe em sessão, mesmo regime das seções 9/10 (**provisória, o
+grupo revisa**). Medições em `Dump/analises/Backtest_v1.md`.
+
+**Contexto que mudou tudo:** a perna do poly da 2.3 **não** é o binário de
+−50 bps do `clob_exploracao` — é a **PMF completa de decisão por reunião** do
+`data/polymarket_fed_reunioes.parquet` (18 reuniões, 2024-04 a 2026-06, 4–5
+faixas que particionam o desfecho). Medido nos dois:
+
+| | binário de −50bp | PMF completa |
+|---|---|---|
+| dias com as duas pernas | 88 | 531 |
+| variância da surpresa vinda do poly | 4,6% | **53%** |
+| `corr(surpresa, −e_ff)` | 0,982 | 0,138 |
+| sinal da surpresa | positivo em 100% dos dias | positivo em 83% |
+
+Com o binário a 2.3 seria um proxy do spread de bills com rótulo de Polymarket.
+Com a PMF é view de verdade.
+
+| Item | Decisão | Por que precisa de revisão do grupo |
+|---|---|---|
+| **`E_FF` da 2.3** | **`DTB3 − DFF`, com a surpresa DEMEANADA por janela expansiva** (mesma construção da D7.4 da 2.2) | A espec (item 2) diz que `E_FF` nunca degrada e sai do ZQ. Não há ZQ grátis (F6). O substituto tem horizonte de ~3 meses contra uma reunião, e a demeanagem trata o viés de nível **sem** consertar o descasamento em si. |
+| **PMF degenerada** | soma crua `< 0,9` → **view desativada no dia** (cascata), `SOMA_MINIMA` em `view_2_3_fed.py` | Piso escolhido sobre o medido (27 de 801 dias ruins, 24 deles com soma < 0,5), não sobre teoria. Na janela do v1 ele **não mordeu nenhum dia** (soma ficou em 0,969–1,013) — está lá para o dado futuro. |
+
+**Opções descartadas (registradas para a ata):** (A) usar cru — mantém viés de
++4,89 bps e a view fica do mesmo lado em 83% dos dias; (C) escalar a âncora por
+`dias_até_reunião/91` — assume proporcionalidade que ninguém mediu; (D) pedir o
+`DTB4WK` ao Paulo — casa melhor o horizonte, custa uma rodada e não elimina o
+prêmio de prazo; (E) deixar a 2.3 fora do v1 como a B — joga fora 531 dias de
+view que o dado sustenta.
+
+**⚠️ Ressalva medida, para a reunião não ler o número torto:** a demeanagem
+**não equilibrou** o sinal dentro da janela do backtest — inverteu o lado. No
+levantamento completo (2024-04 → 2026-06, 533 dias) a surpresa líquida fica
+45%/55%; dentro do backtest (2025-02 → 2026-06, média expansiva começando na
+primeira data da janela) fica **22% positiva / 78% negativa**, porque a média
+carrega o regime de 2024–25. **Refinamento mapeado, não decidido:** semear a
+média expansiva com o histórico anterior ao início do backtest (é dado passado,
+não lookahead).
+
+**Aberto de propósito (não decidi):** quantos eventos de FOMC bastam para o β
+ser confiável. Vale o piso algébrico do `estimate_betas` (2); na prática a
+janela usou **25 a 35 eventos**, e o número por dia sai em `n_eventos_beta`.
+
+**Depende do Paulo (categoria 3):** a regra "vale o mercado da **próxima**
+reunião" é a **opção (a) da Decisão 9 do branch `Paulo`** (overlap: 82/82 pares
+de eventos consecutivos se sobrepõem). Fechei só para o **consumo da 2.3**; a
+decisão do dataset continua dele.
+
+**Efeito medido no backtest** (374 pregões, escopo do teto no tilt, teto 1):
+a 2.3 fica ativa em **325 dias (87%)**, as duas views convivem em **240 dias
+(64%)**, e o excesso contra o SPY sai de **−0,94 pp** (só a 2.2, alavancagem
+medida 1,74) para **+2,68 pp** (alavancagem 1,90). Na mesma alavancagem medida
+de 1,90, o teto de carteira dá −7,91 pp e o teto no tilt dá +2,68 pp.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

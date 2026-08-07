@@ -15,14 +15,16 @@ este arquivo aplica em cada montagem do dia D:
 | view | estado | por quê |
 |---|---|---|
 | **2.2 inflação** | **roda** | PMF de CPI + T10YIE + calendário, tudo entregue |
-| 2.3 Fed | **bloqueada** | `e_ff_bps` = DTB3 − DFF, e o **DFF é o G8**, ainda não entregue |
+| **2.3 Fed** | **roda** (desde 2026-08-07) | PMF de decisão por reunião (`polymarket_fed_reunioes.parquet`) + `DTB3 − DFF` como `E_FF`, com a surpresa DEMEANADA |
 | B trajetória | **fora do v1** | decisão 11 — o ZQ de dezembro não tem fonte grátis (F6) e a view duplica o β/P da 2.3 |
 
-A 2.3 não é cascata (mercado ausente) — é insumo que não chegou. Por isso o
-script a declara em vez de deixá-la cair em `None` silenciosamente: `None`
-significaria "não havia mercado", que é mentira. A B saiu por decisão, não por
-falta: a perna do poly (`M3_fed_trajectory_*`) está entregue e disponível se o
-grupo reabrir.
+A 2.3 destravou com o G8 (`DFF`), mas o que a fez virar view de Polymarket foi
+outra coisa: a perna do poly é a **PMF completa por reunião** do parquet, não o
+binário de −50bp do `clob_exploracao`. Com o binário, o poly explicava 4,6% da
+variância da surpresa e o sinal era o mesmo em 100% dos dias; com a PMF, 53% e
+o poly inverte o sinal do spread de bills. A B saiu por decisão, não por falta:
+a perna do poly (`M3_fed_trajectory_*`) está entregue e disponível se o grupo
+reabrir.
 
 ## Camada tática
 
@@ -47,6 +49,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import view_2_2_inflacao  # noqa: E402
+import view_2_3_fed  # noqa: E402
 from backtest import run_backtest, summary  # noqa: E402
 from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # noqa: E402
                     DRIFT_JANELA_RF, SIGMA_JANELA_PREGOES, TAU)
@@ -54,7 +57,7 @@ from market_inputs import (breakeven_duration, daily_returns,  # noqa: E402
                            empirical_duration, market_weights, sample_covariance)
 from market_loader import load_etf_prices, load_fred  # noqa: E402
 from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # noqa: E402
-                         load_cpi_releases, load_pmf)
+                         load_cpi_releases, load_fomc_pmf, load_pmf)
 from poly_preprocessing import bucket_values_with_open, carry_missing  # noqa: E402
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
@@ -96,6 +99,27 @@ def pmf_diaria(diretorio, prefixo):
     return pmf, valores / PONTOS_PERCENTUAIS, cru
 
 
+def pmf_fomc_diaria(parquet):
+    """{data da reunião: (probs por data, Δtaxa em bps, série CRUA)}.
+
+    Mesmo tratamento da `pmf_diaria` do CPI, com as mesmas decisões fechadas:
+    faixa faltante herda a última leitura (D4/6.1) e ponta aberta entra a meia
+    largura para fora (D4/1.2) — aqui a máscara de ponta aberta vem do próprio
+    título do mercado (`load_fomc_pmf`), porque a grade muda de reunião para
+    reunião (4 ou 5 faixas, ponta inferior em −50+ ou −75+).
+
+    A série CRUA sai junto pelo mesmo motivo do CPI: o `diagnostics` do Ω da
+    Lia mede a qualidade do dado que ENTROU, antes do conserto.
+    """
+    saida = {}
+    for probs, valores, abertos, reuniao in load_fomc_pmf(parquet).values():
+        pontas = tuple(nome for nome, aberto in (("lower", abertos[0]),
+                                                 ("upper", abertos[-1])) if aberto)
+        diaria = daily_preopen(carry_missing(probs)).dropna(how="all")
+        saida[reuniao] = (diaria, bucket_values_with_open(valores, open_ends=pontas), probs)
+    return dict(sorted(saida.items()))
+
+
 class MontadorV1:
     """Monta `(sigma, views, overlays)` de um dia. Chamado em ordem de data.
 
@@ -105,7 +129,8 @@ class MontadorV1:
     """
 
     def __init__(self, retornos, breakeven, dgs10, mercados, pmfs,
-                 fomc=None, surpresas=None, orcamentos=None):
+                 fomc=None, surpresas=None, orcamentos=None,
+                 fomc_pmfs=None, e_ff=None):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
@@ -113,8 +138,23 @@ class MontadorV1:
         self.pmfs = pmfs                  # prefixo -> (probs, valores)
         self.fomc = fomc if fomc is not None else pd.DatetimeIndex([])
         self.surpresas = surpresas if surpresas is not None else pd.Series(dtype=float)
+        self.fomc_pmfs = fomc_pmfs or {}  # data da reunião -> (probs, valores, cru)
+        self.e_ff = e_ff if e_ff is not None else pd.Series(dtype=float)
         self.orcamentos = orcamentos or {}
-        self.divergencias = []            # histórico para a média expansiva
+        self.divergencias = []            # histórico para a média expansiva (2.2)
+        self.surpresas_2_3 = []           # idem, para a demeanagem da 2.3
+
+    def reset(self):
+        """Zera os históricos expansivos antes de uma nova passada nas datas.
+
+        Obrigatório entre rodadas da varredura: sem isso a média expansiva da
+        rodada seguinte já começa com a série INTEIRA da anterior — inclusive
+        dias posteriores à data que está sendo montada, que é lookahead puro.
+        Mora aqui, e não no laço, para uma view nova não reintroduzir o bug
+        por esquecimento (foi assim que ele apareceu com a 2.3).
+        """
+        self.divergencias.clear()
+        self.surpresas_2_3.clear()
 
     # --- insumos ------------------------------------------------------------
 
@@ -193,6 +233,62 @@ class MontadorV1:
             })
         return view
 
+    def _betas_fomc(self, data):
+        """β da 2.3 por event-study EXPANSIVO: só reuniões anteriores a `data`.
+
+        A surpresa realizada é o ΔDTB3 do dia do FOMC (D6, no lugar da variação
+        do ZQ). Sem eventos suficientes ou sem variância na surpresa a view cai
+        pela cascata em vez de estourar — é condição de dado num loop diário,
+        não erro de chamada.
+
+        ⚠️ Quantos eventos são "suficientes" NÃO é decisão fechada: aqui vale o
+        piso do próprio `estimate_betas` (2, o mínimo algébrico). O nº usado sai
+        nos diagnostics (`n_eventos_beta`) para a reunião ver com que amostra
+        cada dia foi montado.
+        """
+        dias = self.surpresas.index[self.surpresas.index < data].intersection(self.retornos.index)
+        if len(dias) < 2:
+            return None, 0
+        s = self.surpresas.loc[dias].to_numpy(dtype=float)
+        if np.ptp(s) == 0:
+            return None, len(dias)  # surpresa constante -> β não identificável
+        return view_2_3_fed.estimate_betas(self.retornos.loc[dias].to_numpy(dtype=float), s), len(dias)
+
+    def _view_2_3(self, data, pregoes):
+        """View 2.3 do dia, ou None se falta mercado, β ou âncora (cascata)."""
+        futuras = [r for r in self.fomc_pmfs if r >= data]
+        if not futuras:
+            return None
+        reuniao = min(futuras)            # vale o mercado da PRÓXIMA reunião
+        probs, valores, cru = self.fomc_pmfs[reuniao]
+        if data not in probs.index:
+            return None                   # sem leitura pré-abertura nesse dia
+        linha = probs.loc[data].to_numpy(dtype=float)
+        if not np.isfinite(linha).all():
+            return None
+        e_ff = self._ultimo_antes(self.e_ff, data)
+        betas, n_eventos = self._betas_fomc(data)
+        if e_ff is None or betas is None:
+            return None
+        faltam = int(pregoes.slice_indexer(data, reuniao).stop
+                     - pregoes.slice_indexer(data, reuniao).start) - 1
+        if faltam < 1:
+            return None                   # dia da reunião: o mercado resolve
+        # Decisão de 2026-08-07: a surpresa entra DEMEANADA, média expansiva
+        # (mesma construção da D7.4 da 2.2) — sem ZQ, o e_ff tem horizonte de
+        # ~3 meses contra uma reunião, e o viés de nível é do instrumento.
+        media = float(np.mean(self.surpresas_2_3)) if self.surpresas_2_3 else 0.0
+        view = view_2_3_fed.build_view(
+            list(ASSETS), e_ff_bps=e_ff, betas=betas, bucket_probs=linha,
+            bucket_deltas_bps=valores, surpresa_media=media)
+        if view is not None:
+            self.surpresas_2_3.append(view.diagnostics["surpresa_bps"])
+            view.diagnostics.update({
+                **diagnostics_qualidade(cru, data, dias_ate_evento=faltam),
+                **view.diagnostics, "n_eventos_beta": n_eventos,
+            })
+        return view
+
     # --- camada tática ------------------------------------------------------
 
     def _premio(self, data):
@@ -240,7 +336,7 @@ class MontadorV1:
     def __call__(self, data):
         pregoes = self.retornos.index
         sigma = sample_covariance(self.retornos, data=data)
-        views = [self._view_2_2(data, pregoes)]
+        views = [self._view_2_2(data, pregoes), self._view_2_3(data, pregoes)]
         overlays = [self._premio(data), self._drift(data)]
         return sigma, views, overlays
 
@@ -268,8 +364,16 @@ def carregar(raiz, orcamentos=None):
     dtb3 = load_fred(raiz / "data/raw/fred_DTB3.csv")
     surpresas = (dtb3.diff() * PONTOS_PERCENTUAIS).reindex(fomc).dropna()
 
+    # View 2.3: PMF de decisão por reunião + âncora de mercado. Sem ZQ grátis,
+    # `E_FF = DTB3 − DFF` em bps (decisão de 2026-08-07, provisória) — e a
+    # surpresa entra demeanada, ver `_view_2_3`.
+    fomc_pmfs = pmf_fomc_diaria(raiz / "data/polymarket_fed_reunioes.parquet")
+    dff = load_fred(raiz / "data/raw/fred_DFF.csv")
+    e_ff = ((dtb3 - dff) * PONTOS_PERCENTUAIS).dropna()
+
     montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
-                          fomc, surpresas, orcamentos or {})
+                          fomc, surpresas, orcamentos or {},
+                          fomc_pmfs=fomc_pmfs, e_ff=e_ff)
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
     primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
@@ -317,14 +421,16 @@ def main():
             # o `|` precisa vir escapado: é nome de coluna de tabela markdown
             colunas[rotulo_teto(teto, no_tilt)] = summary(resultado,
                                                           benchmark=retornos["SPY"])
-            montador.divergencias.clear()  # a média expansiva recomeça a cada rodada
+            montador.reset()  # as médias expansivas recomeçam a cada rodada
     tabela = pd.DataFrame(colunas)
 
     # A duration medida é a decisão desta sessão — sai no relatório, não fica só
     # dentro do loop. Vem dos diagnostics da última rodada (é a mesma em todas:
     # o teto corta o peso, não a view).
-    durations = [d["duration"] for dia in resultado.diagnostics.values()
-                 for d in dia["views"]]
+    # filtra por view: com a 2.3 ligada a lista tem diagnostics de duas formas
+    # diferentes, e um `d["duration"]` seco estoura na primeira linha da 2.3.
+    views_do_dia = [d for dia in resultado.diagnostics.values() for d in dia["views"]]
+    durations = [d["duration"] for d in views_do_dia if d["view"] == "2.2_inflacao"]
 
     tatica_ligada = [f"{k} = {v}" for k, v in orcamentos.items() if v is not None]
     linhas = ["# Backtest do v1 — BL com as views ativas (I5)\n",
@@ -335,8 +441,9 @@ def main():
               "decisão humana; a varredura mede, não escolhe.**\n",
               f"- janela: **{datas[0].date()} a {datas[-1].date()}** "
               f"({len(datas)} pregões)",
-              "- views ativas: **2.2 inflação**. A 2.3 e a B ficam fora por "
-              "insumo que não chegou (DFF/G8 e ZQ de dezembro), não por cascata",
+              "- views ativas: **2.2 inflação** e **2.3 Fed** (esta desde "
+              "2026-08-07: PMF de decisão por reunião + `DTB3 − DFF` demeanado). "
+              "A B fica fora por decisão 11, não por cascata",
               f"- duration do breakeven: **medida** no par da própria view, "
               f"janela expansiva — variou de **{min(durations):.2f} a "
               f"{max(durations):.2f}** na amostra (a espec supunha \"~8\"; o dado "
@@ -371,23 +478,26 @@ def main():
     c = tabela[rotulo_teto(teto0, False)]
     t = tabela[rotulo_teto(teto0, True)]
     linhas.append("\n## Leitura\n")
+    # A leitura é GERADA do sinal medido: com duas views o resultado mudou de
+    # lado, e frase cravada à mão vira mentira na re-rodada seguinte.
+    perde = c["excesso acumulado (líquido − benchmark)"] < 0
     linhas.append(
-        f"**A carteira perde do comprar-e-segurar SPY**: {c['retorno acumulado líquido'] * 100:+.1f}% "
-        f"contra {c['benchmark acumulado'] * 100:+.1f}% do benchmark no teto mais "
-        f"apertado, e a distância AUMENTA conforme o teto afrouxa.\n")
+        f"**A carteira {'perde do' if perde else 'bate o'} comprar-e-segurar SPY** no teto de "
+        f"carteira mais apertado: {c['retorno acumulado líquido'] * 100:+.1f}% contra "
+        f"{c['benchmark acumulado'] * 100:+.1f}% do benchmark "
+        f"({c['excesso acumulado (líquido − benchmark)'] * 100:+.2f} pp).\n")
     linhas.append(
-        f"**O custo não é o culpado.** O retorno BRUTO já é "
-        f"{c['retorno acumulado bruto'] * 100:+.1f}%, muito abaixo do benchmark, e o custo de "
-        f"breakeven ({c['custo de breakeven (bps por lado)']:.1f} bps/lado) é "
+        f"**Folga de custo.** O retorno BRUTO é {c['retorno acumulado bruto'] * 100:+.1f}% e o "
+        f"custo de breakeven ({c['custo de breakeven (bps por lado)']:.1f} bps/lado) é "
         f"{c['custo de breakeven (bps por lado)'] / args.custo_bps:.1f}× a premissa de "
-        f"{args.custo_bps:.0f} bps. Há folga larga de custo; o problema é o retorno bruto.\n")
+        f"{args.custo_bps:.0f} bps — o resultado não está sendo decidido pelo custo.\n")
     linhas.append(
-        f"**O mecanismo suspeito era mecânico, não da view.** O teto de carteira escala TODAS "
-        f"as pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com a view ativa em "
-        f"{c['views ativas por dia (média)'] * 100:.0f}% dos pregões, parte do orçamento de "
-        f"Σ|w| sai do SPY para o par TIP/TLT — numa janela em que o SPY fez "
-        f"{c['benchmark acumulado'] * 100:+.1f}%, reduzir exposição a ele custa caro por si só. "
-        f"A seção seguinte mede o tamanho disso.\n")
+        f"**O escopo do teto é mecânico, não da view.** O teto de carteira escala TODAS "
+        f"as pontas pelo mesmo fator, inclusive a de SPY que vem do prior. Com "
+        f"{c['views ativas por dia (média)']:.2f} view(s) ativa(s) por pregão em média, parte "
+        f"do orçamento de Σ|w| sai do SPY para os pares das views — numa janela em que o SPY "
+        f"fez {c['benchmark acumulado'] * 100:+.1f}%, reduzir exposição a ele custa caro por si "
+        f"só. A seção seguinte mede o tamanho disso.\n")
     linhas.append(
         f"**Giro desfeito em 1–2 pregões: {c['giro desfeito em 1–2 pregões'] * 100:.0f}%.** Um terço "
         f"do que se negocia é desfeito em dois pregões. É material, mas com a folga de custo "

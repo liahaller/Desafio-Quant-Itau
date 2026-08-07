@@ -20,7 +20,9 @@ from poly_loader import (
     bucket_value,
     daily_preopen,
     diagnostics_qualidade,
+    fomc_bucket_bps,
     load_cpi_releases,
+    load_fomc_pmf,
     load_history,
     load_payroll_releases,
     load_pmf,
@@ -297,3 +299,65 @@ def test_payroll_releases_nao_reaplica_correcao_ja_feita_na_fonte(tmp_path):
     r = load_payroll_releases(_csv(tmp_path, corrigido))
     assert list(r["mes_referencia"]) == ["August 2025", "September 2025",
                                          "November 2025", "December 2025"]
+
+
+# --- PMF de decisão do FOMC (parquet do Paulo) -------------------------------
+
+def test_fomc_bucket_bps_le_as_duas_redacoes():
+    """As 18 reuniões entregues vêm em dois padrões de título; os dois têm de
+    dar o mesmo número, e o `+` da ponta sai marcado separado do valor."""
+    assert fomc_bucket_bps("Fed decreases interest rates by 25 bps after 2025 May meeting?") \
+        == (-25.0, False)
+    assert fomc_bucket_bps("Will the Fed decrease interest rates by 25 bps in January?") \
+        == (-25.0, False)
+    assert fomc_bucket_bps("Fed decreases interest rates by 75+ bps after X?") == (-75.0, True)
+    assert fomc_bucket_bps("Fed raises interest rates by 25+ bps after X?") == (25.0, True)
+    assert fomc_bucket_bps("Will the Fed increase interest rates by 50+ bps in X?") == (50.0, True)
+    assert fomc_bucket_bps("No change in Fed interest rates after X?") == (0.0, False)
+    assert fomc_bucket_bps("Will there be no change in Fed interest rates?") == (0.0, False)
+    with pytest.raises(ValueError, match="não reconhecido"):
+        fomc_bucket_bps("Fed cuts rates a lot?")
+
+
+def _parquet_fomc(tmp_path, titulos, n_slots=3):
+    """Parquet sintético no formato do `polymarket_fed_reunioes.parquet`."""
+    linhas = []
+    for i in range(n_slots):
+        for j, titulo in enumerate(titulos):
+            linhas.append({"data": pd.Timestamp("2025-09-18 12:00:03") + pd.Timedelta(hours=12 * i),
+                           "mercado": titulo, "probabilidade": 0.1 * (j + 1),
+                           "volume": 1.0, "evento_id": 42})
+    caminho = tmp_path / "fomc.parquet"
+    pd.DataFrame(linhas).to_parquet(caminho)
+    return caminho
+
+
+def test_load_fomc_pmf_ordena_por_delta_e_marca_as_pontas(tmp_path):
+    """Colunas na ordem do Δtaxa (não a do arquivo), pontas abertas marcadas
+    e ainda NÃO resolvidas — resolver é a decisão 1.2, a jusante."""
+    caminho = _parquet_fomc(tmp_path, [
+        "No change in Fed interest rates after X?",
+        "Fed increases interest rates by 25+ bps after X?",
+        "Fed decreases interest rates by 50+ bps after X?",
+        "Fed decreases interest rates by 25 bps after X?",
+    ])
+    (probs, valores, abertos, reuniao), = load_fomc_pmf(caminho).values()
+    assert list(valores) == [-50.0, -25.0, 0.0, 25.0]
+    assert list(abertos) == [True, False, False, True]
+    assert probs.shape == (3, 4)
+    assert probs.index.tz is not None and set(probs.index.hour) <= {0, 12}
+    assert reuniao == pd.Timestamp("2025-09-19")  # último slot da série
+    # a coluna do bucket de −50 é a do título correspondente, não a 1ª do arquivo
+    assert "decreases interest rates by 50+" in probs.columns[0]
+
+
+def test_load_fomc_pmf_rejeita_faixa_aberta_no_meio(tmp_path):
+    """Ponta aberta é regra de PONTA (D1.2). Se um `+` aparecer no miolo, a
+    grade mudou de forma e aplicar a regra cega inventaria valor."""
+    caminho = _parquet_fomc(tmp_path, [
+        "Fed decreases interest rates by 50 bps after X?",
+        "Fed decreases interest rates by 25+ bps after X?",   # aberto no meio
+        "No change in Fed interest rates after X?",
+    ])
+    with pytest.raises(ValueError, match="faixa aberta fora das pontas"):
+        load_fomc_pmf(caminho)

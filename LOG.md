@@ -1,6 +1,125 @@
 # LOG de sessões
 
-## 2026-08-07 (sessão 5) — Felipe
+## 2026-08-07 (sessão 6) — Felipe
+
+**Contexto da sessão:** chegaram as duas respostas (Lia — decisão 6a e pedido de
+interface; Paulo — G8 `DFF` e G5 volume). Sessão de ler, conferir e usar: quatro
+frentes, na ordem que o dono escolheu (1 → 2 → 5 → 3).
+
+**1. Recado à Lia** (`Dump/trocas/RESPOSTA2_Lia_6a_interface.md`, pronto para envio).
+A verificação de lookahead que ela pediu tem uma **terceira** resposta, e é a que
+vale: o ponto das 12:00 UTC não é agregado do slot, é **snapshot instantâneo** do
+midpoint (deriva de 3–9 s; que a série é midpoint foi MEDIDO pelo Paulo, não
+inferido). Execução às 13:30 UTC ⇒ a leitura está 1,5–2,5 h antes. `idade = 0.0`
+não é lookahead e não há nada a corrigir.
+
+**2. `aplicar_veto` passa a casar por NOME** (`src/bl_integration.py`). Dicts
+chaveados por `diagnostics["view"]`; chave que falta, sobra ou está errada vira
+`ValueError` com os dois lados listados. **Não mantive a variante posicional** —
+manter as duas manteria a armadilha viva. A ressalva que vai no recado: ela
+escreveu `'2.2'`, a chave é `"2.2_inflacao"`.
+
+**3. Colisão de numeração das decisões, registrada** (aviso no topo do
+`Decisoes_pendentes.md`). É pior do que parecia: diverge **a partir da seção 8**
+nos três branches, e "D11/D12" nas nossas próprias análises são os itens da
+**seção 10**, não as seções 11/12. Levantado, com opções, sem escolher.
+
+**4. View 2.3 LIGADA — e o diagnóstico que eu tinha dado estava errado.**
+
+Eu havia reportado que a 2.3 degeneraria: perna do poly = um binário de −50 bps,
+88 dias, poly explicando 4,6% da variância da surpresa e sinal constante em 100%
+dos dias. **O binário é um bucket de um mercado de 4 que o Paulo já tinha
+entregue inteiro** (`data/polymarket_fed_reunioes.parquet`, 18 reuniões, 4–5
+faixas). Com a PMF completa:
+
+| | binário | PMF completa |
+|---|---|---|
+| dias com as duas pernas | 88 | 531 |
+| variância vinda do poly | 4,6% | **53%** |
+| `corr(surpresa, −e_ff)` | 0,982 | 0,138 |
+| sinal positivo | 100% dos dias | 83% |
+
+**Decisão 12 (branch `Felipe`) fechada em sessão, provisória:** `E_FF = DTB3 −
+DFF` com a surpresa **demeanada** por janela expansiva (mesma construção da D7.4
+da 2.2), e **PMF com soma crua < 0,9 desativa a view no dia**. Opções A/C/D/E
+descartadas e registradas.
+
+**Resultado medido** (374 pregões): a 2.3 fica ativa em **325 dias (87%)**, as
+duas views convivem em **240 (64%)**, β estimado com **25–35 eventos** de FOMC.
+Excesso contra o SPY no teto-no-tilt = 1: de **−0,94 pp** (só a 2.2, alavancagem
+1,74) para **+2,68 pp** (alavancagem 1,90). Pareando pela alavancagem medida de
+1,90: teto de carteira −7,91 pp × teto no tilt +2,68 pp.
+
+**Quebrou / aprendido:**
+- **Lookahead entre rodadas da varredura, meu, achado antes de virar entrega.** O
+  laço limpava só `divergencias` (2.2); o acumulador da 2.3 atravessava as 8
+  rodadas, então da 2ª em diante a média expansiva já continha dias POSTERIORES
+  à data montada. Corrigido com um `MontadorV1.reset()` — mora na classe
+  justamente para a próxima view não reintroduzir o bug por esquecimento. O
+  número contaminado dizia +4,65 pp; o limpo é **+2,68 pp**.
+- **Três arquivos de teste mentiam "OK".** O bloco `__main__` do
+  `test_bl_integration.py` estava no MEIO do arquivo (4 testes nunca rodavam
+  pelo comando padrão) e `test_taticas.py` / `test_view_2_3_fed.py` chamavam nome
+  de função anterior a um rename, morrendo em `NameError`. Suíte hoje: **179
+  testes verdes**.
+- **Conferir o dado antes de opinar salvou a view.** O diagnóstico "a 2.3
+  degenerou" estava baseado no arquivo errado e teria mandado a view para fora do
+  v1 (opção E) por engano. O que pegou foi olhar a decisão 10 aberta do Paulo,
+  que citava um dataset de FOMC que eu não estava usando.
+- **A demeanagem não equilibrou o sinal na janela do backtest — inverteu.** 45%/55%
+  no levantamento completo, **22%/78%** dentro do backtest, porque a média
+  expansiva carrega o regime de 2024–25. Registrado como ressalva, com o
+  refinamento mapeado (semear a média com o histórico anterior à janela).
+
+**Pendente:**
+
+*Envio (do dono):*
+- **Recado à Lia** pronto. O único item dele que trava alguém é o `NaN` × `0` do
+  G5, e a resposta dela vai para o **Paulo**, não para nós.
+
+*Depende de terceiros:*
+- **Decisão 9 do branch `Paulo` (overlap dos mercados de FOMC).** Fechei a opção
+  (a) — "vale o mercado da próxima reunião" — **só para o consumo da 2.3**. A
+  decisão do dataset é dele e precisa de um recado.
+- **Régua do `c` (Lia).** A fiação está pronta e agora com k = 2 em 64% dos dias.
+
+*Reunião (grupo):*
+- **Revisão da seção 12** (E_FF demeanado, piso de 0,9) e das provisórias 9/10.
+- **D12-teto — nível e escopo**, agora com número de duas views.
+- Quantos eventos de FOMC bastam para o β (hoje: piso algébrico de 2; na prática
+  25–35).
+- Orçamentos da camada tática; decisão 11 (view B).
+
+*Trabalho meu:*
+- **Curva do `c` vira vetorial** — com 2 views o escalar deixa de representar.
+- Semear a média expansiva da 2.3 com o histórico pré-janela (refinamento medido,
+  não decidido).
+- Banda de não-negociação (giro desfeito segue em ~35%).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~105k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "chegaram as repostas da Lia e do Paulo. Leia
+  elas e me fale o que podemos fazer a partir delas"
+- **Iterações até aceitar:** 1 — sem rodada de correção de conteúdo pelo dono. As
+  intervenções foram de condução ("vamos de 1,2 e 5 primeiro", "vamos para o item
+  3") e duas escolhas de opção (demeanar; view desativada na PMF ruim).
+- **Erros da IA:** 2, os dois apanhados pela própria medição antes de virar
+  entrega. (1) Diagnóstico da 2.3 baseado no arquivo errado (binário de um bucket
+  em vez da PMF completa) — a conclusão "a view degenerou" chegou a ser escrita no
+  recado à Lia e foi corrigida antes do envio. (2) Lookahead entre rodadas da
+  varredura, por só metade do estado expansivo ser limpo no laço.
+- **Decisões escaladas:** 1 fechada (**12 do branch `Felipe`**, provisória, por
+  escolha explícita do dono); 1 registrada sem fechar (aviso de numeração); 1
+  marcada como dependente de terceiro (Decisão 9 do `Paulo`).
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"conferir o insumo no
+  repositório antes de concluir sobre ele"**: as duas conclusões erradas da sessão
+  vieram de ler o arquivo errado e de supor que o estado era limpo, e as duas
+  caíram quando o número foi medido.
+
+---
+
+## 2026-08-07 (sessão 2) — Felipe
 
 **Contexto da sessão:** os dois recados da sessão 4 (`FOLLOWUP4` ao Paulo e
 `RESPOSTA_Lia_omega_diagnostics`) **foram enviados pelo dono** — a pendência de
@@ -149,7 +268,7 @@ limita o desvio, não a carteira, e deixa Σ|w| chegar a 1 + t):
 
 ---
 
-## 2026-08-07 (sessão 4) — Felipe
+## 2026-08-07  — Felipe
 
 **Contexto da sessão:** chegaram as **três respostas** dos recados enviados em 05/08 (G9 payrolls e
 FOLLOWUP3 do Paulo, régua do Ω da Lia). Sessão de ler, conferir, responder e implementar o que as

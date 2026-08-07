@@ -7,7 +7,13 @@ do ativo contra a surpresa à la Kuttner).
 
     surpresa = E_poly[Δtaxa] − E_FF[Δtaxa]           (bps)
     P[i]     = 2 · (β_i − β_SPY) / Σ_j |β_j − β_SPY|  (Σ|P| = 2, P[SPY] = 0)
-    Q        = surpresa · Σ_i P[i] · β_i
+    Q        = (surpresa − média expansiva) · Σ_i P[i] · β_i
+
+⚠️ `E_FF` não sai do ZQ: não há fonte gratuita (F6). Substituto fechado em
+2026-08-07 (provisório, regime das seções 9/10): **`DTB3 − DFF`, com a
+surpresa DEMEANADA por janela expansiva** — o instrumento tem horizonte de ~3
+meses e o `E_poly` é de uma reunião, e a demeanagem é o que tira o viés de
+nível que sobra. Ver `build_view`.
 
 Cascata de degradação (item 0 da espec) — só o lado do poly degrada; E_FF
 sai SEMPRE do ZQ (contrato do mês posterior à reunião), como esperança em
@@ -34,6 +40,13 @@ from views_common import P_from_betas, ViewResult
 # Centro da linha P (espec item 4: excesso sobre o mercado) — parametrizado
 # só para não hardcodar ticker na lógica; o default É a decisão.
 MARKET_ASSET = "SPY"
+
+# Piso da soma crua da PMF para a leitura valer (decisão de 2026-08-07,
+# provisória — regime das seções 9/10). MEDIDO no dado das 18 reuniões: 27 de
+# 801 dias vêm degenerados, 24 deles com soma < 0,5 (mercado sem preço no
+# livro). Renormalizar uma soma de 0,001 fabrica PMF sem lastro; abaixo do
+# piso a view SAI pela cascata, como se não houvesse mercado.
+SOMA_MINIMA = 0.9
 
 
 def estimate_betas(event_returns, surprises_bps):
@@ -66,6 +79,7 @@ def estimate_betas(event_returns, surprises_bps):
 def build_view(assets, e_ff_bps, betas,
                bucket_probs=None, bucket_deltas_bps=None,
                binary_prob=None, binary_delta_bps=None,
+               surpresa_media=0.0, soma_minima=SOMA_MINIMA,
                fl_correction=favorite_longshot, market_asset=MARKET_ASSET):
     """Monta a view 2.3 para uma data de rebalanceamento.
 
@@ -82,11 +96,26 @@ def build_view(assets, e_ff_bps, betas,
                          via open_bucket_value — decisão 11b).
       binary_prob      : tupla (p_sim, p_nao) CRUA do binário (ou None).
       binary_delta_bps : Δtaxa que o binário resolve (ex.: −25 para corte).
+      surpresa_media   : média histórica da surpresa, de janela EXPANSIVA no
+                         chamador — a surpresa entra DEMEANADA (ver abaixo).
+      soma_minima      : piso da soma crua da PMF (`SOMA_MINIMA`).
       fl_correction    : correção de favorite-longshot (default: stub 11a).
 
     Retorna ViewResult (P, Q, diagnostics) ou None se não há mercado de FOMC.
+
+    DEMEANAGEM (decisão de 2026-08-07, provisória): sem ZQ grátis, o `e_ff_bps`
+    entra como `DTB3 − DFF` — bill de 3 meses contra overnight, ~2 reuniões,
+    enquanto o `E_poly` é de UMA reunião. Horizonte mais longo precifica mais
+    corte acumulado, então a surpresa crua sai enviesada (MEDIDO: +4,89 bps de
+    média, positiva em 83% dos 531 dias). Demeanada por janela expansiva a
+    assimetria cai para 45%/55%. Mesma construção da DECISAO-7.4 da view 2.2, e
+    pela mesma razão: o nível da divergência é do instrumento, o sinal é o
+    desvio. `surpresa_media = 0.0` reproduz a fórmula crua da espec.
     """
     if bucket_probs is not None:
+        soma = soma_faixas(bucket_probs)
+        if not np.isfinite(soma) or soma < soma_minima:
+            return None  # PMF degenerada -> cascata, não chute renormalizado
         e_poly_bps = pmf_mean(bucket_probs, bucket_deltas_bps, fl_correction)
         caminho = "pmf"
     elif binary_prob is not None:
@@ -99,9 +128,10 @@ def build_view(assets, e_ff_bps, betas,
         return None  # cascata item 0: sem mercado de FOMC -> view desativada
 
     surpresa_bps = e_poly_bps - e_ff_bps
+    surpresa_liquida = surpresa_bps - surpresa_media
     P = P_from_betas(betas, list(assets), market_asset)
     betas = np.asarray(betas, dtype=float)
-    Q = float(surpresa_bps * (P @ betas))
+    Q = float(surpresa_liquida * (P @ betas))
     return ViewResult(P=P, Q=Q, diagnostics={
         "view": "2.3_fed",
         # β vem de event-study com retornos DIÁRIOS dos dias de FOMC -> o Q é
@@ -111,6 +141,8 @@ def build_view(assets, e_ff_bps, betas,
         "e_poly_bps": e_poly_bps,
         "e_ff_bps": e_ff_bps,
         "surpresa_bps": surpresa_bps,
+        "surpresa_media": surpresa_media,
+        "surpresa_liquida": surpresa_liquida,
         "soma_faixas": soma_faixas(bucket_probs),  # cru, para o Ω da Lia
         "sum_P_beta": float(P @ betas),  # ∝ dispersão dos βs (espec item 5)
     })

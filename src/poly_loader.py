@@ -363,3 +363,71 @@ def bucket_value(slug):
             return float("nan")  # bucket aberto — decisão 11b
         return float(quantidade)
     raise ValueError(f"slug não reconhecido: {slug!r}")
+
+
+# Título de mercado de decisão do FOMC, nas DUAS redações que o Paulo entregou
+# ("Fed decreases interest rates by 25 bps after X meeting?" e "Will the Fed
+# decrease interest rates by 50+ bps in X?"). O "+" marca faixa aberta.
+_FOMC = re.compile(r"(decreases?|increases?|raises?)\s+interest\s+rates\s+by\s+(\d+)(\+?)\s*bps",
+                   re.IGNORECASE)
+_FOMC_SEM_MUDANCA = re.compile(r"no change", re.IGNORECASE)
+
+
+def fomc_bucket_bps(titulo):
+    """(Δtaxa nominal em bps, é_aberto) de um bucket de decisão do FOMC.
+
+    O `bucket_value` acima lê SLUG de arquivo; este lê o TÍTULO do mercado,
+    que é o que vem na coluna `mercado` do `polymarket_fed_reunioes.parquet`.
+    Duas grades de rótulo diferentes, dois parsers — juntar num só faria a
+    expressão regular decidir por contexto, que é onde se erra calado.
+
+    Devolve o valor NOMINAL (`"50+ bps"` -> −50) e a marca de faixa aberta
+    SEPARADA, porque quem resolve a ponta aberta é a decisão 1.2
+    (`bucket_values_with_open`, meia largura para fora), não a leitura.
+
+    MEDIDO nas 18 reuniões entregues: a grade muda de reunião para reunião
+    (4 ou 5 faixas; a ponta inferior aparece como −50+ ou −75+), e o "+" só
+    ocorre nas PONTAS. Quem consome deve validar isso, não supor.
+    """
+    if _FOMC_SEM_MUDANCA.search(titulo):
+        return 0.0, False
+    achado = _FOMC.search(titulo)
+    if not achado:
+        raise ValueError(f"título de mercado de FOMC não reconhecido: {titulo!r}")
+    direcao, numero, mais = achado.groups()
+    sinal = -1.0 if direcao.lower().startswith("decrease") else 1.0
+    return sinal * float(numero), mais == "+"
+
+
+def load_fomc_pmf(path):
+    """PMF de decisão do FOMC por reunião, do parquet do Paulo.
+
+    Devolve `{evento_id: (probs, valores_bps_nominais, abertos, reuniao)}`:
+      - `probs`   : DataFrame slots × buckets, CRU (NaN onde não há leitura),
+                    colunas ordenadas pelo Δtaxa — mesmo contrato do `load_pmf`;
+      - `valores_bps_nominais` : Δtaxa de cada bucket, ponta aberta AINDA NÃO
+                    resolvida (quem resolve é a decisão 1.2, a jusante);
+      - `abertos` : máscara booleana das pontas abertas, na ordem das colunas;
+      - `reuniao` : data da reunião (último slot da série do evento).
+
+    Nenhum tratamento aqui: sem renormalizar, sem preencher buraco, sem cortar
+    slot de PMF degenerada. A grade varia por reunião, então cada evento traz
+    a sua — tabela fixa de buckets quebraria em metade das reuniões.
+    """
+    bruto = pd.read_parquet(path)
+    saida = {}
+    for evento, g in bruto.groupby("evento_id"):
+        pares = {m: fomc_bucket_bps(m) for m in g.mercado.unique()}
+        ordem = sorted(pares, key=lambda m: pares[m][0])
+        probs = (g.pivot_table(index=g.data.dt.round("12h"), columns="mercado",
+                               values="probabilidade")
+                 .reindex(columns=ordem))
+        probs.index = probs.index.tz_localize("UTC") if probs.index.tz is None else probs.index
+        valores = np.array([pares[m][0] for m in ordem], dtype=float)
+        abertos = np.array([pares[m][1] for m in ordem], dtype=bool)
+        if abertos[1:-1].any():
+            raise ValueError(f"evento {evento}: faixa aberta fora das pontas ({ordem}) — "
+                             "a regra de ponta aberta (D1.2) não cobre buraco interno")
+        saida[int(evento)] = (probs, valores, abertos,
+                              pd.Timestamp(g.data.max()).normalize())
+    return saida
