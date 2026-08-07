@@ -119,21 +119,56 @@ uma e outra rodam o `carry_missing` (D6.1: faixa sem preço herda a última
 leitura, em vez de a massa dela ser espalhada nas presentes) e, na 2.3, o piso de
 soma 0,9 (a linha degenerada mata o dia em vez de virar PMF renormalizada).
 
+**Encerramento da ressalva (`RESPOSTA4` dela, 2026-08-07):** a divergência é
+**de propósito e ela está certa** — o score dela não deve reproduzir o `p` da
+view. O `p` tratado é o que o modelo consome; o que ela mede é se o mercado que
+gerou aquele insumo estava funcionando, e medir sobre a série tratada mediria a
+suavidade do tratamento. Retirei a preocupação e a oferta do
+`serie_janela_tratada`. Ela também **recusa o `ffill`** pelo mesmo argumento do
+midpoint (leitura repetida entra como variação zero: erro num sentido só = viés,
+não ruído) e trata buraco descartando o slot, penalizando-o pelo canal próprio
+(`n_slots_esperados − n_pontos`).
+
+**Delimitação que ela pediu para constar na ata (e é justa):** o que fechou na 6a
+foi o **lugar** (ela colapsa, do lado dela, a partir da `serie_janela`). A
+**forma continua aberta** e sai do teste de monotonicidade, agora com **quatro
+candidatas** — 2 formas de colapso × 2 grades de tempo (12 h entre leituras × 24 h
+entre decisões). Não registrar a 6a como "fechada" sem esta metade.
+
 ## 7. Convergência entre fontes (polls, casas de aposta) 🟡
 Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
 
 **Decisão:** fora do v1 — fica como stub. Reavaliar depois se entra em versão futura (em aberto).
 
-## 8. Passo final do otimizador: qual Σ e quais restrições 🔴
+## 8. Passo final do otimizador: qual Σ e quais restrições 🟢
 Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
 
 **Contexto:** o passo `w = inv(δΣ)μ` aceita duas covariâncias:
 - **Σ amostral** — pesos respondem só à mudança na média; com confiança zero volta exatamente a `w_mkt`.
 - **Σ_bl posterior (He & Litterman)** — incorpora a incerteza das views; com confiança zero os pesos encolhem para `w_mkt/(1+τ)` (sobra caixa implícito).
 
-Também em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?). O esqueleto atual é irrestrito (BL padrão) e deixa a escolha do Σ para o chamador.
+Também estava em aberto: restrições nos pesos (long-only? soma 1? limite de alavancagem?).
 
-**Decisão:** _(a registrar)_
+**Decisão (fechada em reunião, 2026-07-07):**
+
+- **Parte A — Σ amostral** no passo final de pesos, **não** a Σ_bl posterior de
+  He & Litterman. Motivo registrado: dá o caso neutro limpo — confiança zero
+  devolve exatamente `w_mkt`, e o encolhimento por incerteza fica a cargo do Ω
+  reativo, num lugar só.
+- **Parte B — irrestrito** (opção B1): fórmula fechada, aceitando short e desvio
+  de soma = 1. Ficou com a ressalva explícita de reavaliar se o backtest
+  mostrasse pesos extremos — **e mostrou**: é a origem da discussão de teto de
+  alavancagem da seção 10, que segue aberta e não reabre esta.
+
+> ⚠️ **Registro reposto em 2026-08-07 (sessão 8), por instrução do dono.** Esta
+> seção esteve 🔴 "(a registrar)" entre 2026-07-09 e 2026-08-07: a decisão foi
+> apagada por acidente na limpeza da seção duplicada (sessão 3 de 09/07), que
+> removeu a cópia com o texto e manteve a vazia. O conteúdo acima vem da ata do
+> `LOG.md` de 2026-07-07 e bate com o que o código faz desde então
+> (`src/bl_optimizer.py`, docstring de `optimal_weights`: "DECISAO-8 (fechada)").
+> **Nada foi decidido agora — só recolocado.** As alternativas B2/B3/B4 que a ata
+> menciona como "mantidas no arquivo" foram perdidas na mesma limpeza; vale
+> reconferir na reunião se alguém as quiser de volta.
 
 ---
 
@@ -233,6 +268,21 @@ grupo.** Ela também corrige o alvo: **δ = 3,0 não é parâmetro livre, é
 observável** (medido no nosso SPY), então não é ele que precisa fechar junto com
 a escala do `c` — é o teto.
 
+**Remedição de 2026-08-07 (sessão 8), com as DUAS views ligadas — muda a
+leitura do passo (2)** (`Dump/analises/Curva_c.md`). A varredura anterior rodou
+com a 2.2 sozinha e concluiu que "o `c` não muda o resultado, o teto morde
+antes". Com a 2.3 ligada **isso deixou de valer**: ao longo da mesma grade o
+excesso se move até **5,01 pp**, e no escopo de tilt ele **troca de sinal**
+(+2,62 pp em `c = 1` → −0,44 pp em `c = 0,01`, com máximo de +4,57 pp em
+`c = 0,25`). O resto da leitura antiga continua de pé: a Σ|w| pedida nunca cabe
+em 1 (mediana 199 em `c = 1`, ainda 4,9 em `c = 0,01`) e a ruína do irrestrito só
+some com `c ≤ 0,02` — **algum** limitador segue obrigatório.
+
+**Consequência, e é argumento a favor do protocolo dela, não contra:** o nível do
+`c` não é ajuste fino, é escolha de resultado. Uma tabela em que o excesso tem
+máximo interior é exatamente o que tenta o olho a "escolher o `c` que dá o melhor
+número". Registrado como medição — **nenhum `c` desta tabela é proposta**.
+
 **Segunda posição da Lia (`RESPOSTA3`, 2026-08-07) — protocolo anti-overfit,
 registrado, NÃO fechado (é do grupo):** com o excesso agora positivo (+2,68 pp),
 um `c` global alto passa a ser **custo** e não conserto — e ela levanta o risco
@@ -328,7 +378,31 @@ Com a PMF é view de verdade.
 | Item | Decisão | Por que precisa de revisão do grupo |
 |---|---|---|
 | **`E_FF` da 2.3** | **`DTB3 − DFF`, com a surpresa DEMEANADA por janela expansiva** (mesma construção da D7.4 da 2.2) | A espec (item 2) diz que `E_FF` nunca degrada e sai do ZQ. Não há ZQ grátis (F6). O substituto tem horizonte de ~3 meses contra uma reunião, e a demeanagem trata o viés de nível **sem** consertar o descasamento em si. |
-| **PMF degenerada** | soma crua `< 0,9` → **view desativada no dia** (cascata), `SOMA_MINIMA` em `view_2_3_fed.py` | Piso escolhido sobre o medido (27 de 801 dias ruins, 24 deles com soma < 0,5), não sobre teoria. Na janela do v1 ele **não mordeu nenhum dia** (soma ficou em 0,969–1,013) — está lá para o dado futuro. |
+| **PMF degenerada** | soma crua `< 0,9` → **view desativada no dia** (cascata), `SOMA_MINIMA` em `view_2_3_fed.py` | Piso escolhido sobre o medido (ver correção abaixo), não sobre teoria. O piso **não morde nenhum dia** — nem na janela do v1, nem no histórico completo. |
+
+**⚠️ Correção de medição (2026-08-07, sessão 8) — o número que sustentava a
+linha acima estava errado em dois pontos.** O registro original dizia "27 de 801
+dias ruins, 24 com soma < 0,5, todos fora da janela do v1". Remedido no parquet:
+
+| | registrado antes | medido |
+|---|---|---|
+| dias degenerados (leitura crua, sem carry) | 27 | **25** — o 27 é outra coisa: dias com alguma faixa faltando |
+| desses, com soma < 0,5 | 24 | 24 ✔ |
+| onde caem | "fora da janela do v1" | **dentro**: 30/10/2025 a 21/04/2026 |
+| após `carry_missing` (o que a view lê) | — | **0 de 801**, somas entre 0,953 e 1,143 |
+
+**Por que o piso mesmo assim não morde:** não é o recorte da janela, é o
+tratamento — a view nunca vê a linha crua, e depois do `carry_missing` nenhum
+dia do histórico inteiro chega ao piso. A frase antiga ("a faixa estreita é
+propriedade do recorte") fica sem efeito.
+
+**Fato novo, relevante para a régua da Lia:** os 25 dias degenerados são
+**100% linhas incompletas** (mediana de 3 faixas ausentes de 4) — não existe um
+único livro completo somando abaixo de 0,9. Ou seja, a soma baixa mede buraco,
+não desencontro entre books. Comunicado a ela em
+`Dump/trocas/RESPOSTA4_Lia_correcao_801_dias.md`, porque ela havia escolhido
+calibrar sobre a história completa **por causa desses dias**. O que fazer com
+isso é da régua dela; aqui fica só a medição.
 
 **Compromisso de interface com o Ω da Lia (`RESPOSTA3`, 2026-08-07) — escrito
 dos dois lados, a pedido dela:** o piso de 0,9 e o `score_coerencia` dela
@@ -363,13 +437,84 @@ view que o dado sustenta.
 levantamento completo (2024-04 → 2026-06, 533 dias) a surpresa líquida fica
 45%/55%; dentro do backtest (2025-02 → 2026-06, média expansiva começando na
 primeira data da janela) fica **22% positiva / 78% negativa**, porque a média
-carrega o regime de 2024–25. **Refinamento mapeado, não decidido:** semear a
-média expansiva com o histórico anterior ao início do backtest (é dado passado,
-não lookahead).
+carrega o regime de 2024–25.
 
-**Aberto de propósito (não decidi):** quantos eventos de FOMC bastam para o β
-ser confiável. Vale o piso algébrico do `estimate_betas` (2); na prática a
-janela usou **25 a 35 eventos**, e o número por dia sai em `n_eventos_beta`.
+### 12a. Semeadura da média expansiva da 2.3 🟢 (fechada pelo dono, 2026-08-07 — sessão 8)
+
+Era o "refinamento mapeado, não decidido" do parágrafo acima. **Fechada aqui, sem
+ir à reunião, por instrução do dono** (com o v1 virando a entrega final, o
+refinamento não tem versão seguinte para onde ser empurrado).
+
+**O que é:** a lista que alimenta a média expansiva da 2.3 entra pré-preenchida
+com os pregões **anteriores** ao início da janela (`MontadorV1.semear_2_3`).
+Antes ela nascia vazia: o primeiro dia demeanava por 0,0 — viés inteiro do proxy
+passando cru — e os primeiros meses usavam um zero estimado com meia dúzia de
+pontos. Não é lookahead: tudo que entra é estritamente anterior ao primeiro dia
+negociado, e a média segue expansiva dali em diante.
+
+**Medido (206 pregões de semente, 2024-04 a 2025-02):**
+
+| | sem semente | com semente |
+|---|---|---|
+| sinal líquido na janela (325 dias) | 22% pos / 78% neg | **34% pos / 66% neg** |
+| média da surpresa líquida | −2,56 bps | −1,81 bps |
+| excesso × SPY, `tilt ≤ 1` | +2,68 pp | **+2,62 pp** |
+| excesso × SPY, `tilt ≤ 3` | +10,56 pp | **+13,70 pp** |
+
+**Honestidade sobre o alcance:** a semente **melhora e não conserta**. O sinal não
+volta aos 45%/55% do levantamento completo porque, dentro da janela, a surpresa
+genuinamente pende para o lado negativo — o resíduo é regime, não artefato do
+zero. No teto de referência (`tilt ≤ 1`) o resultado fica praticamente igual; o
+ganho aparece nos tetos frouxos.
+
+**A 2.2 não foi semeada** — não há o que semear: a janela começa na primeira PMF
+de CPI (2025-02-08), então não existe pregão anterior a ela com dado da view.
+
+### 12b. Piso de eventos de FOMC para o β 🟢 (fechada pelo dono, 2026-08-07 — sessão 8)
+
+Estava "aberto de propósito". **Decisão: sem piso adicional no v1 — vale o mínimo
+algébrico do `estimate_betas` (2).**
+
+**Por que fechar assim, e não com um número:** na janela do v1 o β foi estimado
+com **25 a 35 eventos** todos os dias (`n_eventos_beta`). Qualquer piso abaixo de
+25 **não desativa um único pregão** — escolher 10 ou 20 seria inventar um
+threshold sem medição e sem consequência, contra a regra 6 do `CLAUDE.md`.
+
+**O critério, para quem retomar:** o piso só passa a morder com dado novo que
+comece com poucas reuniões, ou ao reaproveitar o template de event-study em view
+ou ativo de histórico curto. Aí ele se decide medindo a **curva de estabilidade**
+— β estimado com os primeiros *n* eventos contra o β final — e o piso é onde a
+diferença deixa de virar o sinal de `P`. Fica registrado como limitação do
+relatório, não como pendência.
+
+### 12c. Camada tática fora do v1 🟢 (fechada pelo dono, 2026-08-07 — sessão 8)
+
+**Decisão: o v1 entrega com a camada tática DESLIGADA.** Os três overlays
+(prêmio de anúncios 1.3, drift pós-FOMC, gap de fim de semana) ficam no
+repositório, implementados e testados, com os orçamentos em `None`.
+
+**Por que não é adiamento:** com o v1 virando a entrega, "decidir depois" não
+existe mais — ou liga agora, ou não entra. Ligar exige um `orcamento` (fração do
+patrimônio), que é parâmetro do modelo.
+
+**Medido antes de decidir** (`Dump/analises/Curva_orcamento.md`,
+`scripts/curva_orcamento.py`, teto no tilt = 1):
+
+| família | Δ vs. desligada |
+|---|---|
+| só prêmio | −0,34 a −0,03 pp |
+| só drift | +0,08 a +0,80 pp |
+| prêmio + drift | +0,05 a +0,45 pp |
+
+**O que a varredura mostrou, e é o motivo de não ligar:** o Δ é **monótono no
+orçamento** dentro de cada família — cada overlay é um deslocamento de peso fixo
+vezes o orçamento, então a grade **não tem ótimo interior**. A melhor linha é
+sempre a da ponta, e a ponta é onde a varredura parou. Uma tabela assim não
+seleciona orçamento; escolher a linha de cima seria calibrar tamanho contra o
+resultado de 374 pregões, que é o overfit em dois passos do protocolo da seção
+10 — agora sem rodada seguinte para desmentir.
+
+**Fica no relatório como sensibilidade**, não como configuração entregue.
 
 **Depende do Paulo (categoria 3):** a regra "vale o mercado da **próxima**
 reunião" é a **opção (a) da Decisão 9 do branch `Paulo`** (overlap: 82/82 pares

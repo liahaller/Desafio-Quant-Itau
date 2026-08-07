@@ -1,5 +1,163 @@
 # LOG de sessões
 
+## 2026-08-07 (sessão 8) — Felipe
+
+**Contexto da sessão:** o dono enviou o `RESPOSTA3` e o `FOLLOWUP5` da sessão 7
+e pediu o mapa do que dá para fazer, decidir e do que está travado. No meio da
+sessão entrou o fato que reordenou tudo: **a entrega é 17/08 e o v1 vira a
+entrega final** — "decidir depois" deixou de existir. Ordem executada: decidir o
+decidível → executar.
+
+**1. `data/` destravado (o bloqueio que valia por todos).** Não existe `data/` no
+branch `Felipe`; os parquets e CSVs do FRED estão no `Paulo`. Resolvido sem merge
+e sem sujar o branch: `git archive origin/Paulo data | tar -x` + `data/` no
+`.git/info/exclude` (local, não é o `.gitignore` compartilhado). Baseline
+reproduziu o número da sessão 6 (+2,68 pp no tilt ≤ 1) antes de qualquer
+mudança — a régua de que o ambiente estava certo.
+
+**2. Três decisões fechadas pelo dono, registradas como 12a/12b/12c.**
+
+- **12a — semeadura da média expansiva da 2.3.** A lista que demeana a surpresa
+  nascia vazia no primeiro pregão (dia 1 demeanava por 0,0). Agora entra
+  pré-preenchida com os **206 pregões anteriores** à janela
+  (`MontadorV1.semear_2_3`). Medido: sinal líquido de **22%/78% → 34%/66%**;
+  excesso no tilt ≤ 1 de +2,68 → **+2,62 pp**, e no tilt ≤ 3 de +10,56 →
+  **+13,70 pp**. **Melhora e não conserta** — o resíduo é regime, não artefato
+  do zero. A 2.2 não tem semente porque não há pregão anterior à primeira PMF
+  de CPI.
+- **12b — piso de eventos de FOMC para o β: sem piso adicional.** Na janela o β
+  nunca foi estimado com menos de 25 eventos, então qualquer piso abaixo disso
+  não desativa pregão nenhum. Cravar 10 ou 20 seria threshold sem medição
+  (regra 6). O critério de quando decidir (curva de estabilidade do β) fica
+  registrado no lugar do número.
+- **12c — camada tática fora do v1.** Varrida antes de decidir
+  (`scripts/curva_orcamento.py`, novo): só prêmio −0,34 a −0,03 pp; só drift
+  +0,08 a +0,80 pp; os dois +0,05 a +0,45 pp. O que decidiu: o Δ é **monótono no
+  orçamento** — a grade não tem ótimo interior, a melhor linha é sempre a ponta
+  onde parei de varrer. Tabela assim não seleciona orçamento; escolher por ela
+  seria o overfit da seção 10, agora sem rodada seguinte para desmentir.
+
+**3. Bug latente encontrado ao entregar a robustez γ — o pior tipo.** As views
+2.2 e 2.3 passavam a `favorite_longshot` **binária** como correção da **PMF**.
+Em γ = 1,0 (o v1) as duas são a identidade, então **nunca deu diferença**. Em
+γ ≠ 1 a binária devolve `p^γ/(p^γ+(1−p)^γ)` faixa a faixa, o vetor deixa de somar
+1 e o `E_poly` sai escalado **sem erro nenhum** — ou seja, o defeito só apareceria
+dentro da própria coluna de robustez que a seção 9 prometeu, e como número, não
+como falha. Consertado nos dois caminhos (`fl_correction=None` = a correção do
+caminho da cascata) e, sobretudo, **na raiz**: `pmf_mean` agora exige que a
+correção devolva PMF somando 1, com a mensagem dizendo qual usar. Isso cobre
+também a view B e a tática do prêmio, que têm o mesmo default e não foram
+tocadas.
+
+**4. Robustez γ entregue, dentro do `Backtest_v1.md`.** γ ∈ {1,0; 1,1; 1,25} no
+escopo de referência, com a **semente recalculada em cada γ** (`set_gamma`) — a
+surpresa depende de γ, e manter a semente de γ = 1,0 numa rodada de 1,25
+demeanaria por uma média que aquele γ nunca produziria, sem dar erro. Resultado:
+**+2,62 / +2,88 / +4,02 pp** — o sinal não depende do γ nesta janela.
+
+**5. `Curva_c.md` remedida com as duas views, e a conclusão antiga caiu.** A
+varredura anterior rodou só com a 2.2 e concluía "o `c` não muda o resultado, o
+teto morde antes". Com a 2.3 ligada o excesso se move até **5,01 pp** ao longo da
+grade e **troca de sinal** no escopo de tilt (+2,62 pp em `c = 1`, máximo de
++4,57 pp em `c = 0,25`, −0,44 pp em `c = 0,01`). O texto do script era prosa fixa
+afirmando o que a tabela mostrava antes; virou frase **calculada da própria
+tabela**. Registrado na seção 10 como medição.
+
+**6. Chegou o `RESPOSTA4` da Lia — e a conferência derrubou um número meu.** Ela
+aceita/decide cinco itens (sem `ffill`, buraco descarta o slot, grade de tempo
+vira dimensão da calibração, dispensa o `serie_janela_tratada`, não consome o
+`dp_variacao_janela`) e escolhe **calibrar sobre a história completa (801 dias)**
+— apoiada num número que eu tinha lhe dado. Fui medir para lhe mandar a receita
+dos 801 dias e o número não sobreviveu:
+
+| | eu havia dito | medido |
+|---|---|---|
+| dias degenerados (cru, sem carry) | 27 | **25** (27 = dias com faixa faltando) |
+| desses, com soma < 0,5 | 24 | 24 ✔ |
+| onde caem | "fora da janela do v1" | **dentro** (30/10/2025 a 21/04/2026) |
+| após `carry_missing` (o que a view lê) | — | **0 de 801** (0,953 a 1,143) |
+
+E o achado que muda o plano dela: os 25 são **100% linhas incompletas** (mediana
+de 3 faixas ausentes de 4) — nenhum livro completo soma abaixo de 0,9. A soma
+baixa mede **buraco**, não desencontro entre books, e buraco ela já penaliza no
+canal `n_slots_esperados − n_pontos`. Escrito em
+`Dump/trocas/RESPOSTA4_Lia_correcao_801_dias.md` com a receita dos 801 dias
+(1 linha/dia, mercado da próxima reunião, pré-abertura, sem carry — ler o parquet
+direto dá 3.905, 1.952 ou 804, nunca 801). Correção também na seção 12, e a 6a
+ganhou a delimitação que ela pediu (fechou o LUGAR; a forma segue aberta, agora
+com 4 candidatas = 2 colapsos × 2 grades).
+
+**Quebrou / aprendido:**
+- **Número dito de cabeça vira premissa do outro em uma rodada.** O "27 de 801,
+  todos fora da janela" saiu num recado, sem artefato que o reproduzisse — e
+  voltou como justificativa de método dela ("os seus 27 dias são o ativo"). Duas
+  sessões depois ele estava errado em duas das três partes. Medição que vai para
+  fora precisa de script, não de memória.
+- **Prosa gerada por script também apodrece — e mente com números certos ao
+  lado.** O `curva_c.py` imprimia "o `c` não muda o resultado" acima de uma
+  tabela que agora mostra troca de sinal. Número gerado, conclusão escrita à mão:
+  a conclusão é que envelhece.
+- **O bug que só aparece na coluna de robustez é o pior de achar.** Ficou
+  invisível por decisão (γ = 1,0 é identidade) e só sairia no relatório final,
+  como número plausível.
+- **Semente e parâmetro andam juntos.** Semear é estado derivado do γ; trocar um
+  sem refazer o outro é inconsistência silenciosa. Por isso `set_gamma` re-semeia
+  em vez de só atribuir.
+- **Com o v1 virando entrega, "adiar" mudou de significado.** 12b e 12c não são
+  adiamentos disfarçados: são fechamentos com o motivo medido, e o que sobra vai
+  ao relatório como limitação, não como pendência.
+
+**Pendente:**
+
+*Resolvido no fim da sessão:*
+- **Registro da decisão 8 reposto**, por instrução do dono. Esteve 🔴 vazio de
+  09/07 a 07/08: a limpeza da seção duplicada (sessão 3) removeu a cópia COM o
+  texto e manteve a vazia. Reposto da ata de 07/07 (Σ amostral + irrestrito),
+  que bate com o código desde então. Marcado no arquivo como reposição, não como
+  decisão nova; as alternativas B2/B3/B4 citadas pela ata sumiram na mesma
+  limpeza e ficam para a reunião confirmar se fazem falta.
+
+*Envio (do dono):*
+- `Dump/trocas/RESPOSTA4_Lia_correcao_801_dias.md` — correção medida, receita
+  dos 801 dias e o aviso de prazo (ela não sabia que existe data de corte).
+
+*Depende de terceiros (caminho crítico da entrega):*
+- `G5 do Paulo` → `régua do c da Lia` → `nível e escopo do teto (grupo)`. Três
+  elos, dois fora daqui. O `RESPOSTA4` dela **não** entrega o `c`: sobram quatro
+  itens do lado dela, e o portão de volume segue preso na D12 do Paulo.
+  **Falta fixar data de corte e plano B pré-registrado** (proposta de 13/08 no
+  recado, não fechada): se a régua não chegar, entrega com `c = 1` e teto no
+  tilt, nível escolhido pela regra e não pelo resultado.
+- **D9 do branch `Paulo`** (overlap dos mercados de FOMC) — segue sem recado.
+
+*Trabalho meu, para a entrega:*
+- **Reprodutibilidade:** hoje nenhum branch roda sozinho (o código está aqui, o
+  dado no `Paulo`). A entrega exige merge dos três — que eu não faço.
+- Banda de não-negociação (introduz threshold novo; se entrar, entra medida).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~85k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "enviei os arquivos que montamos na ultima
+  sessão. Agora me fale Tudo que podemos fazer ou decidir agora e também me fale
+  o que está travado"
+- **Iterações até aceitar:** 1 — sem rodada de correção. Os prompts seguintes
+  mudaram de tarefa (decidir → explicar → executar), não corrigiram saída
+  anterior.
+- **Erros da IA:** nenhum novo apanhado nesta sessão. O bug do `fl_correction` é
+  de sessão anterior (mesmo autor, mesmo módulo) e só foi achado por a coluna de
+  robustez ter sido finalmente construída. Suíte: **181 testes verdes** (179 +
+  o de `reset` preservando a semente + o de `pmf_mean` recusando a correção
+  binária).
+- **Decisões escaladas:** 3 fechadas pelo dono em sessão (**12a**, **12b**,
+  **12c**), todas com medição antes; 1 medição registrada sem fechar (curva do
+  `c` com duas views, seção 10); 1 devolvida ao dono (registro da decisão 8).
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"a mudança de horizonte
+  reclassifica as decisões"**: as mesmas três perguntas tinham resposta "adia" na
+  véspera e "fecha com o motivo medido" depois de o v1 virar entrega final.
+
+---
+
 ## 2026-08-07 (sessão 7) — Felipe
 
 **Contexto da sessão:** duas partes. (1) Leitura do estado das decisões a pedido
