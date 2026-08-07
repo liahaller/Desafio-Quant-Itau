@@ -105,6 +105,27 @@ os campos nas 8 views, fusão no `MontadorV1`):
    certo, o entregável não.** Isso restaura o padrão "toda série resolvida termina no dia do release",
    sem exceção — e foi esse padrão que virou a chave de casamento do tratamento.
 
+**Organização dos arquivos (fim da sessão):** a raiz do repo tinha material solto que já não era de
+raiz. Agora só sobram os arquivos de governança (`CLAUDE.md`, `LOG.md`, `Decisoes_pendentes.md`,
+`README.md`) e as pastas de código.
+
+- `Informações_uteis/` (13 arquivos de espec das views e táticas) → **`Dump/analises/Informações_uteis/`**.
+  O git detectou os 13 como rename, então o histórico segue.
+- As **três respostas recebidas** foram versionadas em `Dump/trocas/`, junto dos pedidos que as
+  originaram: `RESPOSTA_FOLLOWUP3_Pedido_Paulo_dados.md`, `RESPOSTA_PEDIDO_G9_payrolls_Paulo.md` e
+  `RESPOSTA_Pergunta_Lia_omega_volume.md`. Estavam fora do rastreio, e o LOG as cita.
+- **Renomeado:** o arquivo da Lia veio como `Reposta Lia.md` (typo + espaço no nome, fora da convenção
+  `RESPOSTA_*` que todas as outras seguem) → `RESPOSTA_Pergunta_Lia_omega_volume.md`, espelhando o
+  `Pergunta_Lia_omega_volume.md` que o originou.
+- **Deletado: `leaveoff.md`** (o da sessão 3). É nota de retomada, consumida por construção — o
+  próprio arquivo dizia "leia também o `LOG.md`, que traz os números; este é o resumo operacional".
+  Com as sessões 3 e 4 registradas, o conteúdo está superado. **Recuperável em `abadefe:leaveoff.md`**
+  se alguém precisar.
+- **Nada mais foi deletado, de propósito.** Os scripts de medição de decisão reprovada
+  (`gap_fds_condicionado.py`, `nivel_divergencia_3_1.py`) e as views cortadas do v1 (2.4, 3.1, C, E, G)
+  **não são código morto**: são a trilha de auditoria das decisões D2/D2b/D2c/D3b que o relatório cita,
+  e estão cobertos por teste. Apagá-los destruiria a reprodutibilidade do que já foi decidido.
+
 **Pendente:**
 - **Os dois recados estão escritos e commitados, mas NÃO enviados** — o envio é do dono.
 - **G8 é o gargalo:** sem `DFF` o backtest segue com 1 view de 3. A view B continua sem caminho (ZQ de
