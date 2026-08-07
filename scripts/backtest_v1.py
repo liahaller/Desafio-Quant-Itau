@@ -16,11 +16,13 @@ este arquivo aplica em cada montagem do dia D:
 |---|---|---|
 | **2.2 inflação** | **roda** | PMF de CPI + T10YIE + calendário, tudo entregue |
 | 2.3 Fed | **bloqueada** | `e_ff_bps` = DTB3 − DFF, e o **DFF é o G8**, ainda não entregue |
-| B trajetória | **bloqueada** | precisa do ZQ de dezembro, que **não tem fonte grátis** (F6) |
+| B trajetória | **fora do v1** | decisão 11 — o ZQ de dezembro não tem fonte grátis (F6) e a view duplica o β/P da 2.3 |
 
-As duas bloqueadas não são cascata (mercado ausente) — é insumo que não
-chegou. Por isso o script as declara em vez de deixá-las cair em `None`
-silenciosamente: `None` significaria "não havia mercado", que é mentira.
+A 2.3 não é cascata (mercado ausente) — é insumo que não chegou. Por isso o
+script a declara em vez de deixá-la cair em `None` silenciosamente: `None`
+significaria "não havia mercado", que é mentira. A B saiu por decisão, não por
+falta: a perna do poly (`M3_fed_trajectory_*`) está entregue e disponível se o
+grupo reabrir.
 
 ## Camada tática
 

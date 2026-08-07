@@ -105,7 +105,7 @@ módulo da Lia. Justificativa e números de cada uma no `LOG.md` (sessão 2 de
 | Item | Decisão |
 |---|---|
 | Prazo da carteira (H) | 1 dia |
-| Views ativas | 2.2 · 2.3 · B |
+| Views ativas | 2.2 · 2.3 · ~~B~~ (a B saiu do v1 em 2026-08-07 — ver seção 11) |
 | Views fora | 2.4, 3.1, C, E, G |
 | Camada tática | entra: prêmio de anúncio condicionado à incerteza + drift pós-FOMC |
 | Tática fora | gap de fim de semana |
@@ -190,6 +190,55 @@ só o tilt. **O Felipe concordou e leva assim para a reunião; a decisão segue 
 grupo.** Ela também corrige o alvo: **δ = 3,0 não é parâmetro livre, é
 observável** (medido no nosso SPY), então não é ele que precisa fechar junto com
 a escala do `c` — é o teto.
+
+---
+
+## 11. Sessão de 2026-08-07 (sessão 5) — view B fora do v1 🟢 (provisória)
+
+Fechada pelo Felipe no mesmo regime das seções 9 e 10 (**provisória, o grupo
+revisa**). Espec da view preservada em
+`Dump/analises/Informações_uteis/views/view_B_trajetoria_fed.md` — sai do v1, não
+do projeto.
+
+**Fato novo que motivou a decisão (levantado nesta sessão):** a B estava
+registrada como "bloqueada, esperando dado", o que não descrevia a situação. Das
+duas pernas:
+
+- **A perna do poly EXISTE e já foi entregue.** `M3_fed_trajectory_*` no dado do
+  Paulo: 9 faixas ("nenhum corte" a "8+ cortes em 2025"), ~690 leituras por
+  faixa, de 2024-12-29 a 2025-12-10. Ninguém tinha percebido porque a view nunca
+  chegou a ser montada.
+- **A perna do mercado NÃO existe de graça, e isso já estava medido.** O F6 do
+  Paulo testou todas as sintaxes do contrato de dezembro no yfinance (`ZQZ25`,
+  `ZQZ25.CME`, `ZQ=Z25`, `ZQZ2025`, `ZQF26`, …) — todas vazias. Só o contínuo
+  `ZQ=F` funciona, e ele é o contrato da frente, que não serve para um alvo de
+  data fixa. As alternativas são pagas (CME DataMine, Nasdaq Data Link,
+  Barchart); o FRED não tem o contrato.
+
+**Por que sai do v1 em vez de virar mais um pedido:**
+
+1. **Duplica a 2.3.** Por desenho (item 4 da espec) o β e o P são os MESMOS da
+   2.3 — muda só a surpresa. A própria espec já listava "dupla exposição com a
+   2.3" como pendência.
+2. **Cobre metade da janela.** O M3 é só de 2025: contra a janela do backtest
+   (2025-02-10 a 2026-08-06) sobram ~210 dos 374 pregões.
+3. **A view irmã está travada por dado grátis.** A 2.3 espera o `DFF` (G8), um
+   CSV de uma coluna já cobrado no FOLLOWUP4. Comprar dado para a B enquanto a
+   2.3 espera um arquivo grátis inverte a prioridade.
+
+**Condições de reabertura (qualquer uma):** aparecer fonte gratuita do ZQ de
+dezembro, **ou** o grupo aprovar um benchmark substituto.
+
+**Substituto mapeado, NÃO decidido — é decisão metodológica, do grupo:** extrair
+o forward do mês de dezembro da curva de bills do FRED (dois pontos
+interpolados). **Tem precedente direto:** a seção 9 já aceitou trocar o ZQ por
+`ΔDTB3` na surpresa de juros, e a 2.3 vai rodar com `DTB3 − DFF`. Fica registrado
+como opção, com a ressalva de que um forward de 1 mês tirado de dois vértices
+interpolados é ruidoso e ninguém mediu esse ruído.
+
+**Consequência operacional imediata:** **o Paulo pode parar de procurar o ZQ.** A
+caça aparece em três pedidos diferentes (F6, FOLLOWUP2, FOLLOWUP3) e agora não
+tem consumidor no v1.
 
 ---
 

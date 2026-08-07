@@ -1,6 +1,8 @@
 # View B (candidata) — Trajetória do Fed (caminho dos juros até o fim do ano)
 
-**Status:** 🟡 **candidata — entrada na carteira em aberto** (entra ou não é decisão de reunião). Desenho proposto em sessão com Felipe (2026-07-10), espelhando a view 2.3 ao máximo — **não** fecha as decisões 3 e 4 (isso só acontece se a reunião aprovar a entrada). Família A (divergência + sensibilidade), com β/P **reusados da 2.3**.
+**Status:** ⬜ **FORA DO v1** (decisão 11, 2026-08-07 — provisória, o grupo revisa). A perna do poly está entregue (`M3_fed_trajectory_*`, 9 faixas, 2024-12-29 a 2025-12-10); o que falta é o benchmark: o ZQ de dezembro não tem fonte gratuita (F6). Condições de reabertura e o substituto mapeado (forward da curva de bills) estão na decisão 11. O desenho abaixo fica preservado como espec — sai do v1, não do projeto.
+
+**Status anterior:** 🟡 **candidata — entrada na carteira em aberto** (entra ou não é decisão de reunião). Desenho proposto em sessão com Felipe (2026-07-10), espelhando a view 2.3 ao máximo — **não** fecha as decisões 3 e 4 (isso só acontece se a reunião aprovar a entrada). Família A (divergência + sensibilidade), com β/P **reusados da 2.3**.
 
 ## A ideia
 
