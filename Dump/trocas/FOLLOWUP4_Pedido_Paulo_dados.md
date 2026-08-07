@@ -31,6 +31,10 @@
   remap fica comigo (`2025-11-20` é o release de **setembro/2025**, não de outubro; **outubro não tem
   release próprio** — o número saiu dentro do release combinado de `2025-12-16`). O seu próprio dado
   do G9b confirma sozinho: out/2025 é o único mês com "só meta" e **nenhum mercado do número**.
+  **Já está tratado e rodando** (`src/poly_loader.py::load_payroll_releases`): a tática de prêmio saiu
+  de **19 para 32 eventos** (7 FOMC + 13 CPI + 12 payrolls) e o efeito segurou — a diferença
+  incerto−previsível ficou em +1,099% com t de Welch subindo de +2,10 para **+2,27**. **O G9 valeu:**
+  era o que você levantou que virou o dobro de amostra.
 
 ---
 
@@ -138,20 +142,22 @@ negociou; `NaN` = o slot está antes do alcance do `/trades`.**
 
 ---
 
-## G10 — uma linha do G9b que não fecha (teto de 15 minutos)
+## Sem ação sua: uma correção de reporte no G9b (o dado está certo)
 
-Achado ao conferir o G9b, e é pequeno. Em **todos** os mercados resolvidos que você levantou, a série
-termina **exatamente no dia do release** — é um padrão perfeito, e foi ele que validou o calendário do
-G9a por dois lados. **Uma linha quebra o padrão:**
+Não precisa fazer nada — é só para o número não circular errado. No G9b você reportou:
 
 ```
 march-unemployment-rate-561 (2026):  série 2026-02-14 → 2026-03-28
-release de março/2026 (G9a):         2026-04-03
 ```
 
-A série morre **6 dias antes** do release. Ou a série está truncada, ou o mês do slug ali não é o mês
-de referência. Se der para olhar em 15 minutos, diga qual dos dois; se pedir mais que isso, escreve `?`
-— **não é bloqueio**, esse mês não é candidato limpo de qualquer jeito.
+Li o arquivo: a série vai até **2026-04-03**, não 03-28. E 2026-04-03 é exatamente a data de release
+de março/2026 no seu próprio G9a. **O dado que você entregou está correto** — foi a data no
+entregável que saiu errada.
+
+Isso importa porque restaura um padrão que vale para **todos** os mercados resolvidos da sua
+varredura: a série termina exatamente no dia do release. Sem exceção. Usei esse padrão como chave de
+casamento mercado→release (em vez do nome do mês do slug, que não distingue ano), e é ele que resolve
+sozinho a ambiguidade de dez/2024 vs dez/2025 que você sinalizou.
 
 ---
 
@@ -163,7 +169,7 @@ de referência. Se der para olhar em 15 minutos, diga qual dos dois; se pedir ma
 
 ## Formato da devolução
 
-Os blocos `=== G8 — DFF ===` e `=== G5 — VOLUME NO TEMPO ===` preenchidos, mais o G10 em uma linha, e:
+Os blocos `=== G8 — DFF ===` e `=== G5 — VOLUME NO TEMPO ===` preenchidos, e:
 
 ```
 ## Bloqueios
