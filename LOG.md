@@ -1,5 +1,94 @@
 # LOG de sessões
 
+## 2026-08-07 (sessão 9) — Felipe
+
+**Contexto da sessão:** o dono pediu o mapa do que dá para fazer e mandou
+percorrer a lista executando, perguntando só quando a escolha fosse dele. A
+sessão 8 tinha terminado com **tudo no working tree e nada commitado** — 615
+linhas de mudança, incluindo o conserto do `fl_correction`. Primeira coisa a
+resolver.
+
+**1. Sessão 8 commitada em 6 commits lógicos.** Um por mudança (§5 do
+`CLAUDE.md`): conserto do favorite-longshot na PMF · semeadura da 2.3 + robustez
+γ · varredura de orçamento (12c) · remedição da curva do `c` · correção dos 801
+dias para a Lia · registro das decisões. Suíte verde (181) antes do primeiro.
+
+**2. Banda de não-negociação medida — e o resultado não foi o esperado.**
+Era a última pendência de código minha e a saída **pré-registrada no D8** para o
+giro do H = 1 dia. Implementada por ativo (escolha do dono):
+`backtest.no_trade_band` + parâmetro `banda`, desligada por padrão.
+Varredura em `scripts/curva_banda.py` → `Dump/analises/Curva_banda.md`:
+
+| banda | giro | desfeito em 1–2 pregões | pernas paradas | breakeven | excesso |
+|---|---|---|---|---|---|
+| 0 (v1) | 0,242 | 0,363 | 1% | 35,89 bps | +2,62 pp |
+| 0,10% | 0,241 | 0,363 | **55%** | 36,01 bps | +2,61 pp |
+| 5,00% | 0,220 | 0,354 | 90% | 38,48 bps | +1,70 pp |
+
+O número que decidiu: **a banda mais fina para 55% das pernas e corta 0,4% do
+giro.** Não existe cauda de trade miúdo — o giro está em poucas pernas grandes,
+que a banda deixa passar por construção. A reversão quase não se move, e o
+breakeven já tem **18× de folga** contra os 2 bps premissados. **D13 fechada
+pelo dono: não entra no v1.**
+
+**3. Duas decisões de prazo fechadas pelo dono.** **10a** — data de corte da
+régua do `c`: se não chegar até **13/08**, entrega com `c = 1` e teto no tilt no
+nível **1**, o mais conservador da grade já registrada. A regra é
+verificável sem abrir o `Backtest_v1.md`, que é o ponto: escolher no dia 15 seria
+escolher com a tabela de excesso na tela. **D13** — a banda, acima.
+
+**4. `README.md` deixou de ser uma linha.** Procedimento de reprodução ponta a
+ponta: `git archive origin/Paulo data` (sem merge), a suíte, os quatro artefatos
+do relatório e as versões em que os números foram medidos.
+
+**Quebrou / aprendido:**
+- **O remédio pré-registrado pode não morder o mecanismo que o motivou.** O D8
+  previu a banda olhando o `reversal_share` alto. Ele continua alto — só que a
+  reversão mora nas pernas GRANDES, e a banda é um filtro de pernas pequenas por
+  definição. Diagnóstico certo, remédio errado, e só a medição separou os dois.
+- **Métrica de contagem e métrica de volume medem coisas diferentes.** "55% das
+  pernas paradas" e "0,4% do giro cortado" descrevem a mesma rodada. Reportar só
+  a primeira teria vendido a banda como eficaz.
+- **Trabalho sem commit é trabalho que ainda pode sumir.** Uma sessão inteira,
+  incluindo um bug de robustez consertado na raiz, esteve num working tree por
+  um dia.
+- Teste da banda nasceu falso-verde: montei a monotonicidade do giro com a
+  carteira `_sem_views`, que é 100% SPY e **não gira nunca** — os três níveis
+  davam o mesmo número. Refeito com a view sintética.
+
+**Pendente:**
+
+*Depende de terceiros (caminho crítico da entrega):*
+- `G5 do Paulo` → `régua do c da Lia` → `nível e escopo do teto (grupo)`. Agora
+  com corte de **13/08** e plano B pré-registrado (10a).
+- **D9 do branch `Paulo`** (overlap dos mercados de FOMC) — segue sem recado.
+
+*Trabalho meu, para a entrega:*
+- **Reprodutibilidade:** o procedimento está escrito, mas o merge dos três
+  branches continua sendo o único caminho para o repositório rodar sozinho — e
+  não é feito daqui.
+- Nada de código. Com a D13 fechada, a fila de implementação do `Felipe` zerou.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~75k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "O que podemos fazer agora?"
+- **Iterações até aceitar:** 1 — sem rodada de correção. Houve uma devolução do
+  dono pedindo a explicação do que a banda é antes de decidir, que é pergunta,
+  não correção de saída.
+- **Erros da IA:** 1 — o teste de monotonicidade da banda nasceu falso-verde
+  (carteira de teste que não gera giro). Apanhado pelo próprio assert e refeito
+  na mesma rodada. Suíte final: **183 testes verdes**.
+- **Decisões escaladas:** 2 fechadas pelo dono em sessão (**10a** data de corte +
+  plano B; **13** banda fora do v1), as duas com medição ou regra explícita
+  antes.
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"medir o remédio, não só o
+  sintoma"**: a banda era conclusão herdada de pesquisa e sobreviveu meses como
+  pendência óbvia; uma tabela de 7 linhas mostrou que ela filtra o que não
+  carrega giro.
+
+---
+
 ## 2026-08-07 (sessão 8) — Felipe
 
 **Contexto da sessão:** o dono enviou o `RESPOSTA3` e o `FOLLOWUP5` da sessão 7

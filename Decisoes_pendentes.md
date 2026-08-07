@@ -301,6 +301,31 @@ número do escopo (teto no tilt +2,68 pp × teto de carteira −7,91 pp na mesma
 alavancagem de 1,90) responde a "questão de desenho aberta" acima com medição,
 não com opinião — mas **a escolha continua do grupo**.
 
+### 10a. Data de corte da régua do `c` e plano B pré-registrado 🟢 (fechada pelo dono, 2026-08-07 — sessão 9)
+
+**O que fecha:** se a régua do `c` da Lia não chegar até **13/08** (entrega em
+17/08), o v1 é entregue com **`c = 1`** (fallback neutro do `omega_fallback`) e
+**teto no tilt**, no nível **1** — o mais conservador da grade `{1, 2, 3, 5}` já
+registrada, que é também o escopo de referência de todas as varreduras desde
+05/08.
+
+**O que NÃO fecha:** o nível e o escopo do teto continuam sendo decisão do grupo,
+e a ordem da Lia (c → medir Σ|w| → decidir teto) segue valendo até 13/08. Isto é
+um **default de prazo**, não uma escolha metodológica adiantada.
+
+**Por que pré-registrar em vez de resolver no dia 15:** o único jeito de escolher
+o nível "pela regra e não pelo resultado" é escolhê-lo **antes** de ver o
+resultado da configuração que vai ser entregue. A regra usada aqui é
+explicitamente independente do backtest — *o ponto mais conservador da grade* —,
+e é verificável: qualquer um confere que 1 é o menor de `{1, 2, 3, 5}` sem abrir
+o `Backtest_v1.md`. Deixar para o dia 15 significaria escolher o teto com a
+tabela de excesso na tela, que é exatamente o overfit em dois passos do
+protocolo anti-overfit desta seção.
+
+**Cadeia que isto destrava:** `G5 do Paulo` → `régua do c da Lia` → `nível e
+escopo do teto`. Dois dos três elos estão fora deste branch; o plano B existe
+para que o atraso de um elo alheio não vire decisão apressada no último dia.
+
 ---
 
 ## 11. Sessão de 2026-08-07 (sessão 5) — view B fora do v1 🟢 (provisória)
@@ -526,6 +551,57 @@ a 2.3 fica ativa em **325 dias (87%)**, as duas views convivem em **240 dias
 (64%)**, e o excesso contra o SPY sai de **−0,94 pp** (só a 2.2, alavancagem
 medida 1,74) para **+2,68 pp** (alavancagem 1,90). Na mesma alavancagem medida
 de 1,90, o teto de carteira dá −7,91 pp e o teto no tilt dá +2,68 pp.
+
+---
+
+## 13 (branch `Felipe`). Sessão de 2026-08-07 (sessão 9) — banda de não-negociação fora do v1 🟢
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D13 do
+> `Felipe`".
+
+**Decisão: o v1 entrega sem banda (`banda=None`) — a carteira negocia todo `Δw`
+que o modelo pede.** Fechada pelo dono em sessão, com medição antes (mesmo
+regime da 12c). Implementação (`backtest.no_trade_band`) e testes ficam no
+repositório; a varredura vai ao relatório como sensibilidade.
+
+**O que a banda é:** filtro de execução — `Δw` de um ativo abaixo da banda não é
+executado, e o `Δw` grande passa inteiro. Era a saída **pré-registrada no D8**
+para o caso de o giro do H = 1 dia ser ruído: a pesquisa que fechou o D8 aponta
+"negociar contra si mesmo" como o mecanismo que mata estratégia diária, e a nossa
+tem **36% do giro desfeito em 1–2 pregões**.
+
+**Medido antes de decidir** (`Dump/analises/Curva_banda.md`,
+`scripts/curva_banda.py`, teto no tilt = 1, 374 pregões):
+
+| banda | giro diário | desfeito em 1–2 pregões | pernas paradas | breakeven | excesso × SPY |
+|---|---|---|---|---|---|
+| 0 (v1) | 0,242 | 0,363 | 1% | 35,89 bps | +2,62 pp |
+| 0,10% | 0,241 | 0,363 | 55% | 36,01 bps | +2,61 pp |
+| 1,00% | 0,235 | 0,357 | 82% | 36,99 bps | +2,68 pp |
+| 5,00% | 0,220 | 0,354 | 90% | 38,48 bps | +1,70 pp |
+
+**O que decidiu, e não foi o excesso:**
+
+1. **O ruído não está nas pernas pequenas.** A banda mais fina já impede 55% dos
+   pares (dia × ativo) de negociar e corta **0,4%** do giro. Não existe cauda de
+   trade miúdo a filtrar — quase todo o giro está em poucas pernas grandes, que
+   a banda deixa passar por construção. Para cortar giro de verdade ela teria de
+   bloquear trade grande, e aí não é filtro de ruído, é deixar de seguir o modelo.
+2. **A reversão quase não se move** (0,363 → 0,354). O remédio não morde o
+   mecanismo que o motivou.
+3. **O custo não é o que aperta:** breakeven de **35,89 bps por lado contra os
+   2 bps premissados — 18× de folga**. O custo teria de subir uma ordem de
+   grandeza para virar o sinal.
+
+**Armadilha registrada:** o excesso tem **máximo interior** (1,00%, +2,68 pp).
+Com a reversão parada, essa oscilação não tem mecanismo por trás — escolher a
+banda por ela seria o overfit em dois passos do protocolo da seção 10, agora sem
+rodada seguinte para desmentir.
+
+**Consequência de registro:** com isto some a última pendência de código do
+`Felipe` para a entrega. O que resta no caminho crítico é de terceiros (`G5 do
+Paulo` → régua do `c` da Lia → teto do grupo, com o corte de 13/08 da seção 10a)
+e o merge dos três branches, que não é feito daqui.
 
 ---
 
