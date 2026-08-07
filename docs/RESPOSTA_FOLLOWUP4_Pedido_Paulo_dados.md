@@ -127,4 +127,6 @@ mercado com `closed=true`. **Zero mercado ficou sem resolver.**
 
 ## Commit
 
-<preenchido após o push>
+- **G8:** `2f3a3eb67861524431e2a621e50d9afea6db4def`
+- **G5:** `afce2adb92015729815ad24c3207bd6641d91b2b`
+- **Branch:** `Paulo` (push para `origin/Paulo`; último: `f31d9d0..afce2ad`)
