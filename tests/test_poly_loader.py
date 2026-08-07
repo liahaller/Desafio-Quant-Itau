@@ -22,6 +22,7 @@ from poly_loader import (
     diagnostics_qualidade,
     load_cpi_releases,
     load_history,
+    load_payroll_releases,
     load_pmf,
     series_by_slot,
     to_slots,
@@ -240,3 +241,59 @@ def test_diagnostics_serie_janela_vem_crua():
     serie = diagnostics_qualidade(cru, cru.index[-1])["serie_janela"]
     assert [t for t, _ in serie] == list(cru.index)
     assert all(linha == {"a": 0.4, "b": 0.6} for _, linha in serie)
+
+
+# --- calendário de payrolls (G9a) --------------------------------------------
+
+# Trecho real do arquivo do Paulo em torno do shutdown de 2025 (mes_referencia
+# DERIVADO por "mês do release − 1", que é onde a janela do shutdown quebra).
+CABECALHO = "release_date,time_et,mes_referencia,fonte"
+JANELA_SHUTDOWN = [
+    "2025-09-05,8:30 AM,August 2025,FRED",
+    "2025-11-20,8:30 AM,October 2025,FRED [ATENCAO: gap de 76 dias]",
+    "2025-12-16,8:30 AM,November 2025,FRED",
+    "2026-01-09,8:30 AM,December 2025,FRED",
+]
+
+
+def _csv(tmp_path, linhas):
+    caminho = tmp_path / "payrolls.csv"
+    caminho.write_text("\n".join([CABECALHO] + linhas) + "\n", encoding="utf-8")
+    return caminho
+
+
+def test_payroll_releases_remapeia_o_shutdown(tmp_path):
+    """2025-11-20 é o release de SETEMBRO, não de outubro: o shutdown atrasou
+    o cronograma e outubro não teve release próprio."""
+    r = load_payroll_releases(_csv(tmp_path, JANELA_SHUTDOWN))
+    r = r.set_index(r["release_date"].dt.strftime("%Y-%m-%d"))
+
+    assert r.loc["2025-11-20", "mes_referencia"] == "September 2025"
+    assert r.loc["2025-11-20", "mes_referencia_cru"] == "October 2025"   # cru preservado
+    assert "shutdown" in r.loc["2025-11-20", "nota_tratamento"]
+    # o release combinado out+nov já saía com o mês certo, mas precisa da NOTA
+    assert r.loc["2025-12-16", "mes_referencia"] == "November 2025"
+    assert "COMBINADO" in r.loc["2025-12-16", "nota_tratamento"]
+    # linha fora da janela não é tocada
+    assert r.loc["2026-01-09", "nota_tratamento"] == ""
+    # outubro/2025 NÃO ganha linha inventada
+    assert "October 2025" not in set(r["mes_referencia"])
+
+
+def test_payroll_releases_falha_alto_se_o_arquivo_mudar_de_forma(tmp_path):
+    """O remap do shutdown é exceção declarada, não regra derivável. Se o resto
+    do arquivo parar de obedecer a 'mês do release − 1', a exceção virou chute
+    e tem de FALHAR, não ser aplicada calada."""
+    csv = _csv(tmp_path, JANELA_SHUTDOWN + ["2026-02-11,8:30 AM,November 2025,FRED"])
+    with pytest.raises(ValueError, match="shutdown"):
+        load_payroll_releases(csv)
+
+
+def test_payroll_releases_nao_reaplica_correcao_ja_feita_na_fonte(tmp_path):
+    """Se o Paulo (ou o FRED) corrigir na origem, o tratamento tem de ser
+    idempotente — não pode empurrar a linha um mês a mais."""
+    corrigido = [linha.replace("October 2025", "September 2025")
+                 for linha in JANELA_SHUTDOWN]
+    r = load_payroll_releases(_csv(tmp_path, corrigido))
+    assert list(r["mes_referencia"]) == ["August 2025", "September 2025",
+                                         "November 2025", "December 2025"]

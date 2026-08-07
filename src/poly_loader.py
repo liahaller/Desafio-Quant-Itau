@@ -107,7 +107,7 @@ def series_by_slot(path):
     return serie[~serie.index.duplicated(keep="last")].sort_index()
 
 
-def load_pmf(directory, prefix):
+def load_pmf(directory, prefix, ordenar=True):
     """Monta a matriz slots × buckets de um mercado multi-token.
 
     `prefix` é o começo do nome dos arquivos do mercado (ex. `"M3_fed_trajectory_"`,
@@ -118,6 +118,14 @@ def load_pmf(directory, prefix):
     do slug (`bucket_value`) e indexado pelo slot. **NaN onde o bucket não tem
     leitura naquele slot** — inclui tanto a faixa que morreu quanto a leitura
     faltante pontual. Nada é preenchido nem zerado aqui (decisão 6.1).
+
+    `ordenar=False` pula o `bucket_value` e devolve as colunas na ordem do
+    arquivo. Existe pelos mercados de payrolls do G9: o Paulo os salvou **sem
+    o slug do balde** (`<prefix><tokenId>.json`), então não há rótulo de onde
+    tirar valor numérico. Serve para medida que não usa valor de balde — a
+    entropia normalizada é invariante à ordem e à renormalização (é por isso
+    que a tática de prêmio foi escrita em cima dela). **Não serve para view**:
+    P e Q precisam dos valores alinhados.
     """
     arquivos = sorted(Path(directory).glob(f"{prefix}*.json"))
     if not arquivos:
@@ -127,6 +135,8 @@ def load_pmf(directory, prefix):
         slug = arquivo.stem[len(prefix):].rsplit("_", 1)[0]
         colunas[slug] = series_by_slot(arquivo)
     pmf = pd.DataFrame(colunas)
+    if not ordenar:
+        return pmf
     # bucket aberto (valor NaN) vai para o fim — hoje só existe como ponta
     # superior ("8plus"); NaN como chave de ordenação embaralharia as colunas.
     return pmf[sorted(pmf.columns, key=lambda s: np.nan_to_num(bucket_value(s), nan=np.inf))]
@@ -241,6 +251,75 @@ def load_cpi_releases(path):
     referencia = pd.to_datetime(releases["mes_referencia"], format="%B %Y")
     ano_errado = releases["release_date"] < referencia
     releases.loc[ano_errado, "release_date"] += pd.DateOffset(years=1)
+    return releases.sort_values("release_date").reset_index(drop=True)
+
+
+# Remap do shutdown de 2025 no calendário de payrolls (G9a). A `release_date` é
+# MEDIDA (FRED release id=50); só o `mes_referencia` é DERIVADO pelo Paulo por
+# "mês do release − 1", e a derivação quebra numa janela — ele marcou cru e
+# sinalizou, como combinado, e a correção é aqui no tratamento.
+#
+# O que aconteceu: o shutdown de 2025 abriu um buraco de 76 dias (2025-09-05 ->
+# 2025-11-20) e o BLS remanejou o cronograma. Quatro releases normais viraram
+# três, então "mês − 1" desalinha.
+#
+# NÃO é regra derivável (ao contrário do typo de ano do CPI, que cai em
+# "divulgação nunca precede o mês de referência"): é fato histórico. Fica como
+# exceção declarada, com validação — se o arquivo mudar, a correção não se
+# aplica calada.
+#
+# Corroborado pelo PRÓPRIO dado do G9b, sem fonte externa: out/2025 é o único
+# mês da varredura com "só meta" e NENHUM mercado do número — exatamente o que
+# se espera de um mês sem release próprio.
+_SHUTDOWN_2025 = {
+    # release        -> (mes_referencia correto, nota)
+    "2025-11-20": ("September 2025",
+                   "release de setembro atrasado pelo shutdown (o cru dizia October)"),
+    "2025-12-16": ("November 2025",
+                   "release COMBINADO out+nov; outubro não teve release próprio "
+                   "e a taxa de desemprego de outubro nunca foi publicada"),
+}
+
+
+def load_payroll_releases(path):
+    """Calendário de divulgação do Employment Situation, com o shutdown de 2025
+    corrigido. Espelha `load_cpi_releases`: o Paulo entrega cru, a correção é aqui.
+
+    Devolve o DataFrame ordenado por data, com duas colunas a mais:
+      - `mes_referencia_cru` : o que veio do arquivo (auditoria)
+      - `nota_tratamento`    : por que a linha foi corrigida (vazio se não foi)
+
+    **Outubro/2025 não ganha linha**: o payroll de outubro saiu DENTRO do release
+    de 2025-12-16, não em release próprio. Inventar uma linha para ele criaria um
+    evento que não existe no calendário — e o `-` honesto vale mais.
+    """
+    releases = pd.read_csv(path, parse_dates=["release_date"])
+    releases["mes_referencia_cru"] = releases["mes_referencia"]
+    releases["nota_tratamento"] = ""
+
+    chaves = releases["release_date"].dt.strftime("%Y-%m-%d")
+    for data, (correto, nota) in _SHUTDOWN_2025.items():
+        alvo = chaves == data
+        if not alvo.any():
+            continue  # arquivo sem essa linha: nada a corrigir, e não é erro
+        # A nota vale mesmo quando o mês derivado já saiu certo: 2025-12-16 cai
+        # em "November" pela regra do Paulo e está certo para o payroll de
+        # novembro, MAS foi um release combinado out+nov — quem lê o calendário
+        # precisa saber disso mesmo sem haver o que corrigir.
+        releases.loc[alvo, "mes_referencia"] = correto
+        releases.loc[alvo, "nota_tratamento"] = nota
+
+    # Validação: fora da janela do shutdown, "mês do release − 1" TEM de valer.
+    # Se parar de valer, o arquivo mudou de forma e a exceção acima virou chute.
+    referencia = pd.to_datetime(releases["mes_referencia"], format="%B %Y")
+    esperado = (releases["release_date"].dt.to_period("M") - 1).dt.to_timestamp()
+    desvio = (referencia != esperado) & (releases["nota_tratamento"] == "")
+    if desvio.any():
+        ruins = releases.loc[desvio, "release_date"].dt.date.tolist()
+        raise ValueError(
+            f"mes_referencia não bate com 'mês do release − 1' fora da janela do "
+            f"shutdown: {ruins} — o arquivo do Paulo mudou de forma e o remap "
+            f"declarado em _SHUTDOWN_2025 precisa ser revisto, não aplicado cego")
     return releases.sort_values("release_date").reset_index(drop=True)
 
 
