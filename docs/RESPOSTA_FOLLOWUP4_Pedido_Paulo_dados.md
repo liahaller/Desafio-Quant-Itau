@@ -74,4 +74,5 @@ abaixo, não some.
 
 ## Commit
 
-<preenchido após o push>
+- **Hash:** `2f3a3eb67861524431e2a621e50d9afea6db4def`
+- **Branch:** `Paulo` (push para `origin/Paulo`: `8dd635d..2f3a3eb`)
