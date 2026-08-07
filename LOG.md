@@ -39,11 +39,18 @@
 **Ponto de processo (aceito):** o G8 era a 2ª metade do FOLLOWUP3 e não foi sinalizado
 na resposta do G7. Corrigido; item não entregue passa a entrar em Bloqueios.
 
-**Levantado, NÃO decidido (para a Lia):** a regra "antes de `t_cobertura_min` = NaN"
-foi aplicada literal a todos os mercados. Dos 424 NaN, 346 são de truncamento do cap
-(o caso que a regra protege) e 78 são "pré-primeiro-trade" em 19 mercados NÃO capados
-(a série de preço tem slot antes do 1º trade). Estes últimos poderiam ser lidos como 0;
-sinalizado no entregável como escolha da Lia, não fechei sozinho.
+**Levantado, NÃO decidido (para a Lia) — registrado como Decisão 12:** a regra "antes
+de `t_cobertura_min` = NaN" foi aplicada literal a todos os mercados. Dos 424 NaN, 346
+são de truncamento do cap (o caso que a regra protege) e 78 são "pré-primeiro-trade" em
+19 mercados NÃO capados (a série de preço tem slot antes do 1º trade). Estes últimos
+poderiam ser lidos como 0; sinalizado no entregável e escalado em `Decisoes_pendentes.md`
+(Decisão 12), não fechei sozinho.
+
+**Polimento final do entregável (mesma sessão):** o título/abertura do MD ainda diziam
+"foco no G8" (sobra da 1ª rodada) e só citavam FRED — corrigido para refletir G8+G5 e o
+Polymarket, com ponteiro explícito para `g5_volume_cobertura.csv` como a lista dos 121
+mercados. Recalculei todos os números do entregável a partir dos CSVs-fonte antes de
+liberar o envio: batem exatos.
 
 **O que quebrou:** 1ª e 2ª rodadas do G5 deixaram ~79 e depois 21 mercados sem
 `conditionId` (o filtro `clob_token_ids` não indexa famílias antigas; regex de slug de
@@ -57,15 +64,17 @@ re-runs incrementais.
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 4.8.
-- **Contexto consumido:** ~55% da janela.
+- **Contexto consumido:** ~65% da janela.
 - **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP4_Pedido_Paulo_dados.md' responda isso em um md. foque nas principais questoes dele: parte do g8"
-- **Iterações até aceitar:** ~3 rodadas (G8 direto; G5 exigiu 2 correções do resolvedor
-  de `conditionId` até resolver os 121).
+- **Iterações até aceitar:** ~5 rodadas (G8 direto; G5 exigiu 2 correções do resolvedor
+  de `conditionId` até resolver os 121; depois o Paulo pediu para responder TUDO — G5 foi
+  feito na sequência; e verificação final + polimento de título/lista antes do envio).
 - **Erros da IA:** (1) leitura estreita do 1º prompt entregou só o G8 — o Paulo pediu
   tudo e o G5 foi feito na sequência; (2) resolvedor de `conditionId` do G5 falhou em
-  famílias antigas/série M — corrigido antes da entrega. Nenhum número inventado.
-- **Decisões escaladas:** — (nenhuma nova fechada; sinalizado à Lia o tratamento
-  NaN-vs-0 do pré-primeiro-trade, sem decidir).
+  famílias antigas/série M — corrigido antes da entrega. Nenhum número inventado (todos
+  reconferidos contra os CSVs no fim).
+- **Decisões escaladas:** **Decisão 12** (G5: tratamento `NaN`-vs-`0` do slot
+  pré-primeiro-trade em mercados não capados — dona é a Lia).
 - **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up 4 — reprodutibilidade).
 
 ---

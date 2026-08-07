@@ -165,6 +165,31 @@ só informam o trade-off):**
 Interliga com a Decisão 9 (overlap) e com o `poly_preprocessing` do Felipe
 (midpoint bid/ask). **Decisão:** _(a registrar)_
 
+## 12. G5 volume no tempo — tratamento de slot pré-primeiro-trade: `NaN` ou `0`? 🔴
+Levantado em 2026-08-07 (entrega do G5 do FOLLOWUP4, spec do Ω da Lia). A spec
+diz "antes do `t_cobertura_min` = `NaN`, nunca `0`", regra criada para o
+**truncamento do cap de 20k** do `/trades` (sem ela, os mercados mais líquidos
+leriam volume 0 falso nas datas antigas que a API não alcança). Apliquei a regra
+**literal a todos os mercados**.
+
+Consequência medida: dos 424 slots `NaN` no `g5_volume_no_tempo.csv`, **346 são
+de truncamento** (2 mercados M3 capados — o caso que a regra protege) e **78 são
+"pré-primeiro-trade" em 19 mercados NÃO capados** — slots de 12h em que a série
+`/prices-history` já tinha ponto (midpoint semeado na criação do mercado) mas
+ainda não houve nenhum trade. Como esses mercados **não** foram truncados,
+sabe-se que o volume ali é genuinamente zero.
+
+Opções (trade-off a decidir — dona da regra é a Lia, é o Ω dela):
+- Manter `NaN` literal em tudo antes do `t_cobertura_min` (conservador; trata
+  pré-trade como "sem dado").
+- `NaN` só quando houve truncamento (mercado bateu o cap); nos não-capados, os
+  slots antes do 1º trade viram `0` legítimo (informação que existe, não se
+  perde).
+
+Não fechei sozinho (CLAUDE.md §1). Sinalizado no entregável
+`docs/RESPOSTA_FOLLOWUP4_Pedido_Paulo_dados.md`. É troca de uma linha no
+`scripts/g5_volume_no_tempo.py`. **Decisão:** _(a registrar)_
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.
