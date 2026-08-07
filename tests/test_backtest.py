@@ -250,6 +250,38 @@ def test_atribuicao_do_dia_fecha_com_o_bruto():
     assert d["r_mercado"].to_numpy() == pytest.approx(r[r.columns[0]].to_numpy())
 
 
+def test_alavancagem_pedida_nao_depende_do_teto():
+    """A carteira PEDIDA é a mesma em qualquer rodada — a montagem do dia não
+    olha o peso de ontem. É o que deixa a curva do `c` ser medida uma vez só."""
+    r = _retornos(escala=0.002)
+    view = ViewResult(P=np.array([0.0, 1.0, -1.0]), Q=0.01,
+                      diagnostics={"view": "sintetica", "horizonte_q_dias": 1})
+    montar = lambda _d: (_sigma(), [view], [])  # noqa: E731
+    w_mkt = np.array([1.0, 0.0, 0.0])
+    a = run_backtest(r, montar, w_mkt, teto_alavancagem=1.0)
+    b = run_backtest(r, montar, w_mkt, teto_alavancagem=5.0, teto_no_tilt=True)
+    assert a.diario["alavancagem_pedida"].to_numpy() == pytest.approx(
+        b.diario["alavancagem_pedida"].to_numpy())
+
+
+def test_incerteza_maior_encolhe_o_tilt():
+    """`incerteza` é a varredura do `c`: maior = menos confiança = menos tilt.
+    Sem view ativa não muda nada — o Ω não tem onde entrar."""
+    r = _retornos(escala=0.002)
+    view = ViewResult(P=np.array([0.0, 1.0, -1.0]), Q=0.01,
+                      diagnostics={"view": "sintetica", "horizonte_q_dias": 1})
+    montar = lambda _d: (_sigma(), [view], [])  # noqa: E731
+    w_mkt = np.array([1.0, 0.0, 0.0])
+    pedida = lambda inc: run_backtest(  # noqa: E731
+        r, montar, w_mkt, teto_alavancagem=1.0,
+        incerteza=inc).diario["alavancagem_pedida"].median()
+    assert pedida(100.0) < pedida(1.0)
+    assert pedida(None) == pytest.approx(pedida(1.0))  # None = neutro = 1,0
+    sem_view = [run_backtest(r, _sem_views, w_mkt, incerteza=i).diario["alavancagem"]
+                for i in (None, 100.0)]
+    assert sem_view[0].to_numpy() == pytest.approx(sem_view[1].to_numpy())
+
+
 def test_data_fora_da_tabela_falha_alto():
     r = _retornos()
     with pytest.raises(ValueError, match="fora da tabela"):

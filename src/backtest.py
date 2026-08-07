@@ -172,7 +172,7 @@ def reversal_share(trades, janela=2):
 
 def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELTA,
                  custo_bps=CUSTO_BPS_POR_LADO, teto_alavancagem=None,
-                 teto_no_tilt=False, w_inicial=None):
+                 teto_no_tilt=False, incerteza=None, w_inicial=None):
     """Anda nas datas e devolve o BacktestResult.
 
     retornos   : DataFrame (datas × ativos) de retornos diários, colunas na
@@ -192,6 +192,12 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  só o desvio em relação a `w_mkt`, deixando a perna de mercado
                  intacta. Muda o que o teto limita (`Σ|w − w_mkt|`, não `Σ|w|`)
                  — ver `cap_leverage`.
+    incerteza  : ESCALAR aplicado a todas as views ativas do dia (None = 1,0, o
+                 fallback neutro). É ferramenta de VARREDURA — serve para medir
+                 a sensibilidade ao `c` antes de a régua da Lia existir, não
+                 para cravar confiança. O vetor de verdade é por view e chega
+                 pelo `aplicar_veto`, não por aqui. Convenção do `omega_fallback`:
+                 maior = MENOS confiança, e o `c ∈ (0,1]` dela entra como 1/c.
     w_inicial  : peso já carregado antes da primeira data. None = zeros, ou
                  seja, a primeira montagem paga o custo de entrar na carteira.
 
@@ -222,10 +228,11 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         # aqui que o vetor dela entra, depois de passar por `aplicar_veto` —
         # e nada mais muda.
         P, _, _ = stack_views(view_results, n_assets=len(ativos))
-        omega = None if P is None else omega_fallback(P, sigma, tau)
+        omega = None if P is None else omega_fallback(
+            P, sigma, tau, None if incerteza is None else np.full(P.shape[0], incerteza))
         w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
-        w_alvo, diag_taticas = apply_overlays(w_bl, overlay_results or ())
-        w_alvo = cap_leverage(w_alvo, teto_alavancagem, w_mkt if teto_no_tilt else None)
+        w_pedido, diag_taticas = apply_overlays(w_bl, overlay_results or ())
+        w_alvo = cap_leverage(w_pedido, teto_alavancagem, w_mkt if teto_no_tilt else None)
 
         custo, giro = transaction_cost(w_alvo, w_derivado, custo_bps)
         carrego = carry_cost(w_alvo)
@@ -247,6 +254,15 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
             "r_liquido": r_bruto - custo - carrego,
             "giro": giro,
             "alavancagem": float(np.abs(w_alvo).sum()),
+            # Σ|w| PEDIDO pelo BL, antes do corte. Não depende do teto nem do
+            # escopo dele (a montagem do dia não olha o peso de ontem), então
+            # sai igual em qualquer rodada — é a régua para responder "com o `c`
+            # da Lia, ainda sobra alavancagem a cortar?".
+            "alavancagem_pedida": float(np.abs(w_pedido).sum()),
+            # Retorno que a carteira não-cortada teria feito HOJE. Contrafactual
+            # de 1 dia, não trajetória: <= -100% marca o dia em que o irrestrito
+            # zera o patrimônio (a ruína que motivou o teto).
+            "r_pedido": float(w_pedido @ r_ativos),
             "n_views": 0 if P is None else P.shape[0],
             "n_taticas": len(diag_taticas),
         })

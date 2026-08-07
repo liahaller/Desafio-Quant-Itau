@@ -156,6 +156,28 @@ da Lia (c → medir Σ|w| → decidir teto) não muda: o número acima só diz q
 pergunta do escopo tem consequência de duas casas decimais, então vale decidir
 junto com o nível.
 
+**Passo (2) da ordem da Lia pré-executado — varredura do `c`** (mesma sessão;
+`Dump/analises/Curva_c.md`, `scripts/curva_c.py`, `run_backtest(..., incerteza=)`).
+O `c` dela não existe ainda, então entrou como GRADE de valores constantes —
+varre e reporta, não escolhe. Três resultados:
+
+1. **O `c` encolhe a alavancagem menos do que parece.** Com Ω = (1/c)·diag(P·τΣ·Pᵀ),
+   o tilt escala como **c/(1+c)**, não como `c`: perto de `c = 1` metade do peso
+   já vem do prior, e apertar rende pouco. Medido, de `c = 1` a `c = 0,01` a
+   Σ|w| pedida mediana cai 40× (195 → 4,8).
+2. **Mesmo no `c` mais apertado da grade sobra alavancagem para cortar.** A Σ|w|
+   pedida nunca cabe em 1, e o teto morde em 74% dos pregões em TODA a grade —
+   por isso o excesso quase não se move (−14,39 → −14,12 pp no escopo de
+   carteira). Nesta janela e com esta view, **o `c` não substitui o limitador de
+   tamanho.** Isso não contradiz a Lia (o `c` de fato só tira peso, e a ordem
+   dela segue certa); refina: os dois convivem, o teto não é só remendo.
+3. **Correção de registro:** o "Σ|w| mediana 24, máx 264" acima subestima. Sem
+   teto o backtest morre no primeiro dia de ruína, então aquela estatística só
+   cobria os pregões até lá. Medida na carteira PEDIDA (que existe todo dia,
+   por não depender de trajetória), a mediana é **195** e o máximo **34.481** na
+   janela inteira. A conclusão que o número sustentava fica mais forte, não mais
+   fraca.
+
 **Posição da Lia (resposta de 2026-08-07), registrada — não fecha nada:** ela
 pede para **não** fechar o teto antes de o `c` entrar, porque hoje o teto está
 fazendo o trabalho do Ω. Argumento dela: a régua é produto de fatores em (0,1]

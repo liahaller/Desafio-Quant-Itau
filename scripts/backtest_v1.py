@@ -243,6 +243,39 @@ class MontadorV1:
         return sigma, views, overlays
 
 
+def carregar(raiz, orcamentos=None):
+    """(retornos, montador, datas, w_mkt) — toda a plumbing de dado do v1.
+
+    Separado do `main` para as varreduras irmãs (ex.: `curva_c.py`) rodarem o
+    MESMO montador em vez de reimplementar a leitura e arriscar divergir dela.
+    """
+    raiz = Path(raiz)
+    precos = load_etf_prices(raiz / "data/etf_prices_daily.parquet")[list(ASSETS)]
+    retornos = daily_returns(precos)
+    breakeven = load_fred(raiz / "data/raw/fred_T10YIE.csv") / PONTOS_PERCENTUAIS
+    dgs10 = load_fred(raiz / "data/raw/fred_DGS10.csv")
+    releases = load_cpi_releases(raiz / "data/raw/cpi_release_dates.csv")
+    diretorio = raiz / "data/raw/clob_exploracao"
+    mercados = mercados_de_cpi(releases, diretorio)
+    pmfs = {p: pmf_diaria(diretorio, p) for p in set(mercados.values())}
+
+    fomc = pd.to_datetime(pd.read_csv(raiz / "data/raw/fomc_dates.csv")["date"])
+    fomc = pd.DatetimeIndex(sorted(fomc))
+    # D6: ΔDTB3 do dia do FOMC no lugar da variação do ZQ (que não tem fonte
+    # grátis). É a surpresa REALIZADA, insumo do drift — não da view 2.3.
+    dtb3 = load_fred(raiz / "data/raw/fred_DTB3.csv")
+    surpresas = (dtb3.diff() * PONTOS_PERCENTUAIS).reindex(fomc).dropna()
+
+    montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
+                          fomc, surpresas, orcamentos or {})
+
+    # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
+    primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
+    inicio = max(retornos.index[SIGMA_JANELA_PREGOES], primeira_pmf)
+    datas = retornos.index[retornos.index >= inicio]
+    return retornos, montador, datas, market_weights(ASSETS)
+
+
 def rotulo_teto(teto, no_tilt):
     """Nome da coluna. `|` escapado — vira cabeçalho de tabela markdown."""
     return f"tilt ≤ {teto:g}" if no_tilt else f"Σ\\|w\\| ≤ {teto:g}"
@@ -265,34 +298,10 @@ def main():
     parser.add_argument("--saida", default="Dump/analises/Backtest_v1.md")
     args = parser.parse_args()
 
-    raiz = Path(args.raiz)
-    precos = load_etf_prices(raiz / "data/etf_prices_daily.parquet")[list(ASSETS)]
-    retornos = daily_returns(precos)
-    breakeven = load_fred(raiz / "data/raw/fred_T10YIE.csv") / PONTOS_PERCENTUAIS
-    dgs10 = load_fred(raiz / "data/raw/fred_DGS10.csv")
-    releases = load_cpi_releases(raiz / "data/raw/cpi_release_dates.csv")
-    diretorio = raiz / "data/raw/clob_exploracao"
-    mercados = mercados_de_cpi(releases, diretorio)
-    pmfs = {p: pmf_diaria(diretorio, p) for p in set(mercados.values())}
-
-    fomc = pd.to_datetime(pd.read_csv(raiz / "data/raw/fomc_dates.csv")["date"])
-    fomc = pd.DatetimeIndex(sorted(fomc))
-    # D6: ΔDTB3 do dia do FOMC no lugar da variação do ZQ (que não tem fonte
-    # grátis). É a surpresa REALIZADA, insumo do drift — não da view 2.3.
-    dtb3 = load_fred(raiz / "data/raw/fred_DTB3.csv")
-    surpresas = (dtb3.diff() * PONTOS_PERCENTUAIS).reindex(fomc).dropna()
-
     orcamentos = {"premio": args.orcamento_premio,
                   "drift_acoes": args.orcamento_drift_acoes,
                   "drift_rf": args.orcamento_drift_rf}
-    montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
-                          fomc, surpresas, orcamentos)
-
-    # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
-    primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
-    inicio = max(retornos.index[SIGMA_JANELA_PREGOES], primeira_pmf)
-    datas = retornos.index[retornos.index >= inicio]
-    w_mkt = market_weights(ASSETS)
+    retornos, montador, datas, w_mkt = carregar(args.raiz, orcamentos)
 
     # Duas varreduras: o teto cortando a carteira inteira e cortando só o tilt.
     # É a questão de desenho aberta na seção 10 do `Decisoes_pendentes.md` —
