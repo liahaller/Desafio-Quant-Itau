@@ -191,7 +191,14 @@ def diagnostics_qualidade(pmf_cru, decisao, janela_slots=None, dias_ate_evento=n
     `dp_variacao_janela` sai NaN em mercado multi-bucket: colapsar a PMF num
     escalar `p` é transformação da régua dela, não minha (mesmo argumento com
     que ela pediu `soma_faixas` cru). Só é calculado quando a série tem uma
-    coluna só, caso em que o `p` é inequívoco. Ver pergunta aberta no LOG.
+    coluna só, caso em que o `p` é inequívoco.
+
+    ⚠️ **CAMPO SEM LEITOR desde 2026-08-07** (`RESPOSTA4` da Lia): ela passou a
+    calcular também o caso de coluna única do lado dela, pelo mesmo caminho do
+    multi-bucket, para não conviverem duas estimativas da mesma quantidade. O
+    campo continua saindo por não valer o risco de mexer em interface na véspera
+    da entrega (17/08) — **remover depois dela**, e não "consertar" preenchendo
+    o multi-bucket, que é a decisão 6a ao contrário.
     """
     decisao = pd.Timestamp(decisao)
     if decisao.tz is None:
