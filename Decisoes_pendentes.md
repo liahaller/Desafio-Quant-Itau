@@ -4,6 +4,37 @@ Decisões de implementação que faltam fechar antes/durante o mock. À medida q
 
 ---
 
+## ⚠️ Aviso de numeração — o mesmo número é decisão DIFERENTE em cada branch
+
+Levantado em 2026-08-07 (sessão 6, Felipe), ao ver o Paulo abrir uma "Decisão 12"
+que não é a nossa. **Não é decisão minha e não estou renumerando nada** — é fato
+de encanamento, registrado para ninguém citar número achando que o outro entende.
+
+De 1 a 7 os três branches batem (o 7 diverge só no status). **De 8 em diante são
+três numerações paralelas:**
+
+| # | `Felipe` | `Paulo` | `Lia` |
+|---|---|---|---|
+| 8 | passo final do otimizador | reconciliação de cobertura poly × ETFs | passo final do otimizador |
+| 9 | maratona de 04/08 (13 provisórias) | encadeamento dos mercados FOMC | matriz ativos × mercados |
+| 10 | sessão de 05/08 (2 do backtest) | extensão do universo FOMC | — |
+| 11 | view B fora do v1 | fonte da série de preço do poly | — |
+| 12 | `E_FF` da 2.3 sem o ZQ | G5: slot pré-primeiro-trade `NaN` ou `0` | — |
+
+**Agravante interno ao branch `Felipe`:** nos `Dump/analises/` e no `LOG.md`,
+"D11" e "D12" são os **dois itens da seção 10** (duration medida e teto de
+alavancagem), não as seções 11 e 12. E o `LOG.md` de 31/07 chama de "Decisão 12"
+o critério de escolha do `k` — que não existe como seção em nenhum branch.
+
+**Opções para a reunião (não escolhidas):** (a) prefixo por dono (`F8`, `P8`,
+`L8`); (b) um dono único do arquivo e renumeração no merge; (c) faixas
+reservadas por dono; (d) manter e sempre citar branch junto do número.
+
+**Enquanto não fecha:** ao citar decisão, diga o branch — "D12 do `Paulo`", não
+"D12".
+
+---
+
 ## 1. Universo de ativos e fonte de preços 🟢
 Lista fechada de instrumentos negociáveis que formam o vetor de pesos.
 
