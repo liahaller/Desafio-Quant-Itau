@@ -4,3 +4,6 @@ __pycache__/
 # Segredos locais (NUNCA versionar chaves de API)
 config/secrets.json
 .env
+
+# Cache intermediário retomável do G5 (agregação por mercado; regenerável)
+data/raw/g5_cache/

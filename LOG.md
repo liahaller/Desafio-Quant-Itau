@@ -2,45 +2,71 @@
 
 ---
 
-## 2026-08-07 — Paulo — FOLLOWUP4 (G8): série DFF do FRED (o item que faltou no FOLLOWUP3)
+## 2026-08-07 — Paulo — FOLLOWUP4 (G8 + G5): DFF do FRED e série de volume no tempo
 
 **O que foi feito:**
-- Executado o `G8` do `FOLLOWUP4_Pedido_Paulo_dados.md` — o item que ficou de fora da
-  resposta do FOLLOWUP3 (só o G7 tinha vindo). Baixada ao vivo a série **DFF**
-  (Effective Federal Funds Rate) do FRED via `fredgraph.csv?id=DFF`, mesmo caminho
-  público sem chave do G2, com um ID a mais.
-- Novo `scripts/g8_fred_dff.py` (clone do padrão do `g2_fred.py`). Salvo cru em
-  `data/raw/fred_DFF.csv`, mesmo formato dos outros três (`observation_date,DFF`),
-  sem renomear coluna, reindexar, preencher buraco ou converter unidade.
-- **Resultado medido:** 26.334 linhas, 1954-07-01 → 2026-08-05, **0 campos vazios**,
-  marca de ausente `(nenhum)`. Diferente do DTB3/DGS10, o DFF não tem buraco de
-  feriado (taxa diária de calendário, repete valor em fim de semana). Com isso a
-  view 2.3 do Felipe (`e_ff_bps = DTB3 − DFF`) tem os dois lados crus.
-- Entregável: `docs/RESPOSTA_FOLLOWUP4_Pedido_Paulo_dados.md` (bloco `=== G8 — DFF ===`
-  + ponto de processo aceito + Bloqueios + Commit) + cópia em `~/Downloads/`.
+- Executado o `FOLLOWUP4_Pedido_Paulo_dados.md` **inteiro** — os dois itens pedidos
+  (G8 e G5), ao vivo. (Numa 1ª rodada só o G8 foi feito por leitura estreita do
+  prompt; o Paulo pediu explicitamente para responder tudo, e o G5 foi executado na
+  sequência.)
 
-**Ponto de processo (aceito):** o G8 era a 2ª metade do FOLLOWUP3 e não foi entregue
-nem sinalizado (o "Bloqueios: Nenhum" da resposta do G7 devia ter listado o DFF).
-Corrigido; item não entregue passa a entrar em Bloqueios.
+- **G8 — DFF:** baixada ao vivo a série **DFF** (Effective Federal Funds Rate) via
+  `fredgraph.csv?id=DFF`, mesmo caminho público sem chave do G2. Novo
+  `scripts/g8_fred_dff.py` (clone do `g2_fred.py`). Salvo cru em
+  `data/raw/fred_DFF.csv` (`observation_date,DFF`), sem tratar. **26.334 linhas,
+  1954-07-01 → 2026-08-05, 0 campos vazios** (DFF é taxa diária de calendário, sem
+  buraco de feriado). Fecha o outro lado de `e_ff_bps = DTB3 − DFF` (view 2.3).
 
-**O que quebrou:** nada. Rodou de primeira contra o FRED.
+- **G5 — volume no tempo (spec da Lia):** novo `scripts/g5_volume_no_tempo.py`.
+  Série 12h derivada do `data-api /trades` para os **121 mercados** das views ativas
+  (2.2 = 111 [105 CPI_* + 6 M1] · 2.3 = 1 [M2] · B = 9 [M3]) já em
+  `clob_exploracao/`. Por mercado: resolve `conditionId`, pagina `/trades` até o teto
+  de 20k (F4), agrega por slot de 12h em `notional_usd = Σ(size×price)` **e**
+  `n_trades`, e marca `t_cobertura_min` (trade mais antigo alcançado, 1 por mercado).
+  Grid de 12h vem da série `/prices-history` já baixada. **Antes do `t_cobertura_min`
+  = NaN (campos vazios); depois, slot sem trade = 0 legítimo.** Saídas:
+  `data/raw/g5_volume_no_tempo.csv` (12.928 linhas) + `g5_volume_cobertura.csv`
+  (1 linha/mercado). Janela 2024-12-30 → 2026-07-29 UTC. **3 mercados capados** no 20k
+  (M2 set/2025, M3 4-cuts, M3 5-cuts) com `t_cobertura_min` reportado. 2.403 slots-0
+  legítimos, 424 slots-NaN.
+- **Resolução de IDs:** 21 dos 121 mercados são famílias que o filtro `clob_token_ids`
+  do Gamma não indexa; resolvidos pelo evento (`/events?slug=` + match do tokenId em
+  `clobTokenIds`) — `*-inflation-monthly`, `CPI_G4_janeiro`, `M1`, `M3` — e o M2 pelo
+  slug de mercado com `closed=true`. Zero mercado sem resolver.
+- Entregável: `docs/RESPOSTA_FOLLOWUP4_Pedido_Paulo_dados.md` (blocos `=== G8 ===` e
+  `=== G5 ===` + Bloqueios + Commit) + cópia em `~/Downloads/`.
+
+**Ponto de processo (aceito):** o G8 era a 2ª metade do FOLLOWUP3 e não foi sinalizado
+na resposta do G7. Corrigido; item não entregue passa a entrar em Bloqueios.
+
+**Levantado, NÃO decidido (para a Lia):** a regra "antes de `t_cobertura_min` = NaN"
+foi aplicada literal a todos os mercados. Dos 424 NaN, 346 são de truncamento do cap
+(o caso que a regra protege) e 78 são "pré-primeiro-trade" em 19 mercados NÃO capados
+(a série de preço tem slot antes do 1º trade). Estes últimos poderiam ser lidos como 0;
+sinalizado no entregável como escolha da Lia, não fechei sozinho.
+
+**O que quebrou:** 1ª e 2ª rodadas do G5 deixaram ~79 e depois 21 mercados sem
+`conditionId` (o filtro `clob_token_ids` não indexa famílias antigas; regex de slug de
+evento era lowercase-only e não pegava `CPI_G4_...`; série M não tem slug de evento no
+nome). Corrigido em duas iterações (resolver por evento + override da série M + fallback
+`closed=true` no M2). Cache em disco (`data/raw/g5_cache/`, git-ignored) tornou os
+re-runs incrementais.
 
 **Pendente:**
-- **G5 (volume no tempo):** NÃO executado nesta sessão — escopo fechado no G8 por
-  instrução do Paulo. A spec da Lia (série 12h do `/trades`: `notional_usd`,
-  `n_trades`, `t_cobertura_min` com `NaN` antes do alcance do cap de 20k; escopo só
-  views 2.2/2.3/B) está entendida e executável; fica para a próxima sessão. Declarado
-  em Bloqueios do entregável.
-- **G6 (CPI 2022–2024):** condicional à reunião, sem mudança.
+- **G6 (CPI 2022–2024):** condicional à reunião, sem mudança (não é item do FOLLOWUP4).
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 4.8.
-- **Contexto consumido:** ~30% da janela.
+- **Contexto consumido:** ~55% da janela.
 - **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP4_Pedido_Paulo_dados.md' responda isso em um md. foque nas principais questoes dele: parte do g8"
-- **Iterações até aceitar:** 1 rodada (execução direta; DFF baixou de primeira).
-- **Erros da IA:** nenhum.
-- **Decisões escaladas:** — (nenhuma; G8 é re-pull de série, não decisão metodológica).
-- **Tags:** `[PROMPT-CHAVE]` (execução do G8 do follow-up 4 — reprodutibilidade).
+- **Iterações até aceitar:** ~3 rodadas (G8 direto; G5 exigiu 2 correções do resolvedor
+  de `conditionId` até resolver os 121).
+- **Erros da IA:** (1) leitura estreita do 1º prompt entregou só o G8 — o Paulo pediu
+  tudo e o G5 foi feito na sequência; (2) resolvedor de `conditionId` do G5 falhou em
+  famílias antigas/série M — corrigido antes da entrega. Nenhum número inventado.
+- **Decisões escaladas:** — (nenhuma nova fechada; sinalizado à Lia o tratamento
+  NaN-vs-0 do pré-primeiro-trade, sem decidir).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do follow-up 4 — reprodutibilidade).
 
 ---
 
