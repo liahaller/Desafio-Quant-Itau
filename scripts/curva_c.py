@@ -23,9 +23,10 @@ Três leituras, todas medidas na carteira **pedida** pelo BL (antes do corte):
   - **ruína** acontece exatamente quando algum dia tem `r_pedido ≤ −100%` —
     compor (1 + r) só zera patrimônio por um dia assim.
 
-Hoje **só a view 2.2 roda** (a 2.3 espera o G8/DFF e a B o ZQ de dezembro),
-então o escalar É o `c` da view. Com três views ativas ele vira média grosseira,
-e a curva só valeria como sensibilidade agregada.
+Desde 2026-08-07 rodam **duas views** (2.2 e 2.3; a B ficou fora do v1 pela
+decisão 11), então o escalar não é mais o `c` de uma view: é o MESMO `c`
+aplicado às duas, ou seja sensibilidade agregada. Quando o vetor da Lia chegar,
+cada view terá o seu — a leitura desta curva é de ordem de grandeza.
 
 Uso:
 
@@ -121,8 +122,9 @@ def main():
         "antes de a régua chegar. **Isto mede, não escolhe** — nenhum `c` desta "
         "tabela é proposta de valor (CLAUDE.md §6).\n",
         f"- janela: **{datas[0].date()} a {datas[-1].date()}** ({len(datas)} pregões)",
-        "- view ativa: **só a 2.2** (a 2.3 espera o G8/DFF, a B o ZQ de dezembro) — "
-        "com uma view só, o escalar **é** o `c` dela, não uma média",
+        "- views ativas: **2.2 e 2.3** (a B fora do v1 pela decisão 11) — o mesmo "
+        "`c` entra nas duas, então a curva é **sensibilidade agregada**, não o "
+        "`c` de uma view",
         f"- as colunas de excesso usam teto **{args.teto:g}** nos dois escopos "
         "(D12 em aberto); as de Σ|w| são da carteira PEDIDA, e não dependem de "
         "teto nenhum",
@@ -184,9 +186,28 @@ def main():
         f"números não têm de bater exato — Σ|w| carrega junto a perna de mercado, "
         f"que não escala com o `c` — mas a ordem de grandeza fecha, e é o que "
         f"valida a leitura.\n")
+    # A amplitude do excesso ao longo da grade é MEDIDA, não afirmada: com uma
+    # view só ela era desprezível ("o teto morde antes"); com a 2.3 ligada o
+    # escopo de tilt chega a trocar de sinal. Deixar a frase antiga fixa aqui
+    # faria o texto contradizer a própria tabela.
+    faixa = {escopo: (tabela[f"excesso — teto {escopo}"].min(),
+                      tabela[f"excesso — teto {escopo}"].max())
+             for escopo in ("na carteira", "no tilt")}
+    troca_sinal = [e for e, (lo, hi) in faixa.items() if lo * hi < 0]
+    amplitude = max(hi - lo for lo, hi in faixa.values())
     texto.append(
-        f"**No teto de {args.teto:g}, o `c` não muda o resultado — o teto morde "
-        f"antes.** O excesso vai de "
+        (f"**No teto de {args.teto:g} o `c` move o resultado em até "
+         f"{amplitude * 100:.2f} pp** — e no escopo `{'` e `'.join(troca_sinal)}` "
+         f"ele chega a TROCAR o sinal do excesso. Não dá para tratar a régua "
+         f"dela como ajuste fino: a escolha do nível é escolha de resultado, que "
+         f"é exatamente por que o protocolo anti-overfit da seção 10 pede que o "
+         f"nível saia uma vez só, junto do teto, e não por iteração contra esta "
+         f"tabela.\n" if troca_sinal else
+         f"**No teto de {args.teto:g} o `c` move o excesso em no máximo "
+         f"{amplitude * 100:.2f} pp e não troca o sinal em nenhum escopo** — o "
+         f"teto morde antes.\n"))
+    texto.append(
+        f"O excesso vai de "
         f"{base['excesso — teto na carteira'] * 100:+.2f} pp a "
         f"{menor['excesso — teto na carteira'] * 100:+.2f} pp (escopo de carteira) "
         f"e de {base['excesso — teto no tilt'] * 100:+.2f} pp a "
@@ -196,7 +217,7 @@ def main():
         f"**É a resposta ao passo (3) da Lia:** para o teto virar redundante, a "
         f"Σ|w| pedida teria de cair abaixo dele — e mesmo em `c = {c1:g}` ela ainda "
         f"está em {menor['Σ|w| pedida mediana']:.1f} de mediana. Nesta janela e com "
-        f"esta view, **o `c` não substitui o limitador de tamanho**; os dois têm de "
+        f"estas views, **o `c` não substitui o limitador de tamanho**; os dois têm de "
         f"conviver, que é diferente de \"o teto está fazendo o trabalho do Ω\".\n")
     if len(primeira_sem_ruina):
         c_ok = primeira_sem_ruina.index[0]
