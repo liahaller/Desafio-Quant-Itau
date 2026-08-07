@@ -1,8 +1,9 @@
-# RESPOSTA — FOLLOW-UP 4 · foco no `G8` (`DFF` do FRED)
+# RESPOSTA — FOLLOW-UP 4 · `G8` (`DFF` do FRED) + `G5` (volume no tempo)
 
-> Medido ao vivo contra o FRED em 2026-08-07. Dado salvo **cru**, sem tratar:
-> sem renomear coluna, sem reindexar, sem preencher buraco, sem converter
-> unidade. Mesmo caminho `fredgraph.csv` do G2, com um ID a mais.
+> Os dois itens de ação do FOLLOWUP4 entregues, medidos ao vivo em 2026-08-07:
+> **G8** contra o FRED e **G5** contra o `data-api /trades` do Polymarket. Dado
+> salvo **cru**, sem tratar: sem renomear coluna, sem reindexar, sem preencher
+> buraco, sem converter unidade, sem normalizar.
 
 ---
 
@@ -71,7 +72,7 @@ Arquivo salvo:        data/raw/g5_volume_no_tempo.csv   (série longa)
                       data/raw/g5_volume_cobertura.csv  (1 linha por mercado: t_cobertura_min etc.)
 Colunas:              ['view', 'mercado', 'conditionId', 'slot_utc', 'notional_usd', 'n_trades']
 Nº de linhas:         12928   (slots × mercados)
-Nº de mercados:       121     (2.2 = 111 [105 CPI_* + 6 M1_cpi_monthly] · 2.3 = 1 [M2_fomc] · B = 9 [M3_fed_trajectory])
+Nº de mercados:       121     (2.2 = 111 [105 CPI_* + 6 M1_cpi_monthly] · 2.3 = 1 [M2_fomc] · B = 9 [M3_fed_trajectory]; lista completa em g5_volume_cobertura.csv)
 Passo:                12h (43200s; = prices-history fidelity=720)
 Janela:               2024-12-30 00:00 → 2026-07-29 12:00 (UTC)
 Mercados que bateram no cap de 20k:  3
