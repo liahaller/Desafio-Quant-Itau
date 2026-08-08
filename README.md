@@ -32,10 +32,17 @@ dado do zero. O `--raiz` é o diretório que contém `data/`, e não precisa ser
 repositório: `--raiz /caminho/do/branch/paulo` roda contra a cópia dele sem
 copiar nada.
 
-**Ambiente medido:** Python 3.11.2 · numpy 2.3.4 · pandas 2.3.3 · scipy 1.16.3 ·
-pyarrow 25.0.0. Não há `requirements.txt` porque não há dependência fixada — se
-os números divergirem, comece conferindo a versão do pandas (a leitura de PMF
-depende de `groupby`/`reindex`).
+**Ambientes medidos:** os quatro artefatos saem **byte a byte iguais** nos dois
+abaixo — inclusive atravessando a major do pandas.
+
+| | Python | numpy | pandas | scipy | pyarrow |
+|---|---|---|---|---|---|
+| 07/08 | 3.11.2 | 2.3.4 | 2.3.3 | 1.16.3 | 25.0.0 |
+| 08/08 | 3.11.3 | 2.3.3 | **3.0.4** | 1.16.2 | 25.0.0 |
+
+Não há `requirements.txt` porque não há dependência fixada — se os números
+divergirem, comece conferindo a versão do pandas (a leitura de PMF depende de
+`groupby`/`reindex`). Suíte: 183 verdes nos dois.
 
 ## O que cada coisa é
 
