@@ -656,4 +656,202 @@ seguem o regime das seções 9/10 (provisórias, revisão do grupo).
 
 ---
 
+## 15 (branch `Felipe`). Duas views novas — CANDIDATAS, construídas e não ligadas 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D15 do
+> `Felipe`".
+
+**Registro, não decisão.** Resposta à direção da seção 14, sessão de
+**2026-08-08**. As duas estão **implementadas, testadas e FORA do backtest** —
+nenhuma foi empilhada, nenhum número de entrega mudou. O que segue é o que o
+grupo precisa decidir antes de qualquer uma entrar.
+
+| | View CPI transversal | View de incerteza de anúncio |
+|---|---|---|
+| Módulo | `src/view_cpi_transversal.py` | `src/view_incerteza_anuncio.py` |
+| Testes | `tests/test_view_cpi_transversal.py` (8) | `tests/test_view_incerteza_anuncio.py` (8) |
+| Dado novo? | **nenhum** | **nenhum** |
+| Sinal | a divergência da 2.2 (E_poly[CPI] − breakeven) | entropia da PMF na véspera |
+| P | seção cruzada dos 9 (`P_from_betas`, P[SPY] = 0) | **direcional**: 2 no SPY |
+| Q | (ΣP·β) × divergência_líquida / dias_até_divulgação | (ΣP·β) × incerteza_líquida |
+
+### 15a. As duas views leem sinal que já está em uso — e isso é do grupo 🔴
+
+A **transversal** usa a MESMA divergência da 2.2. Empilhar as duas conta a mesma
+informação duas vezes no BL, que foi um dos três motivos de tirar a view B
+(seção 11). Não é o mesmo caso da B (lá o P também era o mesmo; aqui o P é
+diferente), mas é correlação de view que o Ω precisa enxergar.
+
+**Medido em 08/08 e é o achado que decide a conversa:** as duas tomam posições
+**opostas no TIP**. A 2.2 fica comprada; a transversal fica vendida
+(P[TIP] = −0,29 na amostra completa) porque, relativo ao mercado, o TIP responde
+muito mais ao juro de 10 anos (β +1,6 contra +10,7 do SPY) do que ao componente
+de inflação — o mesmo achado do `Dump/analises/Convergencia_2_2.md`, por outro
+caminho. O β diário é dominado pelo canal risk-on (XLE +20,4; XLF +15,2;
+TLT −11,2), então o P que sai é "cíclicos e energia contra duração".
+
+**Três saídas, nenhuma escolhida aqui:** (a) só a 2.2; (b) só a transversal;
+(c) as duas, com Ω que reconheça a correlação.
+
+### 15b. A view de incerteza é a PRIMEIRA direcional do projeto 🔴
+
+Todas as views estruturais são neutras em mercado por construção (`P_from_betas`
+crava P[SPY] = 0 exato). O prêmio de Savor-Wilson é prêmio de MERCADO, e
+expressá-lo com P[SPY] = 0 é exatamente o que impediu a view 3.1 de dizer o que
+tinha a dizer (D2b). Por isso o P dela é direcional.
+
+**O que não muda:** Σ|P| = 2 (decisão 4) e a identidade Q = P·E[r].
+**O que muda e é do grupo:** com ΣP ≠ 0 a view mexe na exposição direcional, e a
+obrigação 5a de `views_common.py` (centragem se troca em TODAS as views juntas)
+precisa ser lida antes de empilhar esta com as neutras.
+
+### 15c. A ESCALA da incerteza muda o resultado, e não há default honesto 🔴
+
+Medido nos 32 anúncios (7 FOMC + 13 CPI + 12 payrolls), β do SPY — nenhuma das
+duas escalas usa threshold:
+
+| escala | β_SPY | t |
+|---|---|---|
+| entropia crua demeanada por família | +0,48 %/unidade | **+0,32** |
+| percentil da entropia dentro da família | +1,75 %/unidade | **+1,96** |
+
+A entropia crua **linear não sustenta a premissa**: o t cai de +2,27 (contraste
+de grupos, como a premissa foi medida em `Dump/analises/Premio_condicional.md`)
+para +0,32. O percentil dentro da família é a versão contínua do MESMO contraste
+(a mediana é o percentil dicotomizado) e recupera o sinal sem cravar corte.
+`build_view` aceita as duas e grava qual rodou em `diagnostics["escala"]` — qual
+entra é decisão do grupo.
+
+### 15d. O que a view de incerteza resolve da 12c
+
+A 12c desligou a tática do prêmio de anúncios porque ligar exigia um `orcamento`
+sem âncora, e o Δ era **monótono no orçamento** (sem ótimo interior: a grade
+devolvia a pergunta em vez de selecionar parâmetro). Como **view**, quem
+dimensiona é o BL (τ, Ω, Σ) — o parâmetro sem âncora deixa de existir. A
+premissa, que a 12c registrou como APROVADA, é reaproveitada inteira.
+**Isto não reabre a 12c**: a tática segue desligada e os overlays seguem com
+`orcamento = None`. É outro caminho para a mesma premissa.
+
+### 15f. A transversal REPROVOU no teste de sinal 🟢 (medido 2026-08-08)
+
+Medido depois de construída, a pedido do dono, em 276 pregões (fev/2025 a
+jul/2026), β expansivo e divergência de média expansiva — sem lookahead:
+
+| elo da tese | medido |
+|---|---|
+| a divergência move o breakeven até a divulgação | b +0,0039, **t +2,11** ✅ |
+| coef. preditivo de cada ativo acompanha o β contemporâneo | corr = **+0,06** 🛑 |
+| a carteira P rende na direção do Q | b −0,048, **t −3,02**, acerto **35%** 🛑 |
+
+**O primeiro elo existe, o segundo não.** O β diário ao Δbreakeven é dominado pelo
+canal risk-on e não se transporta para retorno futuro condicionado ao sinal de
+inflação. É erro de desenho, não de parâmetro.
+
+**Recomendação (do Felipe, decisão do grupo):** a transversal **não entra**. Com
+isso a 15a fica sem objeto por ora — a decisão "só a 2.2 / só a transversal / as
+duas" resolve-se em "só a 2.2" enquanto não houver desenho novo.
+
+**Não inverter**, apesar de o inverso ser significante: precedente fechado na D2b,
+que recusou redesenhar a 3.1 na direção que o dado pedia (sinal contrário à
+própria tese, um ano de amostra). Inverter é ajustar sinal à amostra.
+
+**⚠️ CONTROLE — e ele muda como este teste deve ser citado.** Rodei o MESMO teste
+nas duas views que estão na entrega:
+
+| view | t | acerto de sinal |
+|---|---|---|
+| 2.2 (entrega) | +0,44 | 57% |
+| **2.3 (entrega, carrega o backtest)** | **+0,26** | 51% / 56% |
+| transversal | **−3,02** | 35% |
+
+**Nenhuma view do v1 passa.** A 2.3, que leva o excesso de −0,94 pp para +2,68 pp,
+dá t +0,26. Portanto o teste **não é certificado de utilidade** — ele não captura
+o que faz uma view render dentro do BL, onde o Q interage com Σ, w_mkt e o teto do
+tilt. Ele funciona como **veto**: pega sinal invertido. É só nisso que a
+transversal se separa — as incumbentes são indistinguíveis de zero, ela é
+significativamente ao contrário. A recomendação de não ligar vale por isso, e
+**não** por ela ter ficado abaixo de uma régua que as outras cumprem.
+
+**Consequência que o grupo precisa ver, e que não é sobre a transversal:** nenhuma
+view do v1 prevê linearmente o retorno da própria carteira P. O +2,68 pp do
+backtest vem da interação com Σ, w_mkt e o teto — não de o Q estar certo. Isso é
+observação para o relatório; não mexo na 2.2 nem na 2.3, que são decisões
+registradas.
+
+### 15g. Candidata a 4ª view — a B com β PRÓPRIO 🟡 (medida, não decidida)
+
+O dono pediu uma **quarta** view (2.2 + 2.3 + incerteza + 1). Levantadas todas as
+candidatas, a única viável no calendário é a **view B (trajetória do Fed)
+reformulada**. O que mudou desde o corte da seção 11:
+
+**A objeção de duplicação era do DESENHO, não da view — e agora está medida.** A
+espec da B manda **reusar os β da 2.3** (item 3), o que faz o P sair *literalmente
+idêntico*: empilhar as duas põe **duas linhas iguais** no P do BL, que é pior que
+correlação (as duas viram uma só, ponderada pelo Ω). Mas o β não precisa ser
+reusado. Estimando-o contra **outro vértice da curva**, o P muda de verdade —
+medido em 37 reuniões:
+
+| β estimado contra | P resultante |
+|---|---|
+| ΔDTB3 (curto — o da 2.3) | long TLT +0,61 · TIP +0,36 · XLU +0,58 |
+| ΔDGS10 (longo — proxy do vértice de trajetória) | long XLE +0,91 · XLF +0,30 · **short TLT −0,39** |
+
+**Ângulo entre os dois P: 95,6°** (corr −0,34) — praticamente ortogonais. Com β
+próprio, a B ocupa **dimensão nova** no BL e a objeção principal da seção 11 cai.
+
+**Cobertura, o segundo motivo do corte:** o M3 (`will-N-fed-rate-cuts-happen-in-2025`)
+vai de 2024-12-30 a 2025-12-10 e cobre **237 dos 374 pregões (63%)** da janela,
+com soma das faixas média 1,007 (min 0,882). Não há mercado de trajetória de 2026
+no `data/`. 63% é comparável à convivência atual das duas views (64%) — limitação
+a declarar, não impedimento.
+
+**O que falta de dado: UMA série do FRED, o `DGS1`** (1 ano — o vértice certo para
+uma pergunta de fim de ano). Pedido como **G10a**, o item de TOPO do G10 (é uma
+série só, minutos de trabalho). Sem ele não dá para especificar a view: o DTB3 (3 meses) é
+curto demais e o DGS10 (10 anos) é longo demais para a pergunta.
+
+**🛑 AVISO, e é o motivo de isto NÃO estar fechado:** rodei o teste de sinal na
+versão PROXY (DGS10 nos dois lados, 179 dias) e ela saiu **invertida** — t −1,79
+em 1 dia, **t −2,68** em 5 dias, acerto 48%. Mesma classe da transversal. O proxy é
+sabidamente errado (benchmark de 10 anos para pergunta de 1 ano, então a
+"surpresa" carrega prêmio de prazo), mas **é o segundo desenho seguido a sair
+invertido**, e isso é padrão, não azar.
+
+**Estado: CONSTRUÍDA em 2026-08-08, por instrução do dono** —
+`src/view_B_trajetoria_propria.py` + `tests/test_view_B_trajetoria_propria.py`
+(8 testes). O módulo **não depende do `DGS1`**: o benchmark e os β entram como
+argumento, então o que ficou pendente é a MEDIÇÃO, não o código. Ele delega
+cascata, E_poly e P ao `view_B_trajetoria_fed` (uma implementação só, para as
+duas versões não divergirem em silêncio) e acrescenta três coisas: piso de soma
+herdado da 2.3, demeanagem expansiva e `vertice` obrigatório nos diagnostics.
+
+**Sequência que falta, e ela não é negociável por pressa:** chegou o `DGS1`
+(G10a) → refazer o teste de sinal no vértice certo → **só então** empilhar. Se
+sair invertido de novo, **não entra e não se inverte** (precedente D2b). O custo
+dessa ordem é ~1 dia; o custo de pular a medição é uma view invertida na entrega
+final.
+
+### 15e. Dependência do Paulo — um item bloqueia, dois não
+
+`Dump/trocas/PEDIDO_G10_Paulo.md` (08/08, reescrito no fim da
+sessão quando a quarta view entrou no escopo), três itens em ordem de prioridade:
+
+- **G10a — `DGS1` do FRED.** Uma série. É o único insumo que falta para a quarta
+  view (15g) existir, e **o único item BLOQUEANTE** do pedido.
+
+- **G10b — rótulo dos baldes de payrolls.** Os 234 JSONs do G9 trazem só preço; o
+  nome do arquivo tem o token, não o slug do desfecho. Sem rótulo não existe
+  `E_poly[payrolls]`, e payrolls fica limitado à entropia (que não usa rótulo e
+  por isso já roda). **Não bloqueia nenhuma das duas views.**
+- **G10c — calendário oficial do CPI via API do FRED.** O
+  `cpi_release_dates.csv` atual tem 15 datas derivadas das REGRAS dos mercados do
+  Polymarket. Destravaria a variante event-study do β da transversal. Melhoria,
+  não pré-requisito.
+
+**Nada fecha aqui.** Se qualquer das duas entrar, é decisão metodológica sob o
+regime das seções 9/10 (provisória, revisão do grupo), e o backtest só as empilha
+depois de 15a, 15b e 15c fecharem.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

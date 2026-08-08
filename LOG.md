@@ -1,5 +1,222 @@
 # LOG de sessões
 
+## 2026-08-08 (sessão 12) — Felipe
+
+**Contexto da sessão:** a sessão 11 terminou com o dono reabrindo o escopo
+(seção 14: "duas views não bastam"). Esta sessão respondeu à pergunta que faltava
+antes de construir — *dá para fazer view nova com o dado que temos?* — e depois
+construiu as duas que dão.
+
+**1. Inventário do dado ANTES de desenhar, e ele mudou a resposta.** A pergunta
+"precisa pedir ao Paulo?" só tem resposta olhando arquivo. Achado que decidiu
+tudo: os **234 JSONs de payrolls do G9** trazem `{"history": [{t, p}]}` e o nome
+do arquivo tem o **token id, não o slug do desfecho** — diferente do CPI, onde o
+slug do desfecho está no nome e é dele que `bucket_value` lê a faixa. Logo **não
+existe `E_poly[payrolls]`**, e toda view direcional de emprego está bloqueada no
+Paulo. O que sobrevive sem rótulo é a **entropia** — e é justamente o que a
+medição da premissa já usa.
+
+**2. TRÊS views construídas, testadas e FORA do backtest** (registradas como
+candidatas na seção 15 do `Decisoes_pendentes.md`; nada empilhado, nenhum número
+de entrega mudou). Duas nasceram no começo da sessão, a terceira no fim, quando o
+dono pediu uma quarta view para a carteira (ver item 3e):
+
+- **`src/view_cpi_transversal.py`** — a divergência da 2.2 expressa na seção
+  cruzada dos 9. Composição de duas peças que já existiam: a divergência da 2.2 e
+  a regressão de `market_inputs.breakeven_duration` generalizada do PAR para os N
+  ativos. Zero dado novo.
+- **`src/view_incerteza_anuncio.py`** — o prêmio de anúncio condicionado à
+  incerteza, com P **direcional** no SPY. É a tática 1.3 da 12c virada view: o
+  `orcamento` sem âncora que matou a tática **deixa de existir**, porque quem
+  dimensiona view é o BL (τ, Ω, Σ).
+
+**24 testes novos, suíte em 207 verdes.**
+
+**3. Rodar contra o dado real mudou o desenho das duas primeiras — e este é o
+ponto da sessão.** Nenhuma das duas correções teria aparecido em teste sintético:
+
+- **A entropia LINEAR não sustenta a premissa.** β do SPY = +0,48%/unidade,
+  **t +0,32** — a premissa foi medida com t +2,27, por contraste de grupos. O
+  percentil dentro da família (versão contínua do MESMO contraste, e sem cravar
+  corte) devolve +1,75%/unidade, **t +1,96**. `build_view` aceita as duas e grava
+  qual rodou em `diagnostics["escala"]`; a escolha é do grupo (15c).
+- **A transversal fica VENDIDA em TIP** (P[TIP] = −0,29), enquanto a 2.2 fica
+  comprada. Não é bug: relativo ao mercado, o TIP responde ao juro de 10 anos
+  (β +1,6 contra +10,7 do SPY) muito mais que ao componente de inflação — é o
+  achado do `Convergencia_2_2.md` reaparecendo por outro caminho. O β diário é
+  dominado pelo canal risk-on (XLE +20,4; XLF +15,2; TLT −11,2).
+
+**3b. A transversal foi testada e REPROVOU — e o teste era o que faltava.** A
+pedido do dono ("ela prevê alguma coisa?"), medi em 276 pregões com β expansivo e
+divergência de média expansiva. O primeiro elo da tese existe: a divergência move
+o breakeven até a divulgação (**t +2,11**, confirmando a medição da 2.2 e a
+DECISAO-7.2). O segundo não: a correlação entre o coeficiente PREDITIVO de cada
+ativo e o β contemporâneo é **+0,06** — a view supõe ≈ +1 —, e a carteira P rende
+**contra** o Q (**t −3,02**, acerto de sinal 35%). Não inverti, apesar de o
+inverso ser significante: precedente da D2b, que recusou redesenhar a 3.1 na
+direção que o dado pedia. Registrado em 15f; o módulo abre com 🛑 e a
+recomendação é não ligar. **Referência que apareceu de brinde:** o par da 2.2 no
+mesmo teste dá t +0,44 e acerto 57% — fraco, sem significância, mas não
+invertido; anotado para o grupo, sem mexer na 2.2.
+
+**3c. O controle do teste, e ele corrigiu a minha própria conclusão.** Antes de
+recomendar qualquer coisa a partir do teste que reprovou a transversal, rodei o
+MESMO teste nas duas views da entrega: **2.2 dá t +0,44** e **2.3 dá t +0,26** —
+a 2.3 sendo justamente a que leva o excesso de −0,94 pp para +2,68 pp. **Nenhuma
+view do v1 passa.** Logo o teste é **veto, não certificado**: ele pega sinal
+invertido e não mede o que faz uma view render dentro do BL (onde o Q interage com
+Σ, w_mkt e o teto do tilt). A recomendação de não ligar a transversal continua de
+pé — ela é significativamente ao contrário (t −3,02) onde as incumbentes são
+indistinguíveis de zero —, mas o texto que eu tinha escrito em 15f dava a entender
+que ela ficara abaixo de uma régua que as outras cumprem, e não é o caso.
+Corrigido no módulo e na 15f. Fica registrado o achado que sobra: **nenhuma view
+do v1 prevê linearmente o retorno da própria carteira P**.
+
+**3d. Candidata a 4ª view levantada, medida e NÃO montada (15g).** O dono pediu a
+quarta. A única viável no calendário é a **B (trajetória do Fed) com β próprio**.
+A objeção de duplicação da seção 11 era do DESENHO: a espec manda reusar os β da
+2.3, o que faz o P sair idêntico (empilhar poria duas linhas iguais no P do BL).
+Estimando o β contra outro vértice, o P muda — medido em 37 reuniões, **ângulo de
+95,6°** entre o P do ΔDTB3 e o do ΔDGS10, praticamente ortogonais. Cobertura do
+M3: 237 dos 374 pregões (63%). Falta **uma série do FRED (`DGS1`)**, pedida como
+G10a (item de topo do pedido). **Não montei**: o teste de sinal na versão proxy saiu invertido de novo
+(t −2,68 em 5 dias) e, mesmo com o proxy sendo sabidamente errado, é o segundo
+desenho seguido a sair invertido. A sequência recomendada é pedir o `DGS1`,
+refazer a medição com o vértice certo e só então montar.
+
+**3e. A quarta view construída: `src/view_B_trajetoria_propria.py`** (+ 8 testes).
+Por instrução do dono, depois de eu ter recomendado esperar o `DGS1`. Construir
+antes de medir era possível **sem furar nada** porque o módulo não depende do
+dado: benchmark e β entram como argumento, e a medição é que espera o G10a. Ele
+**delega** cascata, E_poly e P ao `view_B_trajetoria_fed` — a B antiga fica
+intacta e existe uma implementação só — e acrescenta o piso de soma herdado da
+2.3, a demeanagem expansiva e um `vertice` obrigatório. Dois cuidados que valem
+registro: a chave `e_zq_dez_bps` **sai** dos diagnostics (o número agora é de
+vértice de curva, e chave antiga com valor novo é o jeito mais eficiente de
+enganar quem ler o artefato depois), e um teste crava a invariante que justifica a
+view existir — se o P voltar a ficar colinear com o da 2.3, o teste quebra.
+**Não está empilhada e não deve ser ligada antes de medir com o `DGS1`.**
+
+**4. `entropia_normalizada` mudou de casa** — de `scripts/premio_condicional.py`
+para `src/view_incerteza_anuncio.py`, com o script importando de lá. Virou
+matemática de view, e duplicá-la deixaria a medição e a view podendo divergir —
+sendo que é o número da medição que justifica a view. Artefato regenerado:
+`Dump/analises/Premio_condicional.md` **byte a byte idêntico**.
+
+**5. `Dump/trocas/PEDIDO_G10_Paulo.md` escrito, e reescrito no
+fim da sessão quando a quarta view entrou no escopo.** Três itens, em ordem de
+prioridade: **G10a** (`DGS1` do FRED — uma série, **o único bloqueante**: sem ele
+a quarta view não existe), **G10b** (rótulo dos baldes de payrolls — destrava a
+terceira família de view) e **G10c** (calendário oficial do CPI
+via API do FRED, o mesmo caminho que destravou o G9a — hoje as 15 datas vêm das
+REGRAS dos mercados do Polymarket). O pedido declara explicitamente que, ao
+contrário do G9, **isto vira view** — o G9 prometia o contrário e o Paulo tem
+direito de saber que a premissa mudou.
+
+**Quebrou / aprendido:**
+- **"Temos o dado" e "o dado tem o que a view precisa" são perguntas
+  diferentes.** Os payrolls estavam baixados, casados por release, com função de
+  calendário implementada e testada, e alimentando uma medição publicada — e
+  ainda assim não dão view, porque falta um metadado que ninguém notou faltar
+  enquanto o único consumidor era a entropia, que não usa rótulo. O consumidor
+  seguinte é que descobre o buraco.
+- **A especificação contínua não é gratuita.** Trocar a mediana (threshold, que a
+  regra 6 proíbe cravar) pela versão contínua parecia só higiene metodológica —
+  e apagou o sinal quando feita na escala errada. Tirar o parâmetro do modelo é
+  certo; supor que a forma funcional sobrevive à troca, não.
+- **Duas views que discordam valem mais que duas que concordam.** A transversal
+  vender TIP contra a 2.2 comprada foi o primeiro sinal de que elas não são
+  duplicatas — e ao mesmo tempo é a razão de o grupo ter de decidir 15a antes de
+  as duas rodarem juntas.
+- **"Construída e testada" não é "testada".** Entreguei a transversal com 8 testes
+  verdes e β medido no dado real, e ela estava REPROVADA sem ninguém saber: os
+  testes conferem a álgebra, o β confere a sensibilidade contemporânea, e nenhum
+  dos dois pergunta se a view PREVÊ. A pergunta do dono ("elas funcionam?") é que
+  separou as três acepções — e a terceira era a única que importava.
+- **A tese pode ter um elo bom e morrer no seguinte.** O breakeven realmente anda
+  na direção do poly (t +2,11); o que não existe é o transporte do β contemporâneo
+  para retorno futuro. Validar o mecanismo de um elo e assumir a cadeia inteira é
+  o erro de desenho desta view — e a 2.2, que é entrega, tem exatamente a mesma
+  estrutura de cadeia e só o primeiro elo medido.
+
+**Pendente:**
+
+*Do grupo, antes de qualquer das duas entrar (seção 15):*
+- **15f** — a transversal reprovou (t −3,02, acerto 35%): recomendação é **não
+  entrar**, e isso resolve a 15a em "só a 2.2" por ora.
+- **15a** — sinal compartilhado com a 2.2: só a 2.2 / só a transversal / as duas
+  com Ω que enxergue a correlação. **Sem objeto enquanto a 15f estiver de pé.**
+- **15b** — a primeira view direcional do projeto (obrigação 5a de
+  `views_common.py`: centragem se troca em todas as views juntas).
+- **15c** — escala da incerteza: entropia crua (t +0,32) ou percentil (t +1,96).
+
+*Meu, quando 15a–15c fecharem:*
+- Empilhar no `backtest_v1.py` e medir. Hoje as três views novas existem e
+  **nenhuma roda** — nem a de incerteza, que é a única aprovada.
+
+*Direção da PRÓXIMA SESSÃO (dada pelo dono, 2026-08-08):*
+- **Tentar reativar / reformular a camada tática.** É a segunda metade da seção
+  14, que esta sessão não chegou a encostar — ela gastou o tempo todo na primeira
+  metade (views novas).
+- **Ler antes de desenhar**, porque o motivo do corte é específico e não é "efeito
+  fraco": a 12c desligou a tática porque o Δ é **monótono no orçamento** (sem
+  ótimo interior — a grade não seleciona parâmetro, devolve a pergunta), e o gap
+  de fim de semana morreu antes (D3b) por o sinal ser de **reversão, não de
+  continuação**. Reativar exige uma **âncora para o `orcamento` que não venha do
+  resultado do backtest**; sem ela, reabre o overfit em dois passos da seção 10.
+- **O precedente útil está nesta sessão:** a view de incerteza é a tática 1.3
+  transformada em view justamente para o `orcamento` deixar de existir (15d). Se o
+  mesmo truque servir para o drift pós-FOMC, a camada tática volta como view em
+  vez de voltar como overlay — e o impasse da 12c não precisa ser resolvido, ele
+  some. Vale medir antes de assumir: o drift tem P e horizonte diferentes.
+
+*Depende de terceiros (inalterado):*
+- **Régua do `c` da Lia** → corte **13/08**, plano B pré-registrado (10a).
+- **G10 do Paulo** — três itens; só o **G10a** (`DGS1`) é bloqueante, e é do que
+  depende a quarta view.
+- **D9 do `Paulo`** e **os dois defeitos do `calibracao_omega.py`** — sem mudança.
+- **Merge dos três branches.**
+
+*Item 3, segunda metade — ainda não feita:*
+- **Relatório de uso de IA.** Continua cru nos blocos das sessões.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~85k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "Leia o log e você verá que quero reativar a camada tática e criar novas views. É possível construir novas views com os dados que temos? Ou é necessário pedir mais pro paulo?"
+- **Iterações até aceitar:** 1 — nenhuma rodada de correção de saída. Os prompts
+  seguintes mudaram de tarefa (levantar → construir → testar sinal → desenhar sem
+  restrição → 4ª view → reescrever o recado → construir a B). Duas intervenções do
+  dono que NÃO são correção de erro e sim de escopo: reescrever o G10 por cima em
+  vez de abrir um G11, e renomear o arquivo. Uma interrupção por bug de ambiente,
+  sem perda de trabalho.
+- **Erros da IA:** **uma correção real, apanhada por controle que eu mesmo rodei
+  tarde demais.** Declarei que a transversal "reprovou no teste de sinal" antes de
+  conferir como as views INCUMBENTES se saem no mesmo teste — e elas também não
+  passam (2.2 t +0,44; 2.3 t +0,26, sendo a 2.3 quem carrega o backtest). A
+  conclusão sobre a transversal continua de pé pelo SINAL INVERTIDO, mas o
+  enquadramento ("reprovou numa régua") estava errado e foi corrigido no módulo,
+  na 15f e aqui. Mais dois erros de suposição, esses pegos antes de sair: (1) a
+  view de incerteza foi desenhada **linear na entropia** por ser a forma sem
+  threshold — o dado deu t +0,32, e a correção (percentil) foi medida, não
+  escolhida; (2) eu esperava a transversal COMPRADA em TIP por analogia com a 2.2,
+  e ela sai vendida. Nos três casos, o que separou a suposição do fato foi rodar
+  contra o dado real em vez de parar no teste sintético.
+- **Decisões escaladas:** **15**, com sete itens — **15a**, **15b** e **15c**
+  abertas 🔴; **15f** (transversal reprovada) 🟢; **15d**, **15e** e **15g**
+  registradas 🟡. Nenhuma view ligada, nenhuma decisão fechada por mim.
+- **Tags:** `[PROMPT-CHAVE]` — dois padrões, e o segundo é o mais caro. **"O
+  inventário antes do desenho":** a pergunta do dono ("dá com o que temos ou
+  precisa pedir?") só tinha resposta olhando arquivo, e o achado (payrolls sem
+  rótulo de balde) redefiniu o que dava para construir. **"Construída, testada e
+  errada":** três views nasceram nesta sessão com testes verdes, e o que decidiu o
+  destino de cada uma não foi teste nenhum — foi rodar contra o dado e, depois,
+  rodar o MESMO teste nas views que já estão na entrega. Uma view aprovada
+  (incerteza), uma reprovada por sinal invertido (transversal) e uma construída à
+  espera de medição (B própria).
+
+---
+
 ## 2026-08-08 (sessão 11) — Felipe
 
 **Contexto da sessão:** a sessão 10 deixou o item 3 (consolidar o material do
