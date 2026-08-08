@@ -605,4 +605,55 @@ e o merge dos três branches, que não é feito daqui.
 
 ---
 
+## 14 (branch `Felipe`). Reabertura de escopo — views novas e retorno da camada tática 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D14 do
+> `Felipe`".
+
+**Registro, não decisão.** Direção dada pelo dono em **2026-08-08**, ao revisar o
+dossiê de limitações:
+
+> "Duas views para uma estratégia inteira não é nem perto do suficiente. Na
+> próxima sessão iremos criar novas views que fazem sentido para a estratégia e
+> depois tentar REATIVAR a camada tática com novas estratégias."
+
+**O fato que motivou:** das oito views desenhadas, **duas estão ativas** (2.2
+inflação e 2.3 Fed) — verificável em `scripts/backtest_v1.py:395`. As outras seis
+saíram por medição (seção 9/D2–D2c e seção 11), e a camada tática saiu pela 12c.
+
+**O que esta direção toca — nada aqui está fechado nem reaberto ainda:**
+
+| Decisão | Status hoje | O que a direção de 08/08 propõe |
+|---|---|---|
+| seção 9 (views fora: 2.4, 3.1, C, E, G) | 🟢 provisória | não desfazer os cortes — **desenhar views novas** |
+| seção 11 (view B fora) | 🟢 provisória | reabre só sob as condições já registradas lá (fonte grátis do ZQ ou benchmark substituto aprovado) |
+| seção 12c (camada tática desligada) | 🟢 | **tentar reativar** com estratégias novas |
+
+**Trade-offs a levar para a próxima sessão, medidos e já registrados neste
+arquivo — não são objeção, são o que a sessão vai ter de responder:**
+
+1. **Calendário.** Entrega em **17/08**; a régua do `c` corta em **13/08** (10a).
+   View nova precisa de mercado no Polymarket, benchmark de mercado e β estimado —
+   as três coisas que travaram a B, a C, a E e a G.
+2. **Dependência do Paulo.** Mercado que não está no `data/` é pedido novo
+   (categoria 3). O histórico: a E morreu com 13 dias de cobertura e a G com 3.
+3. **A barreira que derrubou quatro views é do dado, não do desenho.** A
+   informação do Polymarket **aterrissa no gap de abertura**, que não é
+   negociável — mesmo padrão na eleição 2024, na recessão 2025, no Irã 2026 e na
+   tática de fim de semana. Uma view nova sobre mercado de evento provavelmente
+   encontra a mesma parede; convém desenhar **medindo isso primeiro**.
+4. **A tática não saiu por efeito fraco, saiu por não ter como escolher o
+   tamanho** (12c): o Δ é monótono no orçamento, sem ótimo interior. Reativar
+   exige uma **âncora para o `orcamento` que não venha do resultado do backtest**
+   — caso contrário reabre exatamente o overfit em dois passos do protocolo da
+   seção 10 (5.5 do dossiê), agora sem rodada seguinte para desmentir.
+
+**Insumo pronto:** `Dump/trocas/DOSSIE_limitacoes_v1.md` (seções 1 e 2) traz o
+motivo medido de cada corte, para a sessão nova não repetir desenho já reprovado.
+
+**Nada fecha aqui.** Se as views novas entrarem, elas são decisão metodológica e
+seguem o regime das seções 9/10 (provisórias, revisão do grupo).
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.
