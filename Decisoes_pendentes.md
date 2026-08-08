@@ -90,7 +90,7 @@ Opções levantadas (trade-offs a discutir em reunião):
 
 **Decisão:** _(a registrar)_
 
-## 9. Encadeamento dos mercados FOMC — tratamento do overlap 🔴
+## 9. Encadeamento dos mercados FOMC — tratamento do overlap 🟢
 Mercados de reuniões diferentes do FOMC negociam simultaneamente no
 Polymarket (ex.: o mercado da reunião de dezembro/2024 abre em abril/2024).
 No dataset baixado, 82 de 82 pares de eventos consecutivos têm overlap de
@@ -106,7 +106,30 @@ Opções levantadas (trade-offs a discutir em reunião):
 - Recortar cada mercado a uma janela fixa antes da reunião (ex.: últimos
   N dias).
 
-**Decisão:** _(a registrar)_
+**Decisão (Paulo, 2026-08-08 — via recado do `Felipe` `RECADO_Paulo_G5_recebido_e_D9.md`):**
+**opção 1** — em cada data, usar só o mercado da **próxima** reunião do FOMC (recorte
+por janela entre reuniões).
+
+Razões (a metodológica pesa mais que o custo):
+- **Metodológica:** mercados de reuniões diferentes do FOMC **não são estimativas
+  redundantes da mesma probabilidade** — são probabilidades de **eventos distintos**
+  (a decisão de setembro ≠ a de dezembro). Agregar os dois num mesmo dia não é "usar
+  mais informação"; sem regra de seleção, qualquer estatística por dia fica ponderada
+  pelo **número de mercados abertos** naquele dia, que não é propriedade nenhuma do
+  mercado. A opção 1 escolhe o instrumento que corresponde à decisão iminente.
+- **Consistência:** já é o que o código do `Felipe` (view 2.3) e o arquivo da Lia
+  (`Dump/trocas/dias_801_fomc.csv`, script `scripts/dias_801_lia.py`) rodam — os 801
+  dias batem 1 a 1 com o v1. Registrar a opção 1 **documenta o que já roda**; nada muda.
+- **Custo/prazo:** a opção 2 exigiria refazer a 2.3 e o arquivo da Lia (corte 13/08,
+  entrega 17/08) sem ganho metodológico — pelo argumento acima, seria mais frágil.
+
+Número que quantifica o overlap (medido pelo `Felipe` em 2026-08-08 no
+`data/polymarket_fed_reunioes.parquet`, 18 reuniões): 1.952 linhas reunião×dia no slot
+pré-abertura vs. **801 datas distintas** → o overlap infla a contagem em **2,44×**.
+
+A opção 2 só faria sentido como **escopo novo** (usar reuniões mais distantes como um
+segundo sinal, com regra própria — ex.: view de trajetória de juros), o que não é o que
+a D9 pergunta. Interliga com a Decisão 8 (janela de backtest) e a 11 (midpoint).
 
 ## 10. Extensão do universo de eventos FOMC — reuniões antigas e mercados "cut by date" 🟡
 Descoberta em 2026-07-27: as reuniões antigas do FOMC (dez/2023, jan/2024,

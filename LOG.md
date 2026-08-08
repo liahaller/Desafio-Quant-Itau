@@ -2,6 +2,41 @@
 
 ---
 
+## 2026-08-08 — Paulo — D9 fechada (overlap FOMC) via recado do `Felipe`
+
+**O que foi feito:**
+- Lido o recado `RECADO_Paulo_G5_recebido_e_D9.md` (Felipe/Lia). Conteúdo: (1) recebido
+  do G5 — reproduziu byte a byte, inclusive sob pandas 3.0.4; (2) aviso de que o
+  `NaN`/`0` do G5 é anulado a jusante no `portao_volume` do `origin/Lia` (módulo da Lia,
+  já avisada — não é item do `Paulo`); (3) proposta de fechar a **D9** (overlap FOMC) na
+  **opção 1**, com número; (4) relógio (entrega 17/08, corte 13/08 — nada do `Paulo` no
+  caminho crítico); (5) recomendação de manter a D12 do `Paulo` fechada.
+- **Decisão do humano (Paulo): D9 → opção 1** — em cada data, usar só o mercado da
+  **próxima** reunião do FOMC. Registrada em `Decisoes_pendentes.md` (§9, 🟢), com
+  autoria do `Paulo`, o raciocínio (metodológico > custo) e o número do overlap (2,44×;
+  1.952 reunião×dia vs. 801 datas distintas). Documenta o que o código do `Felipe` (2.3)
+  e o da Lia (`dias_801_fomc.csv`) já rodam — nada precisa mudar a jusante.
+- Nenhuma mudança de código nem de dado nesta sessão — só registro de decisão.
+
+**O que quebrou:** nada.
+
+**Pendente:**
+- Aviso (2) do recado: o `portao_volume` colapsa `NaN` e `0` na entrada (é do módulo da
+  Lia; ela já foi avisada pelo Felipe com reprodução). **Não é item do `Paulo`.**
+- Decisões 3–8, 10, 11 do `Paulo`: aguardam reunião. D9 e D12 agora fechadas.
+- G6 (CPI 2022–2024): condicional à reunião.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~30% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/RECADO_Paulo_G5_recebido_e_D9.md' o felipe  a lia fizeram isso para me mandar de recado. eu preciso responder algo ou é so um recado mesmo?"
+- **Iterações até aceitar:** 1 rodada (triagem do recado → o humano escolheu a opção 1 → registro).
+- **Erros da IA:** nenhum. Não decidi a D9 sozinho — apresentei o trade-off como insumo e o `Paulo` escolheu (CLAUDE.md §1).
+- **Decisões escaladas:** D9 (fechada pelo humano nesta sessão, opção 1).
+- **Tags:** —
+
+---
+
 ## 2026-08-08 — Paulo — FOLLOWUP5 (G5): régua da Lia p/ o `NaN`-vs-`0` (Decisão 12 do `Paulo`)
 
 **O que foi feito:**
