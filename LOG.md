@@ -1,5 +1,113 @@
 # LOG de sessões
 
+## 2026-08-08 (sessão 14) — Felipe
+
+**Contexto da sessão:** a 13 mediu duas sleeves e reprovou as duas. Esta
+perguntou o passo seguinte — o que dá para reconstruir da camada tática com o
+dado que já temos — e a resposta foi **um gate, não um par de sleeves novas**.
+
+**1. O que a sessão 13 ensinou não foi sobre modelagem, foi sobre ordem.** As
+duas mortes da D16 eram de dado (FOMC sem dispersão, CPI com μ invertido) e as
+duas eram mensuráveis ANTES de existir módulo. Custo real: 400+ linhas e 11
+testes para descobrir o que cabia numa tabela. Esta sessão inverteu —
+`scripts/gate_sleeves.py`, nenhum módulo em `src/`, construção só se alguma linha
+passar.
+
+**2. O gate carrega o próprio grupo de controle, e é isso que o valida.** Nenhum
+critério tem corte cravado (seria threshold sem medição). No lugar, as duas
+sleeves reprovadas da D16 entram na mesma tabela: se o gate não as reprovar pelo
+motivo já conhecido, o errado é o gate. Reproduz número a número — `SPY +4,91 ·
+TLT +1,37` (FOMC) e `TIP +0,21 · TLT +1,31` (CPI). Isso só bateu depois de trocar
+o Σ do encolhimento para a história INTEIRA, que é o que o `tatica_reconstruida`
+usa; com Σ da janela do backtest o controle saía a 0,09 bps de distância.
+
+**3. Quatro candidatos, quatro reprovados — e o achado mata uma família
+inteira.** Medição em `Dump/analises/Gate_sleeves.md`:
+
+| candidato | G1 razão / tick | G2 | G3 maior \|corr\| |
+|---|---|---|---|
+| C1a revisão do M3 | **0,5×** | ❌ | −0,16 |
+| C1b revisão da reunião | **0,2×** | ❌ | −0,24 (div. 2.3) |
+| C2a cauda da PMF de CPI | 19,5× | ❌ | **−0,68 (entropia 15b)** |
+| C2b cauda da PMF de reunião | 1,2× | ❌ | +0,58 (entropia 15b) |
+
+**O achado:** a **revisão diária da crença do poly anda MENOS que um tick** — o Δ
+típico de um pregão é menor que o deslocamento que um centavo num único balde
+produz. É a versão forte do achado da 13: lá o poly acertava a decisão do Fed;
+aqui o próprio repreçamento diário dele vive abaixo da granularidade do preço.
+Vale para **qualquer** sleeve que leia Δ de PMF de um dia para o outro, não só
+para estas duas.
+
+O único sinal com dispersão de verdade (cauda do CPI) morre nos outros dois: μ
+invertido nos dois ativos do livro — **quarto desenho seguido a sair invertido**
+(15f, 15g, 16b) — e ρ = −0,68 com a entropia, ou seja, é a view 15b com outro
+nome (dupla contagem da 15a).
+
+**4. Inventário de cortes, a pedido do dono, para a sessão seguinte começar por
+ele:** `Dump/analises/Retomada_tatica.md` — as 11 views e os 12 desenhos táticos,
+com o motivo de cada corte e **o que teria de mudar** para reabrir. Dois achados
+saíram de escrever isso, e nenhum dos dois estava registrado:
+
+- **Nenhuma view foi cortada por excesso negativo no backtest.** Os cortes são
+  por tradabilidade (gap de abertura), teste de sinal, cobertura de dado ou
+  duplicação. E as duas vivas foram escolhidas em **04/08**, antes de o backtest
+  existir (**05/08**) — não podiam ter sido escolhidas por número. Na tática o
+  caso mais forte é o inverso: o **drift pós-FOMC media POSITIVO** (+0,08 a
+  +0,80 pp) e foi desligado mesmo assim por falta de âncora de tamanho. Isso é o
+  oposto de overfit e deve ir ao relatório como tal.
+- **Existe um experimento que nunca foi feito.** A D16 trocou DUAS coisas ao
+  mesmo tempo: a âncora de tamanho (orçamento → `inv(δΣ)·μ`) **e** a fonte da
+  surpresa (ΔDTB3 → poly). A surpresa do poly era ~zero e a sleeve morreu — mas a
+  **surpresa antiga nunca rodou com a âncora nova**, e o ΔDTB3 tem dispersão onde
+  o poly não tinha (σ 3,3 bps, 3 de 36 reuniões acima de 5 bps). É uma **linha no
+  gate**, não um módulo. Ressalva contra a própria ideia: a mediana COM SINAL do
+  ΔDTB3 é +0,0 bps e a do valor absoluto não está medida — pode morrer na
+  primeira linha.
+
+**Quebrou / aprendido:**
+- A entrega do v1 **não mudou**: `tatica_reconstruida.py` devolve os mesmos
+  +2,62 / −5,68 / −2,23 pp. Suíte inteira em 228 passando, `git status` com só
+  três arquivos NOVOS e nada em `src/` tocado.
+- Aprendizado que vale além desta sessão: **o gate é mais barato que a sleeve por
+  uma ordem de grandeza** e reprova pelos mesmos motivos. Fica disponível — quem
+  propuser sleeve nova roda a linha antes de abrir editor.
+- Contra o próprio resultado: parte do 19,5× da C2a é degrau de grade (a média
+  expansiva atravessa a troca de mercado e o CPI vai de 3 a 9 baldes). Não muda o
+  veredito, que é do G2 e do G3, mas está escrito no arquivo.
+
+**Pendente:**
+- **Primeiro movimento da sessão seguinte, já escrito:** seção 3.1 de
+  `Dump/analises/Retomada_tatica.md` — rodar o ΔDTB3 como UMA linha do
+  `gate_sleeves.py` antes de abrir editor. O dono declarou que vai retomar a
+  camada tática a partir desse arquivo.
+- Entrada da camada tática: **decisão do grupo**, recomendação da D16 (não entra)
+  agora com um motivo a mais. Seções 16 e 17 do `Decisoes_pendentes.md`.
+- Sem mudança no caminho crítico de terceiros: `G10a do Paulo` → régua do `c` da
+  Lia → teto do grupo (corte de 13/08, seção 10a).
+- Bloqueio de terceiro que ninguém tinha ligado à tática: o
+  `etf_open_daily.parquet` está em outra base de ajuste (`Premissa_taticas.md`),
+  e enquanto isso durar **nenhuma tática mede o retorno do próprio dia do
+  evento** — que é justamente onde o projeto inteiro diz que a informação
+  aterrissa. Conserto é um pull dos dois parquets no mesmo dia, módulo do Paulo.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~187k tokens (19% da janela).
+- **Prompt inicial (verbatim):** "na ultima sessão tentamos fazer a camada tática funcionar. Me explique porque as estratégias que montamamos foram cortadas"
+- **Iterações até aceitar:** 2 (escopo e candidatos definidos pelo dono antes do
+  código, via pergunta; depois uma correção de Σ para o controle reproduzir a
+  D16).
+- **Erros da IA:** 2. (a) O Σ do encolhimento entrou com a janela do backtest em
+  vez da história inteira, e o controle saiu a 0,09 bps da D16 — **pego pelo
+  próprio grupo de controle**, que é exatamente para isso que ele existe. (b) Erro
+  de contagem numa resposta ao dono: disse "camada tática 0 de 9 desenhos" quando
+  são **12** (3 + 3 + 2 + 4), e atribuiu os 3 originais à 12c quando saíram em
+  reunião. Corrigido na resposta seguinte e a contagem certa está no
+  `Retomada_tatica.md`. Nenhuma alucinação de dado.
+- **Decisões escaladas:** 17 (nova, 🟡 — registro com premissas declaradas, não
+  fechadas).
+- **Tags:** `[PROMPT-CHAVE]`
+
 ## 2026-08-08 (sessão 13) — Felipe
 
 **Contexto da sessão:** a sessão 12 fechou a metade "views novas" da direção da

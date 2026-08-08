@@ -950,4 +950,127 @@ sob o regime das seções 9/10.
 
 ---
 
+## 17 (branch `Felipe`). Gate de sleeves — quatro candidatos triados e REPROVADOS antes de virar código 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D17 do
+> `Felipe`".
+
+**Registro, não decisão.** Sessão de **2026-08-08**, resposta ao pedido de
+reconstruir a camada tática com o dado que já temos. **Nenhum módulo foi
+escrito** — nenhum candidato passou na triagem. `MontadorV1(tatica=())` continua
+o default e a entrega do v1 (+2,62 pp) não mudou (conferido, ver 17d).
+
+### 17a. O que esta rodada corrige da D16 é a ORDEM, não o desenho
+
+A D16 gastou 400+ linhas de módulo e 11 testes em duas sleeves que morreram por
+motivo **de dado** — e os dois motivos cabiam numa tabela rodada ANTES do código.
+Esta rodada mede primeiro: `scripts/gate_sleeves.py` →
+`Dump/analises/Gate_sleeves.md`.
+
+**O gate não tem corte numérico cravado** (cravar um seria threshold sem medição,
+CLAUDE.md §6). No lugar do corte, ele carrega o **próprio grupo de controle**: as
+duas sleeves reprovadas da D16 entram na mesma tabela, e o gate só é confiável se
+reproduzi-las. Reproduz — `SPY +4,91 · TLT +1,37` (FOMC) e `TIP +0,21 · TLT
++1,31` (CPI), idênticos a `Tatica_reconstruida.md`.
+
+| | o que mede |
+|---|---|
+| **G0** | pregões da janela em que o sinal existe |
+| **G1** | mediana \|sinal\| ÷ Δ que UM tick de 1 centavo produz no sinal |
+| **G2** | sinal de μ (`estimate_drift_mu` da D16, sem alterar) vs. o **declarado a priori** |
+| **G3** | correlação com o sinal que as views 2.2, 2.3 e a candidata 15b já leem |
+
+G4 (P&L da sleeve sozinha) ficou fora **de propósito**: exige backtest, backtest
+exige o módulo, e o módulo é o que o gate se recusa a escrever antes da linha
+passar.
+
+### 17b. O achado, e ele mata uma FAMÍLIA inteira 🛑
+
+**A revisão diária da crença do Polymarket anda MENOS que um tick.**
+
+| candidato | G0 dias | G1 razão / tick | G2 | G3 maior \|corr\| |
+|---|---|---|---|---|
+| C1a revisão do M3 (nº de cortes) | 209 | **0,5×** | ❌ SPY −4,20 | −0,16 |
+| C1b revisão da reunião (bps) | 334 | **0,2×** | ❌ SPY −2,75 · TLT −3,44 | −0,24 (div. 2.3) |
+| C2a cauda da PMF de CPI | 289 | 19,5× | ❌ SPY +0,45 · TLT −1,31 | **−0,68 (entropia 15b)** |
+| C2b cauda da PMF de reunião | 334 | 1,2× | ❌ TLT −0,87 | +0,58 (entropia 15b) |
+
+**C1a e C1b abaixo de 1×**: o Δ típico de um pregão é menor que o deslocamento
+que um centavo num único balde produz. É a versão FORTE do achado da D16 — lá o
+poly acertava a decisão do Fed; aqui o próprio repreçamento diário dele vive
+abaixo da granularidade do preço. **Qualquer sleeve que leia Δ de PMF de um dia
+para o outro está condicionando em ruído de discretização.** Isso vale para
+qualquer desenho futuro da família, não só para estes dois.
+
+**C2a é o único com dispersão de verdade e morre nos outros dois critérios:** μ
+invertido nos dois ativos do livro (contra a premissa declarada "SPY cai, TLT
+sobe", e pela D2b não se inverte) e ρ = −0,68 com a entropia — massa de cauda e
+entropia são o mesmo sinal com dois nomes, então ligar C2a com a view 15b seria a
+dupla contagem da 15a. **Ressalva contra o próprio candidato:** parte do 19,5× é
+degrau de grade (a média expansiva atravessa a troca de mercado e a grade do CPI
+vai de 3 a 9 baldes); não muda o veredito, que é do G2 e do G3.
+
+### 17c. Premissas declaradas ANTES de medir 🔴
+
+São **categoria 3** (metodologia) e ficam registradas como declaradas, **não
+fechadas** — o valor delas é terem sido escritas antes do event-study, que é o
+que faz do G2 um teste em vez de racionalização. Sem isso, "a literatura não fixa
+o sinal" (docstring de `tatica_drift_anuncio`) vira licença para aceitar qualquer
+resultado medido.
+
+- **C1a/C1b** — crença anda para mais afrouxamento → **SPY e TLT sobem**. Âncora:
+  Bernanke-Kuttner, com **7 de 7** sinais já medidos nestes mesmos ativos em
+  `Dump/analises/Surpresa_fomc_sem_ZQ.md`.
+- **C2a/C2b** — mais massa nas pontas → prêmio de risco sobe → **SPY cai, TLT
+  sobe** (fuga para qualidade). Livro **direcional** (ΣP ≠ 0), como a 15b.
+
+### 17d. O que fica no repositório
+
+| | |
+|---|---|
+| Script | `scripts/gate_sleeves.py` |
+| Testes | `tests/test_gate_sleeves.py` (10) |
+| Medição | `Dump/analises/Gate_sleeves.md` |
+| Módulo novo em `src/`? | **nenhum** |
+| Dado novo? | **nenhum** — M3, PMF de reunião, PMF de CPI e FRED já estavam no `data/` |
+| Entrega mudou? | **não** — `tatica_reconstruida.py` devolve os mesmos +2,62 / −5,68 / −2,23 pp da D16 |
+
+**Descartes por medição já registrada, feitos na triagem sem custar código:**
+gap de fim de semana (seção 9), prêmio de anúncios como overlay (12c → virou a
+view 15b), colapso de entropia pós-anúncio (mesma variável da 15b, mutuamente
+exclusiva com ela), payrolls (bloqueado no `G10b` do Paulo — falta o realizado).
+
+**O que isto NÃO diz:** que a camada tática é inviável. Diz que, no dado que
+temos, os sinais de Polymarket que sobraram ou **não têm tamanho** (revisão
+diária, abaixo do tick) ou **já pertencem a uma view** (cauda ≈ entropia). A
+âncora de tamanho da D16 (`inv(δΣ)·μ` encolhido) segue de pé e sem uso — **o que
+falta é sinal, não dimensionamento.**
+
+### 17e. Inventário de cortes e condições de reabertura
+
+`Dump/analises/Retomada_tatica.md` (escrito a pedido do dono, mesma sessão)
+consolida as **11 views** e os **12 desenhos táticos** com o motivo de cada corte
+e **o que teria de mudar** para reabrir. **Não decide nada** — a coluna de
+reabertura lista condição, não recomendação.
+
+Dois pontos de lá que interessam a esta decisão:
+
+- **O experimento que nunca foi feito.** A D16 trocou DUAS coisas ao mesmo tempo:
+  a âncora de tamanho (orçamento → `inv(δΣ)·μ`) **e** a fonte da surpresa (ΔDTB3
+  → poly). A surpresa antiga **nunca rodou com a âncora nova**, e o ΔDTB3 tem
+  dispersão onde o poly não tinha (σ 3,3 bps, 3 de 36 reuniões acima de 5 bps).
+  É **uma linha no `gate_sleeves.py`**, não um módulo. Ressalva contra a própria
+  ideia: a mediana COM SINAL do ΔDTB3 é +0,0 bps e a do valor absoluto não está
+  medida — pode morrer na primeira linha.
+- **Bloqueio de terceiro.** O `etf_open_daily.parquet` está em outra base de
+  ajuste que o `etf_prices_daily.parquet` (`Premissa_taticas.md`). Enquanto
+  durar, **nenhuma tática mede o retorno do PRÓPRIO dia do evento** — que é
+  exatamente onde o achado transversal do projeto diz que a informação aterrissa.
+  Conserto é um pull dos dois no mesmo dia: **módulo do Paulo**.
+
+**Nada fecha aqui.** A recomendação da D16 (a camada tática não entra) fica de pé
+com um motivo a mais, e a entrada continua sendo decisão do grupo.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.
