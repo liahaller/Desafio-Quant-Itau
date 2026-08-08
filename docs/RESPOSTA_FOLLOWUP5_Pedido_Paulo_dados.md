@@ -129,4 +129,4 @@ dona da régua. Se preferir manter aberta até a reunião, é só dizer que reve
 ## Commit
 
 - **Branch:** `Paulo` · base `a4d1d18`.
-- **Hash:** `adf353b92cc7ffd8dc9c28edfa6f046cdf90987e`
+- **Hash:** `08decf6` (entrega FOLLOWUP5 no branch `Paulo`).
