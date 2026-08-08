@@ -1,5 +1,112 @@
 # LOG de sessões
 
+## 2026-08-08 (sessão 11) — Felipe
+
+**Contexto da sessão:** a sessão 10 deixou o item 3 (consolidar o material do
+relatório) como única coisa de trabalho próprio. Esta sessão fez a primeira
+metade — o **dossiê de limitações** — e terminou com o dono reabrindo o escopo.
+
+**1. Revisão dos cortes, um por um, com o motivo reconstruído da fonte.** Não
+aceitei a lista de bala do "Pendente" da sessão 10: fui buscar o porquê de cada
+corte no `Decisoes_pendentes.md` e no `LOG.md` (maratona de 04/08, seções 11,
+12c, 13). Apresentado ao dono em revisão antes de escrever, e ele confirmou.
+
+**2. `Dump/trocas/DOSSIE_limitacoes_v1.md` escrito** — 7 seções: as três
+numerações em circulação (armadilha de citação), views cortadas, camada tática
+(os DOIS cortes, que não são o mesmo), banda, 11 limitações de dado (L1–L11),
+limitações de parâmetro e processo, índice de artefatos. Cada linha com número da
+decisão e ponteiro para o artefato que a mede.
+
+**3. Três coisas que só apareceram ao consolidar:**
+
+- **A camada tática tem dois cortes, não um**, e o relatório trataria como um só:
+  a ORIGINAL (PEAD 1.1, event-driven 3.2, velocidade de ajuste) saiu **por escopo
+  em reunião, sem nenhuma medição**; a REFORMULADA saiu **medida** (12c, gap de
+  fim de semana no D3b). Motivos diferentes, honestidade diferente no relatório.
+- **As seções 3, 4 e 6 🔴 não são buracos de metodologia — são buracos de
+  registro.** O código responde às três (β por event-study, bridge prob→Q, Ω); o
+  que falta é a ata. A 5 morreu junto com a tática original e não há o que
+  registrar. Isso muda como se declara: limitação de **processo**, não de modelo.
+- **O `CLAUDE.md` aponta para o lugar errado.** Ele diz que a camada tática
+  original foi adiada "pela decisão 10 em `Decisoes_pendentes.md`", e a seção 10
+  atual é o backtest. O fato está certo, o ponteiro não. **Não editei o
+  `CLAUDE.md`** — registrado no dossiê (seção 0) e aqui.
+
+**4. Contagem de views conferida no código, não no registro.** À pergunta do dono
+("quantas views ativas temos agora?"): **duas — 2.2 e 2.3**, verificado em
+`scripts/backtest_v1.py:395`, não na memória do `Decisoes_pendentes.md`. Precedente
+direto: em 04/08 a mesma pergunta do dono expôs a classificação errada da 3.1.
+
+**5. Direção nova do dono, registrada como seção 14 do `Decisoes_pendentes.md`
+(🟡, nada fechado):** duas views para uma estratégia inteira não bastam — a
+próxima sessão **desenha views novas** e depois **tenta reativar a camada
+tática** com estratégias novas. Levantei os quatro trade-offs medidos que a
+sessão nova vai ter de responder (calendário até 17/08, dependência do Paulo para
+dado, a parede do gap de abertura, e a falta de âncora para o `orcamento`), e
+segui — a direção é do dono.
+
+**Quebrou / aprendido:**
+- **Consolidar não é copiar: é onde as inconsistências aparecem.** Os três
+  achados do item 3 estavam todos disponíveis há sessões, em arquivos que eu
+  mesmo escrevi, e nenhum tinha sido visto — porque nunca tinham sido postos lado
+  a lado. Juntar material é um método de auditoria disfarçado de trabalho de
+  secretaria.
+- **"Por que isso foi cortado" apodrece mais rápido que "isso foi cortado".** A
+  lista de cortes sobreviveu intacta nas sessões; o motivo de cada um estava
+  espalhado em quatro lugares e três numerações. Em duas semanas o corte vira
+  arbitrário aos olhos de quem lê — e um corte sem motivo rastreável é
+  indefensável numa banca.
+- **O corte da tática não foi por efeito fraco, e essa distinção é o que a
+  reabertura precisa entender.** Ela saiu por o Δ ser monótono no orçamento (sem
+  ótimo interior), logo a grade não seleciona parâmetro. Reativar sem uma âncora
+  para o `orcamento` que não venha do backtest reabre o mesmo problema, não a
+  mesma oportunidade.
+
+**Pendente:**
+
+*Para a próxima sessão (direção do dono, seção 14):*
+- **Desenhar views novas** que façam sentido para a estratégia. Ler antes as
+  seções 1 e 2 do dossiê — o motivo medido de cada corte está lá, para não
+  redesenhar o que já reprovou.
+- **Depois, tentar reativar a camada tática** com estratégias novas. Pré-requisito
+  metodológico: âncora para o `orcamento` independente do resultado do backtest.
+
+*Item 3, segunda metade — ainda não feita:*
+- **Relatório de uso de IA.** Os blocos "Uso de IA" estão preenchidos nas 11
+  sessões, mas em estado cru. Falta extrair e organizar. É item avaliado do
+  desafio.
+
+*Depende de terceiros (inalterado):*
+- **Régua do `c` da Lia** → nível e escopo do teto (grupo). Corte **13/08**,
+  plano B pré-registrado (10a). Único elo restante do caminho crítico.
+- **D9 do `Paulo`** — medida e com proposta de fechamento sem custo (sessão 10).
+- **Os dois defeitos do `calibracao_omega.py`** — dela para consertar.
+- **Merge dos três branches** — único caminho para o repositório rodar sozinho, e
+  não é feito daqui.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~45k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "leia o ultimo log. me de uma explicação curta do que foi deixado para fazermos"
+- **Iterações até aceitar:** 1 — nenhuma rodada de correção. Os prompts seguintes
+  mudaram de tarefa (ler log → revisar cortes → explicar em leigo → consolidar +
+  fim de sessão). O dono confirmou a revisão dos porquês antes de eu escrever o
+  dossiê, que era o ponto de parada pedido.
+- **Erros da IA:** nenhum apanhado. Dois cuidados que evitaram um: (1) a contagem
+  de views foi conferida em `scripts/backtest_v1.py`, não citada de memória do
+  `Decisoes_pendentes.md`; (2) ao afirmar que as seções 3/4/6 estão "respondidas
+  no código", `grep DECISAO-` mostrou que os marcadores no código (`DECISAO-4.1`,
+  `6.1`, `7.4`) são da numeração da PAUTA, não das seções — a afirmação foi
+  reescrita com a distinção em vez de sair torta.
+- **Decisões escaladas:** **14** (reabertura de escopo — views novas e retorno da
+  camada tática), registrada 🟡, nada fechado.
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"o motivo apodrece antes do
+  fato"**: a lista de cortes sobreviveu íntegra, os porquês não, e reconstruí-los
+  exigiu quatro arquivos e três numerações. Consolidar material antigo achou três
+  inconsistências que nenhuma sessão de código tinha achado.
+
+---
+
 ## 2026-08-08 (sessão 10) — Felipe
 
 **Contexto da sessão:** o dono pediu o mapa do que dá para fazer. A sessão 9
