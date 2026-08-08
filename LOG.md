@@ -1,5 +1,146 @@
 # LOG de sessões
 
+## 2026-08-08 (sessão 10) — Felipe
+
+**Contexto da sessão:** o dono pediu o mapa do que dá para fazer. A sessão 9
+tinha fechado a fila de código com a D13, e a resposta honesta era "nada de
+código, tudo depende de terceiros" — até a primeira medição da sessão mostrar
+que o ambiente local não rodava.
+
+**1. Ambiente restaurado, e ele estava pior do que "não conferido".** Não havia
+`data/`, o `pytest` não estava instalado e faltava `pyarrow` (5 testes de loader
+quebravam por engine de parquet ausente). Ou seja: **nenhuma verificação era
+possível neste diretório**, e isso não aparecia em lugar nenhum. Restaurado com
+o procedimento do próprio `README` (`git archive origin/Paulo data` + exclude
+local). Suíte: **183 verdes**.
+
+**2. Os quatro artefatos reproduziram byte a byte — sob pandas 3.0.4.** O README
+declarava o ambiente medido como pandas 2.3.3, e avisava "se os números
+divergirem, comece conferindo o pandas". Regerados os quatro
+(`Backtest_v1`, `Curva_c`, `Curva_orcamento`, `Curva_banda`), `git status`
+voltou limpo. Os números da entrega atravessam uma **major** do pandas sem se
+mover. README ganhou a tabela com os dois ambientes (commit `c9f9535`).
+
+**3. Chegou o G5 do Paulo (`08decf6`) — o elo que valia por todos.** Aplicou a
+régua da Lia: 346 slots `NaN` só de truncamento do cap de 20k, 78 slots
+pré-primeiro-trade viram `0` legítimo, positivos inalterados. E o Paulo registra
+um fato que ninguém tinha anotado deste lado: **a Lia revogou** o "entrego o `c`
+sem portão de volume se o G5 atrasar" — o G5 deixou de ser um dos quatro insumos
+e virou **pré-condição** de um deles.
+
+**4. Dois defeitos medidos no módulo da Lia — observação para a dona, não
+tocados** (regra 2). Copiei o `calibracao_omega.py` do `origin/Lia` para o
+scratchpad e rodei:
+
+- **`portao_volume` trata `NaN` como veto.** `NaN >= threshold` é `False` em
+  pandas e o `.astype(float)` faz virar `0.0`. Os 346 slots de truncamento
+  **vetariam o mercado** — o oposto exato da régua que ela decidiu e que o Paulo
+  acabou de implementar. A distinção `NaN`/`0` morre na primeira função que a
+  consome.
+- **`combinar_por_rank` confunde "score no mínimo" com "veto".** A linha
+  `rank.where(s != 0.0, 0.0)` existe para preservar o veto do portão, mas vale
+  para todos os scores — e dois atingem `0.0` legitimamente: `score_estabilidade`
+  é `−std` (série parada = `-0.0` = estabilidade **máxima**) e `score_proximidade`
+  vale 0.0 no dia do FOMC. A candidata mais estável recebe confiança zero.
+
+**5. Estado da branch `Lia`, para o registro:** último commit **30/07**, e foi
+encanamento (commit + merge da main, sem código). `calcular_omega` segue
+`NotImplementedError`. Nada do desenhado no RESPOSTA3/RESPOSTA4 —
+`score_coerencia`, buraco por `n_slots_esperados − n_pontos`, grade de tempo,
+colapso 6a — está publicado. Pode haver trabalho local não commitado; a mensagem
+a ela diz isso explicitamente.
+
+**6. Três entregas escritas e enviadas pelo dono.**
+
+- `Dump/trocas/RESPOSTA5_Lia_G5_saiu_corte_13-08.md` — substitui o RESPOSTA4,
+  que **nunca chegou a ser enviado**. Junta: o G5 saiu, os dois defeitos com
+  reprodução, o corte de 13/08 agora fechado (não mais proposta), e a correção
+  do número dos 801 dias que já estava no RESPOSTA4.
+- `scripts/dias_801_lia.py` + `Dump/trocas/dias_801_fomc.csv` — os 801 dias
+  resolvidos pela regra da próxima reunião, com os dois canais dela **separados
+  em colunas** (`n_faixas_ausentes` = buraco, `soma_cru` = coerência). O
+  `conferir()` crava os cinco números em `assert`: 801 dias, 25 degenerados, 24
+  com soma < 0,5, nenhum livro completo abaixo de 0,9.
+- `Dump/trocas/RECADO_Paulo_G5_recebido_e_D9.md` — recebido do G5, o aviso de
+  que o trabalho dele é anulado a jusante, e a medição da **D9 do `Paulo`**.
+
+**7. A D9 do `Paulo` pode fechar sem reunião.** Medido: o overlap infla a
+contagem em **2,44×** (1.952 linhas reunião × dia contra 801 datas distintas no
+slot pré-abertura; 804 datas se contar qualquer slot; 3.905 slots no grid de 12h;
+16.338 linhas cruas). E a opção 1 dele ("só o mercado da próxima reunião") **já é
+o que roda** — a view 2.3 usa desde sempre, o backtest inteiro depende dela e o
+arquivo da Lia foi gerado com ela. A decisão está no código de dois módulos e só
+não está registrada. Não fechei — é dele.
+
+**Quebrou / aprendido:**
+- **"Suíte verde" é afirmação sobre um ambiente, não sobre um repositório.** O
+  `LOG` da sessão 9 diz "183 testes verdes" e estava certo — mas neste diretório,
+  hoje, o número era 178 e 5 erros de import, e ninguém teria sabido sem tentar
+  rodar. A régua de que o ambiente está certo precisa ser rodada, não lembrada.
+- **O elo mais frágil de uma decisão distribuída é a função que a consome.** O
+  Paulo mediu, a Lia decidiu, o Paulo implementou e conferiu linha a linha — e a
+  distinção morre numa comparação com `NaN` a jusante. Ninguém errou; o defeito
+  mora exatamente na fronteira que nenhum dos dois testa.
+- **Reprodutibilidade tem dois inimigos, e o segundo não aparece:** o dado que
+  falta (visível, quebra) e a dependência que falta (também visível) — mas o
+  terceiro caso, o número que só é igual porque a versão é igual, só se descobre
+  trocando a versão de propósito. O pandas 3 foi o teste acidental.
+- **Número que vai para fora sai de script.** A lição da sessão 8 aplicada: os
+  801 dias saíram com `assert`, não de memória — e o `27` que confundiu a Lia
+  apareceu na saída como o que sempre foi (801 − 774 completas = 27 linhas
+  incompletas, das quais 25 degeneradas).
+
+**Pendente:**
+
+*Para a próxima sessão (o dono vai fazer com janela limpa):*
+- **Item 3 — consolidar o material do relatório.** São dois documentos, ambos
+  matéria-prima espalhada que ninguém juntou:
+  1. **Dossiê de limitações** (insumo em `Dump/trocas/`, o relatório é módulo da
+     Lia): escopo cortado (views 2.4/3.1/C/E/G, view B da seção 11, camada
+     tática por 12c e D10, banda por D13); limitações de dado (ΔDTB3 no lugar do
+     ZQ, midpoint sem bid/ask da D11 do Paulo, truncamento de 20k, ponta aberta
+     extrapolada, `carry_missing`); as 13 decisões da seção 9 que seguem
+     **provisórias e nunca revistas pelo grupo**; as decisões 3, 4, 5, 6 e 7
+     ainda **🔴**; e a régua do `c` sob a 10a. Cada linha com número e ponteiro
+     para o artefato.
+  2. **Relatório de uso de IA** — item avaliado do desafio. O `CLAUDE.md`
+     (regra 3) mandou cada sessão registrar modelo, contexto, prompt verbatim,
+     iterações, erros e decisões escaladas, e os blocos estão preenchidos nas 10
+     sessões — mas em estado cru. Precisa ser extraído e organizado.
+
+*Depende de terceiros:*
+- **Régua do `c` da Lia** → `nível e escopo do teto (grupo)`. Corte **13/08**,
+  plano B pré-registrado (10a). É o único elo restante do caminho crítico.
+- **D9 do `Paulo`** — agora com medição e proposta de fechamento sem custo.
+- **Os dois defeitos do `calibracao_omega.py`** — dela para consertar.
+
+*Trabalho meu:*
+- Nada de código. A fila segue zerada desde a sessão 9.
+- **Reprodutibilidade:** o merge dos três branches continua sendo o único caminho
+  para o repositório rodar sozinho, e não é feito daqui.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~60k tokens (estimativa da sessão).
+- **Prompt inicial (verbatim):** "Leia o log e me fale o que podemos fazer agora"
+- **Iterações até aceitar:** 1 — nenhuma rodada de correção. Os prompts seguintes
+  mudaram de tarefa (mapear → restaurar → explicar → escrever). Houve uma
+  interrupção do dono no meio de uma listagem de arquivos, que é corte de
+  verbosidade, não correção de saída.
+- **Erros da IA:** nenhum apanhado. Um quase: ia repetir "804 dias distintos"
+  herdado do RESPOSTA4 como se fosse a contagem do slot pré-abertura — medindo,
+  são **801 no pré-abertura e 804 em qualquer slot**, dois números certos que
+  descrevem coisas diferentes. Apanhado antes de sair. Suíte: **183 verdes**.
+- **Decisões escaladas:** — (nenhuma decisão nova; nada em
+  `Decisoes_pendentes.md` mudou nesta sessão).
+- **Tags:** `[PROMPT-CHAVE]` — o padrão da sessão é **"a verificação também
+  apodrece"**: a fila de código estava zerada e a resposta correta parecia ser
+  "esperar terceiros", mas a primeira coisa que se tentou rodar não rodava. Quando
+  não há o que construir, o trabalho é conferir se o que está construído ainda
+  responde.
+
+---
+
 ## 2026-08-07 (sessão 9) — Felipe
 
 **Contexto da sessão:** o dono pediu o mapa do que dá para fazer e mandou
