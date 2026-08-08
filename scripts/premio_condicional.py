@@ -40,24 +40,13 @@ from market_loader import load_etf_prices  # noqa: E402
 from poly_loader import (daily_preopen, load_cpi_releases,  # noqa: E402
                          load_payroll_releases, load_pmf)
 from taticas_common import close_to_close_returns  # noqa: E402
+# A entropia virou matemática de view (`view_incerteza_anuncio`) e mora lá agora.
+# Importada, não recopiada: se a medição e a view puderem divergir, um dia
+# divergem — e o número deste script é o que justifica aquela view.
+from view_incerteza_anuncio import entropia_normalizada  # noqa: E402,F401
 
 ATIVO = "SPY"  # a tática 1.3 é long SPY vs caixa
 PREFIXO_FOMC = "M3_fed_trajectory_"  # PMF do nº de cortes em 2025
-
-
-def entropia_normalizada(linha):
-    """Incerteza da PMF em [0, 1] — 0 = concentrada, 1 = uniforme.
-
-    Renormaliza pela soma observada (a PMF do poly não soma 1) e ignora
-    baldes sem leitura. Menos de 2 baldes vivos -> NaN, nunca número
-    inventado.
-    """
-    p = pd.Series(linha).dropna()
-    p = p[p > 0]
-    if len(p) < 2 or p.sum() <= 0:
-        return float("nan")
-    p = p / p.sum()
-    return float(-(p * np.log(p)).sum() / np.log(len(p)))
 
 
 def eventos_com_incerteza(pmf, datas_evento):
