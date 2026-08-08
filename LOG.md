@@ -2,6 +2,51 @@
 
 ---
 
+## 2026-08-08 — Paulo — FOLLOWUP5 (G5): régua da Lia p/ o `NaN`-vs-`0` (Decisão 12 do `Paulo`)
+
+**O que foi feito:**
+- Executado o `FOLLOWUP5_Pedido_Paulo_dados.md` — a Lia (dona da régua Ω) respondeu à
+  **Decisão 12 do `Paulo`** (slot pré-primeiro-trade: `NaN` ou `0`?): **separar os dois
+  casos**. Truncamento do cap = `NaN` (dado existe, API não alcança; propaga, não veta);
+  pré-primeiro-trade em mercado não capado = `0` (fato do mercado, ninguém negociou; veta
+  o portão de volume).
+- **Implementado** exatamente isso — a "uma linha" que ela previu: em
+  `scripts/g5_volume_no_tempo.py`, a condição do `NaN` passou a exigir `res["bateu_cap"]`;
+  mercado não capado antes do 1º trade cai no `else` e vira `0`. Docstring + rótulos do
+  report atualizados para a régua dos dois casos. Re-rodado com o cache local
+  (`data/raw/g5_cache/`, git-ignored) — **zero chamada nova de API**.
+- **Conferido contra o CSV:** `g5_volume_no_tempo.csv` — `NaN` **424→346** (só
+  truncamento: 2 M3 capados, 4-cuts=309 + 5-cuts=37), `0` **2403→2481** (+78
+  pré-1º-trade nos 19 mercados não capados), positivos **10101** inalterados, total
+  **12928** inalterado. `NaN` em mercado não capado agora = **0**. `t_cobertura_min` por
+  mercado **inalterado** (`g5_volume_cobertura.csv` não mudou).
+- Entregável: `docs/RESPOSTA_FOLLOWUP5_Pedido_Paulo_dados.md` (decisão + código + prova
+  numérica + encanamento da numeração + Bloqueios) + cópia em `~/Downloads/`.
+- **Decisão 12 do `Paulo`** marcada **🟢 fechada** no `Decisoes_pendentes.md`, atribuída à
+  Lia (FOLLOWUP5), com a implementação registrada. Não fechei por conta própria — transcrevi
+  a decisão da dona da régua, que respondeu por escrito.
+
+**Encanamento (registrado):** a numeração das decisões diverge a partir da 8 entre os três
+branches — "12" do `Paulo` é este G5, "12" do `Felipe` é o `E_FF` da 2.3. Convenção adotada:
+citar sempre o branch ("D12 do `Paulo`"). Esquema definitivo fica para a reunião.
+
+**O que quebrou:** nada. Mudança de uma condição, verificada contra o CSV-fonte.
+
+**Pendente:**
+- **G6 (CPI 2022–2024):** condicional à reunião, sem mudança.
+- Decisões 3–11 do `Paulo`: aguardam reunião. A régua da Lia não tem mais item bloqueado no G5.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~35% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/FOLLOWUP5_Pedido_Paulo_dados.md' responda em um md. nao deixe nada de fora, revise para ver se esta tudo do jeito que ele pediu"
+- **Iterações até aceitar:** 1 rodada (mudança única, conferida na primeira passada).
+- **Erros da IA:** nenhum. Números todos reconferidos contra o CSV após o re-run.
+- **Decisões escaladas:** — (nenhuma nova; fechei a Decisão 12 do `Paulo` com a resposta escrita da Lia).
+- **Tags:** `[PROMPT-CHAVE]` (aplicação da régua da Lia ao G5 — reprodutibilidade).
+
+---
+
 ## 2026-08-07 — Paulo — FOLLOWUP4 (G8 + G5): DFF do FRED e série de volume no tempo
 
 **O que foi feito:**

@@ -15,8 +15,13 @@ Para cada mercado (um conditionId por bucket):
        notional_usd = Σ (size × price) dos trades no slot
        n_trades     = contagem de trades no slot
   4. t_cobertura_min = timestamp do trade MAIS ANTIGO alcançado (um por mercado).
-     ANTES desse instante o volume é NaN (nunca 0): o /trades não alcança lá.
-     DEPOIS dele, slot sem trade é 0 legítimo.
+     Regra do slot ANTES do t_cobertura_min (Decisão 12 do Paulo, respondida pela
+     Lia no FOLLOWUP5 — separar os dois casos):
+       - mercado CAPADO (bateu_cap): NaN — o dado existe mas o /trades não alcança
+         lá; é ignorância nossa, propaga como "sem dado" (não vira 0 falso);
+       - mercado NÃO capado: 0 — o /trades alcançou o 1º trade real; antes dele
+         sabe-se que ninguém negociou, é fato do mercado (volume zero legítimo).
+     DEPOIS do t_cobertura_min, slot sem trade é sempre 0 legítimo.
 
 O grid de 12h de cada mercado vem da própria série /prices-history já baixada
 (os arquivos .json em clob_exploracao) — não re-baixa preço.
@@ -270,8 +275,10 @@ def main():
             if primeiro is None:
                 primeiro = slot_iso
             last = slot_iso
-            if cov_slot is None or s < cov_slot:
-                # antes do alcance do /trades -> NaN (campos vazios)
+            if res["bateu_cap"] and (cov_slot is None or s < cov_slot):
+                # capado E antes do alcance do /trades -> NaN (dado existe, o
+                # /trades não alcança lá). Mercado NÃO capado antes do 1º trade
+                # cai no else e vira 0 legítimo — Decisão 12 do Paulo / FOLLOWUP5.
                 long_rows.append([view, name, cid, slot_iso, "", ""])
                 slots_nan += 1
             else:
@@ -325,8 +332,8 @@ def main():
     print(f"Mercados que bateram no cap de 20k:  {len(mercados_cap)}")
     for name, tcov in mercados_cap:
         print(f"    - {name}  (t_cobertura_min={tcov})")
-    print(f"Slots sem trade (0 legítimo, DEPOIS do t_cobertura_min):  {slots_sem_trade}")
-    print(f"Slots NaN (antes do t_cobertura_min, sem alcance do /trades):  {slots_nan}")
+    print(f"Slots com volume 0 legítimo (slot sem trade; inclui pré-1º-trade de mercado não capado):  {slots_sem_trade}")
+    print(f"Slots NaN (só truncamento do cap: mercado capado antes do t_cobertura_min):  {slots_nan}")
     return 0
 
 

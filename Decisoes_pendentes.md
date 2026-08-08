@@ -165,7 +165,7 @@ só informam o trade-off):**
 Interliga com a Decisão 9 (overlap) e com o `poly_preprocessing` do Felipe
 (midpoint bid/ask). **Decisão:** _(a registrar)_
 
-## 12. G5 volume no tempo — tratamento de slot pré-primeiro-trade: `NaN` ou `0`? 🔴
+## 12. G5 volume no tempo — tratamento de slot pré-primeiro-trade: `NaN` ou `0`? 🟢
 Levantado em 2026-08-07 (entrega do G5 do FOLLOWUP4, spec do Ω da Lia). A spec
 diz "antes do `t_cobertura_min` = `NaN`, nunca `0`", regra criada para o
 **truncamento do cap de 20k** do `/trades` (sem ela, os mercados mais líquidos
@@ -188,7 +188,28 @@ Opções (trade-off a decidir — dona da regra é a Lia, é o Ω dela):
 
 Não fechei sozinho (CLAUDE.md §1). Sinalizado no entregável
 `docs/RESPOSTA_FOLLOWUP4_Pedido_Paulo_dados.md`. É troca de uma linha no
-`scripts/g5_volume_no_tempo.py`. **Decisão:** _(a registrar)_
+`scripts/g5_volume_no_tempo.py`.
+
+**Decisão (Lia, via FOLLOWUP5, 2026-08-08 — dona da régua Ω):** **separar os
+dois casos**.
+- Truncamento do cap (346 slots): `NaN` — ignorância nossa (o dado existe, a API
+  não entrega); propaga como "sem dado", não veta o portão de volume.
+- Pré-primeiro-trade (78 slots, 19 mercados não capados): `0` — fato do mercado
+  (ninguém negociou); é `0` legítimo e **veta** o portão.
+
+Argumento que decidiu: a série de preço do Polymarket é **midpoint** (não último
+trade), logo nunca fica vazia por falta de negociação; midpoint parado leria como
+estabilidade perfeita e, sem portão de volume, daria confiança máxima ao mercado
+mais ilíquido (inversão de sinal). Os 78 slots são midpoint semeado na criação do
+book — o caso puro que o portão existe para vetar. A Lia também revogou o "entrego
+o `c` sem portão se o G5 atrasar" (05/08): o G5 virou **pré-condição** da régua,
+não um dos quatro insumos.
+
+**Implementado e conferido (Paulo, 2026-08-08):** condição do `NaN` no
+`scripts/g5_volume_no_tempo.py` passou a exigir `bateu_cap`. `g5_volume_no_tempo.csv`:
+`NaN` 424→346, `0` 2403→2481 (+78), positivos 10101 inalterados, total 12928.
+`t_cobertura_min` por mercado inalterado (`g5_volume_cobertura.csv` sem mudança).
+Entregável `docs/RESPOSTA_FOLLOWUP5_Pedido_Paulo_dados.md`.
 
 ---
 
