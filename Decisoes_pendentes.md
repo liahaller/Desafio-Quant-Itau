@@ -854,4 +854,100 @@ depois de 15a, 15b e 15c fecharem.
 
 ---
 
+## 16 (branch `Felipe`). Camada tática RECONSTRUÍDA — duas sleeves, medidas e REPROVADAS 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D16 do
+> `Felipe`".
+
+**Registro, não decisão.** Resposta à segunda metade da direção da seção 14
+("reativar a camada tática com estratégias novas"), sessão de **2026-08-08**. As
+duas sleeves estão **implementadas, testadas e FORA do backtest** (`tatica=()`
+por default) — a entrega da 12c não mudou de número (+2,62 pp, conferido).
+
+**Isto NÃO reabre a 12c.** Os três overlays antigos (`tatica_premio_anuncios`,
+`tatica_drift_pos_fomc`, `tatica_gap_fds`) estão intocados, com `orcamento =
+None`. O que entrou é um template novo ao lado deles.
+
+### 16a. O que a 12c barrou tem conserto, e ele funcionou
+
+A 12c desligou a camada porque o Δ era **monótono no orçamento** — a grade não
+tinha ótimo interior e escolher a linha de cima era calibrar contra o resultado.
+O conserto: **matar o parâmetro**, do mesmo jeito que a 15d matou o da tática de
+prêmio ao virar view.
+
+    dw = inv(δ·Σ) @ (direção × μ)        (`bl_optimizer.optimal_weights`)
+
+- δ = 3,0 é **observável** (D7, medido no nosso SPY) e Σ é a amostral da D8;
+- `μ` é MEDIDO por event-study expansivo (`tatica_drift_anuncio.estimate_drift_mu`),
+  mesmo padrão do β das views e mesma proibição de lookahead;
+- `μ` entra **encolhido pela própria dispersão**, com o fator ancorado na mesma
+  convenção do Ω (`τ·Σ_ii / (τ·Σ_ii + se²)`) — sem isso um μ de 17 eventos
+  entraria com confiança infinita, que é dar Ω = 0 a uma view.
+
+**Nenhum parâmetro novo entrou.** Esta parte do desenho **sobreviveu ao teste** e
+fica disponível para qualquer sleeve futura: é ela que permitiu medir sem
+calibrar nada contra o resultado.
+
+### 16b. As duas sleeves REPROVARAM — e a do FOMC morre por um achado sobre o dado 🛑
+
+Medido em `Dump/analises/Tatica_reconstruida.md`
+(`scripts/tatica_reconstruida.py`, 374 pregões, teto no tilt = 1):
+
+| configuração | dias | excesso | Δ vs. desligada | P&L da sleeve sozinha |
+|---|---|---|---|---|
+| desligada (v1, 12c) | 0 | +2,62 pp | — | — |
+| só drift FOMC (poly) | 158 | −3,06 pp | **−5,68 pp** | **−35,23 pp** |
+| só drift CPI | 150 | +0,39 pp | **−2,23 pp** | **−5,31 pp** |
+| as duas | 260 | −4,18 pp | −6,80 pp | −40,55 pp |
+
+**A coluna que decide é a última**, e ela foi medida de propósito para separar
+"a sleeve erra" de "a sleeve rouba o teto das views": é `Σ dw·r` no dw PEDIDO,
+antes de qualquer corte. Negativa nas duas — **as sleeves perdem por conta
+própria**, o teto não é o culpado.
+
+**Sleeve do FOMC — o motivo é do dado, e é resultado a reportar:** a surpresa
+(decisão realizada − `E_poly` da véspera) tem **mediana de 0,52 bps** em 17
+reuniões, máximo 5,34. **O Polymarket acerta a decisão do Fed quase na mosca.**
+Tomar direção pelo SINAL de um resíduo de 1 bp é condicionar em ruído de
+discretização da própria PMF, e nenhum ajuste de tamanho conserta. É o oposto do
+problema da 12c: lá faltava âncora para o tamanho, aqui falta sinal para a
+direção.
+
+**Sleeve do CPI:** a surpresa (Δ breakeven no dia, 6 positivas × 6 negativas) é
+balanceada, mas o μ diz que depois de surpresa inflacionária o **TLT (nominal)
+anda mais que o TIP (indexado)** — contrário à premissa que justifica o livro.
+Mesma classe de inversão da transversal (15f) e da B em proxy (15g). **Terceiro
+desenho seguido a sair invertido**, e pelo precedente da D2b **não se inverte**.
+
+**Recomendação (do Felipe, decisão do grupo): a camada tática NÃO entra.** A 12c
+fica de pé pelo mesmo resultado, agora por motivo mais forte — antes era "não sei
+escolher o tamanho", agora é "medi o tamanho pela regra e as sleeves perdem".
+
+### 16c. O que foi construído e fica no repositório
+
+| | |
+|---|---|
+| Módulo | `src/tatica_drift_anuncio.py` (template das duas sleeves) |
+| Testes | `tests/test_tatica_drift_anuncio.py` (11) |
+| Medição | `scripts/tatica_reconstruida.py` → `Dump/analises/Tatica_reconstruida.md` |
+| Dado novo? | **nenhum** — DFF, T10YIE e a PMF de FOMC já estavam no `data/` |
+| Ligado? | **não** — `MontadorV1(tatica=())` por default |
+
+**Insumo novo derivado, e ele serve a quem quiser retomar:**
+`backtest_v1.decisoes_realizadas_fomc` lê no DFF a Δtaxa **decidida** em cada
+reunião (0 ou −25 bps na janela, valores redondos). Não existia no projeto — a
+2.3 usa `DTB3 − DFF` como *expectativa*, nunca a decisão realizada.
+
+**Premissa declarada, única não-mecânica das duas sleeves:** a decisão do FOMC é
+lida no DFF com janela para a frente. **Não é lookahead de preço** — a decisão é
+pública às 14h ET do dia D e a sleeve só abre no close de D; o DFF é o
+instrumento de leitura de um fato já público (a taxa efetiva só migra para o
+novo alvo no dia seguinte). Está escrito no docstring de
+`MontadorV1._surpresa_fomc_poly`.
+
+**Nada fecha aqui.** Se o grupo quiser ligar mesmo assim, é decisão metodológica
+sob o regime das seções 9/10.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

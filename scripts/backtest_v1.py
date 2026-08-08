@@ -61,10 +61,21 @@ from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # 
                          load_cpi_releases, load_fomc_pmf, load_pmf)
 from poly_preprocessing import (bucket_values_with_open, carry_missing,  # noqa: E402
                                 favorite_longshot_pmf)
+import tatica_drift_anuncio  # noqa: E402
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
+from poly_preprocessing import pmf_mean  # noqa: E402
 
 PONTOS_PERCENTUAIS = 100.0
+
+# Camada tática RECONSTRUÍDA (sessão de 2026-08-08, direção da seção 14). Duas
+# sleeves do mesmo template `tatica_drift_anuncio`, sem orçamento — o tamanho
+# sai de δ e Σ. Os livros são onde a âncora de literatura existe; a janela é a
+# de Neuhierl-Weber já registrada em `config.DRIFT_JANELA_ACOES` (15), TRANSPOSTA
+# para o CPI por não haver número próprio medido — transporte declarado, não
+# parâmetro novo (CLAUDE.md §6: não inventar valor).
+DRIFT_LIVRO_FOMC = ("SPY", "TLT")
+DRIFT_LIVRO_CPI = ("TIP", "TLT")
 
 
 def mercados_de_cpi(releases, diretorio):
@@ -132,7 +143,8 @@ class MontadorV1:
 
     def __init__(self, retornos, breakeven, dgs10, mercados, pmfs,
                  fomc=None, surpresas=None, orcamentos=None,
-                 fomc_pmfs=None, e_ff=None, gamma=FL_GAMMA_V1):
+                 fomc_pmfs=None, e_ff=None, gamma=FL_GAMMA_V1,
+                 decisoes_fomc=None, surpresas_cpi=None, tatica=()):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
@@ -147,6 +159,14 @@ class MontadorV1:
         # correção de PMF, que em γ = 1,0 é a identidade e em γ ≠ 1 renormaliza
         # sobre as faixas. É o que torna a coluna de robustez γ confiável.
         self.gamma = gamma
+        # Camada tática reconstruída (2026-08-08): decisão REALIZADA do FOMC em
+        # bps (lida no DFF) e surpresa de inflação do dia da divulgação em bps
+        # (Δ breakeven). `tatica` é a tupla de sleeves ligadas ("fomc", "cpi");
+        # vazia (default) mantém a entrega da 12c intocada.
+        self.decisoes_fomc = decisoes_fomc if decisoes_fomc is not None else pd.Series(dtype=float)
+        self.surpresas_cpi = surpresas_cpi if surpresas_cpi is not None else pd.Series(dtype=float)
+        self.tatica = tuple(tatica)
+        self._cache_surpresa_poly = {}    # reuniao -> surpresa (depende do γ)
         self.divergencias = []            # histórico para a média expansiva (2.2)
         self.surpresas_2_3 = []           # idem, para a demeanagem da 2.3
         self._semente_2_3 = []            # histórico PRÉ-janela, ver `semear_2_3`
@@ -187,6 +207,7 @@ class MontadorV1:
         robustez, e ela não daria erro nenhum.
         """
         self.gamma = gamma
+        self._cache_surpresa_poly.clear()  # o E_poly da sleeve também depende do γ
         self.semear_2_3(self._datas_pre)
 
     def reset(self):
@@ -389,15 +410,128 @@ class MontadorV1:
             janela_acoes=DRIFT_JANELA_ACOES, janela_rf=janela_rf,
             dias_ate_proximo_fomc=ate_proximo)
 
+    # --- camada tática RECONSTRUÍDA (2026-08-08) ----------------------------
+    #
+    # Duas sleeves do mesmo template (`tatica_drift_anuncio`), sem orçamento.
+    # Só rodam com `tatica=True`; a configuração da 12c (`tatica=False`) não
+    # passa por aqui e continua entregando exatamente o mesmo número.
+
+    def _dias_uteis(self, de, ate):
+        pregoes = self.retornos.index
+        return int(pregoes.slice_indexer(de, ate).stop
+                   - pregoes.slice_indexer(de, ate).start) - 1
+
+    def _surpresa_fomc_poly(self, reuniao):
+        """Decisão REALIZADA − E_poly[véspera], em bps. None = sem os dois lados.
+
+        Esta é a diferença de fundo entre a sleeve nova e a `_drift` antiga: lá a
+        surpresa é o ΔDTB3 do dia (proxy de mercado, zero Polymarket na sleeve
+        que mede melhor em `Curva_orcamento.md`); aqui os dois lados são os do
+        projeto — a PMF de decisão do poly na véspera e o que o Fed fez.
+
+        ⚠️ **A decisão realizada é lida no DFF com janela para a frente**, e isso
+        NÃO é lookahead de preço: a decisão é pública às 14h ET do próprio dia D,
+        e a sleeve só abre no close de D. O DFF é o instrumento de leitura de um
+        fato já público (a taxa efetiva só migra para o novo alvo no dia
+        seguinte), não uma informação que o mercado ainda não tinha. Fica
+        declarado porque é a única premissa não-mecânica das duas sleeves.
+        """
+        if reuniao in self._cache_surpresa_poly:
+            return self._cache_surpresa_poly[reuniao]
+        surpresa = None
+        if reuniao in self.decisoes_fomc.index and reuniao in self.fomc_pmfs:
+            probs, valores, _ = self.fomc_pmfs[reuniao]
+            anteriores = probs.index[probs.index < reuniao]
+            if len(anteriores):
+                linha = probs.loc[anteriores[-1]].to_numpy(dtype=float)
+                # Mesmo piso da 2.3 (D12): PMF degenerada não vira E_poly
+                # renormalizado — sem leitura utilizável a sleeve fica dormente.
+                if np.isfinite(linha).all() and linha.sum() >= view_2_3_fed.SOMA_MINIMA:
+                    e_poly = pmf_mean(linha, valores, self._fl)
+                    surpresa = float(self.decisoes_fomc[reuniao]) - float(e_poly)
+        self._cache_surpresa_poly[reuniao] = surpresa
+        return surpresa
+
+    def _drift_fomc(self, data, sigma):
+        """Sleeve 1 — drift pós-FOMC com a surpresa medida no Polymarket."""
+        if "fomc" not in self.tatica or not len(self.fomc):
+            return None
+        eventos = []
+        for reuniao in self.fomc[self.fomc < data]:
+            surpresa = self._surpresa_fomc_poly(reuniao)
+            if surpresa is not None and surpresa != 0.0:
+                eventos.append((reuniao, np.sign(surpresa)))
+        if not eventos:
+            return None
+        mu, n_eventos = tatica_drift_anuncio.estimate_drift_mu(
+            self.retornos, eventos, DRIFT_JANELA_ACOES, DRIFT_LIVRO_FOMC, data,
+            sigma, TAU)
+        ultimo, direcao = eventos[-1]
+        overlay = tatica_drift_anuncio.build_overlay(
+            list(ASSETS), "fomc", dias_desde_evento=self._dias_uteis(ultimo, data),
+            direcao=direcao, mu=mu, sigma=sigma, delta=DELTA,
+            janela=DRIFT_JANELA_ACOES, n_eventos_mu=n_eventos)
+        if overlay is not None:
+            overlay.diagnostics["surpresa_bps"] = self._surpresa_fomc_poly(ultimo)
+        return overlay
+
+    def _drift_cpi(self, data, sigma):
+        """Sleeve 2 — drift pós-CPI, surpresa = Δ breakeven no dia da divulgação.
+
+        Sem dado novo: o T10YIE do dia D fecha com o dia, e a sleeve abre no
+        close de D. É a mesma construção de surpresa REALIZADA que a `_drift`
+        antiga usa no FOMC (ΔDTB3), transposta para a família de inflação — e o
+        complemento temporal da view 2.2, que opera a divergência ANTES e sai no
+        dia da divulgação (`faltam < 1`).
+        """
+        if "cpi" not in self.tatica or not len(self.surpresas_cpi):
+            return None
+        passadas = self.surpresas_cpi[self.surpresas_cpi.index < data]
+        eventos = [(d, np.sign(s)) for d, s in passadas.items() if s != 0.0]
+        if not eventos:
+            return None
+        mu, n_eventos = tatica_drift_anuncio.estimate_drift_mu(
+            self.retornos, eventos, DRIFT_JANELA_ACOES, DRIFT_LIVRO_CPI, data,
+            sigma, TAU)
+        ultimo, direcao = eventos[-1]
+        overlay = tatica_drift_anuncio.build_overlay(
+            list(ASSETS), "cpi", dias_desde_evento=self._dias_uteis(ultimo, data),
+            direcao=direcao, mu=mu, sigma=sigma, delta=DELTA,
+            janela=DRIFT_JANELA_ACOES, n_eventos_mu=n_eventos)
+        if overlay is not None:
+            overlay.diagnostics["surpresa_bps"] = float(passadas.loc[ultimo])
+        return overlay
+
     def __call__(self, data):
         pregoes = self.retornos.index
         sigma = sample_covariance(self.retornos, data=data)
         views = [self._view_2_2(data, pregoes), self._view_2_3(data, pregoes)]
-        overlays = [self._premio(data), self._drift(data)]
+        overlays = [self._premio(data), self._drift(data),
+                    self._drift_fomc(data, sigma), self._drift_cpi(data, sigma)]
         return sigma, views, overlays
 
 
-def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1):
+def decisoes_realizadas_fomc(dff, fomc, antes=3, depois=5):
+    """Δtaxa DECIDIDA em cada reunião, em bps, lida no DFF (taxa efetiva).
+
+    Média das `depois` leituras seguintes menos a das `antes` anteriores: o novo
+    alvo só vale a partir do dia seguinte ao anúncio, e a média de poucos dias
+    tira o ruído de fim de mês do overnight. Medido na janela do v1, devolve os
+    valores redondos que a decisão de fato teve (0 ou −25 bps).
+
+    Insumo da sleeve de drift; **não** é insumo da view 2.3 (aquela usa
+    `DTB3 − DFF` como âncora de expectativa, decisão 12).
+    """
+    saida = {}
+    for reuniao in fomc:
+        pre = dff[dff.index < reuniao].tail(antes)
+        pos = dff[dff.index > reuniao].head(depois)
+        if len(pre) == antes and len(pos) == depois:
+            saida[reuniao] = (pos.mean() - pre.mean()) * PONTOS_PERCENTUAIS
+    return pd.Series(saida, dtype=float)
+
+
+def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=()):
     """(retornos, montador, datas, w_mkt) — toda a plumbing de dado do v1.
 
     Separado do `main` para as varreduras irmãs (ex.: `curva_c.py`) rodarem o
@@ -427,9 +561,19 @@ def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1):
     dff = load_fred(raiz / "data/raw/fred_DFF.csv")
     e_ff = ((dtb3 - dff) * PONTOS_PERCENTUAIS).dropna()
 
+    # Camada tática reconstruída: decisão realizada do FOMC (DFF) e surpresa de
+    # inflação do dia da divulgação (Δ T10YIE em bps). Nenhum dado novo — as duas
+    # séries já estavam no `data/` para outras finalidades.
+    decisoes_fomc = decisoes_realizadas_fomc(dff, fomc)
+    t10yie = load_fred(raiz / "data/raw/fred_T10YIE.csv")
+    surpresas_cpi = (t10yie.diff() * PONTOS_PERCENTUAIS).reindex(
+        pd.DatetimeIndex(list(mercados))).dropna()
+
     montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
                           fomc, surpresas, orcamentos or {},
-                          fomc_pmfs=fomc_pmfs, e_ff=e_ff, gamma=gamma)
+                          fomc_pmfs=fomc_pmfs, e_ff=e_ff, gamma=gamma,
+                          decisoes_fomc=decisoes_fomc,
+                          surpresas_cpi=surpresas_cpi, tatica=tatica)
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
     primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())

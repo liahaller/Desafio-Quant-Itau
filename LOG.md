@@ -1,5 +1,102 @@
 # LOG de sessões
 
+## 2026-08-08 (sessão 13) — Felipe
+
+**Contexto da sessão:** a sessão 12 fechou a metade "views novas" da direção da
+seção 14. Esta fechou a outra metade — **reativar a camada tática** — e a
+resposta foi medida, não opinada.
+
+**1. Triagem antes de construir: o que dá para reconstruir com o dado que já
+temos.** Levantado do `data/` e do `PEDIDO_G10`, com três descartes por medição
+já registrada: **gap de fim de semana** (cortado na seção 9, informação
+aterrissa no gap de abertura), **prêmio de anúncios como overlay** (mede
+negativo em `Curva_orcamento.md` e a 15b já expressa a mesma premissa como view —
+ligar os dois é a dupla contagem da 15a) e **payrolls** (o G10b dá o rótulo, mas
+falta o realizado; sozinho não vira sleeve). Sobraram duas famílias com os dois
+lados no `data/`.
+
+**Verificação que matou uma opção antes de custar código:** testei se o
+realizado do CPI poderia sair da **resolução do próprio mercado do poly** — as
+séries param na véspera (último preço do balde vencedor de abril/2026 = 0,435,
+não 1). Não dá; seria pedido novo ao Paulo (`CPIAUCSL`).
+
+**2. O que a 12c barrou tem conserto, e ele funcionou.** A camada não saiu por
+efeito fraco: saiu porque o Δ era monótono no orçamento e escolher a linha de
+cima era calibrar contra o resultado. Conserto: **matar o parâmetro** —
+`dw = inv(δΣ)·(direção × μ)`, com δ observável (D7), Σ da D8 e μ medido por
+event-study expansivo. Sem orçamento, sem grade, sem nada para escolher olhando
+a coluna de excesso.
+
+**3. Duas correções que só apareceram rodando contra o dado real** (nenhuma
+apareceria em teste sintético):
+
+- **μ sem linha de base media o bull market, não o drift.** Com a direção do
+  FOMC saindo +1 em 13 de 17 eventos, μ[SPY] deu **+10,53 bps/dia** — o retorno
+  médio do próprio mercado. A sleeve viraria "long SPY sempre que houve
+  reunião". Corrigido subtraindo o retorno médio da amostra (expansivo), que é a
+  mesma correção que as views 2.2/2.3 já fazem na divergência.
+- **μ de 17 eventos entrando sem desconto é dar Ω = 0 a uma view.** Acrescentado
+  encolhimento pela dispersão entre eventos, com o fator ancorado na convenção
+  registrada do Ω (`τΣ_ii/(τΣ_ii + se²)`) — sem parâmetro novo. Σ\|dw\| mediano
+  caiu de 171 para 73.
+
+**4. As duas sleeves REPROVARAM, e a do FOMC por um achado sobre o dado.**
+Medição em `Dump/analises/Tatica_reconstruida.md`:
+
+| configuração | dias | Δ vs. desligada | **P&L da sleeve sozinha** |
+|---|---|---|---|
+| só drift FOMC (poly) | 158 | −5,68 pp | **−35,23 pp** |
+| só drift CPI | 150 | −2,23 pp | **−5,31 pp** |
+
+A última coluna foi medida de propósito para separar "a sleeve erra" de "a
+sleeve rouba o teto das views" (`Σ dw·r` no dw PEDIDO, antes do corte).
+Negativa nas duas: **as sleeves perdem por conta própria.**
+
+**O achado:** a surpresa do FOMC medida contra o Polymarket tem **mediana de
+0,52 bps** em 17 reuniões (máx 5,34). **O poly acerta a decisão do Fed quase na
+mosca** — tomar direção pelo sinal desse resíduo é condicionar em ruído de
+discretização da PMF. É o oposto do problema da 12c: lá faltava âncora para o
+tamanho, aqui falta sinal para a direção. No CPI, o μ diz que depois de surpresa
+inflacionária o TLT anda mais que o TIP, contrário à premissa do livro —
+**terceiro desenho seguido a sair invertido** (transversal 15f, B em proxy 15g),
+e pela D2b não se inverte.
+
+**Recomendação registrada (decisão do grupo): a camada tática não entra.** A 12c
+fica de pé por motivo mais forte: antes era "não sei escolher o tamanho", agora é
+"medi o tamanho pela regra e as sleeves perdem".
+
+**Quebrou / aprendido:**
+- A entrega do v1 **não mudou**: com `tatica=()` o backtest devolve os mesmos
+  +2,62 pp registrados. Conferido na primeira linha da tabela.
+- Aprendizado que vale além desta sessão: **a âncora de tamanho sobreviveu** —
+  `inv(δΣ)·μ` com encolhimento pela dispersão dá tamanho sem parâmetro livre, e
+  serve a qualquer sleeve futura. Quem reprovou foram as sleeves, não o método.
+- Insumo novo derivado: `backtest_v1.decisoes_realizadas_fomc` (Δtaxa DECIDIDA
+  lida no DFF; 0 ou −25 bps na janela). O projeto só tinha a expectativa
+  (`DTB3 − DFF`), nunca o realizado.
+
+**Pendente:**
+- Entrada da camada tática: **decisão do grupo** (recomendação registrada é não
+  entrar). Seção 16 do `Decisoes_pendentes.md`.
+- Sem mudança no caminho crítico de terceiros: `G10a do Paulo` → régua do `c` da
+  Lia → teto do grupo (corte de 13/08, seção 10a).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~205k tokens.
+- **Prompt inicial (verbatim):** "na ultima sessão fechamos duas novas views. agora quero revisar a camada tática, ela foi tirada da estratégia mas quero reativa-la com pelo menos duas estratégias dentro. O que podemos criar ou reconstruir da camada tática com os dados que temos ou pedimos para o Paulo no ultimo recado pra ele?"
+- **Iterações até aceitar:** 3 (triagem aceita de primeira; duas rodadas de
+  correção do estimador de μ, as duas disparadas pela medição contra o dado real
+  — linha de base e encolhimento).
+- **Erros da IA:** 2 de desenho, ambos pegos pela própria medição antes de virar
+  resultado: (a) primeiro μ sem subtrair a linha de base, que media o prêmio de
+  risco do mercado em vez do drift do anúncio; (b) μ entrando no `inv(δΣ)` sem
+  encolhimento, tratando 17 eventos como estimativa certa. Nenhuma alucinação de
+  dado — a checagem da resolução do mercado de CPI foi feita no arquivo antes de
+  a opção ser proposta.
+- **Decisões escaladas:** 16 (nova, 🟡 — registro com recomendação, não fechada).
+- **Tags:** `[PROMPT-CHAVE]`
+
 ## 2026-08-08 (sessão 12) — Felipe
 
 **Contexto da sessão:** a sessão 11 terminou com o dono reabrindo o escopo
