@@ -418,9 +418,10 @@ testada e **cai**:
    transformação monótona dos scores calibrados, então o teste de
    monotonicidade continua valendo (ele só enxerga ordem).
    **A forma simétrica `(1 − x)` foi medida e descartada:** o fator de
-   coerência fica **negativo em 7 de 1.139 linhas** do CPI (soma do livro
-   chega a 1,725), e consertar exigiria truncar em zero — um segundo portão
-   binário, que o compromisso da 6c com o Felipe proíbe.
+   coerência fica **negativo em 7 de 1.139 linhas** do CPI (a soma do livro
+   vai de 0,754 a 2,725, mediana 1,017), e consertar exigiria truncar em
+   zero — um segundo portão binário, que o compromisso da 6c com o Felipe
+   proíbe.
 
 **Régua de produção, implementada em `lia/omega.py`** (55 testes na suíte da
 Lia). Medido no dado real, através do `diagnostics_qualidade` do pipeline —

@@ -30,9 +30,9 @@ A forma dos dois fatores é transformação monótona dos scores calibrados
 continua valendo — o teste só enxerga ordem. O que a forma acrescenta é a
 escala: fatores ≥ 1 por construção, sem piso, teto ou truncamento, e sem
 divisão por zero. A alternativa simétrica `(1 − x)` foi medida e descartada:
-o fator de coerência fica negativo em 7 de 1.139 linhas do CPI (soma do livro
-chega a 1,725), e consertar isso exigiria truncar em zero — um segundo portão
-binário, que o compromisso da Decisão 6c com o Felipe proíbe.
+o fator de coerência fica negativo em 7 de 1.139 linhas do CPI (a soma do
+livro vai de 0,754 a 2,725), e consertar isso exigiria truncar em zero — um
+segundo portão binário, que o compromisso da Decisão 6c com o Felipe proíbe.
 
 Este módulo não lê dados brutos: recebe o `diagnostics` do pipeline e o
 volume agregado, ambos por view.
@@ -104,10 +104,10 @@ def fator_coerencia(pmf: pd.DataFrame) -> float:
     """`1 + |soma das faixas − 1|` na leitura da decisão (última linha).
 
     Mede o desarranjo do livro: cada faixa é um mercado separado e elas se
-    desencontram (medido: até 1,725 no CPI, 1,325 no mercado de cortes do
-    Fed). É bilateral, ao contrário do piso da cascata do Felipe (soma < 0,9
-    desativa a view), que só corta por baixo — os dois agem em regimes
-    disjuntos (Decisão 6c).
+    desencontram (medido: soma de 0,754 a 2,725 no CPI, 0,923 a 1,325 no
+    mercado de cortes do Fed). É bilateral, ao contrário do piso da cascata do
+    Felipe (soma < 0,9 desativa a view), que só corta por baixo — os dois agem
+    em regimes disjuntos (Decisão 6c).
 
     Mede na PMF **crua**, não na renormalizada: renormalizar apagaria
     justamente a grandeza medida. É o oposto do que o colapso da estabilidade

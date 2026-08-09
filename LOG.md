@@ -752,6 +752,20 @@ registrado como posição da Lia, não fechado (é decisão de grupo).
   por veto de volume e 21 por ausência de par adjacente completo. Com
   `nivel = 1`, `c` de 1,0016 a 2,7653 (mediana 1,0495, p95 1,2426); nunca
   abaixo de 1, nunca NaN em view ativa.
+- **Seção do relatório sobre o Ω escrita** (`RELATORIO_omega.md`, raiz —
+  primeiro arquivo de relatório do repositório, não havia nenhum em nenhum
+  branch). Dez seções: o problema do Ω subjetivo, a régua, o protocolo,
+  dados, resultados das duas views, **o que foi rejeitado**, os três achados
+  de medição, implementação e validação, limitações declaradas e síntese. A
+  escolha de estrutura foi dar seção própria ao rejeitado e às limitações —
+  uma régua que só registra o que entrou não deixa avaliar se a escolha foi
+  disciplinada.
+- **Erro numérico próprio, encontrado ao conferir o relatório:** eu vinha
+  escrevendo que "a soma do livro chega a 1,725" no CPI. 1,725 é o
+  **desvio** `|soma − 1|`; a soma vai de **0,754 a 2,725** (mediana 1,017).
+  Corrigido nos quatro lugares em que tinha entrado (relatório,
+  `Decisoes_pendentes.md` 6g e duas docstrings de `lia/omega.py`). O erro não
+  afetou nenhum cálculo — o código sempre usou `abs(soma - 1)` —, só o texto.
 
 **Quebrou:** nada.
 
@@ -777,8 +791,12 @@ mesma classe do veto de liquidez.
   volume no `diagnostics`; hoje é parâmetro separado, chaveado pela view).
 - G5 do FOMC (`PEDIDO_Paulo_G5_fomc.md`) segue pendente: sem ele a 2.3 não
   tem portão e o número dela continua provisório. Deixou de ser bloqueio.
-- Seção do relatório sobre o Ω (item 3 da lista da dona) e robustez da
-  calibração com `erro_vs_resolucao` (item 4) — nenhum dos dois começou.
+- Robustez da calibração (item 4 da lista da dona): variar `n_faixas` e usar
+  `erro_vs_resolucao` como alvo alternativo — a função existe e segue sem
+  uso. É o que permitiria o relatório afirmar que o resultado não depende do
+  corte escolhido. **Não começou.**
+- Relatório: a seção do Ω está escrita; falta a revisão da dona e, quando o
+  modelo for congelado, a seção de resultados de backtest.
 - Decisão 9 (matriz de relação) segue aberta.
 - Dados dos outros branches em `%TEMP%\omega_lia`; refazer com
   `git archive origin/Paulo <caminho> | tar -x -C <destino>` se sumir.
@@ -789,11 +807,14 @@ mesma classe do veto de liquidez.
 - **Prompt inicial (verbatim):** "o que falta fazer na minha parte?"
 - **Iterações até aceitar:** 1 nas quatro decisões (todas confirmadas na
   recomendação), com um percalço de execução no meio.
-- **Erros da IA:** um, corrigido na sequência — uma substituição em massa no
-  arquivo de testes deixou parênteses desbalanceados em 11 testes; o arquivo
-  foi reescrito com um helper que elimina a repetição que causou o erro.
-  Nenhum erro no resultado: a suíte fecha em 55 testes verdes e a régua foi
-  validada contra o `diagnostics` real, não só contra caso sintético.
+- **Erros da IA:** dois, ambos corrigidos na sessão. (1) Uma substituição em
+  massa no arquivo de testes deixou parênteses desbalanceados em 11 testes; o
+  arquivo foi reescrito com um helper que elimina a repetição que causou o
+  erro. (2) O número "soma do livro chega a 1,725" estava errado e se
+  propagou por quatro arquivos antes de ser pego na conferência do relatório
+  — 1,725 é o desvio `|soma − 1|`, e a soma vai a 2,725. Nenhum dos dois
+  afetou cálculo: a suíte fecha em 55 testes verdes e a régua foi validada
+  contra o `diagnostics` real, não só contra caso sintético.
 - **Decisões escaladas:** 6g (quatro decisões fechadas pela dona; nível
   global segue para a reunião).
 - **Tags:** `[PROMPT-CHAVE]` — a sessão depende de testar a hipótese que a

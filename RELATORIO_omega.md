@@ -1,0 +1,379 @@
+# O Ω reativo — confiança medida, não arbitrada
+
+> Seção do relatório final referente ao módulo de confiança do Black-Litterman.
+> Escrita em 09/08/2026 sobre a calibração das views 2.2 (CPI) e 2.3 (FOMC).
+> Os resultados de carteira ficam na seção de backtest; aqui trata-se de como a
+> confiança é construída e por que se pode confiar nela.
+
+---
+
+## 1. O problema: Ω é o elo subjetivo do Black-Litterman
+
+O modelo de Black-Litterman combina o equilíbrio de mercado com as visões do
+gestor. A matriz **Ω** é o peso relativo entre as duas coisas: ela declara
+quanta incerteza há em cada view. Na formulação de He & Litterman,
+
+```
+Ω_ii = c_i · diag( P τ Σ Pᵀ )_ii
+```
+
+onde `c_i = 1` recupera o BL clássico e `c_i > 1` encolhe a view em direção ao
+prior.
+
+A crítica clássica ao BL não é sobre a álgebra — é sobre de onde saem `Q` e
+`Ω`. Na prática usual, ambos são declarados pelo gestor: "estou 60% confiante
+nesta view". O modelo herda a subjetividade inteira e a esconde atrás de uma
+matriz. É o elo em que qualquer resultado pode ser produzido escolhendo os
+números certos depois de ver o backtest.
+
+**A proposta deste trabalho é remover a arbitrariedade dos dois lados.** As
+views vêm de probabilidades negociadas com dinheiro real no Polymarket — não
+de opinião. E o `Ω` vem de uma régua cuja **forma foi escolhida por um teste
+estatístico definido antes de ver o resultado**, sobre uma grandeza que não é
+o retorno da carteira.
+
+Restou exatamente **um** número livre no Ω, e ele é declarado como parâmetro
+de risco, não de régua (§9).
+
+---
+
+## 2. A régua
+
+```
+c = ( (1 + v̄) · (1 + |Σp − 1|) ) ^ nível
+```
+
+Dois fatores, cada um a medida de um defeito da leitura do mercado. Cada
+defeito **multiplica** a incerteza por (1 + o tamanho do defeito).
+
+| Fator | O que mede | Definição |
+|---|---|---|
+| `1 + v̄` | **Instabilidade.** Quanto a distribuição de probabilidade se moveu nas últimas leituras | `v̄` = média da variação total, `0,5·Σ_b \|p_{t,b} − p_{t−1,b}\|`, nas 5 variações que terminam na decisão |
+| `1 + \|Σp − 1\|` | **Desarranjo do livro.** Quanto as faixas do mercado deixam de descrever uma distribuição | soma das faixas na leitura da decisão, medida **crua** |
+
+Mais um portão, que não é fator e sim **veto**: mercado sem nenhuma
+negociação no slot sai da carteira (`ativa = False`), em vez de receber `c`
+grande.
+
+Três propriedades que a forma garante por construção, sem truncamento, piso
+ou teto:
+
+- **`c ≥ 1` sempre.** O baseline de He-Litterman é o *teto* de confiança: o Ω
+  só tira peso da view, nunca adiciona. Não existe estado do mercado em que o
+  modelo fique mais confiante do que o BL padrão já estaria.
+- **`nível = 0` devolve `c = 1`** para toda view, recuperando o BL clássico.
+  O nível é um botão contínuo entre "ignorar a qualidade do sinal" e "levá-la
+  a sério".
+- **Sem divisão por zero e sem descontinuidade.** Os dois fatores são ≥ 1 em
+  qualquer entrada válida.
+
+### Por que multiplicativa, e não uma soma ponderada
+
+Uma soma ponderada permitiria compensação indevida: um mercado com o livro
+completamente desarranjado poderia ser "salvo" por estar estável. Os dois
+fatores medem condições necessárias distintas, e a falha de qualquer uma
+degrada a leitura independentemente da outra.
+
+### Por que a coerência é medida no livro cru e a estabilidade no renormalizado
+
+As faixas de um mercado de buckets são livros separados, e elas se
+desencontram: medimos somas de **0,92 a 1,33** no mercado de cortes do Fed e
+de **0,75 a 2,73** nos mercados de CPI (mediana 1,02). Isso é informação sobre
+a saúde do mercado.
+
+A estabilidade, porém, precisa medir **movimento de opinião**, não
+desarranjo. Se a PMF não fosse renormalizada antes do colapso, uma variação
+na soma total entraria como "o mercado se moveu", e os dois fatores estariam
+punindo a mesma coisa duas vezes — num produto, isso seria dupla contagem
+disfarçada de confirmação mútua. A renormalização deixa o desarranjo
+inteiramente com o segundo fator.
+
+---
+
+## 3. O protocolo: quem decide o quê
+
+A régua foi construída sob uma disciplina declarada **antes** da calibração,
+justamente para que a escolha das formas não pudesse ser feita olhando o
+resultado da carteira.
+
+**1. O que a matemática determina.** A relação entre `c` e `Ω` sai de He &
+Litterman. Não é escolha.
+
+**2. O que a semântica determina.** A estrutura multiplicativa e o papel do
+volume como veto, não como fator. Um mercado sem liquidez não tem um preço
+que seja probabilidade; isso não é uma questão de grau.
+
+**3. O que o dado determina.** Tudo o que sobrou: quais ingredientes entram,
+a janela da estabilidade, a grade temporal, a forma do decaimento.
+
+O critério do item 3 é um **teste de monotonicidade**: faixas de confiança
+maiores devem apresentar **erro realizado da probabilidade** menor. Reporta-se
+a correlação de Spearman entre score e erro futuro e a média do erro por
+tercil de confiança. Empates resolvem-se pela forma com menos parâmetros.
+
+> **O alvo é o erro da probabilidade, não o retorno da carteira.** Esta é a
+> trava central contra o overfit. Se a forma da régua fosse escolhida por
+> resultado de backtest, todo o argumento de objetividade cairia — seria
+> apenas subjetividade com mais passos. A consequência é assumida: a forma
+> **não é revisitada** se o backtest desagradar. O que se ajusta, nesse caso,
+> é o teto de alavancagem, que é um parâmetro de risco declarado.
+
+---
+
+## 4. Os dados
+
+| | View 2.3 (FOMC) | View 2.2 (CPI) |
+|---|---|---|
+| Mercados | 18 reuniões | 19 mercados-mês |
+| Slots (grade 12h) | 3.905 | 1.198 |
+| Slots (grade 24h) | 1.952 | 562 |
+| Volume por slot | **indisponível** | 111/111 mercados, 6.360 slots |
+
+Preço: endpoint `/prices-history` do CLOB do Polymarket, passo nativo de 12h.
+Volume: reconstruído trade a trade pela Data API (`/trades`), agregado em
+`notional_usd` por slot — não existe endpoint de volume histórico pronto.
+
+A calibração roda sobre a **história completa dos mercados**, e não sobre a
+janela do backtest. O alvo do teste é o erro da probabilidade, que existe
+mesmo nos dias em que a view não seria negociada; e os dias de livro
+degenerado são justamente a condição que deve produzir score baixo. Excluí-los
+removeria o poder discriminante do teste.
+
+Cada mercado é uma série própria: nem as variações nem o alvo cruzam a
+fronteira entre eventos. Sem esse cuidado, um `.diff()` sobre o painel
+empilhado compararia a PMF de uma reunião com a da seguinte.
+
+---
+
+## 5. Resultados
+
+Correlação de Spearman entre score e erro realizado da probabilidade. **Mais
+negativo é melhor** — significa que confiança alta antecede erro pequeno.
+
+| Ingrediente | 2.3 (FOMC) | 2.2 (CPI) | Monotônica | Veredito |
+|---|---|---|---|---|
+| Estabilidade (variação total) | −0,31 a −0,40 | **−0,46** | ✅ | **entra** |
+| Estabilidade (\|ΔE\|) | −0,29 a −0,36 | −0,42 | ✅ | perde no desempate |
+| Coerência do livro | −0,15 a −0,18 | **−0,21 a −0,31** | ✅ | **entra** |
+| Portão de volume (como score) | — | −0,03 a +0,14 | — | reprovado |
+| Proximidade do evento | +0,09 a +0,22 | +0,09 a +0,31 | ✗ | **reprovado** |
+
+Cada faixa cobre as combinações testadas (2 grades temporais × 2 horizontes de
+erro × 3 janelas); os valores em destaque são a melhor configuração de cada
+ingrediente, com o alvo em variação total. A escolha entre as duas formas de
+estabilidade é sensível ao alvo, e isso está tratado na §9.
+
+Parâmetros que o dado escolheu: **janela de 5 variações** (vence 10 e 20 em
+todos os cortes das duas views) e **grade de 12h** (vence a de 24h em todos).
+
+### O teste que sustenta o ingrediente principal
+
+O ingrediente mais forte esteve sob suspeita de ser um artefato de medição
+(§7.1), e o resultado só passou a valer depois de essa suspeita ser testada
+diretamente. Medindo a estabilidade **apenas nos slots que passam pelo veto de
+liquidez**:
+
+| | Spearman | n |
+|---|---|---|
+| Todos os slots | −0,4615 | 996 |
+| Somente slots com negociação | −0,4531 | 932 |
+
+O sinal sobrevive: o veto custa 6% da amostra e move a correlação em 0,008. O
+ingrediente **não vivia do artefato**.
+
+O diagnóstico direto confirma pelo outro lado — comparando slots com e sem
+negociação:
+
+| | Variação exatamente zero | Erro futuro médio |
+|---|---|---|
+| Sem negociação | 4,4% dos pares | 0,0318 |
+| Com negociação | 1,2% dos pares | 0,0346 |
+
+O congelamento existe (é 3,7× mais frequente sem negociação, exatamente como
+previsto), mas é raro demais em termos absolutos para explicar uma correlação
+de −0,46.
+
+---
+
+## 6. O que foi rejeitado
+
+Esta seção é parte do resultado, não um apêndice. Uma régua que só registra o
+que entrou não permite avaliar se a escolha foi disciplinada.
+
+**Proximidade do evento — reprovada com o sinal invertido.** A hipótese
+inicial era que a incerteza aumenta perto de uma decisão agendada. O dado diz
+o contrário, nas duas views, em 16 cortes independentes: **longe do evento o
+mercado se move mais**, não menos — a probabilidade se cristaliza à medida que
+a decisão chega. O ingrediente saiu da régua pelo protocolo. Entrar com o
+sinal trocado seria escolher o sinal depois de ver o dado, que é precisamente
+o que a trava do §3 existe para impedir. O achado fica registrado como
+resultado e como candidato para uma versão futura, com hipótese declarada
+antes do teste.
+
+**Volume como ingrediente gradual — reprovado.** Não pontua sozinho (−0,03 a
++0,14, sinal predominantemente invertido: mais volume antecede *mais*
+movimento, o que é econômicamente sensato — volume chega com notícia). E
+nenhum threshold calibrado melhora a régua: exigir liquidez acima do 1º, 2º ou
+3º quartil piora o Spearman em até 0,14 e consome amostra. Sobrevive apenas o
+veto do slot sem **nenhuma** negociação, que é gratuito e tem justificativa
+semântica independente.
+
+**Agregação de volume pelo mínimo entre faixas — rejeitada por medição.** Era
+a opção conservadora, mas veta 47% dos slots de 12h: é comum que uma faixa de
+um mercado de buckets não negocie em meio dia. A agregação por soma é a que
+mede atividade do mercado, não da faixa menos ativa.
+
+**A forma simétrica `(1 − x)` para os fatores — rejeitada por medição.** Seria
+a escolha natural ("fração da massa que ficou parada" × "quanto o livro
+fecha"), mas o fator de coerência **fica negativo em 7 de 1.139 leituras**
+completas do CPI, onde a soma do livro chega a 2,73. Corrigir isso exigiria
+truncar o fator em zero, o que criaria um segundo veto binário — e o
+compromisso metodológico assumido é que o **único** veto binário da régua é o
+de liquidez, para que nenhum defeito seja cobrado duas vezes.
+
+**Normalização por posto histórico — rejeitada por argumento.** Tornaria o `c`
+relativo à história em vez de absoluto: o mercado em bom estado receberia
+confiança baixa no seu pior dia, e o mesmo estado do mercado produziria `c`
+diferente em datas diferentes.
+
+**Convergência entre fontes (polls, casas de aposta) — fora do escopo.**
+Adicionaria dependências de dados que não caberiam no prazo; fica como stub.
+
+---
+
+## 7. Três achados de medição que mudaram a régua
+
+Os três surgiram de conferir o que o dado era, e não do que se supunha que
+fosse. Cada um teria produzido uma inversão de sinal silenciosa.
+
+### 7.1 A série é midpoint amostrado, não último trade
+
+O `/prices-history` devolve o **midpoint do book no instante t**, não o preço
+do último negócio nem um agregado do intervalo. A consequência é grave para o
+ingrediente de estabilidade: um mercado sem nenhuma negociação **continua
+reportando o mesmo número**, e midpoint parado é lido como estabilidade
+perfeita. Sem o veto de liquidez, a régua daria confiança **máxima** ao
+mercado mais ilíquido — uma inversão sistemática de sinal, não ruído. Foi este
+achado que transformou o volume de "quarto ingrediente" em pré-condição, e é a
+razão pela qual a §5 gasta um teste inteiro para verificar se o ingrediente
+sobreviveu.
+
+### 7.2 Preencher buracos para a frente (`ffill`) injeta estabilidade falsa
+
+A série tem leituras faltantes. O tratamento usual — repetir a última leitura
+— é inutilizável aqui: leitura repetida entra na conta como **variação zero**,
+de modo que quanto mais esburacado o mercado, mais estável ele pareceria. É a
+mesma inversão da §7.1 por outro caminho, e pior que ruído: o `ffill` é
+determinístico e erra num sentido só (nunca aumenta a variação medida), o que
+é **viés**, e o teste de monotonicidade não distingue viés de sinal.
+
+Regra adotada: slot com qualquer faixa sem leitura **não entra** no cálculo de
+variação, e o par deixa de ser adjacente. O buraco continua custando confiança,
+mas por um canal só.
+
+Corolário de método: **o score não deve reproduzir a série que a view
+consome.** A série tratada é suave por construção; medir a estabilidade nela
+seria medir a estabilidade do tratamento. O score mede se o mercado que gerou
+o insumo estava funcionando.
+
+### 7.3 A janela entregue não vem na grade completa
+
+O bloco de diagnóstico entrega apenas as leituras existentes, omitindo os
+slots inteiramente vazios. Duas linhas vizinhas na lista podem, portanto,
+estar a mais de um slot de distância — e uma diferença calculada entre elas
+leria como *uma* variação o que são duas ou três, contaminando exatamente os
+pares que a regra da §7.2 manda descartar. A implementação reconstrói a grade
+de 12h antes de qualquer diferença, e há teste dedicado a esse caso.
+
+---
+
+## 8. Implementação e validação
+
+A régua está implementada em `lia/omega.py`, com **55 testes** na suíte do
+módulo. Toda função matemática tem caso sintético com resultado conhecido:
+PMF parada devolve fator 1,0; massa movida conhecida devolve o valor exato; o
+fator de coerência é bilateral; `nível = 0` recupera He-Litterman.
+
+Testes sintéticos, porém, não provam que o contrato com o pipeline funciona.
+A régua foi executada de ponta a ponta sobre o bloco de diagnóstico **real**,
+em 601 decisões da view 2.2:
+
+| | |
+|---|---|
+| Views ativas | 543 (90,3%) |
+| Inativas por veto de liquidez | 37 |
+| Inativas por ausência de leitura mensurável | 21 |
+| `c` mínimo · mediana · p95 · máximo (nível = 1) | 1,0016 · 1,0495 · 1,2426 · 2,7653 |
+
+Nenhum `c` abaixo de 1 e nenhum `NaN` em view ativa, como a forma garante.
+
+**Uma regra de borda vale registro:** view sem nenhum par adjacente completo
+na janela sai como **inativa**, não com `c = 1`. Sem par não há como
+qualificar a leitura, e atribuir confiança máxima onde nada foi medido é o
+pior erro disponível — é o caso em que a régua estaria mais errada e menos
+capaz de perceber.
+
+### Dois defeitos encontrados por revisão cruzada
+
+Ambos foram medidos por outro membro da equipe sobre o código já escrito, e
+ambos invertiam o sinal da régua em silêncio:
+
+1. O portão convertia `NaN` em `0,0`, de modo que **346 slots** em que o
+   volume era desconhecido (por truncamento do limite de coleta) vetavam o
+   mercado — o oposto da regra, que separa "ninguém negociou" (veta) de "não
+   sabemos" (não veta).
+2. A combinação de scores inferia veto de `score == 0,0`, o que invertia dois
+   ingredientes: o score de estabilidade era `−desvio`, e portanto `0,0` era o
+   **melhor** valor possível.
+
+---
+
+## 9. Limitações declaradas
+
+**A view 2.3 (FOMC) ainda não tem portão de liquidez.** A reconstrução de
+volume cobre 111 mercados de CPI e apenas 1 dos 76 do FOMC, e não há chave
+comum entre as duas bases. Os números da 2.3 na §5 são, portanto, provisórios
+no mesmo sentido descrito na §7.1 — o teste condicional que valida o
+ingrediente na 2.2 não pôde ser repetido nela. A régua entregue é a mesma; o
+que falta é a verificação independente na segunda view.
+
+**Os dois ingredientes que entraram correlacionam +0,37 a +0,40 entre si.**
+Não é a dupla contagem mecânica que a renormalização eliminou (§2), mas também
+não são medidas ortogonais: parte da penalidade é cobrada duas vezes no
+produto. Registrado e não resolvido — separá-los exigiria uma reformulação que
+não caberia no prazo.
+
+**O empate entre as duas formas de colapso foi resolvido por parcimônia, não
+por evidência.** Na view 2.3 a variação total vencia em todos os cortes; na
+2.2 cada candidata vence no alvo medido por ela mesma, o que é circularidade
+do alvo e não superioridade. A escolha recaiu sobre a variação total por ter
+menos parâmetros e não depender do tratamento da faixa aberta — critérios do
+protocolo, mas não uma vitória estatística.
+
+**Duas views, não vinte.** A replicação entre 2.2 e 2.3 é o que dá alguma
+confiança de que os resultados não são propriedade de um mercado específico —
+particularmente no caso da proximidade, reprovada com o mesmo sinal invertido
+nas duas. Ainda assim, são dois mercados.
+
+**O nível global ainda não está fechado.** É o único parâmetro livre da régua,
+e será cravado uma única vez, junto com o teto de alavancagem, por decisão de
+risco declarada. A ordem importa: hoje o teto de alavancagem faz parte do
+trabalho que caberia ao Ω, então o `c` entra primeiro, mede-se a alavancagem
+resultante, e só então se decide o teto. Com `nível = 1` a régua é suave
+(mediana 1,05); o botão existe justamente porque a escala apropriada é uma
+decisão de apetite a risco, não de estatística.
+
+---
+
+## 10. Síntese
+
+O Ω deste trabalho não pergunta ao gestor quanta confiança ele tem. Ele mede
+três coisas verificáveis no mercado que gerou a view — se houve negociação, o
+quanto a distribuição se moveu, e se o livro fecha — e converte isso num
+multiplicador de incerteza cuja forma foi escolhida por um teste contra o erro
+realizado da probabilidade, não contra o retorno da carteira.
+
+Dos quatro ingredientes candidatos, **dois entraram, um virou veto e um foi
+reprovado** — inclusive um que a intuição inicial dava como certo. É esse
+saldo, e não a régua final, que sustenta a afirmação de que a confiança aqui
+foi medida e não arbitrada.
