@@ -234,6 +234,46 @@ não um dos quatro insumos.
 `t_cobertura_min` por mercado inalterado (`g5_volume_cobertura.csv` sem mudança).
 Entregável `docs/RESPOSTA_FOLLOWUP5_Pedido_Paulo_dados.md`.
 
+## 13. Calendário do CPI — adotar o oficial do FRED (G10c) no lugar do derivado de mercado? 🔴
+Levantado em 2026-08-08 (entrega do G10c, pedido do `Felipe`). O
+`data/raw/cpi_release_dates.csv` (15 linhas, 2025→2026) tem as datas de divulgação do
+CPI derivadas das **regras dos mercados do Polymarket** — só existe onde existe mercado.
+O G10c baixou o calendário **oficial do FRED** (release_id=10, confirmado por nome exato),
+**953 datas** (1949→2026, ~250 desde 2003), salvo **ao lado** em
+`data/raw/cpi_release_dates_fred.csv` (o atual NÃO foi sobrescrito). Motiva a variante de
+β por **event-study nos dias de divulgação**, que com 15 datas não roda de forma
+defensável e com o calendário completo roda.
+
+Conferência das 15 datas atuais contra o FRED: **12 batem, 3 divergem** — e as 3 são as
+tocadas pelo **shutdown de 2025**:
+- `2025-01-13` → FRED `2025-01-15` (dez/2024, +2 dias).
+- `2025-10-15` → FRED `2025-10-24` (set/2025, atraso +9 dias).
+- `2025-11-13` → FRED **não tem** nov/2025 (out/2025 pula de `10-24` p/ `12-18`).
+
+Divergência muda o **dia do evento** em medições já feitas/publicadas — por isso é decisão
+de grupo, não efeito colateral do pedido (o próprio `Felipe` marcou assim). Perguntas em
+aberto (trade-offs a decidir — NÃO decidido):
+- Adotar o FRED como fonte do `cpi_release_dates.csv` (troca de insumo do backtest)?
+- Se sim, refazer as medições que usaram `2025-10-15`/`2025-11-13`, ou congelar o
+  publicado e usar o FRED só daqui pra frente?
+- Tratar out/2025 (que o FRED não lista em nov) como remanejado p/ dez/2025 ou como buraco
+  declarado?
+
+Reportado ao `Felipe` em `docs/FOLLOWUP_G10_Paulo.md`. Lado dos dados (trocar arquivo /
+tratar mês de referência) é do `Paulo`; refazer o event-study é módulo do `Felipe`.
+**Decisão:** _(a registrar — grupo)_
+
+## 14. Fonte do `DGS1` (G10a) — fredgraph vs. API `series/observations` 🟡
+Levantado em 2026-08-08 (G10a). O pedido templou a URL da API
+`api.stlouisfed.org/fred/series/observations`, mas ela devolve valor com padding
+(`4.0600000000`) e ausência `"."` — **não** idêntico aos `fred_DTB3.csv`/`DGS10` (2 casas,
+ausência = campo vazio). Como "formato idêntico" é requisito e "dado cru não se normaliza",
+o `DGS1` foi baixado do **fredgraph** (a mesma fonte do G2/G8 que gerou os irmãos), saindo
+de fato idêntico. Mesma série, muda só a formatação. Confirmação pendente do `Felipe`:
+fredgraph serve, ou ele precisa da API literal (aí o arquivo não fica idêntico)? Não é
+troca de fonte de dado (é o mesmo FRED, mesma série) — é detalhe de formato. Reportado em
+`docs/FOLLOWUP_G10_Paulo.md`. **Decisão:** _(confirmação do `Felipe` — não bloqueia)_
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.

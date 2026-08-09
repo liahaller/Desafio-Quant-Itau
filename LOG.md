@@ -37,6 +37,14 @@ implementação do G10a: a API `observations` não é format-compatível com os 
 divergências do shutdown a ponderar). Fonte do G10a (fredgraph vs. API) — aguarda ok do
 Felipe. G6 e Decisões de reunião seguem.
 
+**Fecho de sessão (mesmo dia):** criado `docs/FOLLOWUP_G10_Paulo.md` — recado do `Paulo`
+ao `Felipe` levando a decisão do calendário CPI (3 perguntas concretas) + a confirmação da
+fonte do G10a. Registradas em `Decisoes_pendentes.md` a **Decisão 13 do `Paulo`** (troca do
+calendário CPI, 🔴 aberta — grupo) e a **Decisão 14 do `Paulo`** (fonte do DGS1, 🟡
+confirmação do Felipe, não bloqueia). Nenhuma fechada por conta própria. Estado do G10:
+tudo entregue/commitado/pushed; o único aberto é a decisão do Felipe/grupo — depois dela o
+`Paulo` executa o lado dos dados.
+
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 4.8.
 - **Contexto consumido:** ~45% da janela.
