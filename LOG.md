@@ -679,7 +679,18 @@ registrado como posição da Lia, não fechado (é decisão de grupo).
   6b pode estar produzindo o −0,40 (mercado ilíquido entra como estável e
   com erro futuro baixo, pelo mesmo midpoint congelado).
 - Entregar `c` + `ativa` até 13/08 (corte da decisão 10a do Felipe).
-- `git push` da branch `Lia` (commits `dd2025c` e `240d911` locais).
+- **Próximo passo recomendado:** testar o portão na view 2.2 (CPI) — o G5
+  tem 111 mercados de CPI contra 1 do FOMC, então o bloqueio pode ser só da
+  família FOMC. Se casar, a estabilidade deixa de ser provisória na view que
+  roda no backtest. Depois: implementar `calcular_omega` (ainda
+  `NotImplementedError`) e a seção do relatório sobre o Ω.
+- Dados dos outros branches ficaram extraídos em
+  `%TEMP%\omega_lia` (parquet do FOMC, G5, `poly_loader.py`) — refazer com
+  `git show origin/Paulo:<arquivo>` se a pasta sumir. `pyarrow` instalado.
+- `git push` da branch `Lia`: **feito** nesta sessão (`bd1c697`), só na
+  `Lia`. A Lia pediu push na `main` e voltou atrás quando a divergência de
+  numeração do `Decisoes_pendentes.md` entre os três branches foi
+  apontada — a `main` segue em `d4b9a28`.
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
