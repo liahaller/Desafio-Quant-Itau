@@ -708,3 +708,95 @@ registrado como posição da Lia, não fechado (é decisão de grupo).
 - **Tags:** `[PROMPT-CHAVE]` — a sessão depende de descobrir, ao tentar
   ligar o portão, que o insumo declarado como entregue não casa com a
   série que ele deveria julgar.
+
+## 2026-08-09 — Lia (segunda sessão: portão no CPI, régua fechada, `calcular_omega`)
+
+**Feito:**
+- **O G5 casa com a view 2.2.** 111/111 mercados, casamento por nome exato de
+  arquivo (`<mercado>_<tokenId>.json`), 6.360 slots de preço com volume,
+  **zero** truncamento do cap de 20k. O bloqueio do `PEDIDO_Paulo_G5_fomc.md`
+  era só da família FOMC — o pedido segue de pé para tirar a 2.3 do
+  provisório, mas parou de bloquear a entrega.
+- **2ª calibração, primeira com os quatro ingredientes**
+  (`lia/rodar_calibracao_cpi.py`): 19 mercados-mês de CPI, 1.198 slots na
+  grade de 12h, 18 eventos. Duas dimensões novas na grade, ambas resolvidas
+  pelo dado: agregação do volume entre faixas (soma × mínimo) e threshold do
+  portão em quantis da própria distribuição, nunca em valor absoluto cravado.
+- **A ressalva da 6f caiu: a estabilidade não era artefato do midpoint.** O
+  veto estrito move o spearman de −0,4615 para −0,4531 (delta +0,008, 6% da
+  amostra). O diagnóstico direto do viés da 6b: variação exatamente zero em
+  4,4% dos pares sem negociação contra 1,2% com — o congelamento existe
+  (3,7×), mas é raro, e o erro futuro médio é quase igual (0,032 × 0,035).
+- **O portão reprovou como score** (−0,03 a +0,14) e nenhum threshold
+  calibrado melhorou a régua; agregar por `minimo` veta 47% dos slots de 12h.
+  Sobrevive só o veto do slot sem nenhuma negociação, que é gratuito.
+- **Proximidade reprovou de novo**, +0,09 a +0,31, mesmo sinal invertido do
+  FOMC — replicação em view independente, 16 cortes. E **não** é redundante
+  com a estabilidade (ρ = −0,12 a −0,29), então a reprovação não é artefato
+  de sobreposição.
+- **Coerência ficou mais forte na 2.2** (−0,21 a −0,31) do que no FOMC
+  (−0,15/−0,18): a ressalva da 6c sobre falta de poder discriminante era
+  propriedade do recorte do Fed, como suspeitado. ⚠️ Mas correlaciona
+  **+0,37/+0,40** com a estabilidade — as duas que passaram punem
+  parcialmente a mesma coisa. Registrado, não resolvido.
+- **Quatro decisões fechadas pela dona** (6g): 6a a favor da variação total
+  (agora por **empate resolvido por parcimônia**, não por vitória — no CPI
+  cada candidata vence no alvo medido por ela mesma); portão = veto em zero
+  agregado por soma; proximidade sai da régua; normalização = **produto de
+  penalidades**, `c = ((1 + var_media)(1 + |soma − 1|)) ** nivel`.
+- **`calcular_omega` implementado** (`lia/omega.py`), substituindo o
+  `NotImplementedError`. Entrega `c` + `ativa` chaveados por
+  `bloco["view"]`, derivado em runtime. 22 testes novos, **55 na suíte**.
+- **Validado no dado real, através do `diagnostics_qualidade` do pipeline**
+  (não só em caso sintético): 601 decisões da 2.2, 90,3% ativas, 37 inativas
+  por veto de volume e 21 por ausência de par adjacente completo. Com
+  `nivel = 1`, `c` de 1,0016 a 2,7653 (mediana 1,0495, p95 1,2426); nunca
+  abaixo de 1, nunca NaN em view ativa.
+
+**Quebrou:** nada.
+
+**Defeito que a implementação evitou (vale para quem for integrar):** a
+`serie_janela` do `diagnostics` **não vem na grade completa** — o pipeline
+filtra as linhas sem nenhuma faixa precificada, então duas leituras vizinhas
+na lista podem estar a mais de um slot de distância. Sem reconstruir a grade
+de 12h antes do `.diff()`, um buraco viraria "uma variação" no lugar de duas
+ou três, que é exatamente o par que a 6e manda descartar. `pmf_da_serie_janela`
+reindexa; há teste dedicado.
+
+**Regra nova de escopo da Lia, registrada por afetar o que o Felipe recebe:**
+view sem nenhum par adjacente completo na janela sai **inativa**, não com
+`c = 1`. Não é o portão binário que a 6c proíbe — é ausência de medição,
+mesma classe do veto de liquidez.
+
+**Pendente:**
+- **Reunião: nível global do `c` + teto de alavancagem** (6d), uma vez só. A
+  forma não entra nessa conversa. Insumo: com `nivel = 1` a régua é suave
+  (mediana 1,05) e `nivel = 0` devolve He-Litterman puro.
+- Entregar `c` + `ativa` ao Felipe até 13/08 — **o código está pronto**;
+  falta acordar de onde ele passa o `volume_notional` (não existe campo de
+  volume no `diagnostics`; hoje é parâmetro separado, chaveado pela view).
+- G5 do FOMC (`PEDIDO_Paulo_G5_fomc.md`) segue pendente: sem ele a 2.3 não
+  tem portão e o número dela continua provisório. Deixou de ser bloqueio.
+- Seção do relatório sobre o Ω (item 3 da lista da dona) e robustez da
+  calibração com `erro_vs_resolucao` (item 4) — nenhum dos dois começou.
+- Decisão 9 (matriz de relação) segue aberta.
+- Dados dos outros branches em `%TEMP%\omega_lia`; refazer com
+  `git archive origin/Paulo <caminho> | tar -x -C <destino>` se sumir.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~60% da janela, estimativa.
+- **Prompt inicial (verbatim):** "o que falta fazer na minha parte?"
+- **Iterações até aceitar:** 1 nas quatro decisões (todas confirmadas na
+  recomendação), com um percalço de execução no meio.
+- **Erros da IA:** um, corrigido na sequência — uma substituição em massa no
+  arquivo de testes deixou parênteses desbalanceados em 11 testes; o arquivo
+  foi reescrito com um helper que elimina a repetição que causou o erro.
+  Nenhum erro no resultado: a suíte fecha em 55 testes verdes e a régua foi
+  validada contra o `diagnostics` real, não só contra caso sintético.
+- **Decisões escaladas:** 6g (quatro decisões fechadas pela dona; nível
+  global segue para a reunião).
+- **Tags:** `[PROMPT-CHAVE]` — a sessão depende de testar a hipótese que a
+  rodada anterior deixou em aberto em vez de aceitá-la: o ingrediente mais
+  forte da régua estava sob suspeita de ser artefato de medição, e a
+  diferença entre confirmar e refutar isso mudava o que seria entregue.

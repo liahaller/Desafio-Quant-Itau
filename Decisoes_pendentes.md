@@ -124,7 +124,7 @@ Como volume, estabilidade, convergência e proximidade de evento viram um númer
     trabalho do Ω. Ordem proposta: entra o `c` → mede-se Σ|w| de novo →
     só então se decide o teto. **Em aberto, para reunião.**
 
-### 6a. Colapso PMF multi-bucket → `p` para o `score_estabilidade` 🟡
+### 6a. Colapso PMF multi-bucket → `p` para o `score_estabilidade` 🟢
 
 Levantada pelo Felipe (07/08/2026): `dp_variacao_janela` foi definido como
 desvio-padrão das diferenças `p_t − p_{t−1}`, mas em mercado multi-bucket
@@ -273,7 +273,8 @@ as duas rodam `carry_missing` (D6.1) e `daily_preopen`.
   quantidade no sistema é a classe de problema já fechada no dict.
 
 **Delimitação do 6a:** fechado quanto ao **lugar**; a **forma** segue aberta
-(quatro candidatas: 2 formas × 2 grades).
+(quatro candidatas: 2 formas × 2 grades). ✅ **Forma fechada em 09/08 pela
+dona** — ver 6g.
 
 ### Nota de encanamento — numeração divergente entre branches
 
@@ -355,3 +356,87 @@ baixo (o midpoint continua congelado) — o teste confirmaria o ingrediente
 pelo artefato. Só o G5 estendido separa as duas explicações. Enquanto isso,
 o número é provisório e não sustenta sozinho a entrada da estabilidade na
 régua.
+
+### 6g. Segunda calibração — view 2.2 (CPI), com portão. Régua fechada (09/08/2026) 🟢
+
+Rodada por `lia/rodar_calibracao_cpi.py` sobre os 19 mercados-mês de CPI
+(`clob_exploracao` + `g5_volume_no_tempo.csv`, `origin/Paulo`): 1.198 slots na
+grade de 12h, 18 eventos. **É a primeira rodada com os quatro ingredientes**:
+o G5 casa 111/111 com os mercados da 2.2 (chave por nome exato de arquivo),
+6.360 slots de preço com volume, nenhum truncamento do cap de 20k. O bloqueio
+do `PEDIDO_Paulo_G5_fomc.md` era só da família FOMC — o pedido segue de pé
+para tirar a 2.3 do provisório, mas deixou de bloquear a entrega.
+
+| Ingrediente | spearman (12h) | monotônica | Leitura |
+|---|---|---|---|
+| estabilidade (variação total, j5) | −0,46 | ✅ | melhor candidata, de novo |
+| estabilidade (\|ΔE\|, j5) | −0,42 | ✅ | perde no alvo dela, ganha no próprio |
+| coerência | −0,21 a −0,31 | ✅ | **mais forte que no FOMC** (−0,15/−0,18) |
+| portão de volume (qualquer threshold) | −0,03 a +0,14 | — | reprovado como score |
+| proximidade | +0,09 a +0,31 | ✗ | **reprovada de novo, sinal invertido** |
+
+**Grade e janela que o dado escolheu:** 12h (vence 24h em todos os cortes) e
+**5 variações** (vence 10 e 20 em todos os cortes das duas views). Atenção ao
+off-by-one: 5 variações = 6 slots, então `janela_slots = 6` no `diagnostics`.
+
+**O achado que destrava a entrega — a estabilidade não era artefato.** A
+ressalva da 6f (o −0,40 do FOMC podendo ser o viés do midpoint da 6b) foi
+testada e **cai**:
+- Veto estrito (volume > 0, agregado por soma): spearman −0,4615 → −0,4531.
+  Delta +0,008, ao custo de 6% da amostra.
+- Diagnóstico direto: variação exatamente zero em **4,4%** dos pares sem
+  negociação contra **1,2%** com negociação — o congelamento existe (3,7×) mas
+  é raro, e o erro futuro médio é quase igual (0,032 sem × 0,035 com).
+- Threshold calibrado (q10/q25/q50) só **piora** (delta até +0,14) e come
+  amostra; agregar por `minimo` entre faixas veta 47% dos slots de 12h,
+  porque é comum uma faixa não negociar em meio dia.
+
+**Quatro decisões fechadas pela dona nesta sessão:**
+
+1. **6a a favor da candidata (a), variação total.** ⚠️ Mudança de fundamento:
+   no FOMC ela vencia em todos os cortes; no CPI as duas **empatam** — cada
+   uma vence no alvo medido por ela mesma (circularidade do alvo). O
+   desempate passa a ser o do protocolo: menos parâmetros e independência do
+   balde aberto. O relatório registra "empate resolvido por parcimônia", não
+   "vitória estatística".
+2. **Portão de volume: veto no slot sem NENHUMA negociação, agregado por
+   soma das faixas.** Sem threshold calibrado — o dado não sustenta nenhum, e
+   o veto em zero é gratuito. Preserva a semântica da 6b e a separação
+   `0` × `NaN` combinada com o Paulo em 07/08 (`NaN` não veta).
+3. **Proximidade sai da régua.** Reprovou nas duas views, 16 cortes, sempre
+   com o mesmo sinal invertido. Pelo protocolo de 08/07, candidata que
+   reprova cai; entrar com o sinal trocado seria escolher sinal depois de ver
+   o dado, que é o que a trava da 6d evita. O achado (**a probabilidade se
+   cristaliza à medida que a decisão chega**) vai ao relatório como
+   resultado, e fica como candidata a versão futura.
+4. **Normalização score → `c`: produto de penalidades.**
+   ```
+   c = ( (1 + var_media) · (1 + |soma_faixas − 1|) ) ** nivel
+   ```
+   Cada defeito multiplica a incerteza por (1 + tamanho do defeito). `c ≥ 1`
+   por construção — sem piso, teto ou truncamento, e sem divisão por zero. É
+   transformação monótona dos scores calibrados, então o teste de
+   monotonicidade continua valendo (ele só enxerga ordem).
+   **A forma simétrica `(1 − x)` foi medida e descartada:** o fator de
+   coerência fica **negativo em 7 de 1.139 linhas** do CPI (soma do livro
+   chega a 1,725), e consertar exigiria truncar em zero — um segundo portão
+   binário, que o compromisso da 6c com o Felipe proíbe.
+
+**Régua de produção, implementada em `lia/omega.py`** (55 testes na suíte da
+Lia). Medido no dado real, através do `diagnostics_qualidade` do pipeline —
+601 decisões da 2.2: 90,3% ativas, 37 inativas por veto de volume, 21 por
+ausência de par adjacente completo. Com `nivel = 1`: `c` de 1,0016 a 2,7653,
+mediana 1,0495, p95 1,2426.
+
+**Regra nova, de escopo da Lia, registrada porque afeta o que o Felipe
+recebe:** view sem nenhum par adjacente completo na janela sai como
+**inativa**, não com `c = 1`. Sem par não há como qualificar a leitura, e
+entregar confiança máxima onde nada foi medido é o pior erro disponível. Não
+é o portão binário que a 6c proíbe — não é o `score_coerencia` vetando, é
+ausência de medição, mesma classe do veto de liquidez.
+
+**Continua aberto (é o que vai à reunião, pela 6d):** o **nível global** e o
+**teto de alavancagem**, fechados juntos e uma vez só. Insumo para a
+conversa: com `nivel = 1` a régua é suave (mediana 1,05), então o `c` cru
+quase não modula — `nivel` é o botão, e `nivel = 0` devolve He-Litterman
+puro. A forma acima **não** é revisitada por resultado de backtest.
