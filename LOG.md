@@ -47,11 +47,11 @@ tudo entregue/commitado/pushed; o único aberto é a decisão do Felipe/grupo �
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 4.8.
-- **Contexto consumido:** ~45% da janela.
+- **Contexto consumido:** ~55% da janela.
 - **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/PEDIDO_G10_Paulo.md' faca isso direitinho, exatamente da forma que ele pediu. quando terminar, cheque se fez tudo que ele pediu e exatamente da mesma forma. essa parte é essencial e nao pode ter erros."
-- **Iterações até aceitar:** 1 rodada + 1 correção do G10a (fredgraph vs. API por causa do formato).
-- **Erros da IA:** 1ª versão do G10a usou a API `observations` literal e o formato saiu não-idêntico (padding + `"."`); detectado na conferência de formato contra os irmãos e corrigido para fredgraph antes da entrega.
-- **Decisões escaladas:** — (nenhuma nova; a fonte do G10a e a troca do CSV do CPI foram reportadas ao Felipe, não decididas).
+- **Iterações até aceitar:** G10 em ~3 rodadas — (1) execução dos três + correção do G10a (fredgraph vs. API por formato); (2) correção do hash no entregável; (3) follow-up ao Felipe + Decisões 13/14 + fecho de sessão.
+- **Erros da IA:** dois, ambos pegos na verificação: (a) 1ª versão do G10a usou a API `observations` literal e o formato saiu não-idêntico (padding + `"."`) — corrigido para fredgraph; (b) o `git commit --amend` que preencheu o hash gerou commit novo, então o entregável citou um hash morto (`0a0daea`) — corrigido para o commit real `b19c440` na conferência final.
+- **Decisões escaladas:** 2 — Decisão 13 do `Paulo` (troca do calendário CPI, 🔴 grupo) e Decisão 14 do `Paulo` (fonte do DGS1, 🟡 confirmação do Felipe). Ambas reportadas em `docs/FOLLOWUP_G10_Paulo.md`, nenhuma fechada por conta própria.
 - **Tags:** `[PROMPT-CHAVE]` (execução completa do G10 — reprodutibilidade).
 
 ---
