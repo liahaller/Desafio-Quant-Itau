@@ -291,3 +291,343 @@ seção 3.
   `Decisoes_pendentes.md`; a autorização de merge foi pontual, não
   metodológica).
 - **Tags:** —
+
+## 2026-07-30 — Lia (fechamento da sessão de 20/07)
+
+**Feito:**
+- Sessão de 20/07 (levantamento de API, Decisão 9, demo da matriz de
+  relação, mensagem de achados preparada para o Paulo) retomada e
+  encerrada. Lia confirmou que já conversou com o Paulo sobre os
+  achados — conteúdo/resultado da conversa não relatado nesta sessão.
+- Revisado estado atual de `Decisoes_pendentes.md` e `LOG.md` antes de
+  fechar: nenhuma decisão nova surgiu.
+
+**Quebrou:** nada.
+
+**Pendente:** as mesmas da entrada de 20/07 (Decisão 6 esperando volume
+  real do Paulo; Decisão 9 aberta; itens 2–5 da lista "LIA" em
+  `Para_Paulo_e_Lia.md`).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Fable 5.
+- **Contexto consumido:** ~40% da janela, estimativa (sessão contínua
+  desde 20/07).
+- **Prompt inicial (verbatim):** "ja conversamos. finalizar sessao"
+- **Iterações até aceitar:** 1.
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** —.
+- **Tags:** —
+
+## 2026-08-05 — Lia
+
+**Feito:**
+- Respondidas as quatro perguntas do Felipe em
+  `Dump/trocas/Pergunta_Lia_omega_volume.md` (branch `Felipe`) — resposta
+  em `RESPOSTA_Pergunta_Lia_omega_volume.md` (raiz, branch `Lia`):
+  1. **Volume (destrava o G5 do Paulo):** série em passo de 12h com
+     `notional_usd` + `n_trades` por slot e `t_cobertura_min` por mercado,
+     escopo nas views ativas (2.2, 2.3, B). Total lifetime recusado por
+     lookahead (contém volume posterior à data da decisão) e por ser
+     constante no tempo.
+  2. **`diagnostics`:** lista de campos fechada do meu lado — série crua da
+     janela + escalares de qualidade + `dias_ate_evento` + `soma_faixas`;
+     desconhecido = NaN, nunca 0.
+  3. **δ:** aceito fechar junto com a escala do Ω, com correção de alvo —
+     δ = 3,0 é medido, não é parâmetro livre; o que precisa fechar junto é
+     o **teto de alavancagem**, que hoje faz o trabalho do Ω.
+  4. **Régua `Ω = c·diag(P·τΣ·Pᵀ)`:** aceita — é a mesma âncora do
+     protocolo de 08/07. Sinalizada a **convenção invertida** (`c_felipe =
+     1/c_lia`) e proposta a entrega como vetor `c` + máscara `ativa`, com
+     veto removendo a view em vez de virar `c` grande.
+- Achado do Felipe (faixas de mercados de buckets não somam 1) aceito como
+  **quarto ingrediente candidato** (`score_coerencia = −|soma_faixas − 1|`),
+  sujeito ao mesmo teste de monotonicidade dos outros — sem exceção ao
+  protocolo.
+- `Decisoes_pendentes.md`: Decisão 6 ganhou o bloco de especificação de
+  interface e insumos. **A decisão continua aberta** — o que foi
+  especificado são entradas e saída, não a forma funcional.
+
+**Quebrou:** nada.
+
+**Observações para os donos:**
+- **Felipe:** o argumento `confianca` de `omega_fallback` (`src/market_inputs.py`)
+  tem nome invertido em relação ao que o número faz (>1 = *menos* confiança).
+  Sugerida a renomeação para `incerteza`/`mult_incerteza`; módulo dele,
+  decisão dele — não editado.
+- A numeração de `Decisoes_pendentes.md` **divergiu entre branches**: as
+  seções 9 e 10 da branch `Felipe` (maratona de 04/08 e decisões do
+  backtest de 05/08) não são as mesmas da branch `Lia` (9 = matriz de
+  relação). Por isso o registro desta sessão entrou como contexto na
+  Decisão 6, sem criar seção nova — reconciliar a numeração é tarefa de
+  merge, não desta sessão.
+
+**Pendente:**
+- Enviar `RESPOSTA_Pergunta_Lia_omega_volume.md` ao Felipe e ao Paulo
+  (o item 1 é o que destrava o G5).
+- `c_i` real continua dependendo do volume histórico (G5). Se atrasar,
+  entregar o `c` sem o portão de volume — a estrutura multiplicativa
+  permite acrescentar o portão depois sem mudar a interface.
+- Reunião: escala do `c` + teto de alavancagem na mesma conversa.
+- Decisão 9 (matriz de relação) segue aberta.
+- `git push` da branch `Lia` continua não feito (pendência desde 30/07).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~25% da janela, estimativa.
+- **Prompt inicial (verbatim):** "responda a pergunta desse arquivo"
+  (seguido do conteúdo de `Pergunta_Lia_omega_volume.md` colado).
+- **Iterações até aceitar:** 1 — a IA levantou o contexto (arquivo do
+  Felipe, `market_inputs.py`, G5 do Paulo, protocolo de 08/07), apresentou
+  três escolhas com recomendação (granularidade do volume, tratamento do
+  veto, formato do `diagnostics`), a Lia confirmou as três e a resposta foi
+  escrita de uma vez.
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** 6 (especificação de interface e insumos
+  registrada; forma funcional segue aberta). Teto de alavancagem e escala
+  do `c` remetidos à reunião, sem seção nova por causa da divergência de
+  numeração entre branches.
+- **Tags:** `[PROMPT-CHAVE]` — a resposta depende de a IA reconstruir o
+  contexto cruzando três branches (`Felipe`, `Paulo`, `Lia`); bom candidato
+  ao teste de reprodutibilidade.
+
+## 2026-08-07 — Lia (segunda rodada com o Felipe)
+
+**Feito:**
+- Respondido o retorno do Felipe ("o `diagnostics` está no ar") em
+  `RESPOSTA2_Felipe_diagnostics_6a.md` (raiz, branch `Lia`):
+  1. **Decisão 6a (colapso PMF→p):** aceita a saída 1 — o colapso é
+     calculado do lado da Lia a partir de `serie_janela`;
+     `dp_variacao_janela` fica `NaN` de propósito. Forma funcional **não**
+     fechada: grade de duas candidatas (variação total entre PMFs
+     consecutivas · desvio-padrão das diferenças de `E[·]`), decidida pelo
+     teste de monotonicidade.
+  2. **Premissa nova e não óbvia:** o colapso roda sobre a PMF
+     **renormalizada**. Sobre a PMF crua, ele misturaria movimento de
+     opinião com desarranjo do livro, e a régua multiplicativa puniria a
+     mesma coisa duas vezes — `score_estabilidade` e `score_coerencia`
+     ficariam correlacionados e isso apareceria no teste como confirmação
+     mútua, não como erro. Era esse o motivo de pedir `soma_faixas` cru
+     junto da série crua.
+  3. **Pedido de interface:** `c` e `ativa` entregues como `dict[str, ...]`
+     chaveados pela view, em vez de vetores posicionais — a
+     `aplicar_veto` casa os índices contra uma lista com `None`
+     intercalados da cascata, e deslocamento de índice não levanta
+     exceção, produz carteira plausível e errada. Decisão dele (módulo
+     dele); alternativa oferecida: manter vetor + validação por nomes.
+  4. **Verificação pedida a ele:** com `idade_ultimo_ponto_h = 0.0`,
+     confirmar que o último ponto da `serie_janela` é o último slot
+     **fechado antes** do timestamp de decisão, não o slot que o contém —
+     no segundo caso há lookahead de meio slot, invisível no retorno e
+     capaz de inflar a estabilidade medida.
+  5. **Dimensionamento com k = 1 view:** o teste de monotonicidade
+     continua válido (é sobre slots no tempo, não entre views); o que fica
+     sem amostra é a ordenação *entre* views. Com uma view, `c` e teto de
+     alavancagem são a mesma alavanca — reforça a ordem já acordada.
+  6. **Ressalva registrada antes do resultado:** como `c ≥ 1`, o Ω só
+     melhora o backtest por subtração (no limite a carteira vira o
+     benchmark). Se depois do `c` a carteira ainda perder do SPY, o
+     problema é a view 2.2, não o dimensionamento de risco.
+- Confirmados sem ressalva os pontos 1a (medição na série crua, antes do
+  `carry_missing`/`daily_preopen`), 1b (truncar `n_slots_esperados` pelo
+  nascimento do mercado) e 1c (`janela_slots = None`).
+- Registrada a semântica corrigida do campo de buracos: mede **quanta
+  imputação houve**, não quanto dado faltou ao modelo — o `carry_missing`
+  roda entre a série crua e a view.
+- `Decisoes_pendentes.md`: nova subseção **6a** dentro da Decisão 6 (lugar
+  resolvido, forma funcional aberta).
+
+**Quebrou:** nada.
+
+**Aceito pelo Felipe nesta rodada** (do que a Lia pediu em 05/08):
+`omega_fallback(..., confianca=)` renomeado para `incerteza=`; veto
+implementado como view que sai (`bl_integration.aplicar_veto`), não como Ω
+gigante; G5 despachado ao Paulo com a spec de volume transcrita; ordem
+"entra o `c` → mede Σ|w| → decide o teto" aceita para a reunião.
+
+**Pendente:**
+- Implementar o colapso PMF→p (duas candidatas) e rodar o teste de
+  monotonicidade nos três ingredientes com dado (estabilidade,
+  proximidade, coerência) — a 2.2 é a única view com dado hoje.
+- Entregar `c` + `ativa` sem o portão de volume se o G5 demorar.
+- `c_i` completo segue dependendo do G5 (volume) com o Paulo.
+- Reunião: escala do `c` + teto de alavancagem; forma funcional da 6a
+  depende da calibração, não de reunião.
+- Decisão 9 (matriz de relação) segue aberta; `git push` da branch `Lia`
+  continua não feito.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~40% da janela, estimativa (sessão contínua com
+  a rodada de 05/08).
+- **Prompt inicial (verbatim):** "o felipe me respondeu com essa mensagem:"
+  (seguido da mensagem dele colada).
+- **Iterações até aceitar:** 1 — duas escolhas apresentadas com
+  recomendação (onde calcular o colapso · qual regra), ambas confirmadas,
+  resposta escrita de uma vez.
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** 6a (nova subseção; lugar resolvido, forma
+  funcional aberta).
+- **Tags:** `[PROMPT-CHAVE]` — a resposta depende de perceber que colapsar
+  a PMF crua correlaciona dois ingredientes da régua multiplicativa; é o
+  tipo de achado que decide se o teste de monotonicidade mede o que
+  promete.
+
+## 2026-08-07 — Lia (terceira rodada com o Felipe)
+
+**Feito:**
+- Respondido o retorno do Felipe (verificação do lookahead + dict
+  implementado + G5/DFF chegando) em
+  `RESPOSTA3_Felipe_midpoint_portao.md` (raiz, branch `Lia`).
+- **Achado principal, e não estava na lista de nenhum dos dois:** a série
+  do `/prices-history` é **midpoint amostrado no instante t**, não último
+  trade nem agregado. Logo a série de preço nunca fica vazia por falta de
+  negociação — mercado sem trade segue reportando midpoint, e midpoint
+  parado é lido pelo `score_estabilidade` como **estabilidade perfeita**.
+  Sem o portão de volume, o ingrediente daria confiança **máxima** ao
+  mercado mais ilíquido: inversão sistemática de sinal, não ruído.
+  Consequência: **o portão de volume vira pré-condição do
+  `score_estabilidade`**, e fica **revogado** o registro de 05/08 de que o
+  `c` poderia ser entregue sem o portão se o G5 atrasasse (o certo seria
+  entregar sem o ingrediente de estabilidade).
+- Verificação do lookahead encerrada sem ação: leitura das 12:00 UTC,
+  execução na abertura de NY (13:30/14:30 UTC) — a leitura é 1,5–2,5 h
+  anterior à execução.
+- **6c (fronteira com a cascata do Felipe):** o piso "soma crua < 0,9
+  desativa a view" (D12 do `Felipe`) e o `score_coerencia` **não** são
+  dupla contagem — os regimes são disjuntos (view desativada nem chega ao
+  Ω). Compromisso registrado dos dois lados: o piso não vira rampa e o
+  score não ganha portão binário. Assimetria a favor: o corte dele é só
+  por baixo, o score é bilateral, então soma 1,32 só é pega pelo score.
+- **G5:** pedida a separação — truncamento do cap = `NaN` (não veta),
+  pré-primeiro-trade = `0` (veta). O item do midpoint é o que decide: nos
+  slots pré-trade o preço é o midpoint semeado na criação, valor inicial
+  do book e não probabilidade negociada.
+- **Chave do dict:** aceito o identificador longo (`"2.2_inflacao"` etc.),
+  que sai de `diagnostics["view"]`. O apelido curto do exemplo de 07/08
+  foi descuido de escrita, não pedido de renomeação — um segundo nome para
+  a mesma coisa recriaria a classe de erro que o dict fechou.
+- **6d (disciplina de calibração):** proposta a separação forma × nível
+  para evitar overfit em dois passos, agora que o backtest ficou positivo
+  (+2,68 pp) e um `c` alto passou a ser custo em vez de conserto.
+- `Decisoes_pendentes.md`: novas subseções **6b**, **6c**, **6d** e a nota
+  de numeração divergente entre branches.
+
+**Quebrou:** nada.
+
+**Notícias recebidas nesta rodada** (contexto que muda dimensionamento):
+`DFF` entregue e view 2.3 ligada — k = 2 em 64% dos pregões e 2.3 ativa em
+87%, então a calibração *entre* views passa a ter amostra (ressalva de
+07/08 retirada, com nota de que são dois mercados, não vinte). G5 entregue:
+121 mercados, 12.928 slots, `notional_usd` + `n_trades` + `t_cobertura_min`.
+Backtest reancorado: +2,68 pp de excesso sobre o SPY com teto no tilt
+(contra −7,91 pp do teto de carteira, mesma alavancagem 1,90) — o número
++15,7% × +30,1% que motivou o parágrafo de honestidade de 07/08 está duas
+medições atrás.
+
+**Observação para o Felipe (módulo dele, não editado):** pedido que a lista
+de chaves válidas da `aplicar_veto` seja derivada de `view_results` em
+runtime, não de constante escrita à mão — senão o nome da view passa a
+viver em três lugares e a validação cobre dois. Registrada também a
+implicação do achado dele sobre os testes que nunca rodavam: "suíte verde"
+naqueles arquivos não era evidência antes do conserto.
+
+**Pendente:**
+- Implementar o colapso PMF→p (duas candidatas) sobre a `serie_janela`
+  renormalizada.
+- Portão de volume com o G5, assim que a separação `0` × `NaN` estiver no
+  arquivo do Paulo.
+- Rodar o teste de monotonicidade nos quatro ingredientes, agora com duas
+  views.
+- Entregar `c` + `ativa` (dicts chaveados por `diagnostics["view"]`).
+- Reunião: nível global do `c` + teto de alavancagem (uma vez só, ver 6d);
+  forma do `c` não entra nessa conversa.
+- Decisão 9 (matriz de relação) segue aberta; `git push` da branch `Lia`
+  continua não feito.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~55% da janela, estimativa (sessão contínua desde
+  05/08).
+- **Prompt inicial (verbatim):** "o felipe me respondeu com essa mensagem:"
+  (seguido da mensagem dele colada).
+- **Iterações até aceitar:** 1, com um percalço de processo: a primeira
+  chamada de escolhas foi rejeitada por engano e a Lia confirmou em
+  seguida a opção recomendada nas duas perguntas.
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** 6b, 6c e 6d (novas subseções da Decisão 6).
+- **Tags:** `[PROMPT-CHAVE]` — a rodada depende de perceber que "a série é
+  midpoint" implica que mercado ilíquido parece perfeitamente estável; é
+  uma inversão de sinal que nenhuma das duas partes tinha na lista e que o
+  teste de monotonicidade não pegaria sozinho.
+
+## 2026-08-07 — Lia (quarta rodada com o Felipe)
+
+**Feito:**
+- Respondida a correção do Felipe
+  (`RESPOSTA3_Lia_portao_renormalizacao.md`, recebido por fora do repo) em
+  `RESPOSTA4_Felipe_buracos_calibracao.md` (raiz, branch `Lia`).
+- **A correção dele estava certa no diagnóstico:** a `serie_janela` crua
+  não reproduz o `p` da view (entre as duas rodam `carry_missing` e
+  `daily_preopen`). Das três consequências que ele listou, duas
+  incorporadas e uma resolvida pelo caminho oposto ao proposto:
+  - **`ffill` recusado.** Repetir a última leitura injeta **variação zero**
+    — mercado esburacado pareceria mais estável. Mesma inversão de sinal do
+    midpoint (6b) por outro caminho, e pior: `ffill` só erra num sentido, o
+    que é viés, não imprecisão, e a monotonicidade não distingue viés de
+    sinal. Regra adotada: **linha incompleta não entra** no cálculo de
+    variação; o buraco segue custando confiança pelo canal próprio.
+  - **Passo de tempo:** aceito que 12 h e 24 h são réguas diferentes;
+    entram como dimensão da grade (2 formas × 2 grades).
+  - **Dias degenerados:** aceito o recorte em produção (é automático),
+    **recusado na calibração** — o alvo do teste é o erro da probabilidade,
+    que existe mesmo sem view, e livro degenerado é a condição que deve
+    gerar score baixo. O artefato é o sinal.
+- **Consequência do número que ele mandou** (27 dias degenerados de 801, 24
+  com soma < 0,5, todos fora da janela do v1): a calibração passa a rodar
+  sobre a **história completa dos mercados (801 dias)**, não sobre os 374
+  pregões do backtest — legítimo pela trava do 6d, e é o que dá poder
+  discriminante ao `score_coerencia`. A faixa estreita da 2.3 era
+  propriedade do recorte, não do mercado.
+- Dispensada a oferta de `serie_janela_tratada`: a série tratada é
+  inutilizável para o que o score mede.
+- `dp_variacao_janela` não será consumido nem nas views binárias — mesma
+  quantidade calculada por um único caminho.
+- `Decisoes_pendentes.md`: nova subseção **6e**; delimitação registrada de
+  que o 6a fechou o **lugar**, não a **forma**.
+
+**Quebrou:** nada.
+
+**Fechado pelo Felipe nesta rodada:** chaves derivadas de `view_results` em
+runtime (já era assim) + `VIEWS_ATIVAS` desatualizada apagada do
+`src/config.py` (constante escrita à mão que ninguém lia e ainda listava a
+view B); compromisso do 6c escrito em dois lugares do lado dele; G5
+repassado ao Paulo como D12 do branch `Paulo`; protocolo anti-overfit
+registrado como posição da Lia, não fechado (é decisão de grupo).
+
+**Pendente:**
+- Implementar o colapso (linha incompleta fora, sem `ffill`, PMF
+  renormalizada) e rodar a monotonicidade nas quatro candidatas sobre os
+  801 dias.
+- Portão de volume quando o Paulo aplicar a separação `0` × `NaN`.
+- Entregar `c` + `ativa`.
+- Confirmar com o Felipe/Paulo se `polymarket_fed_reunioes.parquet` é o
+  caminho certo para os 801 dias.
+- Reunião: nível global do `c` + nível e escopo do teto (6d).
+- Decisão 9 (matriz de relação) aberta; `git push` da branch `Lia` ainda
+  não feito.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~70% da janela, estimativa (sessão contínua desde
+  05/08).
+- **Prompt inicial (verbatim):** caminho do arquivo recebido por WhatsApp
+  (`.../transfers/2026-32/RESPOSTA3_Lia_portao_renormalizacao.md`), sem
+  texto adicional.
+- **Iterações até aceitar:** 1 (uma escolha apresentada — imputar ×
+  descartar linha incompleta — confirmada na recomendação).
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** 6e.
+- **Tags:** `[PROMPT-CHAVE]` — a rodada depende de reconhecer que a
+  correção do Felipe estava certa no diagnóstico e errada no remédio, e que
+  o remédio proposto reintroduzia por outra porta a mesma inversão de sinal
+  identificada na rodada anterior.
