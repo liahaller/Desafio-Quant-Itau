@@ -315,3 +315,43 @@ Enquanto esses três não fecham, qualquer resultado da matriz é exploratório/
 ---
 
 **Próximo passo:** voltar para a Decisão 1.
+
+### 6f. Primeira rodada de calibração com dado real (09/08/2026) 🟡
+
+Rodada por `lia/rodar_calibracao.py` sobre as 18 reuniões do FOMC
+(`polymarket_fed_reunioes.parquet`, `origin/Paulo` em `033e0d8`): 3.905
+slots na grade de 12h, 1.952 na de 24h. **Dois ingredientes**, não quatro —
+o portão de volume ficou de fora porque o G5 não alcança os mercados do
+FOMC (ver `PEDIDO_Paulo_G5_fomc.md`), e sem portão o `score_estabilidade`
+não é interpretável (6b).
+
+Resultado, estável nas 8 combinações (2 grades × 2 alvos × 2 horizontes):
+
+| Ingrediente | spearman | monotônica | Leitura |
+|---|---|---|---|
+| estabilidade (variação total) | −0,31 a −0,40 | ✅ | melhor candidata em **todos** os cortes |
+| estabilidade (\|ΔE\|) | −0,29 a −0,36 | ✅ | perde para a variação total em todos |
+| coerência | −0,15 a −0,18 | ✅ | mais fraco, sinal correto, consistente |
+| proximidade | **+0,09 a +0,22** | ✗ | **reprovada, com o sinal invertido** |
+
+**Decide a 6a a favor da candidata (a), variação total:** vence a (b) em
+todos os cortes, tem menos parâmetros e não depende do balde aberto — os
+três critérios apontam para o mesmo lado, sem precisar de desempate.
+**A confirmar pela dona antes de virar decisão fechada.**
+
+**Achado que contraria o protocolo de 08/07:** a proximidade tem o sinal
+oposto ao suposto. Longe da reunião o mercado se move **mais**, não menos —
+a probabilidade se cristaliza à medida que a decisão chega. Duas saídas, em
+aberto: (i) o ingrediente sai da régua, pelo protocolo (candidata que
+reprova cai); (ii) entra com o sinal invertido, como hipótese nova e
+declarada — proximidade do evento passa a **somar** confiança. Escolher o
+sinal depois de ver o dado exige cuidado com o 6d; a favor de (ii) está o
+fato de haver mecanismo econômico, não só ajuste.
+
+⚠️ **Ressalva sobre a estabilidade nesta rodada:** o spearman de −0,40 pode
+estar inflado pelo próprio viés que a 6b descreve. Sem o portão, mercado
+ilíquido entra como "estável" (midpoint congelado) **e** com erro futuro
+baixo (o midpoint continua congelado) — o teste confirmaria o ingrediente
+pelo artefato. Só o G5 estendido separa as duas explicações. Enquanto isso,
+o número é provisório e não sustenta sozinho a entrada da estabilidade na
+régua.
