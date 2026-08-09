@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-08-08 — Paulo — G10 (DGS1 · rótulo baldes payrolls · calendário CPI oficial)
+
+**O que foi feito:** executado o `PEDIDO_G10_Paulo.md` inteiro, na ordem G10a→G10b→G10c,
+ao vivo. Três scripts novos, entregável em `docs/RESPOSTA_G10_Paulo.md`.
+
+- **G10a — `DGS1`:** `scripts/g10a_fred_dgs1.py`. `data/raw/fred_DGS1.csv` — **16.853
+  linhas**, 1962-01-02→2026-08-06, **719 dias sem leitura** (campo vazio). Vértice de 1 ano
+  da view B. **Escolha de fonte reportada:** o pedido templou a API `series/observations`,
+  mas ela devolve valor com padding (`4.0600000000`) e ausência `"."` — NÃO idêntico aos
+  `fred_DTB3/DGS10` (2 casas, ausência = campo vazio). Como "idêntico" é requisito e não se
+  normaliza dado cru, usei o **fredgraph** (mesma fonte do G2/G8) → formato de fato idêntico.
+  Mesma série, muda só a formatação; se preferir a API, é 1 linha. Reportado no entregável.
+- **G10b — rótulo dos baldes:** `scripts/g10b_payrolls_bucket_labels.py`. Partindo do
+  `payrolls_polymarket_markets.csv` (33, já US-only), `gamma /events?slug=`, 1 linha por
+  balde → `data/raw/payrolls_bucket_labels.csv`, **182 linhas** (= soma dos `n_buckets`,
+  bate). Colunas `slug_mercado, token_id, outcome, slug_desfecho, familia`. `token_id`=
+  `clobTokenIds[0]` **casa 182/182** com os JSONs do G9b. `outcome`=`groupItemTitle` cru;
+  binários sem grupo → `outcomes`. Nenhum mercado sem rótulo. Todos os 26 multi-bucket têm
+  ponta aberta nas duas extremidades (listado).
+- **G10c — calendário oficial do CPI:** `scripts/g10c_cpi_calendar.py`. `release_id` do CPI
+  = **10**, confirmado por **nome exato** em `/fred/releases` (o 345 "Research CPI" foi
+  descartado). `data/raw/cpi_release_dates_fred.csv` — **953 linhas**, 1949-03-24→2026-12-10
+  (~250 desde 2003). **NÃO** sobrescrevi o `cpi_release_dates.csv`. Conferência com as 15
+  atuais: **12 batem, 3 divergem** — `2025-01-13`(FRED `01-15`), `2025-10-15`(FRED `10-24`,
+  shutdown +9d), `2025-11-13`(FRED não tem nov/2025; pula p/ `12-18`, shutdown). Reportado
+  como aviso ANTES de qualquer troca, como o Felipe pediu.
+
+**O que quebrou:** nada de código. Sonda inicial deu DNS-fail no sandbox e FRED deu 000
+transitório; ambos resolvidos rodando com rede (fora do sandbox). Achado que mudou a
+implementação do G10a: a API `observations` não é format-compatível com os `fred_*.csv`.
+
+**Pendente:** trocar `cpi_release_dates.csv` pelo `_fred.csv` (decisão do grupo — 3
+divergências do shutdown a ponderar). Fonte do G10a (fredgraph vs. API) — aguarda ok do
+Felipe. G6 e Decisões de reunião seguem.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~45% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/PEDIDO_G10_Paulo.md' faca isso direitinho, exatamente da forma que ele pediu. quando terminar, cheque se fez tudo que ele pediu e exatamente da mesma forma. essa parte é essencial e nao pode ter erros."
+- **Iterações até aceitar:** 1 rodada + 1 correção do G10a (fredgraph vs. API por causa do formato).
+- **Erros da IA:** 1ª versão do G10a usou a API `observations` literal e o formato saiu não-idêntico (padding + `"."`); detectado na conferência de formato contra os irmãos e corrigido para fredgraph antes da entrega.
+- **Decisões escaladas:** — (nenhuma nova; a fonte do G10a e a troca do CSV do CPI foram reportadas ao Felipe, não decididas).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do G10 — reprodutibilidade).
+
+---
+
 ## 2026-08-08 — Paulo — D9 fechada (overlap FOMC) via recado do `Felipe`
 
 **O que foi feito:**
