@@ -395,6 +395,12 @@ def main():
     razoes_revisao = " e ".join(
         n + " mede " + por_nome.loc[n, "G1 razão / tick"] for n in revisao)
     razao_cauda = por_nome.loc[cauda_cpi_nome, "G1 razão / tick"]
+    # Quantos ativos do livro saem invertidos é MEDIDO, não escrito à mão: com o
+    # calendário do CPI corrigido (shutdown de 2025) a cauda passou de 2 para 1
+    # invertido, e a frase cravada teria virado mentira sem ninguém ver.
+    n_invertidos = por_nome.loc[cauda_cpi_nome, "G2 μ (bps/dia)"].count("❌")
+    onde_inverte = ("nos DOIS ativos do livro" if n_invertidos == 2
+                    else f"em {n_invertidos} dos 2 ativos do livro")
     texto += [
         "## Leitura\n",
         "**O gate está calibrado — o controle reproduz a D16 número a número.** "
@@ -413,7 +419,7 @@ def main():
         "script, não com um módulo.\n",
         f"**O único sinal com dispersão de verdade é a cauda do CPI "
         f"({razao_cauda}), e ela morre nos outros dois critérios.** No G2 o μ "
-        "sai invertido nos DOIS ativos do livro "
+        f"sai invertido {onde_inverte} "
         f"(`{por_nome.loc[cauda_cpi_nome, 'G2 μ (bps/dia)']}`, contra a premissa "
         "declarada \"SPY cai, TLT sobe\"), e pela D2b não se inverte. No G3 ela "
         "correlaciona " + por_nome.loc[cauda_cpi_nome, COL_G3] + " — massa de "

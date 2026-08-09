@@ -140,6 +140,21 @@ def test_load_cpi_releases_corrige_ano_e_ordena(tmp_path):
                                               pd.Timestamp("2026-01-13")]
 
 
+def test_load_cpi_releases_remapeia_shutdown_de_2025(tmp_path):
+    csv = tmp_path / "cpi_release_dates.csv"
+    csv.write_text(
+        "release_date,time_et,mes_referencia,fonte\n"
+        "2025-09-11,8:30 AM,August 2025,Polymarket rules\n"     # fora do shutdown
+        "2025-10-15,8:30 AM,September 2025,Polymarket rules\n"  # atrasado -> 10-24
+        "2025-11-13,8:30 AM,October 2025,Polymarket rules\n",   # nunca publicado
+        encoding="utf-8")
+    releases = load_cpi_releases(csv)
+    assert list(releases["release_date"]) == [pd.Timestamp("2025-09-11"),
+                                              pd.Timestamp("2025-10-24")]
+    assert releases.loc[0, "nota_tratamento"] == ""
+    assert "shutdown" in releases.loc[1, "nota_tratamento"]
+
+
 def test_bucket_value_cpi_incluindo_inversao_de_sinal():
     assert bucket_value("will-monthly-inflation-increase-by-0pt3") == 0.3
     assert bucket_value("will-monthly-inflation-increase-by-1pt0") == 1.0

@@ -654,6 +654,41 @@ motivo medido de cada corte, para a sessão nova não repetir desenho já reprov
 **Nada fecha aqui.** Se as views novas entrarem, elas são decisão metodológica e
 seguem o regime das seções 9/10 (provisórias, revisão do grupo).
 
+### 14a. Direção da sessão seguinte, dada pelo dono em 2026-08-09 (fim da sessão 16)
+
+> "O desafio não precisa de um resultado positivo, mas uma apresentação e
+> estratégias que fazem sentido." · "Na próxima sessão vamos tentar adicionar
+> mais umas views."
+
+**Continua a seção 14, não a substitui.** A metade "views novas" segue aberta; o
+que muda é o critério declarado — **fazer sentido vale mais que medir positivo**.
+Isso é consistente com o que já está registrado (nenhuma view foi cortada por
+excesso negativo no backtest — 17e) e deve orientar o desenho das próximas.
+
+**Três insumos desta sessão para a próxima não repetir desenho já reprovado:**
+
+1. **A pergunta "a view prevê?" tem teste, e ele é VETO.** Rodá-lo ANTES de
+   construir custa minutos e teria matado a transversal antes das 400 linhas — é
+   a mesma lição de ordem que o gate da D17 aplicou à camada tática. Depende de
+   promover o script (pendência no fim da 15g).
+2. **Número acumulado não é resultado sem a conta de atribuição.** A 15h mostrou
+   uma view "de +3,89 pp" que era **um pregão**. A coluna "sem os 3 maiores" e o
+   acerto de sinal passam a ser obrigatórias em qualquer view nova.
+3. **As três inversões da família de inflação têm UMA causa medida, e ela é
+   achado de apresentação.** A transversal (15f), a sleeve de CPI (16b) e o
+   candidato C2a (17b) saíram invertidos pelo mesmo motivo, corroborado por outro
+   caminho no `Convergencia_2_2.md`: **o TIP é dominado por DURAÇÃO, não por
+   inflação** (β +1,6 ao juro de 10 anos contra +10,7 do SPY no canal risk-on).
+   Três desenhos independentes reproduzindo o mesmo achado sobre o instrumento
+   vale mais no relatório do que qualquer um deles teria valido funcionando.
+
+**Ressalva de prior, levantada pelo dono e registrada:** de quatro desenhos que
+saíram invertidos, **um tinha causa banal e nossa** (a base do M3, ver 15g). Isso
+justifica **auditar o encanamento** dos outros antes de tratá-los como tese
+morta — mas os outros três têm mecanismo medido e corroborado, o que a B não
+tinha. Auditoria de encanamento **não é** reabrir decisão, e o precedente da D2b
+segue: achar bug é uma coisa, inverter sinal porque o dado pediu é outra.
+
 ---
 
 ## 15 (branch `Felipe`). Duas views novas — CANDIDATAS, construídas e não ligadas 🟡
@@ -831,6 +866,59 @@ sair invertido de novo, **não entra e não se inverte** (precedente D2b). O cus
 dessa ordem é ~1 dia; o custo de pular a medição é uma view invertida na entrega
 final.
 
+**✅ RODADO em 2026-08-09 (sessão 16), a pedido do dono — a B NÃO sai invertida
+no vértice certo, e o motivo da inversão registrada acima era NOSSO.** Medição
+por ora só no chat e no `LOG.md`, sem artefato em `Dump/analises/` (o dono
+delimitou o escopo a "fale o resultado aqui") — ver a pendência de
+reprodutibilidade no fim deste bloco.
+
+O teste foi RECONSTRUÍDO: era ad-hoc na sessão 12 e não sobrou script. A
+convenção saiu do **controle**, não de palpite — com `r_P` começando em **D+1** a
+**2.3 reproduz exatamente** o registrado em 15f (t +0,26, acerto 51%/56%). A 2.2
+dá t +0,57 / 53% contra +0,44 / 57% registrados, e a diferença tem causa
+conhecida: a correção do calendário do CPI (sessão 15) mexeu no dado dela e não
+no da 2.3.
+
+| vértice | base da grade de baldes | h = 1 | h = 5 |
+|---|---|---|---|
+| **DGS1 (certo)** | **fim de 2024** | **t +0,33 · 51%** | **t +0,65 · 53%** |
+| DGS1 | taxa de hoje | t −0,25 · 50% | t −0,62 · 48% |
+| DGS10 (proxy) | fim de 2024 | t −0,05 · 46% | t +0,57 · 50% |
+| DGS10 (proxy) | taxa de hoje | t −1,10 · 45% | **t −1,85 · 46%** |
+
+**A inversão era da BASE, não do vértice.** Consertar só a base leva −1,85 →
++0,57; consertar só o vértice leva −1,85 → −0,62. A última linha é a
+reconstrução mais próxima do que esta seção registrou (t −2,68, 179 dias):
+**reproduz a classe e o sinal, não o número** — a diferença de dias (210 × 179)
+diz que a medição da sessão 12 tinha outro filtro, então **a atribuição é
+direcional, não exata**.
+
+**⚠️ Isto precisa da desconfiança do grupo, e é o próprio Felipe que pede:** uma
+premissa que EU declarei sozinho (15h — a base da grade é a taxa do fim de 2024)
+é o que desfaz um veredito negativo já registrado. Por isso a corroboração foi
+buscada FORA do resultado, no nosso próprio dado: em **2025-12-10**, última
+leitura do M3, o mercado põe **p = 0,97 no balde "3 cortes"**, e foram
+exatamente **3** os cortes entregues em 2025 (set/out/dez, lidos no DFF). Se o
+mercado contasse "cortes a partir de hoje", depois do corte daquele mesmo dia a
+massa estaria em 0 ou 1, não em 3. **Verificável sem abrir o backtest.**
+
+**O que isto muda e o que NÃO muda:** pela régua da própria 15g ("a régua para
+esta view é *não sair invertida*, não *passar*"), a B **passa o veto** e sai da
+lista de reprovadas. Não entra na de aprovadas: o teste é veto e não
+certificado (15f), a B fica indistinguível de zero como as incumbentes
+(2.2 +0,57 · 2.3 +0,26 · B +0,33), e **no backtest ela mede −1,38 pp** (15h).
+**A entrada continua sendo decisão do grupo.**
+
+**Ressalva menor, registrada:** a base usa o `DFF` (taxa EFETIVA), ~4 bps abaixo
+do meio da banda de então. É viés de nível constante, absorvido pela demeanagem
+expansiva — mas está aqui para ninguém redescobrir depois.
+
+**Pendência de reprodutibilidade (minha, não do grupo):** o script do teste
+vive no scratchpad e **não está no repositório** — a medição acima não é
+reproduzível a partir do branch. Promovê-lo a `scripts/teste_sinal.py` (com a
+2.2 e a 2.3 como controle embutido, no molde do `gate_sleeves.py`) é candidato a
+primeiro movimento da sessão seguinte.
+
 ### 15e. Dependência do Paulo — um item bloqueia, dois não
 
 `Dump/trocas/PEDIDO_G10_Paulo.md` (08/08, reescrito no fim da
@@ -851,6 +939,59 @@ sessão quando a quarta view entrou no escopo), três itens em ordem de priorida
 **Nada fecha aqui.** Se qualquer das duas entrar, é decisão metodológica sob o
 regime das seções 9/10 (provisória, revisão do grupo), e o backtest só as empilha
 depois de 15a, 15b e 15c fecharem.
+
+### 15h. As duas views MEDIDAS no backtest — o ganho é UM PREGÃO 🟡 (medido 2026-08-09)
+
+**Registro, não decisão.** A pedido do dono, as duas candidatas sem veredito
+negativo (**15b incerteza** e **15g B com β próprio**) foram empilhadas no
+`MontadorV1` e medidas. `views_novas=()` continua o default e **a entrega não
+mudou** — `Backtest_v1.md` sai byte a byte idêntico. Medição em
+`Dump/analises/Views_novas.md` (`scripts/views_novas.py`, teto no tilt = 1,
+γ = 1,0, 374 pregões).
+
+| configuração | dias com a view | excesso × SPY | Δ vs. v1 | Σ dos Δ diários | **sem os 3 maiores** | acerto de sinal |
+|---|---|---|---|---|---|---|
+| v1 entregue (2.2 + 2.3) | — | **+4,07 pp** | — | — | — | — |
+| + incerteza (entropia crua) | 27 | +7,96 pp | **+3,89 pp** | +2,74 pp | **−0,54 pp** | 48% (13/27) |
+| + incerteza (percentil) | 27 | +6,39 pp | **+2,32 pp** | +1,61 pp | **−0,09 pp** | 48% (13/27) |
+| + B com β próprio (DGS1) | 210 | +2,70 pp | **−1,38 pp** | −0,96 pp | +2,93 pp | 49% (102/210) |
+| + as duas (entropia crua) | 27 · 210 | +6,24 pp | +2,17 pp | +1,52 pp | +2,51 pp | 49% (109/222) |
+| + as duas (percentil) | 27 · 210 | +4,88 pp | +0,81 pp | +0,50 pp | +0,73 pp | 47% (105/222) |
+
+**O achado, e ele desmonta o número que parecia bom:** o Δ da view de incerteza é
+**um único pregão — 2025-04-10**, o choque tarifário (SPY −4,38%, a view vendida
+em mercado). Sozinho ele vale **+3,21 pp** dos +2,74 pp de soma diária; tirando os
+três extremos o Δ vira **−0,54 pp**. E o acerto de sinal nos 27 dias de anúncio é
+**48%** — cara ou coroa. Vale nas DUAS escalas da 15c, então a 15c não é o que
+separa: a view não tem sinal, tem um dia.
+
+**A medição da premissa já sabia disso e ninguém tinha ligado os pontos:**
+`Premio_condicional.md` identifica 2025-04-10 como o extremo do grupo "incerto",
+e a checagem de robustez de lá mostra a média do grupo caindo ao tirá-lo. O que
+era ressalva de uma medição virou **o resultado inteiro** de um backtest.
+
+**A B mede NEGATIVO (−1,38 pp)** e concentrada do mesmo jeito, com o sinal
+trocado: sem os três extremos o Δ vira **+2,93 pp**. Acerto de sinal 49% em 210
+dias. O P dela no fim da janela é **long XLE +1,04 · XLF +0,29 contra XLP −0,20 ·
+XLU −0,19**, com TLT ≈ 0 — ortogonal ao da 2.3, como a 15g previu; o problema não
+é duplicação, é que a view não prevê.
+
+**🛑 Pendência de protocolo que continua de pé:** a 15g registra a ordem `DGS1
+chegou → refazer o teste de sinal no vértice certo → só então empilhar`. Esta
+rodada fez a última etapa **sem a do meio**, por instrução do dono, e para medir.
+O **teste de sinal no `DGS1` segue não rodado**, e o precedente da D2b vale igual:
+se sair invertido, não entra e **não se inverte**.
+
+**Premissa declarada nesta rodada, e ela não estava escrita em lugar nenhum:** o
+M3 pergunta quantos cortes acontecem **dentro de 2025**, então a taxa de fim de
+ano de um balde é `taxa do FIM DE 2024 − 25bp × N`, não `taxa de hoje − 25bp × N`
+— a leitura antiga contaria em dobro os cortes já entregues no ano (50 bps de
+erro de nível em nov/2025). A espec da B só dizia "taxa_atual"
+(`backtest_v1.M3_INICIO_DO_ANO`). É leitura da REGRA do mercado, não escolha de
+parâmetro, mas fica declarada para quem revisar poder discordar.
+
+**Nada fecha aqui.** 15a, 15b, 15c e 15g continuam abertas e a recomendação
+implícita da tabela é do grupo, não minha.
 
 ---
 
@@ -1070,6 +1211,218 @@ Dois pontos de lá que interessam a esta decisão:
 
 **Nada fecha aqui.** A recomendação da D16 (a camada tática não entra) fica de pé
 com um motivo a mais, e a entrada continua sendo decisão do grupo.
+
+---
+
+## 18 (branch `Felipe`). Busca por views novas — régua do poly declarada e três candidatas triadas 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D18 do
+> `Felipe`".
+
+**Registro, não decisão.** Sessão de **2026-08-09**, a pedido do dono: duas frentes
+de busca por views novas (arqueologia do repositório + literatura clássica),
+limitadas a 3 propostas cada. **Nenhuma linha de código foi escrita.** A entrega do
+v1 não foi tocada. O handoff detalhado das candidatas está em `leaveoff.md`.
+
+### 18a. Régua declarada pelo dono nesta sessão 🟡 — precisa de ratificação do grupo
+
+> **View que não lê o Polymarket não entra nem em discussão.**
+
+Declarada verbatim pelo Felipe em 2026-08-09, ao ver as 6 propostas. **Não está
+fechada como 🟢 porque não é decisão de um módulo só** — ela define o que conta como
+view admissível no modelo, o que é premissa compartilhada (CLAUDE.md §1, categoria
+3). Fica registrada como posição do dono da integração, **pendente de ratificação em
+reunião**.
+
+**Consequência medida, e é grande:** das 6 propostas geradas, **4 caem por esta
+régua** — inclusive as duas mais baratas de implementar e a de melhor esperança
+medida. Sobram 3, que são o conjunto inteiro admissível. Não é escolha de 3 entre 6.
+
+**Trade-off para a reunião:** a régua protege a tese do desafio (BL *alimentado por
+probabilidades do Polymarket*) ao custo de barrar sinais clássicos baratos que
+melhorariam o backtest. As duas coisas são reais. **Quem decide é o grupo.**
+
+### 18b. O que a régua barrou (inventariado para não ser redescoberto)
+
+| proposta | fonte | por que caiu |
+|---|---|---|
+| Drift pós-FOMC (ΔDTB3) virado **view** | interna | não lê o poly. **Ressalva:** é a única tática do projeto que mediu **positivo** (+0,08 a +0,80 pp, D16), e o parâmetro que a matou (`orcamento` sem âncora) **deixa de existir** ao virar view — quem dimensiona passa a ser o BL. A célula `ΔDTB3 × inv(δΣ)·μ` **nunca foi rodada** |
+| Ciclo FOMC semanas pares/ímpares (Cieslak, Morse & Vissing-Jorgensen 2019) | externa | não lê o poly; e a semana 0 se sobrepõe ao `drift_pos_fomc` **já ativo** |
+| Reversão de curto prazo 5d (Lehmann 1990; Jegadeesh 1990) | externa | não lê o poly. Era a única cujo horizonte natural bate com **H = 1 dia** |
+| Momentum setorial 12−1 (Moskowitz & Grinblatt 1999) | externa | não lê o poly; e descasamento de horizonte (paper é holding mensal, ~20 indústrias) |
+
+**Se a reunião derrubar a régua 18a, o primeiro item volta na frente dos outros três**
+— e custa uma linha no `gate_sleeves.py` para saber se vive (a mediana do |ΔDTB3|
+nunca foi medida; se ficar perto do tick de 1 bp do FRED, morre no G1).
+
+### 18c. As três candidatas admitidas — nenhuma aprovada
+
+Detalhe completo em `leaveoff.md`. Resumo do status:
+
+| candidata | estado | próximo passo | bloqueio |
+|---|---|---|---|
+| **C geopolítica, 2º episódio (Irã jun/2025)** | medição não rodada | uma linha no dict de `scripts/janela_negociavel.py:45-58` | nenhum — mas re-rodar no dado atual (o artefato não foi re-gerado pós-sessão 15) |
+| **Transversal do CPI com β ortogonalizado** (ressuscita a 15f) | conserto proposto, não testado | teste de sinal **antes** do módulo | nenhum formal; risco técnico alto (ver abaixo) |
+| **3.1 recessão com P direcional** | 🛑 **bloqueada** | reunião | **D2b** — ver 18d |
+
+**Sobre a transversal:** a causa da morte está medida e corroborada por três
+caminhos independentes (TIP dominado por **duração**, não por inflação). Mas o elo
+que falhou **não foi o β — foi o transporte** do β contemporâneo para retorno futuro
+(corr +0,06). Ortogonalizar ataca a causa declarada **sem garantia** de que o
+transporte apareça. Ordem obrigatória (lição da 14a/D17): **medir antes de escrever
+módulo.**
+
+### 18d. Decisão que a 3.1 direcional exige do grupo 🛑
+
+A 3.1 é o único caso do projeto com **sinal significante que a view não expressa**:
+no par defensivo−cíclico t −0,46 a −1,05, mas **SPY +0,59% em 10 pregões, |t| > 2**.
+O P neutro em mercado (`P[SPY] = 0`) apaga exatamente o que existe.
+
+**O problema não é técnico, é de tese:** o coeficiente direcional medido é
+**positivo**, e a tese original da view prevê **negativo**. Entrar como desenhada
+perde; **inverter é o que a D2b proibiu explicitamente**.
+
+**Pergunta para a reunião:** o grupo re-declara a tese a priori como **"prêmio de
+medo pago"** (o mercado remunera quem carrega risco quando o medo sobe) — que é tese
+diferente e defensável — ou mantém a 3.1 cortada?
+
+Duas ressalvas para quem for decidir: (i) re-declarar tese **depois** de ver o sinal
+é exatamente o vício que a D2b existe para barrar, então a declaração precisa ser
+explícita e datada; (ii) **não há segundo mercado de recessão**, logo não existe o
+teste fora da amostra que tornou o veredito da 2.4 confiável.
+
+**Nada fecha aqui.** Nenhuma das três candidatas está aprovada, e a régua 18a
+aguarda ratificação.
+
+---
+
+## 19 (branch `Felipe`). As três candidatas da D18 — MONTADAS e MEDIDAS 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D19 do
+> `Felipe`".
+
+**Registro, não decisão.** Sessão de **2026-08-09** (sessão 18), a pedido do
+dono: montar e medir as três candidatas do `leaveoff.md`, **sem decidir o
+destino de nenhuma**. A entrega do v1 não mudou — `Backtest_v1.md` sai byte a
+byte idêntico e nenhuma candidata foi empilhada. Suíte inteira: 240 testes
+passando.
+
+**O que ficou no repositório:** `scripts/teste_sinal.py` (+ 5 testes) — promove
+ao branch o teste que vivia no scratchpad e era pendência de reprodutibilidade
+registrada no fim da 15g; `scripts/view_3_1_direcional.py`;
+`view_3_1_recessao.build_view_direcional` (+ 3 testes); uma linha no dicionário
+de `scripts/janela_negociavel.py`. Artefatos:
+`Dump/analises/Teste_sinal.md` e `Dump/analises/Recessao_direcional.md`, mais o
+`Janela_negociavel.md` re-gerado.
+
+### 19a. Candidata 1 (view C, 2º episódio Irã jun/2025) — o veredito de 2026 NÃO se reproduz 🟡
+
+Uma linha no dicionário de `scripts/janela_negociavel.py`, como a D18c previa.
+Os 55 pregões do mercado de jun/2025 (2025-04-02 a 2025-06-20) nunca tinham
+passado pelo teste de tradabilidade. Medido no XLE, que é o ativo da view:
+
+| episódio | obs | gap (não negociável) | janela negociável | razão oc/cc | mediana dos 9 ativos |
+|---|---|---|---|---|---|
+| Irã 2026 (o que decidiu) | 27 | **+0,0606 · t +3,18** | −0,0183 · t −0,67 | **−44%** | +41% |
+| Irã jun/2025 (fora da amostra) | 55 | +0,0578 · t +1,39 | +0,0478 · t +0,82 | **+46%** | **+83%** |
+
+**A sensibilidade replica; o veredito não.** O coeficiente do gap sai
+praticamente igual nos dois episódios (+0,0606 × +0,0578) — o mercado do poly
+move o XLE com a mesma magnitude nas duas crises, o que é evidência real e vai
+ao relatório. Mas as duas conclusões que sustentaram o corte caem no segundo
+episódio: (i) nada é significante ali (t +1,39 no gap, com o DOBRO de
+observações), e (ii) o efeito **não** morre na janela negociável — sobra 46% em
+vez de −44%.
+
+**Como ler isto, e as duas leituras são legítimas:** (a) o corte da C foi
+decidido sobre 27 observações de um episódio e o segundo não o corrobora, logo a
+evidência contra ela é mais fraca do que o registro sugere; (b) o segundo
+episódio também não produz sinal significante, logo a C continua sem base para
+entrar. **Nenhuma das duas é escolhida aqui.**
+
+**Nota de encanamento (não é a candidata):** o `Janela_negociavel.md` publicado
+não reproduzia o dado atual — o mercado de recessão ganhou 15 observações
+(227 → 242) no re-pull da sessão 15 e vários coeficientes andaram na terceira
+casa. Os números do Irã 2026 reproduzem **exatos**. O artefato foi re-gerado.
+
+### 19b. Candidata 2 (transversal com β ortogonalizado) — REPROVADA, e o módulo não foi tocado 🛑
+
+Ordem obrigatória da 14a/D17 cumprida: **o teste rodou antes do módulo**. O β
+foi estimado contra o Δbreakeven residualizado do canal risk-on (retorno do SPY
+e ΔDGS10), como a D18c propôs. `estimate_betas_breakeven` continua intacto.
+
+**Controle embutido reproduz** (é o que autoriza ler o resto da tabela):
+
+| view | h = 1 | h = 5 | h = divulgação | registrado antes |
+|---|---|---|---|---|
+| 2.2 (entrega) | t +0,57 · 53% | t +0,85 · 50% | t +0,50 · 58% | t +0,57 / 53% (15g) ✔ |
+| 2.3 (entrega) | t +0,26 · 51% | t +0,23 · 56% | — | t +0,26 · 51%/56% (15f) ✔ |
+| transversal (β cru) | t −1,08 · 49% | t −0,86 · 43% | **t −2,72 · 36%** | t −3,02 / 35% (15f) ✔ |
+| **transversal (β ⊥ risk-on)** | t −0,90 · 49% | **t −2,36 · 47%** | t −1,12 · 37% | — |
+
+**A ortogonalização conserta a causa declarada — e a view continua não
+funcionando.** O P deixa de ser "cíclicos e energia contra duração" e vira o que
+a tese sempre disse que era:
+
+| variante | TIP | TLT | XLE |
+|---|---|---|---|
+| β cru | **−0,29** | −0,70 | +0,31 |
+| β ⊥ risk-on | **+0,67** | −0,02 | +0,84 |
+
+Ou seja: o diagnóstico das três medições convergentes (TIP dominado por duração,
+15a/16b/17b) estava **certo**, e tirar duração e risk-on do regressor faz a view
+ficar comprada em TIP, como a lógica de inflação pede. Mas o elo que falhou na
+15f era o **transporte**, não o β — e ele piora: a corr entre coeficiente
+preditivo e β contemporâneo vai de −0,48 para **−0,84** no horizonte da
+divulgação, e o t de h = 5 passa a ser significativamente **contra** (−2,36).
+Acerto de sinal em 37–49% em toda a tabela.
+
+**Recomendação (do Felipe, decisão do grupo): a transversal continua fora, e a
+15f não precisa ser reaberta.** Pela D2b não se inverte. **Custo desta rodada:
+zero linha de módulo** — é a segunda vez que a ordem "medir antes de escrever"
+paga (a primeira foi a D17), e isso é insumo de relatório sobre processo.
+
+### 19c. Candidata 3 (3.1 com P direcional) — construída, medida, e o bloqueio MUDA DE NATUREZA 🛑
+
+Construída a pedido do dono, **para medir**: `build_view_direcional` reusa o
+`directional_P` da 15b (P[SPY] = 2, Σ|P| = 2, ΣP ≠ 0). **A entrada continua
+bloqueada** — nada foi empilhado, nada foi decidido.
+
+**O achado, e ele antecede a pergunta da D18d:** o coeficiente em que a
+re-declaração de tese se apoiaria **troca de sinal dentro da própria amostra**.
+SPY em h = 10, discordância `z(p_poly) − z(−spread)` padronizada de forma
+EXPANSIVA (sem o z in sample que o `Nivel_divergencia_3_1.md` declarou como
+ressalva):
+
+| recorte | pregões | período | coef SPY (h = 10) | t |
+|---|---|---|---|---|
+| amostra inteira | 186 | 2025-04-04 a 2025-12-31 | **+0,40%** | +3,22 |
+| 1ª metade | 93 | 2025-04-04 a 2025-08-18 | **+0,97%** | +6,52 |
+| 2ª metade | 93 | 2025-08-19 a 2025-12-31 | **−0,35%** | −2,27 |
+
+**As duas metades são significantes e apontam para lados opostos.** Não há
+segundo mercado de recessão (a própria D18d registra isso), então não existe o
+teste fora da amostra que tornou o veredito da 2.4 confiável — e agora sabemos
+que não existe nem *dentro* da amostra.
+
+**Consequência para a D18d, e ela é de agenda:** a pergunta registrada era "o
+grupo re-declara a tese como *prêmio de medo pago*?". Medido, essa pergunta fica
+**sem base empírica em qualquer das duas direções** — não porque a tese seja
+falsa, mas porque o sinal que a sustentaria não é estável. A D18d pode ser
+respondida sem discutir tese, o que **evita** o vício que a D2b existe para
+barrar (re-declarar tese depois de ver o sinal).
+
+**O que a medição confirma da premissa:** o P direcional de fato **captura o que
+o P neutro apaga** — as duas montagens dão números diferentes nos mesmos dias, e
+o desenho funciona. O problema não é a expressão da view; é o sinal.
+
+**Ressalva honesta:** nos 126 pregões em que o β expansivo existe (2025-07-02 em
+diante), **as duas** montagens medem negativo — mas esse recorte é
+essencialmente a 2ª metade da tabela acima, então ele não é evidência
+independente, é a mesma metade com outro nome. Está dito no artefato.
+
+**Nada fecha aqui.** As três candidatas seguem sem destino; a régua 18a segue
+pendente de ratificação.
 
 ---
 

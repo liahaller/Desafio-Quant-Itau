@@ -11,7 +11,8 @@ from scipy.stats import norm
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from view_3_1_recessao import build_view, curve_spread, p_curve_at, p_curve_probit
+from view_3_1_recessao import (build_view, build_view_direcional, curve_spread,
+                              p_curve_at, p_curve_probit)
 
 # Números do exemplo da espec (item 6), β em fração/ponto de probabilidade.
 ASSETS = ["SPY", "XLK", "XLP", "TLT"]
@@ -106,6 +107,30 @@ def test_p_curva_sem_historico_falha_alto():
         pass
 
 
+def test_direcional_concentra_no_mercado_e_mantem_soma_2():
+    """P direcional: 2 no SPY, 0 no resto — o oposto do P[SPY] = 0 do neutro."""
+    view = build_view_direcional(ASSETS, beta_mercado=-0.30, divergencia=1.5)
+    assert view.P[ASSETS.index("SPY")] == 2.0
+    assert np.allclose(view.P[1:], 0.0)
+    assert np.isclose(np.abs(view.P).sum(), 2.0)          # decisão 4
+    assert np.isclose(view.Q, 2 * -0.30 * 1.5)            # Q = P·E[r]
+    assert view.diagnostics["view"] == "3.1_recessao_direcional"
+
+
+def test_direcional_espelha_com_o_sinal_do_beta():
+    """A escolha de TESE (sinal do β) é o que troca o lado da view, e só ela."""
+    medido = build_view_direcional(ASSETS, beta_mercado=+0.30, divergencia=1.5)
+    tese = build_view_direcional(ASSETS, beta_mercado=-0.30, divergencia=1.5)
+    assert np.isclose(medido.Q, -tese.Q)
+    assert np.allclose(medido.P, tese.P)
+
+
+def test_direcional_sem_divergencia_desativa():
+    """Sem mercado de recessão (ou divergência NaN) a view sai, não chuta."""
+    assert build_view_direcional(ASSETS, 0.3, None) is None
+    assert build_view_direcional(ASSETS, 0.3, float("nan")) is None
+
+
 if __name__ == "__main__":
     test_probit_curva()
     test_sanity_check_de_sinal_espec_item_6()
@@ -116,4 +141,7 @@ if __name__ == "__main__":
     test_p_curva_nao_usa_a_leitura_do_proprio_dia()
     test_p_curva_pula_fim_de_semana_e_feriado()
     test_p_curva_sem_historico_falha_alto()
-    print("view_3_1_recessao: 9 testes OK")
+    test_direcional_concentra_no_mercado_e_mantem_soma_2()
+    test_direcional_espelha_com_o_sinal_do_beta()
+    test_direcional_sem_divergencia_desativa()
+    print("view_3_1_recessao: 12 testes OK")

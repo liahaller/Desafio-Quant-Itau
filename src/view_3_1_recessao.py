@@ -30,6 +30,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
+from view_incerteza_anuncio import directional_P
 from views_common import P_from_betas, ViewResult
 
 # Centro da linha P — o default É a decisão (espelha a 2.3, espec item 4).
@@ -122,4 +123,51 @@ def build_view(assets, betas, k, p_poly=None, p_curva=None, market_asset=MARKET_
         "horizonte_q_dias": k,  # Q herda o horizonte do β de absorção plena
         "soma_faixas": float("nan"),  # binária: sem grade de faixas (Ω da Lia)
         "sum_P_beta": float(P @ betas),
+    })
+
+
+def build_view_direcional(assets, beta_mercado, divergencia,
+                          market_asset=MARKET_ASSET):
+    """Variante DIRECIONAL da 3.1 — candidata 3 do `leaveoff.md`. NÃO LIGADA.
+
+    🛑 **Construída para MEDIR, por instrução do dono em 2026-08-09. A entrada
+    continua bloqueada pela D2b / D18d e é decisão de reunião.** O motivo do
+    bloqueio não é técnico: o coeficiente direcional medido é POSITIVO e a tese
+    original da view prevê NEGATIVO (mais probabilidade de recessão → cíclico
+    cai). Entrar como desenhada perde; inverter é o que a D2b proibiu. O único
+    caminho legítimo é o grupo re-declarar a tese a priori ("prêmio de medo
+    pago"), datada e explícita.
+
+    A razão de existir: a 3.1 é o único caso do projeto com **sinal significante
+    que a view não consegue expressar**. No par que o P neutro monta (defensivo −
+    cíclico) não há nada (t −0,46 a −1,05 em 245 pregões), mas existe efeito
+    DIRECIONAL (`Nivel_divergencia_3_1.md`: SPY +0,59% em 10 pregões, |t| > 2, e
+    o mesmo sinal positivo em 8 dos 9 ativos — assinatura de mercado, não de
+    seção cruzada). `P_from_betas` crava P[SPY] = 0 exato e apaga exatamente isso.
+
+    Parâmetros:
+      assets       : list[str] — universo na ordem do dataset do Paulo.
+      beta_mercado : float — ∂r_mercado/∂divergência, estimado sem lookahead
+                     pelo chamador. **É aqui que a tese entra**: o SINAL dele é
+                     o que a D2b protege. Medido no dado, ele sai positivo.
+      divergencia  : float — discordância padronizada `z(p_poly) − z(−spread)`,
+                     ou None se não há mercado de recessão (view desativada).
+
+    Retorna ViewResult ou None. Mantém Σ|P| = 2 (decisão 4) e a identidade
+    Q = P·E[r] das outras views — o que muda é que ΣP ≠ 0, então a obrigação 5a
+    de `views_common` (centragem) tem de ser lida antes de empilhar com as
+    neutras, exatamente como na 15b.
+    """
+    if divergencia is None or not np.isfinite(divergencia):
+        return None
+    P = directional_P(assets, market_asset)
+    Q = float(2.0 * beta_mercado * divergencia)
+    return ViewResult(P=P, Q=Q, diagnostics={
+        "view": "3.1_recessao_direcional",
+        "caminho": "binario",
+        "divergencia": float(divergencia),
+        "beta_mercado": float(beta_mercado),
+        "horizonte_q_dias": 1,
+        "soma_faixas": float("nan"),
+        "sum_P_beta": float(2.0 * beta_mercado),
     })

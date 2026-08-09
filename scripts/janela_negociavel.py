@@ -56,6 +56,12 @@ MERCADOS = {
     # Segundo mercado da view C, também achado na revisão: soma 121 dias com o
     # de jun/2025, contra os 45 que a decisão usou.
     "C geopolítica (Irã 2026)": "M7_iran_strike_*.json",
+    # Esse é o mercado de jun/2025 do comentário acima, que estava em disco e
+    # nunca tinha entrado no dicionário (achado da sessão 17). Serve de teste
+    # FORA DA AMOSTRA da view C: episódio independente, mesmo par de perguntas
+    # (ação militar dos EUA contra o Irã), sem overlap de datas com o de 2026.
+    "C geopolítica (Irã jun/2025, fora da amostra)":
+        "M7_iran_jun2025_us-military-action-against-iran*.json",
 }
 
 

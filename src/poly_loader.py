@@ -236,6 +236,30 @@ def diagnostics_qualidade(pmf_cru, decisao, janela_slots=None, dias_ate_evento=n
     }
 
 
+# Remap do shutdown de 2025 no calendário do CPI (G10c). Mesma natureza do
+# `_SHUTDOWN_2025` dos payrolls logo abaixo: fato histórico, não regra derivável,
+# e por isso fica como exceção declarada em vez de conserto genérico.
+#
+# O `cpi_release_dates.csv` vem das *rules* dos mercados, e as rules foram
+# escritas ANTES do shutdown — trazem a data planejada, não a que aconteceu.
+# O calendário oficial (FRED release id=10, G10c) e a NOSSA PRÓPRIA série do
+# poly concordam nas duas linhas, sem precisar de fonte externa:
+#   - set/2025: rules dizem 2025-10-15; o FRED diz 2025-10-24 e o mercado
+#     `september-inflation-monthly` negocia até **2025-10-24**. Atraso do
+#     shutdown; o 15/10 é pregão SEM evento, com o mercado ainda vivo.
+#   - out/2025: rules dizem 2025-11-13; o FRED não tem release nenhum em
+#     nov/2025 (pula de 10-24 para 12-18) e o mercado `october-inflation-monthly`
+#     morre em 2025-11-22 sem release. O CPI de outubro nunca foi publicado.
+#
+# Por que o arquivo do FRED não substitui este: ele não tem o slug do mercado
+# (o casamento release -> mercado sai da coluna `fonte` daqui). São insumos
+# diferentes, não fontes concorrentes.
+_SHUTDOWN_2025_CPI_ATRASO = {"2025-10-15": "2025-10-24"}
+# Outubro/2025 não ganha linha, pela mesma razão que o payroll de outubro não
+# ganha (ver `load_payroll_releases`): evento que não existiu não vira linha.
+_SHUTDOWN_2025_CPI_SEM_RELEASE = ("2025-11-13",)
+
+
 def load_cpi_releases(path):
     """Calendário de divulgação do CPI, com o erro de ano da fonte corrigido.
 
@@ -252,12 +276,26 @@ def load_cpi_releases(path):
     um ano. Qualquer recorrência futura do mesmo typo cai na mesma regra.
 
     Devolve o DataFrame ordenado por data (o arquivo cru está fora de ordem,
-    consequência do mesmo typo).
+    consequência do mesmo typo), já com o remap do shutdown de 2025 aplicado
+    (`_SHUTDOWN_2025_CPI_*`) e uma coluna `nota_tratamento` de auditoria.
     """
     releases = pd.read_csv(path, parse_dates=["release_date"])
     referencia = pd.to_datetime(releases["mes_referencia"], format="%B %Y")
     ano_errado = releases["release_date"] < referencia
     releases.loc[ano_errado, "release_date"] += pd.DateOffset(years=1)
+
+    releases["nota_tratamento"] = ""
+    chaves = releases["release_date"].dt.strftime("%Y-%m-%d")
+    for cru, real in _SHUTDOWN_2025_CPI_ATRASO.items():
+        alvo = chaves == cru
+        if not alvo.any():
+            continue  # arquivo sem essa linha: nada a corrigir, e não é erro
+        releases.loc[alvo, "release_date"] = pd.Timestamp(real)
+        releases.loc[alvo, "nota_tratamento"] = (
+            f"release atrasado pelo shutdown de 2025 (a rule do mercado dizia {cru})")
+    fantasma = chaves.isin(_SHUTDOWN_2025_CPI_SEM_RELEASE)
+    releases = releases.loc[~fantasma]
+
     return releases.sort_values("release_date").reset_index(drop=True)
 
 

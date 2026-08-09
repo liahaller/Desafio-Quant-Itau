@@ -49,6 +49,10 @@ from taticas_common import close_to_close_returns, intraday_returns  # noqa: E40
 # Fim de semana normal já são 3 dias corridos (sexta -> segunda); feriado
 # prolongado entra na mesma conta, como manda a espec do gap de fim de semana.
 GAP_MINIMO_DIAS = 3
+
+# Ruído intradiário declarado no bloco de base de ajuste. Acima disso a mediana
+# de `abertura/fechamento − 1` não é ruído, é ajuste diferente entre os parquets.
+LIMIAR_BASE_AJUSTE = 0.001
 # Janelas da literatura (Neuhierl-Weber / Brooks-Katz-Lustig). São os defaults
 # DE ESPEC, pendentes de confirmação em reunião — aqui só dimensionam a medida.
 JANELA_ACOES = 15
@@ -77,28 +81,53 @@ def linha_tabela(rotulo, stat):
     return (f"| {rotulo} | {n} | {media * 100:+.3f}% | {desvio * 100:.3f}% | {t:+.2f} |")
 
 
+def tickers_contaminados(abertura, fechamento):
+    """Tickers cuja razão abertura/fechamento denuncia base de ajuste diferente.
+
+    O veredito é MEDIDO a cada rodada, não cravado: quando este bloco foi
+    escrito, TIP e TLT estavam deslocados por um ex-dividendo entre os dois
+    pulls; se o Paulo re-baixar os dois arquivos no mesmo pull, o texto tem de
+    parar de acusar contaminação sozinho — senão a análise publica um bloqueio
+    que não existe mais.
+    """
+    gap = adjustment_gap(abertura, fechamento)
+    return set(gap.index[gap.abs() > LIMIAR_BASE_AJUSTE])
+
+
 def bloco_base_de_ajuste(abertura, fechamento, escrever):
     """Conferência que precede qualquer número de janela intradiária."""
     gap = adjustment_gap(abertura, fechamento)
-    escrever("## ⚠️ Antes dos números: os dois parquets não estão na mesma base\n")
+    fora = sorted(tickers_contaminados(abertura, fechamento))
+    titulo = ("## ⚠️ Antes dos números: os dois parquets não estão na mesma base"
+              if fora else
+              "## Antes dos números: os dois parquets estão na MESMA base")
+    escrever(titulo + "\n")
     escrever("Mediana de `abertura/fechamento − 1` por ticker. Se as duas séries "
              "estivessem no mesmo ajuste, isso seria ruído intradiário (± 0,1%):\n")
     escrever("| " + " | ".join(gap.index) + " |")
     escrever("|" + "---|" * len(gap))
     escrever("| " + " | ".join(f"{v * 100:+.3f}%" for v in gap) + " |")
-    escrever(f"\n**TIP ({gap['TIP'] * 100:+.2f}%) e TLT ({gap['TLT'] * 100:+.2f}%) estão "
-             "deslocados** — e são justamente os dois ETFs de pagamento MENSAL. O "
-             "`etf_prices_daily.parquet` foi gerado em 2026-07-09 (`48cb12e`) e o "
-             "`etf_open_daily.parquet` em 2026-08-02 (`7ea4e86`); um ex-dividendo entre "
-             "os dois pulls faz o `auto_adjust=True` reescalar toda a história anterior "
-             "de um só arquivo. O degrau é visível: a razão fica em −1,15% até "
-             "~2026-06-01 e vai a ~0 depois.\n")
-    escrever("Efeito: `abertura → fechamento` de TIP e TLT ganha **+1,15% e +0,40% "
-             "fabricados por dia** na amostra antiga (com o espelho no overnight). "
-             "As médias intradiárias desses dois tickers abaixo estão contaminadas; "
-             "as **correlações não** (o deslocamento é constante e não muda "
-             "covariância), e nada que use só fechamento é afetado. Conserto: "
-             "re-baixar os dois arquivos no mesmo pull — módulo do Paulo.\n")
+    if not fora:
+        escrever(f"\n**Nenhum ticker acima de ± {LIMIAR_BASE_AJUSTE * 100:.1f}% — a "
+                 "conferência passa.** O deslocamento de TIP e TLT que contaminava as "
+                 "médias intradiárias desta análise (ex-dividendo entre os pulls de "
+                 "`etf_prices_daily.parquet` e `etf_open_daily.parquet`, com "
+                 "`auto_adjust=True` reescalando um arquivo só) **não está mais no "
+                 "dado**: os dois arquivos vieram no mesmo ajuste. As janelas "
+                 "intradiárias abaixo valem para todos os tickers, inclusive no dia "
+                 "do próprio evento.\n")
+        return
+    medidos = " e ".join(f"{t} ({gap[t] * 100:+.2f}%)" for t in fora)
+    escrever(f"\n**{medidos} estão deslocados** — e são ETFs de pagamento MENSAL. Um "
+             "ex-dividendo entre os pulls de `etf_prices_daily.parquet` e "
+             "`etf_open_daily.parquet` faz o `auto_adjust=True` reescalar toda a "
+             "história anterior de um só arquivo.\n")
+    escrever(f"Efeito: `abertura → fechamento` de {', '.join(fora)} ganha retorno "
+             "fabricado por dia (com o espelho no overnight). As médias intradiárias "
+             "desses tickers abaixo estão contaminadas; as **correlações não** (o "
+             "deslocamento é constante e não muda covariância), e nada que use só "
+             "fechamento é afetado. Conserto: re-baixar os dois arquivos no mesmo "
+             "pull — módulo do Paulo.\n")
 
 
 def bloco_gap_fds(abertura, fechamento, escrever):
@@ -117,7 +146,7 @@ def bloco_gap_fds(abertura, fechamento, escrever):
     escrever("| ativo | salto médio | σ do salto | intradiário médio | σ intradiário | "
              "corr(salto, intradiário) | t da corr |")
     escrever("|---|---|---|---|---|---|---|")
-    contaminados = {"TIP", "TLT"}  # base de ajuste diferente (bloco acima)
+    contaminados = tickers_contaminados(abertura, fechamento)  # bloco acima
     for ativo in fechamento.columns:
         s = salto.loc[reaberturas, ativo].dropna()
         i = intra.loc[reaberturas, ativo].dropna()
@@ -233,8 +262,8 @@ def main():
     escrever("> Gerado por `scripts/premissa_taticas.py` sobre o dado do G1/G2 "
              "(follow-up 2). **Mede a premissa; não escolhe parâmetro nem liga tática** "
              "— a ENTRADA da camada segue pendente de reunião (decisão 10). Leia o "
-             "bloco de base de ajuste antes das tabelas: ele diz quais números estão "
-             "contaminados por um problema do dado, não pela tática.\n")
+             "bloco de base de ajuste antes das tabelas: ele diz se algum número está "
+             "contaminado por um problema do dado, e não pela tática.\n")
 
     bloco_base_de_ajuste(abertura, fechamento, escrever)
     bloco_gap_fds(abertura, fechamento, escrever)

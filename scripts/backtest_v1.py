@@ -50,6 +50,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import view_2_2_inflacao  # noqa: E402
 import view_2_3_fed  # noqa: E402
+import view_B_trajetoria_propria  # noqa: E402
+import view_incerteza_anuncio  # noqa: E402
 from backtest import run_backtest, summary  # noqa: E402
 from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # noqa: E402
                     DRIFT_JANELA_RF, FL_GAMMA_V1, FL_GAMMA_VARREDURA,
@@ -58,9 +60,10 @@ from market_inputs import (breakeven_duration, daily_returns,  # noqa: E402
                            empirical_duration, market_weights, sample_covariance)
 from market_loader import load_etf_prices, load_fred  # noqa: E402
 from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # noqa: E402
-                         load_cpi_releases, load_fomc_pmf, load_pmf)
+                         load_cpi_releases, load_fomc_pmf, load_payroll_releases,
+                         load_pmf)
 from poly_preprocessing import (bucket_values_with_open, carry_missing,  # noqa: E402
-                                favorite_longshot_pmf)
+                                favorite_longshot_pmf, soma_faixas)
 import tatica_drift_anuncio  # noqa: E402
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
@@ -76,6 +79,20 @@ PONTOS_PERCENTUAIS = 100.0
 # parâmetro novo (CLAUDE.md §6: não inventar valor).
 DRIFT_LIVRO_FOMC = ("SPY", "TLT")
 DRIFT_LIVRO_CPI = ("TIP", "TLT")
+
+# --- views novas (candidatas das seções 15b e 15g), DESLIGADAS por default ----
+#
+# `views_novas=()` mantém a entrega da 12c/D13 intocada — nada abaixo desta
+# linha roda no caminho padrão. Ligar é `views_novas=("incerteza", "B")`.
+PREFIXO_M3 = "M3_fed_trajectory_"   # "will N fed rate cuts happen in 2025"
+
+# O M3 pergunta quantos cortes acontecem DENTRO de 2025, então a taxa de fim de
+# ano de um balde é `taxa do fim de 2024 − 25bp × N` — e NÃO a taxa de hoje
+# menos 25bp × N, que contaria em dobro os cortes já feitos no ano corrente
+# (em nov/2025, com 2 cortes já entregues, o erro é de 50 bps de nível).
+# É leitura da REGRA do mercado, declarada aqui porque não estava escrita em
+# lugar nenhum: a espec da B só dizia "taxa_atual".
+M3_INICIO_DO_ANO = pd.Timestamp("2025-01-01")
 
 
 def mercados_de_cpi(releases, diretorio):
@@ -133,6 +150,74 @@ def pmf_fomc_diaria(parquet):
     return dict(sorted(saida.items()))
 
 
+def pmf_m3_diaria(diretorio):
+    """(probs por data, valores em nº de cortes) do M3_fed_trajectory.
+
+    Mesmo tratamento das outras PMFs (D4/6.1 herda leitura faltante, D4/1.2
+    resolve a ponta aberta). Só a ponta SUPERIOR é aberta ("8plus"); a inferior
+    é "no fed rate cuts" = 0 exato, faixa fechada.
+    """
+    cru = load_pmf(diretorio, PREFIXO_M3)
+    pmf = daily_preopen(carry_missing(cru)).dropna(how="all")
+    valores = np.array([bucket_value(c) for c in pmf.columns], dtype=float)
+    return pmf, bucket_values_with_open(valores, open_ends=("upper",)), cru
+
+
+def entropias_de_anuncio(diretorio, prefixo, datas, familia, ordenar=True):
+    """{data de anúncio: (entropia, família, soma crua)} — insumo da view 15b.
+
+    Construção IDÊNTICA à da medição que justifica a view
+    (`premio_condicional.eventos_com_incerteza`): entropia da PMF no slot
+    pré-abertura do próprio dia do anúncio, sobre a série CRUA. Sem
+    `carry_missing` de propósito — a entropia é invariante à renormalização e
+    ignora balde sem leitura, então tratar a linha mediria o tratamento.
+    """
+    diario = daily_preopen(load_pmf(diretorio, prefixo, ordenar=ordenar))
+    saida = {}
+    for data in pd.DatetimeIndex(datas).intersection(diario.index):
+        linha = diario.loc[data].to_numpy(dtype=float)
+        h = view_incerteza_anuncio.entropia_normalizada(linha)
+        if np.isfinite(h):
+            saida[data] = (h, familia, soma_faixas(linha))
+    return saida
+
+
+def percentil_expansivo(valor, passados):
+    """Fração dos eventos PASSADOS da mesma família com entropia ≤ `valor`.
+
+    É a versão CONTÍNUA do contraste de grupos que mediu a premissa (a mediana é
+    o percentil dicotomizado), e por isso não crava threshold nenhum. Amostra
+    passada vazia -> NaN, nunca 0,5 inventado.
+    """
+    p = pd.Series(passados, dtype=float).dropna()
+    return float((p <= valor).mean()) if len(p) else float("nan")
+
+
+def calendario_de_anuncios(raiz, diretorio):
+    """DataFrame (data × [entropia, familia, soma]) das 3 famílias de anúncio.
+
+    O casamento release -> mercado das famílias de CPI e payrolls é IMPORTADO de
+    `premio_condicional`, não recopiado: é a mesma regra (slug na coluna `fonte`
+    do calendário; payroll casado pela data em que a série termina, com o
+    desempate jobs > desemprego), e duas cópias um dia divergem — o mesmo
+    argumento que trouxe a `entropia_normalizada` para dentro de `src/`.
+    """
+    from premio_condicional import (PREFIXO_FOMC, mercados_de_payroll,  # noqa: E402
+                                    prefixos_cpi)
+
+    fomc = pd.to_datetime(pd.read_csv(raiz / "data/raw/fomc_dates.csv")["date"])
+    eventos = entropias_de_anuncio(diretorio, PREFIXO_FOMC, fomc, "fomc")
+    for data, prefixo in prefixos_cpi(
+            load_cpi_releases(raiz / "data/raw/cpi_release_dates.csv"), diretorio).items():
+        eventos.update(entropias_de_anuncio(diretorio, prefixo, [data], "cpi"))
+    payrolls = load_payroll_releases(raiz / "data/raw/payrolls_release_dates.csv")
+    for data, (prefixo, _) in mercados_de_payroll(diretorio, payrolls).items():
+        eventos.update(entropias_de_anuncio(diretorio, prefixo, [data], "payrolls",
+                                            ordenar=False))
+    return pd.DataFrame.from_dict(
+        eventos, orient="index", columns=["entropia", "familia", "soma"]).sort_index()
+
+
 class MontadorV1:
     """Monta `(sigma, views, overlays)` de um dia. Chamado em ordem de data.
 
@@ -144,7 +229,9 @@ class MontadorV1:
     def __init__(self, retornos, breakeven, dgs10, mercados, pmfs,
                  fomc=None, surpresas=None, orcamentos=None,
                  fomc_pmfs=None, e_ff=None, gamma=FL_GAMMA_V1,
-                 decisoes_fomc=None, surpresas_cpi=None, tatica=()):
+                 decisoes_fomc=None, surpresas_cpi=None, tatica=(),
+                 anuncios=None, m3=None, dgs1=None, taxa_base_m3=None,
+                 views_novas=(), escala_incerteza="entropia"):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
@@ -166,6 +253,17 @@ class MontadorV1:
         self.decisoes_fomc = decisoes_fomc if decisoes_fomc is not None else pd.Series(dtype=float)
         self.surpresas_cpi = surpresas_cpi if surpresas_cpi is not None else pd.Series(dtype=float)
         self.tatica = tuple(tatica)
+        # Views novas CANDIDATAS (15b incerteza, 15g B com β próprio). Fora do
+        # v1: `views_novas=()` é o default e nada disto é chamado. A entrada é
+        # decisão do grupo (15a–15c e 15g) — aqui só existe o que permite MEDIR.
+        self.anuncios = anuncios if anuncios is not None else pd.DataFrame(
+            columns=["entropia", "familia", "soma"])
+        self.m3 = m3                      # (probs, valores em nº de cortes, cru)
+        self.dgs1 = dgs1 if dgs1 is not None else pd.Series(dtype=float)
+        self.taxa_base_m3 = taxa_base_m3  # taxa do fim de 2024, bps (ver M3_INICIO_DO_ANO)
+        self.views_novas = tuple(views_novas)
+        self.escala_incerteza = escala_incerteza
+        self.surpresas_B = []             # histórico para a média expansiva da B
         self._cache_surpresa_poly = {}    # reuniao -> surpresa (depende do γ)
         self.divergencias = []            # histórico para a média expansiva (2.2)
         self.surpresas_2_3 = []           # idem, para a demeanagem da 2.3
@@ -224,6 +322,7 @@ class MontadorV1:
         """
         self.divergencias.clear()
         self.surpresas_2_3[:] = self._semente_2_3
+        self.surpresas_B.clear()
 
     # --- insumos ------------------------------------------------------------
 
@@ -366,6 +465,112 @@ class MontadorV1:
             })
         return view
 
+    # --- views novas, CANDIDATAS (15b e 15g) --------------------------------
+
+    def _escala_anuncios(self, data):
+        """(x de hoje, x dos anúncios PASSADOS, centro) na escala declarada.
+
+        Duas escalas, nenhuma com threshold, e a 15c está ABERTA sobre qual
+        entra — por isso as duas rodam pelo mesmo caminho e o que muda é só a
+        transformação do regressor:
+
+          - `entropia` : o número cru; centro = média expansiva da família.
+          - `percentil`: posição dentro da própria família (a versão contínua do
+            contraste de grupos que mediu a premissa); centro = média dos
+            percentis passados da família, que é ~0,5 por construção.
+
+        Sem lookahead nas duas: hoje é ranqueado contra os anúncios ANTERIORES,
+        e o regressor de treino contra o próprio conjunto de treino.
+        """
+        passados = self.anuncios[self.anuncios.index < data]
+        familia = self.anuncios.loc[data, "familia"]
+        entropia = float(self.anuncios.loc[data, "entropia"])
+        if self.escala_incerteza == "entropia":
+            x_pass = passados["entropia"].astype(float)
+            x_hoje = entropia
+        elif self.escala_incerteza == "percentil":
+            x_pass = passados.groupby("familia")["entropia"].transform(
+                lambda g: g.rank(pct=True))
+            mesma = passados.loc[passados["familia"] == familia, "entropia"]
+            x_hoje = percentil_expansivo(entropia, mesma)
+        else:
+            raise ValueError(f"escala desconhecida: {self.escala_incerteza!r}")
+        centro = x_pass[passados["familia"] == familia]
+        if not len(centro) or not np.isfinite(x_hoje):
+            return None
+        return x_hoje, x_pass, float(centro.mean())
+
+    def _view_incerteza(self, data):
+        """View de incerteza de anúncio (15b) do dia, ou None (cascata).
+
+        Só existe em dia de anúncio: o Q é o retorno close-to-close do PRÓPRIO
+        dia, e a entropia sai do slot pré-abertura — a mesma janela que a
+        medição de `premio_condicional.py` usou.
+        """
+        if "incerteza" not in self.views_novas or data not in self.anuncios.index:
+            return None
+        escala = self._escala_anuncios(data)
+        if escala is None:
+            return None
+        x_hoje, x_pass, centro = escala
+        dias = x_pass.index.intersection(self.retornos.index)
+        if len(dias) < 2 or float(np.ptp(x_pass.loc[dias])) == 0.0:
+            return None                   # β não identificável -> cascata
+        betas = view_incerteza_anuncio.estimate_betas_incerteza(
+            self.retornos.loc[dias], x_pass.loc[dias], assets=list(ASSETS))
+        view = view_incerteza_anuncio.build_view(
+            list(ASSETS), betas=betas, entropia=x_hoje, entropia_media=centro,
+            soma_faixas=float(self.anuncios.loc[data, "soma"]),
+            familia=self.anuncios.loc[data, "familia"],
+            escala=self.escala_incerteza)
+        if view is not None:
+            view.diagnostics["n_eventos_beta"] = len(dias)
+        return view
+
+    def _betas_dgs1(self, data):
+        """β da B por event-study EXPANSIVO contra o ΔDGS1 dos dias de FOMC.
+
+        Mesmo estimador da 2.3, outro vértice — e é justamente isso que separa
+        esta view da 2.3 (15g: ângulo de 95,6° entre os dois P). Reusar os β da
+        2.3, como manda a espec antiga, poria duas linhas iguais no P do BL.
+        """
+        delta = (self.dgs1.diff() * PONTOS_PERCENTUAIS).dropna()
+        dias = self.fomc[self.fomc < data].intersection(
+            self.retornos.index).intersection(delta.index)
+        if len(dias) < 2:
+            return None, len(dias)
+        s = delta.loc[dias].to_numpy(dtype=float)
+        if np.ptp(s) == 0:
+            return None, len(dias)
+        return (view_2_3_fed.estimate_betas(
+            self.retornos.loc[dias].to_numpy(dtype=float), s), len(dias))
+
+    def _view_B(self, data):
+        """View B com β próprio (15g) do dia, ou None (cascata)."""
+        if "B" not in self.views_novas or self.m3 is None or self.taxa_base_m3 is None:
+            return None
+        probs, valores, _ = self.m3
+        if data not in probs.index:
+            return None
+        linha = probs.loc[data].to_numpy(dtype=float)
+        if not np.isfinite(linha).all():
+            return None
+        benchmark = self._ultimo_antes(self.dgs1, data)
+        betas, n_eventos = self._betas_dgs1(data)
+        if benchmark is None or betas is None:
+            return None
+        media = float(np.mean(self.surpresas_B)) if self.surpresas_B else 0.0
+        view = view_B_trajetoria_propria.build_view(
+            list(ASSETS), benchmark_bps=benchmark * PONTOS_PERCENTUAIS,
+            betas=betas, vertice="DGS1", bucket_probs=linha,
+            bucket_rates_bps=view_B_trajetoria_propria.rates_from_cut_buckets(
+                self.taxa_base_m3, valores),
+            surpresa_media=media, fl_correction=self._fl)
+        if view is not None:
+            self.surpresas_B.append(view.diagnostics["surpresa_bps"])
+            view.diagnostics["n_eventos_beta"] = n_eventos
+        return view
+
     # --- camada tática ------------------------------------------------------
 
     def _premio(self, data):
@@ -505,7 +710,8 @@ class MontadorV1:
     def __call__(self, data):
         pregoes = self.retornos.index
         sigma = sample_covariance(self.retornos, data=data)
-        views = [self._view_2_2(data, pregoes), self._view_2_3(data, pregoes)]
+        views = [self._view_2_2(data, pregoes), self._view_2_3(data, pregoes),
+                 self._view_incerteza(data), self._view_B(data)]
         overlays = [self._premio(data), self._drift(data),
                     self._drift_fomc(data, sigma), self._drift_cpi(data, sigma)]
         return sigma, views, overlays
@@ -531,7 +737,8 @@ def decisoes_realizadas_fomc(dff, fomc, antes=3, depois=5):
     return pd.Series(saida, dtype=float)
 
 
-def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=()):
+def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=(),
+             views_novas=(), escala_incerteza="entropia"):
     """(retornos, montador, datas, w_mkt) — toda a plumbing de dado do v1.
 
     Separado do `main` para as varreduras irmãs (ex.: `curva_c.py`) rodarem o
@@ -569,11 +776,25 @@ def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=()):
     surpresas_cpi = (t10yie.diff() * PONTOS_PERCENTUAIS).reindex(
         pd.DatetimeIndex(list(mercados))).dropna()
 
+    # Insumos das views novas — carregados só quando alguma está ligada, para o
+    # caminho da entrega (views_novas=()) não pagar por eles nem mudar de nada.
+    anuncios = m3 = dgs1 = taxa_base = None
+    if "incerteza" in views_novas:
+        anuncios = calendario_de_anuncios(raiz, diretorio)
+    if "B" in views_novas:
+        m3 = pmf_m3_diaria(diretorio)
+        dgs1 = load_fred(raiz / "data/raw/fred_DGS1.csv")
+        base = dff[dff.index < M3_INICIO_DO_ANO]
+        taxa_base = float(base.iloc[-1]) * PONTOS_PERCENTUAIS if len(base) else None
+
     montador = MontadorV1(retornos, breakeven, dgs10, mercados, pmfs,
                           fomc, surpresas, orcamentos or {},
                           fomc_pmfs=fomc_pmfs, e_ff=e_ff, gamma=gamma,
                           decisoes_fomc=decisoes_fomc,
-                          surpresas_cpi=surpresas_cpi, tatica=tatica)
+                          surpresas_cpi=surpresas_cpi, tatica=tatica,
+                          anuncios=anuncios, m3=m3, dgs1=dgs1,
+                          taxa_base_m3=taxa_base, views_novas=views_novas,
+                          escala_incerteza=escala_incerteza)
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
     primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
