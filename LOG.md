@@ -631,3 +631,69 @@ registrado como posição da Lia, não fechado (é decisão de grupo).
   correção do Felipe estava certa no diagnóstico e errada no remédio, e que
   o remédio proposto reintroduzia por outra porta a mesma inversão de sinal
   identificada na rodada anterior.
+
+## 2026-08-09 — Lia (implementação: defeitos, colapso e 1ª calibração)
+
+**Feito:**
+- Reproduzidos e corrigidos os **dois defeitos** que o Felipe mediu em
+  `lia/calibracao_omega.py` (commit `dd2025c`): `portao_volume` convertia
+  `NaN` em `0.0` (os 346 slots de truncamento vetariam o mercado — o
+  oposto da decisão de 07/08) e `combinar_por_rank` inferia veto de
+  `score == 0.0`, invertendo estabilidade (−desvio: 0.0 é o melhor valor)
+  e proximidade (0.0 no dia do evento). O veto passou a ser parâmetro
+  explícito, coerente com a 6b.
+- Implementado o colapso da 6a: `preparar_pmf` (linha incompleta sai
+  inteira, sem `ffill`; renormaliza), `variacao_total`,
+  `variacao_valor_esperado`, `score_estabilidade_pmf` (média, não desvio —
+  a quantidade colapsada é não-negativa) e `score_coerencia` (só em linha
+  completa). 22 testes no arquivo, 33 na suíte da Lia.
+- **Achado que trava o portão (`PEDIDO_Paulo_G5_fomc.md`):** o G5 não
+  alcança os mercados do FOMC. Não há chave comum — o parquet tem
+  `data, mercado, probabilidade, volume, evento_id` e nenhum
+  `conditionId`, enquanto o G5 identifica por slug/`conditionId` — e a
+  cobertura é de **1 mercado contra 76**. Pedido escrito ao Paulo com
+  prioridade por reunião inteira e das mais recentes para as antigas.
+- **1ª calibração com dado real** (`lia/rodar_calibracao.py`, commit
+  `240d911`): 18 reuniões, 3.905 slots em 12h e 1.952 em 24h, com as
+  variações calculadas por evento (nunca cruzando fronteira de reunião).
+  Resultado estável nas 8 combinações: variação total vence `|ΔE|` em
+  todos os cortes (−0,31 a −0,40, monotônica), coerência passa mais fraca
+  (−0,15 a −0,18) e **proximidade reprova com o sinal invertido** (+0,09 a
+  +0,22).
+- Instalado `pyarrow` no ambiente (faltava para ler o parquet). Dados dos
+  outros branches lidos via `git show` para pasta temporária fora do repo
+  — sem merge, sem edição de módulo alheio.
+
+**Quebrou:** nada.
+
+**Em aberto para a dona decidir:**
+- Confirmar a 6a a favor da candidata (a), variação total — os três
+  critérios (spearman, nº de parâmetros, independência do balde aberto)
+  apontam para o mesmo lado.
+- Proximidade: sai da régua (protocolo) ou entra com sinal invertido
+  (hipótese nova, com mecanismo econômico — a probabilidade se cristaliza
+  perto da decisão)?
+
+**Pendente:**
+- O número da estabilidade é **provisório**: sem portão, o mesmo viés da
+  6b pode estar produzindo o −0,40 (mercado ilíquido entra como estável e
+  com erro futuro baixo, pelo mesmo midpoint congelado).
+- Entregar `c` + `ativa` até 13/08 (corte da decisão 10a do Felipe).
+- `git push` da branch `Lia` (commits `dd2025c` e `240d911` locais).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~95% da janela, estimativa.
+- **Prompt inicial (verbatim):** caminho de três arquivos do Felipe
+  (`RESPOSTA5_Lia_G5_saiu_corte_13-08.md`, `dias_801_fomc.csv`,
+  `dias_801_lia.py`), sem texto adicional.
+- **Iterações até aceitar:** 1 (uma escolha de escopo — implementar tudo
+  até o `c` — confirmada na recomendação).
+- **Erros da IA:** nenhum no resultado; um percalço de execução (sintaxe
+  de here-string do PowerShell usada no Bash, que sujou a mensagem do
+  commit anterior e foi corrigida por `--amend`).
+- **Decisões escaladas:** 6f (resultado da 1ª calibração; duas escolhas em
+  aberto para a dona).
+- **Tags:** `[PROMPT-CHAVE]` — a sessão depende de descobrir, ao tentar
+  ligar o portão, que o insumo declarado como entregue não casa com a
+  série que ele deveria julgar.
