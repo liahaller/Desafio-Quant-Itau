@@ -42,7 +42,7 @@ from typing import NamedTuple
 import numpy as np
 import pandas as pd
 
-from bl_integration import bl_weights_from_views, stack_views
+from bl_integration import aplicar_veto, bl_weights_from_views, stack_views
 from config import (ALUGUEL_BPS_ANO, CUSTO_BPS_POR_LADO, DELTA,
                     FINANCIAMENTO_SPREAD_BPS_ANO, PREGOES_POR_ANO, TAU)
 from market_inputs import omega_fallback
@@ -202,7 +202,8 @@ def reversal_share(trades, janela=2):
 
 def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELTA,
                  custo_bps=CUSTO_BPS_POR_LADO, teto_alavancagem=None,
-                 teto_no_tilt=False, incerteza=None, w_inicial=None, banda=None):
+                 teto_no_tilt=False, incerteza=None, regua=None, w_inicial=None,
+                 banda=None):
     """Anda nas datas e devolve o BacktestResult.
 
     retornos   : DataFrame (datas × ativos) de retornos diários, colunas na
@@ -231,6 +232,18 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  da Lia entrega (`c >= 1`) — o `c` dela entra DIRETO, sem
                  inverter. O que se inverte é o eixo das curvas de sensibilidade
                  (confiança em (0,1]), e a conversão vive lá, não aqui.
+    regua      : a régua da Lia POR DECISÃO — `callable(data) -> (ativa,
+                 incerteza)`, os dois dicts chaveados pelo nome da view
+                 (`diagnostics["view"]`), exatamente a assinatura de
+                 `aplicar_veto`. É por aqui que o vetor de verdade entra: o
+                 `incerteza` escalar acima é grade de varredura e vale para
+                 todas as views iguais, o que mede o LIMITE da régua, nunca o
+                 efeito dela (que é de cauda — D20b). Os dois são mutuamente
+                 exclusivos.
+
+                 O veto sai daqui já resolvido: view com `ativa[nome] = False`
+                 vira None antes do `stack_views`, então ela não aparece em P,
+                 em Q nem no `n_views` do dia.
     w_inicial  : peso já carregado antes da primeira data. None = zeros, ou
                  seja, a primeira montagem paga o custo de entrar na carteira.
     banda      : banda de não-negociação por ativo (None/0 = sem banda). Δw menor
@@ -241,6 +254,9 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
     retornos DE D — o custo é cobrado nesse mesmo dia, no rebalanceamento que
     o produziu.
     """
+    if regua is not None and incerteza is not None:
+        raise ValueError("`incerteza` (grade de varredura) e `regua` (por decisão) "
+                         "são mutuamente exclusivos — a grade sobrescreveria a régua")
     retornos = pd.DataFrame(retornos)
     ativos = list(retornos.columns)
     w_mkt = np.asarray(w_mkt, dtype=float)
@@ -258,14 +274,23 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         sigma, view_results, overlay_results = montar_dia(data)
         sigma = np.asarray(sigma, dtype=float)
 
-        # O Ω tem de ser montado com o MESMO P que o BL vai empilhar, então o
-        # stack roda antes. `incerteza=None` = fallback He-Litterman, que é o
-        # TETO de confiança (a régua da Lia só tira peso, nunca adiciona). É
-        # aqui que o vetor dela entra, depois de passar por `aplicar_veto` —
-        # e nada mais muda.
+        # A régua roda ANTES do stack por dois motivos: ela pode vetar view (e
+        # view vetada não pode aparecer no P do BL) e o Ω tem de ser montado com
+        # o MESMO P que o BL vai empilhar. `aplicar_veto` devolve o vetor já na
+        # ordem de `stack_views`, que é a única ordem que o `omega_fallback`
+        # aceita. Sem régua e sem grade, o Ω fica no fallback He-Litterman, que
+        # é o TETO de confiança (a régua só tira peso, nunca adiciona).
+        c_dia = None
+        if regua is not None:
+            view_results, c_dia = aplicar_veto(view_results, *regua(data))
+
         P, _, _ = stack_views(view_results, n_assets=len(ativos))
-        omega = None if P is None else omega_fallback(
-            P, sigma, tau, None if incerteza is None else np.full(P.shape[0], incerteza))
+        if P is None:
+            omega = None
+        else:
+            if c_dia is None and incerteza is not None:
+                c_dia = np.full(P.shape[0], incerteza)
+            omega = omega_fallback(P, sigma, tau, c_dia)
         w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
         w_pedido, diag_taticas = apply_overlays(w_bl, overlay_results or ())
         w_alvo = cap_leverage(w_pedido, teto_alavancagem, w_mkt if teto_no_tilt else None)
