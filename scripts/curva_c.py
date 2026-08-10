@@ -11,6 +11,13 @@ O que a varredura responde, e é a pergunta que trava a D12: **com o `c` real,
 ainda sobra alavancagem para um teto cortar?** Se Σ|w| já cair sozinha para
 perto de 1, o teto vira remendo sem buraco — que é justamente o argumento dela.
 
+⚠️ Desde 2026-08-10 a régua existe (`lia/omega.py`), e ela **não alcança a
+grade inteira**: medida nas 601 decisões da 2.2, com nível 1 ela ocupa
+[0,36 · 1,0] neste eixo (mediana 0,953). O trecho abaixo de 0,36 continua
+medindo sensibilidade — é útil como física do modelo — mas não é cenário que
+a régua produza. Para a escolha de 13/08 vale a faixa alcançável; ver
+`Dump/analises/Curva_c_faixa_regua.md`.
+
 Três leituras, todas medidas na carteira **pedida** pelo BL (antes do corte):
 
   - `alavancagem_pedida` não depende do teto nem do escopo dele: a montagem do
@@ -51,9 +58,14 @@ from config import CUSTO_BPS_POR_LADO, DELTA, TAU  # noqa: E402
 def rodada(retornos, montador, datas, w_mkt, c, teto, no_tilt, custo_bps):
     """Um backtest com `c` constante em todas as views ativas do dia.
 
-    O `c ∈ (0,1]` da Lia é confiança (maior = mais); o `omega_fallback` recebe
-    incerteza (maior = menos). Entra como 1/c — a conversão vive aqui, num
-    lugar só, porque trocar as duas é a armadilha que a régua dela descreve.
+    O `c ∈ (0,1]` DESTA VARREDURA é confiança (maior = mais), que é o eixo das
+    curvas; o `omega_fallback` recebe incerteza (maior = menos). Entra como
+    1/c — a conversão vive aqui, num lugar só, porque trocar as duas é a
+    armadilha que a régua descreve.
+
+    ⚠️ Não é a convenção em que a régua da Lia ENTREGA: lá `c >= 1` já é
+    incerteza e vai direto ao `omega_fallback`, sem passar por aqui. Os dois
+    eixos são recíprocos (`c_varredura = 1 / c_regua`).
     """
     resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                              delta=DELTA, custo_bps=custo_bps, teto_alavancagem=teto,
@@ -69,7 +81,9 @@ def main():
                         help="diretório com data/ extraído do branch Paulo")
     parser.add_argument("--cs", type=float, nargs="+",
                         default=[1.0, 0.75, 0.5, 0.25, 0.1, 0.05, 0.02, 0.01],
-                        help="grade de confiança c ∈ (0,1] — varredura, não escolha")
+                        help="grade de confiança c ∈ (0,1] — varredura, não escolha. "
+                             "A régua da Lia alcança [0,36 · 1,0] com nível 1: abaixo "
+                             "disso a grade mede sensibilidade, não cenário atingível")
     parser.add_argument("--teto", type=float, default=1.0,
                         help="teto usado só nas colunas de resultado líquido")
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
@@ -117,9 +131,12 @@ def main():
 
     texto = [
         "# Curva `c` → alavancagem — o passo (2) da ordem da Lia, pré-executado\n",
-        "> Gerado por `scripts/curva_c.py`. O `c` da Lia **não existe ainda**: "
-        "aqui ele é uma GRADE de valores constantes, para medir a sensibilidade "
-        "antes de a régua chegar. **Isto mede, não escolhe** — nenhum `c` desta "
+        "> Gerado por `scripts/curva_c.py`. O `c` aqui é uma GRADE de valores "
+        "CONSTANTES no eixo de **confiança** (maior = mais peso). A régua da "
+        "Lia entrega no eixo recíproco (`c >= 1`, incerteza) e **por view**: "
+        "com nível 1 ela ocupa **[0,36 · 1,0]** deste eixo (mediana 0,953, "
+        "medida nas 601 decisões da 2.2). Grade constante é portanto um LIMITE "
+        "da régua, não a régua. **Isto mede, não escolhe** — nenhum `c` desta "
         "tabela é proposta de valor (CLAUDE.md §6).\n",
         f"- janela: **{datas[0].date()} a {datas[-1].date()}** ({len(datas)} pregões)",
         "- views ativas: **2.2 e 2.3** (a B fora do v1 pela decisão 11) — o mesmo "
@@ -136,7 +153,9 @@ def main():
     ]
     for c, linha in tabela.iterrows():
         celulas = [f"{c:g}",
-                   f"{linha['incerteza (1/c)']:.0f}",
+                   # 2 casas: na faixa que a régua alcança a incerteza vive
+                   # entre 1,0 e 2,8, e arredondar a inteiro colapsa a coluna
+                   f"{linha['incerteza (1/c)']:.2f}",
                    f"{linha['Σ|w| pedida mediana']:.2f}",
                    f"{linha['Σ|w| pedida máx']:.2f}",
                    f"{linha[f'dias acima do teto {args.teto:g}'] * 100:.0f}%",

@@ -1,6 +1,6 @@
 # Curva `c` → alavancagem — o passo (2) da ordem da Lia, pré-executado
 
-> Gerado por `scripts/curva_c.py`. O `c` da Lia **não existe ainda**: aqui ele é uma GRADE de valores constantes, para medir a sensibilidade antes de a régua chegar. **Isto mede, não escolhe** — nenhum `c` desta tabela é proposta de valor (CLAUDE.md §6).
+> Gerado por `scripts/curva_c.py`. O `c` aqui é uma GRADE de valores CONSTANTES no eixo de **confiança** (maior = mais peso). A régua da Lia entrega no eixo recíproco (`c >= 1`, incerteza) e **por view**: com nível 1 ela ocupa **[0,36 · 1,0]** deste eixo (mediana 0,953, medida nas 601 decisões da 2.2). Grade constante é portanto um LIMITE da régua, não a régua. **Isto mede, não escolhe** — nenhum `c` desta tabela é proposta de valor (CLAUDE.md §6).
 
 - janela: **2025-02-10 a 2026-08-06** (374 pregões)
 - views ativas: **2.2 e 2.3** (a B fora do v1 pela decisão 11) — o mesmo `c` entra nas duas, então a curva é **sensibilidade agregada**, não o `c` de uma view
@@ -9,14 +9,14 @@
 
 | c | incerteza (1/c) | Σ\|w\| pedida mediana | Σ\|w\| pedida máx | dias acima do teto 1 | dias de ruína (irrestrito) | irrestrito acumulado bruto | excesso — teto na carteira | excesso — teto no tilt |
 |---|---|---|---|---|---|---|---|---|
-| 1 | 1 | 191.99 | 34138.09 | 96% | 35 | — | -15.20 pp | +4.07 pp |
-| 0.75 | 1 | 164.42 | 29259.74 | 96% | 26 | — | -14.87 pp | +4.74 pp |
-| 0.5 | 2 | 127.82 | 22756.12 | 96% | 23 | — | -14.34 pp | +5.52 pp |
-| 0.25 | 4 | 76.90 | 13652.68 | 96% | 14 | — | -13.46 pp | +6.23 pp |
-| 0.1 | 10 | 35.47 | 6205.80 | 96% | 6 | — | -12.95 pp | +4.89 pp |
-| 0.05 | 20 | 19.05 | 3251.04 | 96% | 2 | — | -13.23 pp | +2.91 pp |
-| 0.02 | 50 | 8.43 | 1339.28 | 96% | 0 | -8.0% | -13.96 pp | +0.74 pp |
-| 0.01 | 100 | 4.75 | 676.77 | 96% | 0 | +65.4% | -14.20 pp | -0.11 pp |
+| 1 | 1.00 | 191.99 | 34138.09 | 96% | 35 | — | -15.20 pp | +4.07 pp |
+| 0.75 | 1.33 | 164.42 | 29259.74 | 96% | 26 | — | -14.87 pp | +4.74 pp |
+| 0.5 | 2.00 | 127.82 | 22756.12 | 96% | 23 | — | -14.34 pp | +5.52 pp |
+| 0.25 | 4.00 | 76.90 | 13652.68 | 96% | 14 | — | -13.46 pp | +6.23 pp |
+| 0.1 | 10.00 | 35.47 | 6205.80 | 96% | 6 | — | -12.95 pp | +4.89 pp |
+| 0.05 | 20.00 | 19.05 | 3251.04 | 96% | 2 | — | -13.23 pp | +2.91 pp |
+| 0.02 | 50.00 | 8.43 | 1339.28 | 96% | 0 | -8.0% | -13.96 pp | +0.74 pp |
+| 0.01 | 100.00 | 4.75 | 676.77 | 96% | 0 | +65.4% | -14.20 pp | -0.11 pp |
 
 ## Leitura
 

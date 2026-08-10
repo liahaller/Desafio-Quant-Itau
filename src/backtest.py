@@ -226,8 +226,11 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  fallback neutro). É ferramenta de VARREDURA — serve para medir
                  a sensibilidade ao `c` antes de a régua da Lia existir, não
                  para cravar confiança. O vetor de verdade é por view e chega
-                 pelo `aplicar_veto`, não por aqui. Convenção do `omega_fallback`:
-                 maior = MENOS confiança, e o `c ∈ (0,1]` dela entra como 1/c.
+                 pelo `aplicar_veto`, não por aqui. Convenção: maior = MENOS
+                 confiança, a mesma do `omega_fallback` e a mesma em que a régua
+                 da Lia entrega (`c >= 1`) — o `c` dela entra DIRETO, sem
+                 inverter. O que se inverte é o eixo das curvas de sensibilidade
+                 (confiança em (0,1]), e a conversão vive lá, não aqui.
     w_inicial  : peso já carregado antes da primeira data. None = zeros, ou
                  seja, a primeira montagem paga o custo de entrar na carteira.
     banda      : banda de não-negociação por ativo (None/0 = sem banda). Δw menor

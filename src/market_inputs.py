@@ -158,13 +158,20 @@ def omega_fallback(P, sigma, tau, incerteza=None):
 
     O argumento se chamava `confianca`, o que dizia o OPOSTO do que o número
     faz — renomeado a pedido da Lia (resposta de 2026-08-07, item 4a). As duas
-    convenções existem de verdade e são inversas (`c_dela ∈ (0,1]`, maior =
-    mais confiança; `c_meu = 1/c_dela`); ela entrega na convenção daqui, e o
-    nome agora não desmente o sinal. É exatamente a armadilha de escala que
-    motivou a régua: as duas parecem iguais e dão carteiras diferentes.
+    convenções existem de verdade e são recíprocas; a régua dela ENTREGA na
+    convenção daqui (`c >= 1`, incerteza), e o nome agora não desmente o sinal.
+    É exatamente a armadilha de escala que motivou a régua: as duas parecem
+    iguais e dão carteiras diferentes.
 
-    Ela garante `incerteza >= 1` por construção — a régua dela é produto de
-    fatores em (0,1] na convenção de confiança, então **só tira peso, nunca
+    ⚠️ A outra convenção existe e é a das CURVAS (a dela e o `curva_c.py`):
+    ali o eixo é confiança em (0,1] e vale `c_curva = 1 / incerteza`. Número
+    lido de gráfico NÃO entra aqui direto — inverter (resposta dela de
+    2026-08-10, item 2). Medido nas 601 decisões da 2.2 com nível 1: a régua
+    devolve incerteza de 1,0016 a 2,7653, ou seja [0,36 · 1,0] no eixo das
+    curvas — ela mora no TOPO delas, não no fundo.
+
+    Ela garante `incerteza >= 1` por construção — a régua é produto de
+    penalidades `>= 1` elevado ao nível, então **só tira peso, nunca
     adiciona**. Ou seja: este fallback é o TETO de confiança do modelo.
     """
     P = np.atleast_2d(np.asarray(P, dtype=float))
