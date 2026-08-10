@@ -916,3 +916,95 @@ mesma classe do veto de liquidez.
   mesmo padrão se repetiu três vezes na sessão — o portão reprovou como
   score, o alvo circular foi trocado por um independente, e o erro de
   calendário foi medido em vez de aceito.
+
+---
+
+## 2026-08-10 — Lia (série de `c` por decisão para o Felipe)
+
+**Feito:**
+- **Entregue o item 2 do Felipe: a série de `c` por decisão**
+  (`lia/exportar_c.py` → `lia/c_por_decisao.csv`, 2.417 linhas, 1.227
+  selecionadas). Motivo do pedido: a `Curva_c.md` varre `c` **constante**
+  aplicado às duas views todo dia, o que apaga por construção a diferenciação
+  entre mercado bom e ruim — a curva media um limite da régua, não a régua.
+- **Exporta `c_nivel1`, não uma série por nível.** A régua é
+  `((1 + v̄)(1 + |Σp − 1|)) ** nivel`, então `c(nivel) = c_nivel1 ** nivel` e o
+  Felipe varre o eixo continuamente sem nova rodada minha. Vão junto os dois
+  fatores separados (diagnóstico de qual defeito tira peso no dia), `ativa` +
+  `motivo_inativa` (os dois motivos separados, como coluna de log — a
+  assinatura de `calcular_omega` continua sem devolvê-los) e `tem_portao`.
+- **Reprodução exata dos números publicados antes de exportar**: 601 decisões
+  da 2.2, 543 ativas (90,3%), 37 vetos de volume, 21 sem par adjacente, `c` de
+  1,0016 a 2,7653 (mediana 1,0495, p95 1,2426). Confirma `janela_slots = 6`
+  como o recorte usado na validação de 09/08.
+- **⚠️ Achado da entrega (6k): a régua modula quase só a 2.2.** A 2.3 tem `c`
+  mediano 1,0120 e pior caso 1,2240 — na escala da curva do Felipe, 0,988 e
+  0,817 com nível 1; mesmo com nível 5 o pior dia da 2.3 (0,364) é onde a 2.2
+  já está com nível 1. Mecanismo: o mercado do FOMC tem livro que fecha
+  (coerência mediana 1,0035 × 1,0200) e PMF que se move pouco (1,0065 ×
+  1,0283). Parte da suavidade é ausência de portão. **Consequência para
+  13/08: a curva do nível tem de sair por view**, senão a 2.3 dilui e o
+  agregado subestima quanto o nível morde a 2.2. Não se propõe nível por view
+  (seriam dois botões onde a 6d pediu um).
+- **A regra de seleção do mercado do dia foi LIDA do módulo do Felipe, não
+  decidida aqui.** Em 80 das 496 datas da 2.2 há 2 ou 3 mercados-mês vivos, e
+  `{data: {view: c}}` exige escolher um. `_view_2_2`/`_view_2_3` do
+  `scripts/backtest_v1.py` usam `min(eventos futuros)`. A série completa vai
+  junto para o casamento se refazer do CSV se a regra dele mudar.
+- **10 testes novos** (`lia/tests/test_exportar_c.py`), **76 na suíte**:
+  seleção do próximo evento, um por (data, view), empate determinístico,
+  `c_nivel1` = produto dos fatores, potenciação, e os dois motivos de
+  `ativa = False`.
+- **Resposta escrita** em `RESPOSTA6_Felipe_serie_c.md`.
+
+**Cancelado no meio da sessão (instrução da dona):**
+- Estava em curso a verificação da **cristalização** contra a medição do
+  Felipe (`Cristalizacao_entropia.md`), com a dona já tendo escolhido corrigir
+  a frase do relatório pelo recorte medido. O Felipe avisou que **o artefato
+  dele está errado e enviará o corrigido**, e a dona mandou cancelar.
+- `lia/rodar_cristalizacao.py` foi **apagado**; `RELATORIO_omega.md` **não foi
+  tocado** — a frase da seção "o que foi rejeitado" segue como está. Registrado
+  na **6l**.
+- A medição exploratória chegou a rodar antes do cancelamento e indicava
+  divergência entre as views (o CPI revertia em d = 0, o FOMC não). **Não vai a
+  lugar nenhum** enquanto o dado dele não estiver certo — está aqui só para a
+  próxima sessão saber que o teste é barato de refazer.
+
+**Pendente:**
+- **Arquivo corrigido da cristalização** (Felipe). Só então a frase do
+  relatório é revisitada (6l). A rejeição da proximidade não depende disso.
+- **Reunião: nível global + teto** (6d/6j), agora com a tabela **por view** da
+  6k como insumo.
+- **Interface do volume (D20a do `Felipe`)**: fica na opção (1) — dict passado
+  na chamada — até a reunião; se a (2) passar, quem escreve é Lia + Paulo.
+- G5 do FOMC (`PEDIDO_Paulo_G5_fomc.md`): sem ele a 2.3 vai marcada com
+  `tem_portao = False` e nenhuma decisão dela sai por liquidez (0 × 17 na 2.2).
+- Valor realizado do CPI (`PEDIDO_Paulo_cpi_realizado.md`): última prioridade,
+  sem prazo.
+- Relatório: falta a revisão da dona e a seção de resultados de backtest.
+- Janela 5 × 10 (6h) segue registrada em aberto; Decisão 9 segue aberta.
+- Dados dos outros branches em `%TEMP%\omega_lia`. Nesta sessão foi extraído
+  também `src/` do `origin/Felipe` em `%TEMP%\omega_lia\src_felipe` (leitura da
+  regra de seleção — nada editado).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~45% da janela, estimativa.
+- **Prompt inicial (verbatim):** "o felipe me mandou essa mensagem # Resposta à
+  Lia — a convenção virou correção de código, o volume vai para a reunião, e a
+  cristalização não bate no meu dado [...]"
+- **Iterações até aceitar:** 1 nas duas escolhas apresentadas (escopo da série;
+  tratamento da frase do relatório), ambas confirmadas na opção recomendada —
+  mas a segunda foi **revertida por informação nova do Felipe**, não por
+  discordância da dona.
+- **Erros da IA:** nenhum de resultado. Um desperdício de trabalho: escrevi
+  `lia/rodar_cristalizacao.py` e ia rodá-lo quando a dona cancelou, porque o
+  insumo do Felipe estava errado — não havia como saber pelo repositório.
+- **Decisões escaladas:** **6k** (a régua modula quase só a 2.2; curva por view
+  para a reunião) e **6l** (cristalização congelada até o arquivo corrigido).
+- **Tags:** `[PROMPT-CHAVE]` — o valor da sessão não foi gerar o CSV pedido, e
+  sim ter ido ler o módulo do Felipe para descobrir que `{data: {view: c}}` era
+  ambíguo em 80 datas, e ter medido a série antes de entregá-la, o que expôs
+  que a 2.3 é quase invariante à régua. Entregar o formato pedido sem essas
+  duas coisas teria produzido um artefato correto e uma decisão de reunião mal
+  informada.
