@@ -986,6 +986,10 @@ mesma classe do veto de liquidez.
 - Dados dos outros branches em `%TEMP%\omega_lia`. Nesta sessão foi extraído
   também `src/` do `origin/Felipe` em `%TEMP%\omega_lia\src_felipe` (leitura da
   regra de seleção — nada editado).
+- `git push` da branch `Lia`: **feito**, `a0cd76f..9d61611` (3 commits — o
+  exportador com o CSV, a 6k/6l com a resposta, e este fechamento). Só na
+  `Lia`; a `main` segue em `d4b9a28` e a divergência de numeração do
+  `Decisoes_pendentes.md` entre os três branches continua sem resolução.
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
