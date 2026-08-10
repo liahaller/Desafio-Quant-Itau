@@ -616,3 +616,52 @@ vai ao relatório com o recorte que os dois lados sustentarem.
 depende dessa frase** — ela caiu em 16 cortes do teste de monotonicidade, nas
 duas views, incluindo o alvo por desfecho da 6h. O que está em jogo é uma
 sentença interpretativa, não um ingrediente da régua.
+
+### 6m. Regra de decisão declarada ANTES de rodar a 2.3 com portão (10/08/2026) 🟡
+
+O Paulo entregou o G5 do FOMC (`conditionId` no parquet + as 76 faixas × 18
+reuniões) e o valor realizado do CPI. Isso permite, pela primeira vez, rodar a
+**2.3 com os quatro ingredientes** e estender o **alvo por desfecho à 2.2** — as
+duas lacunas que a 6f e a 6h declaravam.
+
+**Este registro é feito com o dado em disco e nenhum resultado calculado.** É o
+que o torna verificável: a regra abaixo não pode ter sido escolhida depois de
+ver o número, porque o commit que a grava é anterior ao que produz o número.
+
+**Regra, escolhida pela dona:**
+1. A rodada da 2.3 com portão é **confirmatória**. Se concordar com a 6g, a
+   régua fica confirmada em duas views com portão.
+2. **Se discordar, a régua não muda.** A 6g fechou a 6a por **parcimônia**, não
+   por vitória estatística (as duas formas já empatavam no CPI); trocar a forma
+   ao ver a segunda view seria escolher depois do dado — exatamente o que a
+   trava da 6d evita. A discordância vai ao relatório como **limitação
+   registrada**, não como motivo de troca.
+3. O que a rodada **pode** mudar: a ressalva da 6f (estabilidade possivelmente
+   inflada pelo viés do midpoint) e os números da tabela por view da 6k, que
+   foram medidos sem portão na 2.3.
+
+**Decisões da dona sobre o alvo por desfecho da 2.2** (perguntas devolvidas pelo
+Paulo na entrega do CPI realizado):
+- **Desfecho = `sa_fp_1dec`** — CPI MoM SA *first-print* (ALFRED, valor que
+  existia no dia do release), arredondado a 1 casa, que é a precisão em que a
+  própria rule do mercado resolve. O revisado erraria o bucket em dez/2024 e
+  ago/2025.
+- **out/2025 e nov/2025 ficam FORA do teste**, reportados à parte. Os dois têm
+  desfecho do UMA (0,3%) mas nenhum valor do BLS: out/2025 nunca foi publicado
+  (shutdown) e nov/2025 não tem MoM porque falta a base de outubro. Pela 6h o
+  desfecho **não sai do mercado**, e resolução de oráculo não é medição
+  independente — aceitá-los reintroduziria a circularidade nos dois meses mais
+  anômalos da série. O fato vai ao relatório numa nota separada.
+- **dez/2024 e jan/2025 entram com SA**, com ressalva: a rule desses dois é
+  legada e não nomeia a série, então "SA" é inferência do Paulo por
+  consistência com os buckets — que usa o desfecho para escolher a série, e é
+  levemente circular. **Roda-se a sensibilidade com e sem os dois**; se o
+  resultado não mudar, a ressalva é imaterial e fica registrada como tal.
+- **jul/2026 fora** — release em 12/08/2026, mercado ainda aberto, sem bucket
+  vencedor. Não é escolha metodológica, é calendário.
+- Sobram **15 meses** utilizáveis, contra 16 reuniões na 2.3.
+
+**Correção de fato na 6g:** lá está escrito "19 mercados-mês de CPI". São
+**18** — contados os slugs distintos no `clob_exploracao`, que é a mesma conta
+do Paulo. As 111 faixas (que o G5 casa 111/111) estão certas; o erro era só no
+número de mercados-mês.
