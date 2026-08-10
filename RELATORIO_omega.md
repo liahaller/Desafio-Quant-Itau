@@ -156,7 +156,7 @@ negativo é melhor** — significa que confiança alta antecede erro pequeno.
 | Estabilidade (\|ΔE\|) | −0,29 a −0,36 | −0,42 | ✅ | perde no desempate |
 | Coerência do livro | −0,15 a −0,18 | **−0,21 a −0,31** | ✅ | **entra** |
 | Portão de volume (como score) | — | −0,03 a +0,14 | — | reprovado |
-| Proximidade do evento | +0,09 a +0,22 | +0,09 a +0,31 | ✗ | **reprovado** |
+| Proximidade do evento | +0,09 a +0,22 | +0,10 a +0,37 | ✗ | **reprovado** |
 
 Cada faixa cobre as combinações testadas (2 grades temporais × 2 horizontes de
 erro × 3 janelas); os valores em destaque são a melhor configuração de cada
@@ -248,6 +248,32 @@ Três leituras, todas favoráveis à régua escolhida:
    desempate por parcimônia foi a decisão certa, e não um recurso para
    escapar de uma comparação inconclusiva: quando o alvo deixa de favorecer
    qualquer uma delas, não há vencedora.
+
+### Um teste não planejado: o calendário estava errado
+
+Durante a redação desta seção, o calendário oficial do CPI (FRED) revelou dois
+erros no calendário que vínhamos usando, ambos na janela do *shutdown* de
+2025: uma divulgação atrasada em nove dias e uma que **nunca ocorreu** —
+um evento fantasma no arquivo.
+
+Recalculada a calibração com o calendário corrigido, **um único número mudou**:
+o da proximidade do evento, que passou de +0,09/+0,31 para +0,10/+0,37 na 2.2
+(mais reprovada do que antes). Estabilidade, coerência e portão saíram
+idênticos.
+
+Não é coincidência, e é o argumento mais forte disponível a favor da régua
+escolhida: **os dois ingredientes que entraram não consultam o calendário.**
+Eles medem propriedades da leitura do mercado — quanto a distribuição se moveu
+e se o livro fecha —, e não propriedades da agenda. O único candidato que
+dependia de saber quando o evento aconteceria é justamente o que foi
+descartado. Uma régua construída sobre "faltam N dias para o anúncio" teria
+herdado o erro inteiro, silenciosamente, e sem nenhum sintoma que a
+calibração pudesse detectar.
+
+A lição geral, que vale além do Ω: numa janela histórica curta, um erro de
+calendário pode pesar mais que boa parte das escolhas de modelo. O que ele
+sustenta não é "o resultado melhorou" — é que dado de calendário deve vir de
+fonte oficial em tudo que for medido.
 
 ---
 
@@ -432,9 +458,19 @@ nas duas. Ainda assim, são dois mercados.
 e será cravado uma única vez, junto com o teto de alavancagem, por decisão de
 risco declarada. A ordem importa: hoje o teto de alavancagem faz parte do
 trabalho que caberia ao Ω, então o `c` entra primeiro, mede-se a alavancagem
-resultante, e só então se decide o teto. Com `nível = 1` a régua é suave
-(mediana 1,05); o botão existe justamente porque a escala apropriada é uma
-decisão de apetite a risco, não de estatística.
+resultante, e só então se decide o teto. O botão existe justamente porque a
+escala apropriada é uma decisão de apetite a risco, não de estatística.
+
+O que já se pode dizer sobre ele, medido: **a régua discrimina, mas não
+encolhe a carteira.** Expressa como confiança relativa (o inverso do
+multiplicador), com `nível = 1` ela vai de 0,95 na mediana a 0,36 no pior
+mercado; com `nível = 5`, de 0,79 na mediana a 0,006 no pior. A cauda desaba
+muito antes do centro — e para levar a *mediana* ao ponto em que o
+dimensionamento pedido cairia de fato seria preciso um nível da ordem de 95,
+o que não é uma escolha, é uma impossibilidade. Ou seja: o Ω separa mercado
+confiável de mercado ruim, e não substitui o limitador de tamanho da
+carteira. Os dois têm de conviver, e é por isso que o nível e o teto se
+decidem na mesma conversa.
 
 ---
 

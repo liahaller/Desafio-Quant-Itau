@@ -373,7 +373,7 @@ para tirar a 2.3 do provisório, mas deixou de bloquear a entrega.
 | estabilidade (\|ΔE\|, j5) | −0,42 | ✅ | perde no alvo dela, ganha no próprio |
 | coerência | −0,21 a −0,31 | ✅ | **mais forte que no FOMC** (−0,15/−0,18) |
 | portão de volume (qualquer threshold) | −0,03 a +0,14 | — | reprovado como score |
-| proximidade | +0,09 a +0,31 | ✗ | **reprovada de novo, sinal invertido** |
+| proximidade | +0,10 a +0,37 | ✗ | **reprovada de novo, sinal invertido** |
 
 **Grade e janela que o dado escolheu:** 12h (vence 24h em todos os cortes) e
 **5 variações** (vence 10 e 20 em todos os cortes das duas views). Atenção ao
@@ -503,3 +503,62 @@ carteira não seria admissível.
 exigiria o CPI publicado pelo BLS; o pipeline traz as datas de divulgação, não
 os valores. Se essa série entrar, a verificação de não circularidade passa a
 ter duas views — **candidato a pedido ao Paulo, não pedido ainda.**
+
+### 6i. Recalibração com o calendário do CPI corrigido (09/08/2026) 🟢
+
+Aviso do Felipe: o G10c do Paulo trouxe o calendário oficial do CPI (FRED) e
+expôs dois erros na janela do shutdown de 2025 — o CPI de set/2025 saiu em
+24/10 (não 15/10) e o de out/2025 **nunca foi publicado** (`2025-11-13` era
+evento fantasma). Corrigido em `load_cpi_releases` (`origin/Felipe` em
+`66cfecb`), com o arquivo do Paulo mantido cru.
+
+**Re-rodada a calibração da 2.2 inteira. Mudou um número só:**
+
+| Ingrediente | Antes | Depois |
+|---|---|---|
+| estabilidade (vt e \|ΔE\|), coerência, portão | — | **idênticos** |
+| proximidade | +0,09 a +0,31 | **+0,10 a +0,37** (n: 883 → 840) |
+
+**A régua não muda, e não é sorte:** os dois ingredientes que entraram não
+consultam calendário — medem movimento da PMF e fechamento do livro, que são
+propriedades da leitura, não da agenda. O único candidato que dependia da data
+do evento é justamente o que reprovou. Uma régua com proximidade dentro teria
+herdado o erro em silêncio: o teste de monotonicidade mede ordem entre score e
+erro, e calendário errado desloca os dois juntos.
+
+**Registrado no relatório** (seção de robustez), com o recorte do mecanismo e
+da lição — "calendário oficial em tudo que for medido". O +1,45 pp de impacto
+no backtest **ficou de fora de propósito**: é número do Felipe e o lugar dele
+é a seção de backtest; a seção do Ω não cita resultado de carteira em ponto
+nenhum, e é isso que torna verificável no próprio texto a afirmação de que a
+régua não foi ajustada a resultado.
+
+### 6j. ⚠️ Convenção do `c`: a curva do Felipe e a saída da régua são inversas 🟡
+
+Levantado ao ler `Curva_c.md` (09/08). Na curva dele o `c` varre 0,01 a 1 e a
+Σ|w| **cresce** com o `c` — é **confiança**. A régua entrega `c ≥ 1`,
+**multiplicador de incerteza** (convenção combinada em 05/08). São recíprocos,
+e não é questão de rótulo: decide que trecho da curva a régua alcança.
+
+Traduzida para a escala da curva (601 decisões da 2.2):
+
+| nível | mediana | p95 | pior mercado |
+|---|---|---|---|
+| 1 | 0,953 | 0,805 | 0,362 |
+| 3 | 0,865 | 0,521 | 0,047 |
+| 5 | 0,785 | 0,338 | 0,006 |
+
+**A régua vive no topo da curva.** A região em que a Σ|w| do Felipe desaba
+(0,01, mediana 4,8) é inalcançável pela mediana — exigiria nível ≈ 95. Mesmo
+o pior mercado só chega lá com nível ≈ 4,5.
+
+**Confirma a conclusão do passo (3) dele por caminho independente e mostra o
+mecanismo:** o `c` não substitui o limitador de tamanho porque age na
+**cauda**, não no centro (com nível 5, o pior mercado cai a 0,006 e a mediana
+segue em 0,79). Discriminar mercado bom de ruim e encolher a carteira inteira
+são funções diferentes.
+
+**Consequência para a reunião:** o eixo da escolha tem de ser o **nível da
+régua**, não o `c` da curva — senão escolhe-se um ponto que a régua não
+alcança. Oferecida ao Felipe a série de `c` por decisão para ele replotar no
+eixo certo. **Aberto até a reunião.**

@@ -822,6 +822,36 @@ mesma classe do veto de liquidez.
   `Decisoes_pendentes.md` entre os três branches continua sem resolução, e
   merge não é decisão de uma sessão só.
 
+**Depois do push — aviso do Felipe sobre o calendário do CPI (6i, 6j):**
+- Re-rodada a calibração da 2.2 com o `load_cpi_releases` corrigido
+  (`origin/Felipe` em `66cfecb`: remap do shutdown + remoção do release
+  fantasma de out/2025). **Mudou um número só:** a proximidade, de
+  +0,09/+0,31 para +0,10/+0,37 (n de 883 → 840). Estabilidade, coerência e
+  portão saíram idênticos. A régua não muda.
+- O motivo não é sorte e virou parágrafo no relatório: **os dois ingredientes
+  que entraram não consultam calendário**, e o único que consultava é o que
+  reprovou. Se a proximidade estivesse dentro, o erro teria entrado em
+  silêncio — a monotonicidade mede ordem entre score e erro, e calendário
+  errado desloca os dois juntos.
+- **Achado de convenção (6j):** a `Curva_c.md` do Felipe varre `c` de 0,01 a 1
+  com Σ|w| crescendo — ali `c` é **confiança**; a régua entrega `c ≥ 1`,
+  **incerteza**. São recíprocos, e isso decide que trecho da curva a régua
+  alcança: com nível 1 ela ocupa [0,36 · 1,0] na escala dele, e a região onde
+  a Σ|w| desaba (0,01) exigiria nível ≈ 95 na mediana. Confirma a conclusão
+  dele de que o `c` não substitui o teto, e mostra o mecanismo — a régua age
+  na **cauda**, não no centro. **Na reunião, o eixo tem de ser o nível da
+  régua, não o `c` da curva.**
+- Escrita a resposta em `RESPOSTA5_Felipe_calendario_e_nivel.md`: recalibração,
+  a inversão de convenção, a interface do volume ainda aberta e o registro de
+  que o +1,45 pp do backtest ficou **de fora** da minha seção de propósito
+  (número dele, lugar dele; a seção do Ω não cita resultado de carteira, e é
+  isso que torna verificável a afirmação de que a régua não foi ajustada a
+  resultado).
+- ⚠️ O `poly_loader.py` em `%TEMP%\omega_lia\src` foi **substituído** pela
+  versão de `origin/Felipe:66cfecb`. A antiga ficou em `poly_loader_antigo.py`
+  ao lado. Daqui pra frente, extrair o loader do branch `Felipe`, não do
+  `Paulo` — o `load_cpi_releases` do Paulo não tem o remap.
+
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
 - **Contexto consumido:** ~60% da janela, estimativa.
