@@ -2,6 +2,59 @@
 
 ---
 
+## 2026-08-10 — Paulo — G5 alcança o FOMC (chave `conditionId` + as 76 faixas)
+
+**O que foi feito:** executado o `PEDIDO_Paulo_G5_fomc.md` (recado da Lia) inteiro. Os dois
+problemas que ela mediu (0 chaves em comum; G5 com 1 mercado FOMC contra 76 do parquet) estão
+resolvidos. Entregável em `docs/RESPOSTA_PEDIDO_Paulo_G5_fomc.md`.
+
+- **Item 1 — chave no parquet:** `scripts/g5b_fomc_conditionid.py`. Acrescenta `conditionId` +
+  `slug` ao `data/polymarket_fed_reunioes.parquet` (aditivo; 16.338 linhas / 76 mercados / 18
+  eventos inalterados). Resolve por `gamma /events?id=` (18 chamadas, 1 por evento já no parquet →
+  sem risco de mudar o universo; mesma fonte da Decisão 2). Casamento `question→conditionId`
+  **76/76**. Junção G5×parquet por `conditionId`: **0 → 76** em comum.
+- **Item 2 — G5 estendido ao FOMC:** `scripts/g5_volume_no_tempo.py` ganhou o estágio `fomc_stage`,
+  que lê a view 2.3 do parquet enriquecido (grid de 12h e `conditionId` vêm do próprio parquet que a
+  2.3 consome → alinhamento de slot **1:1**, 0 divergência conferida). Os `.json` `M2_fomc_*` deixam
+  de ser lidos (o parquet cobre o FOMC inteiro, sem duplicar). Mesma regra `NaN`/`0` da Decisão 12.
+  View 2.3: 1→**76 faixas**, 16.321 linhas (>0: 6.803 · `0`: 445 · `NaN`: 9.073 · 42/76 bateram o cap).
+- **Cobertura honesta (o `?` que a Lia pediu):** as 76 faixas das 18 reuniões estão **todas**
+  presentes. 12/18 reuniões 100% cobertas em todos os slots; 6 truncadas pelo cap de 20k só nos
+  slots **iniciais** (Nov/2024, Dec/2024, Jan/2025, Mar/2025, Jul/2025, Sep/2025) — em todas o run-up
+  colado na reunião fica inteiro. **Todas as reuniões de Oct/2025 em diante (6) estão 100%** (bate com
+  a prioridade de recência dela).
+- **Pipeline coerente:** `src/data_pipeline/download_polymarket_fed.py` (build_table) passou a emitir
+  `conditionId`+`slug`, para um rebuild completo já sair com a chave. Não re-rodei (o parquet-fonte
+  `_probabilities` não está em disco; enriqueci o `_reunioes` via g5b, sem derivar do que a Lia mediu).
+
+**O que quebrou (e foi corrigido antes da entrega):**
+- `fomc_grid` convertia `datetime64[ms]` com `//10**9` (unidade errada) → todos os slots colapsavam
+  em ~1970, `slots=1` por mercado. Detectado pela janela `1970-01-01` no report; corrigido para
+  `astype("datetime64[s]")` e re-rodado (trades já cacheados). Segunda passada: janela correta
+  `2024-04-04 → 2026-07-29`.
+
+**Conferências:** view 2.2 (CPI, 111 mercados, 6.699 linhas) e view B (9 mercados, 5.964 linhas)
+**idênticas byte a byte ao `HEAD`** (Lia pediu para não tocar). Slot-set das 76 faixas bate 1:1 com o
+parquet (0 mismatch). Sintaxe dos 3 scripts OK.
+
+**Pendente:** nada bloqueia a Lia. Rótulo da coluna `mercado` na 2.3 hoje é o `slug` completo (chave
+legível) — troco numa linha se ela preferir outro.
+
+**Interface alterada (registrada):** esquema do `polymarket_fed_reunioes.parquet` ganhou 2 colunas
+(`conditionId`, `slug`). Mudança **pedida pela consumidora (Lia) no `PEDIDO_Paulo_G5_fomc.md`** e
+aditiva/retrocompatível — nota em `Decisoes_pendentes.md` (§ interface).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~50% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/PEDIDO_Paulo_G5_fomc.md' responda isso para a lia. responda tudo que ela pediu, nao deixe nada faltando. apos terminar, revise."
+- **Iterações até aceitar:** ~2 rodadas internas (bug de unidade do `fomc_grid` ms→s; ajuste da ordem de colunas no entregável na revisão).
+- **Erros da IA:** (1) `fomc_grid` com `//10**9` sobre `datetime64[ms]` colapsou o grid em 1970 — pego pela janela do report e corrigido; (2) o entregável citou a ordem de colunas errada (`conditionId/slug` antes de `probabilidade`) — corrigido na revisão contra o parquet real.
+- **Decisões escaladas:** — (nenhuma decisão metodológica nova; a mudança de esquema foi pedida pela Lia, registrada como nota de interface).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do pedido G5-FOMC — reprodutibilidade).
+
+---
+
 ## 2026-08-08 — Paulo — G10 (DGS1 · rótulo baldes payrolls · calendário CPI oficial)
 
 **O que foi feito:** executado o `PEDIDO_G10_Paulo.md` inteiro, na ordem G10a→G10b→G10c,

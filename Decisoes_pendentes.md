@@ -276,4 +276,18 @@ troca de fonte de dado (é o mesmo FRED, mesma série) — é detalhe de formato
 
 ---
 
+## Notas de interface (mudanças de formato acordadas — não são decisões metodológicas)
+
+- **2026-08-10 — `polymarket_fed_reunioes.parquet` ganhou `conditionId` + `slug`.** Mudança
+  **aditiva** (as colunas antigas e as 16.338 linhas / 76 mercados / 18 eventos ficam intactas),
+  **pedida pela consumidora (Lia)** no `Downloads/PEDIDO_Paulo_G5_fomc.md` — é a chave que faltava
+  para juntar o parquet com a saída do G5 (antes: 0 chaves em comum; agora: 76). Esquema novo:
+  `[data, mercado, probabilidade, volume, evento_id, conditionId, slug]`. Fonte da chave: a mesma
+  Gamma da Decisão 2 (`/events?id=`), sem re-baixar preço. Aplicada por
+  `scripts/g5b_fomc_conditionid.py`; o `download_polymarket_fed.py` também já emite a chave num
+  rebuild completo. A view 2.3 do G5 (`g5_volume_no_tempo.csv`) passou a cobrir as 76 faixas do FOMC
+  a partir deste parquet. Entregável: `docs/RESPOSTA_PEDIDO_Paulo_G5_fomc.md`.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

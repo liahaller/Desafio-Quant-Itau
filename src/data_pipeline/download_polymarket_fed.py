@@ -256,6 +256,13 @@ def build_table(events: list[dict]) -> pd.DataFrame:
                 n_empty_history += 1
                 continue
             mercado = market.get("question") or market.get("slug")
+            # Chave de junção com a saída do G5 (pedido da Lia): conditionId é o
+            # id canônico do mercado; slug é a chave alternativa. Constantes por
+            # mercado — repetidas em cada ponto da série. Um rebuild completo já
+            # sai com a chave; o parquet já materializado é enriquecido por
+            # scripts/g5b_fomc_conditionid.py (mesma fonte, sem re-baixar preço).
+            condition_id = market.get("conditionId")
+            slug = market.get("slug")
             # Volume total (lifetime) do mercado, direto do Gamma. volumeNum é
             # numérico; volume vem como string em alguns eventos. Constante por
             # mercado — repetido em cada ponto da série.
@@ -271,6 +278,8 @@ def build_table(events: list[dict]) -> pd.DataFrame:
                         "probabilidade": float(point["p"]),
                         "volume": volume,
                         "evento_id": str(event["id"]),
+                        "conditionId": condition_id,
+                        "slug": slug,
                     }
                 )
     print(f"\n=== Consolidação ===")
