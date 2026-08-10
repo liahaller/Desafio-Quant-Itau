@@ -1,5 +1,339 @@
 # LOG de sessões
 
+## 2026-08-10 (sessão 23) — Felipe
+
+**Contexto da sessão:** o dono pediu para testar as candidatas do
+`Candidatos.md` e, ao ver quais já tinham rodado no backtest, mandou tornar as
+duas **vitalícias**. A sessão fechou as três decisões que as travavam, executou a
+medição que faltava e **ligou as duas na entrega**. A estratégia passou de duas
+para **quatro views**.
+
+**1. Levantamento inicial.** Das três candidatas, **15b e 15g já tinham rodado**
+no backtest (`Views_novas.md`, sessão 17); a **C nunca rodou** — só event-study
+(`Janela_negociavel.md`, `Perfil_defasagem_k.md`), e nenhum script de backtest
+importa o módulo dela.
+
+**2. Três decisões fechadas por instrução do dono, nenhuma foi à reunião:**
+- **D15a** — dupla leitura da mesma fonte do poly **aceita**. Libera a 15g.
+  Registrei o que ela NÃO faz: dupla leitura ≠ dupla contagem, e a transversal
+  e a B original seguem mortas pelo item 4 da D22.
+- **D15b** — **P direcional aceito** (ΣP ≠ 0).
+- **D15c** — escala da 15b = **entropia crua**. Registrei o custo: é a de t mais
+  fraco (+0,32 × +1,96) e a de **número maior com sobrevivência pior**
+  (+3,89 pp / −0,54 pp contra +2,32 pp / −0,09 pp).
+
+**3. O item 4 da D22 foi medido** (`scripts/ortogonalidade.py` →
+`Dump/analises/Ortogonalidade.md`) — era o único item aberto da 15b. Três
+achados:
+- **O ângulo não testa view direcional.** O P da 15b é `[SPY=2, 0…]` e o das
+  neutras sai de `P_from_betas`, que crava `P[SPY] = 0` EXATO: o produto interno
+  é zero **por construção** e o ângulo dá 90,000° em qualquer amostra. Para a
+  15b o item 4 se decidiu inteiro no ρ (−0,13 a +0,19, em 13–19 dias — passa,
+  mas não é robusto).
+- **ρ +0,673 entre a 15g e a 2.2** (spearman +0,765, 168 dias). Escalado ao dono:
+  **não reprova** (D22e). Consequência registrada: a barra do "ρ alto" da D22
+  passa a estar acima de 0,673 **por precedente**, não por threshold cravado.
+- **🛑 As views ditas neutras não são neutras.** ΣP mediano +0,96 (2.2), +1,74
+  (2.3), +1,24 (15g) — com Σ|P| = 2, um ΣP de +1,74 é ~+1,87 comprado contra
+  ~−0,13 vendido. `P[SPY] = 0` significa "não toma posição no SPY", nunca
+  significou "sem exposição direcional". O dono aceitou o direcional como
+  **intencional** — não se re-centra nada, e a frase "as views são neutras em
+  mercado" sai do relatório.
+
+**4. As duas foram ligadas na entrega.** `VIEWS_V1 = ("incerteza", "B")` virou o
+**default do `carregar`**, não argumento do `main` — é esse default que define "o
+v1" para as varreduras irmãs, e cravar no `main` faria entrega e varreduras
+medirem carteiras diferentes em silêncio. Excesso × SPY: **+4,07 → +6,24 pp**;
+sharpe 1,19 → 1,27; breakeven 35,9 → 34,5 bps/lado. O controle fecha: o +6,24 pp
+reproduz exatamente a linha que o `Views_novas.md` já media com o backtest
+desligado. **248 testes passam.**
+
+**5. A view C foi medida até o fim e FICA FORA — o conjunto de views fechou em
+quatro.** Rodada na ordem da D14a (veto antes de código de produção). Ela
+**passa os quatro itens da D22** — o corte não veio da régua:
+- **Teste de sinal** (`Teste_sinal.md`, grade k ∈ {1…5}): nenhum k sai
+  invertido com significância. Item 3 ✅.
+- **Ortogonalidade** (`Ortogonalidade.md`): ângulo 88,7°–160,9° contra as quatro
+  ativas; ρ +0,827 com a 2.2, liberado pelo dono no mesmo critério da 15g. ✅.
+- **🛑 O `k` não tem critério que o fixe.** A espec 2.4 item 6 pré-registrou "*o
+  perfil decide*" e isso nunca tinha sido executado. Executei
+  (`Absorcao_C.md`): a resposta acumulada oscila com amplitude maior que o
+  próprio nível e **os dois episódios do Irã discordam — corr +0,08**. Terceiro
+  dos três desfechos que eu havia mapeado antes de medir.
+- **O único lag em que os dois episódios concordam é o 0** (+0,0606 e +0,0313),
+  que é o gap de abertura — e `lagged_poly_view` recusa k < 1 por construção. **O
+  único lag com sinal coerente é o que a view não pode usar.**
+- **🛑 A D4.1 mordeu pela primeira vez.** O `stack_views` recusou empilhar a C:
+  o Q dela é acumulado em k dias e o das outras é de 1 dia. Só k = 1 passa — e é
+  o k que **inverte entre episódios** (t +2,13 → −1,60) e mede **−6,40 pp**.
+
+**Decisão do dono: saída (c)** — a C fica fora e as três medições vão ao
+relatório. O corte de 04/08 volta por caminho independente, agora com os dois
+episódios concordando, e vira o **quarto** caminho medindo "a informação do poly
+aterrissa no gap de abertura".
+
+**Quebrou / aprendido:**
+- **Escrevi como premissa uma frase que a medição desmentiu horas depois, e o
+  instrumento para desmenti-la já existia.** Ao fechar a D15b registrei que "o
+  tilt deixa de ser neutro **com a 15b**", repetindo a crença de projeto de que
+  as views eram neutras. A **obrigação 5a estava escrita no docstring do
+  `P_from_betas` desde o começo — mandando medir exatamente isso — e nunca tinha
+  sido executada.** Quando rodei, o ΣP das três views neutras veio entre +0,96 e
+  +1,74. Corrigi o registro no mesmo dia.
+- **A régua que faltou:** obrigação escrita no código é dívida, não documentação.
+  Uma cláusula "medir X antes de Y" que nunca rodou vira premissa de fato — e o
+  custo dela não é o erro, é o relatório afirmar por um ano que a carteira é
+  neutra em mercado.
+- **Padrão que se repete e vale nomear:** o item 4 da 15g estava registrado como
+  "já medido" em três lugares. O que estava medido era **metade** dele (o
+  ângulo); a metade do ρ nunca tinha sido calculada e é a que trouxe o +0,673.
+  Mesmo modo de falha da sessão 22 (pedido cujo uso declarado ele não sustenta):
+  **o que roda calado é o caro**.
+
+**Pendente:**
+- **O conjunto de views está FECHADO em quatro** (2.2 · 2.3 · 15b · 15g). O
+  `Candidatos.md` ficou sem nenhuma candidata pela primeira vez. Isso destrava os
+  dois itens abaixo, que estavam presos exatamente por isso.
+- **`RESPOSTA6` liberada para sair, mas AINDA NÃO CORRIGIDA.** As chaves passam
+  de duas para quatro e a mensagem precisa dizer o que sai em dia sem view (a
+  15b só existe em 27 pregões). Corte de 13/08; a rede é o plano B da 10a.
+- **Varreduras irmãs desatualizadas** (`curva_c.py`, `curva_banda.py`,
+  `curva_orcamento.py`, `tatica_reconstruida.py`, `gate_sleeves.py`): já leem 4
+  views, mas os `.md` salvos foram gerados com 2 — inclusive o **`Curva_c.md`,
+  insumo direto da escolha de nível + teto de 13/08**. Agora podem ser
+  re-geradas: o conjunto de views não muda mais. Re-rodar como medição
+  declarada, **não** para escolher parâmetro melhor.
+- **D4.1 (horizonte do Q)** segue aberta, mas saiu do caminho crítico: nenhuma
+  view do v1 tem `horizonte_q_dias` ≠ 1. Vai ao relatório como limitação
+  conhecida, com o caso da C como exemplo medido.
+- **⚠️ O `fred_DGS1.csv` está no working tree e NÃO no branch** — `data/` é
+  ignorado pelo `.git/info/exclude`, e nenhum arquivo de `data/` é versionado
+  aqui (convenção do projeto: o dado vive no branch do `Paulo` e se extrai
+  local). Consequência: **a entrega agora depende de um arquivo que só existe na
+  máquina de quem extraiu.** Não falha calado — `load_fred` estoura
+  `FileNotFoundError` —, mas quem for reproduzir o `Backtest_v1.md` precisa
+  extrair o `data/` do `origin/Paulo` antes, incluindo o `fred_DGS1.csv`
+  (`git archive origin/Paulo data/ | tar -x -C <dir>` e rodar com `--raiz`).
+- **Nível do `c` + teto** seguem do grupo — agora sem nada de views na frente.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~115k tokens.
+- **Prompt inicial (verbatim):** "Temos alguns candidatos de views. em
+  Cadidatos.md quero testa-los para ver se conseguem entrar ou não. Antes de
+  começar me fale quais desses já rodaram no backtest previamente?"
+- **Iterações até aceitar:** 1 por entrega (levantamento, explicação da D15b,
+  to-do, fechamento das decisões, medição e ligação do backtest foram aceitos
+  sem rodada de correção do dono). As correções da sessão foram **minhas, sobre
+  o meu próprio registro**.
+- **Erros da IA:** 1, e não trivial — afirmei no registro da D15b que o tilt
+  "deixa de ser neutro com a 15b", tratando como premissa uma propriedade que a
+  obrigação 5a mandava medir e que a medição derrubou. Pego pela própria
+  medição, na mesma sessão, e corrigido no arquivo.
+- **Decisões escaladas:** D15a, D15b, D15c **fechadas**; **D22e** (item 4 medido;
+  ρ +0,673 da 15g e +0,827 da C julgados como não reprovando) e **D23** (a
+  estratégia com quatro views, incluindo a 23e "conjunto fechado" e a 23f "a C
+  fica fora") criadas; obrigação 5a resolvida como direcional intencional. A
+  **D4.1** ganhou o primeiro caso concreto e sai do caminho crítico sem ser
+  fechada.
+- **Tags:** `[PROMPT-CHAVE]` — o prompt de abertura ("quais desses já rodaram?")
+  é candidato ao teste de reprodutibilidade: ele força o inventário do estado
+  antes de qualquer trabalho, e foi o que impediu a sessão de re-medir o que já
+  estava medido.
+
+## 2026-08-10 (sessão 22) — Felipe
+
+**Contexto da sessão:** o dono pediu um panorama do estado do projeto com foco no
+que as decisões estão travando, e daí saiu uma pergunta operacional — dá para
+destravar algo com Lia ou Paulo antes de 13/08? **Nenhuma linha de código.**
+Nenhuma decisão fechada. O produto da sessão é **uma mensagem reescrita** e uma
+correção de registro.
+
+**1. Panorama levantado.** Três travas reais: (i) o corte de 13/08 — nível do `c`
++ teto, na cadeia `volume (Paulo) → régua (Lia) → nível + teto (grupo)`; (ii) as
+candidatas do `Candidatos.md`, onde só a **15g** cumpre os quatro itens da D22 e
+trava em decisão de grupo (D15a), enquanto 15b e C têm o **item 4 não medido** —
+que é trabalho meu, não de reunião; (iii) a camada tática, travada em **escopo**
+(decisão 10), não em evidência.
+
+**2. Triagem de a quem escrever: o Paulo não trava nada.** Os três itens do G10
+estão entregues no `origin/Paulo` (D21d); a interface do volume (D20a) é item de
+reunião e a opção (1) custa zero. **Pedido ao Paulo não escrito** — seria gastar
+uma rodada com quem já entregou. A ausência dele no caminho crítico é resultado
+da triagem, não omissão.
+
+**3. A `RESPOSTA6` à Lia foi REESCRITA antes de sair.** Ela ainda não tinha sido
+enviada. Três mudanças, com os itens 1 e 3–7 intactos:
+- **bloco 🛑 no topo** com o único item do caminho crítico, antes do
+  ponto-a-ponto;
+- **item 2 corrigido** (ver abaixo), agora com a granularidade que faltava —
+  um `c` por **pregão** por view, com o colapso da grade de 12h declarado como
+  dela pelo argumento da 6a;
+- **seção 8** passa a dizer que o item 2 decide se a reunião de 13/08 escolhe o
+  nível com um ponto ou com um eixo.
+
+Registrado na **D20b** como precisão de pedido, não como decisão.
+
+**Quebrou / aprendido:**
+- **Escrevi um pedido cujo uso declarado ele não sustenta.** A `RESPOSTA6` pedia
+  "a série" no singular e na frase seguinte dizia que com ela eu varreria o eixo
+  do **nível** `(1, 2, 3, 5…)`. Se o nível é parâmetro de dentro da régua dela,
+  uma série é uma **coluna**. O erro não é de conta e não levantaria exceção: ela
+  atende exatamente o que foi pedido, os dois ficam satisfeitos com a mensagem, e
+  a falha só aparece **com o arquivo na mão, em cima do corte de 13/08**. Mesma
+  classe do bug de rótulo do item 1 da própria RESPOSTA6 e do erro de índice que
+  ela pegou em 07/08 — **o modo de falha caro aqui é o que roda calado.**
+- **A régua que faltou:** ao pedir dado a outro módulo, escrever o **uso** junto
+  do pedido e conferir se o formato pedido sustenta o uso. Foi a frase do uso que
+  expôs o problema, não a do pedido.
+- **Erro de artefato, e a checagem que faltou é de uma linha.** Montei primeiro um
+  `FOLLOWUP_RESPOSTA6_...` — corrigir por cima de uma mensagem que **ainda não
+  tinha sido enviada**, o que teria feito a Lia ler duas versões do mesmo pedido.
+  Arquivo apagado e a correção foi para dentro do original. Antes de escolher
+  entre corrigir e reescrever: **perguntar se já foi enviado.**
+
+**Pendente:**
+- **`RESPOSTA6` está pronta e NÃO ENVIADA** — o envio é do dono.
+- **Caminho crítico de 13/08, sem mudança de conteúdo:** série de `c` por decisão
+  em `{1, 3, 5}` (Lia), nível + teto uma vez só (grupo), interface do volume
+  (Paulo, D20a).
+- **Executável aqui, sem depender de ninguém:** o **item 4 da D22** (ângulo do P)
+  para a 15b e a C, e a **janela negociável da C no 2º episódio**. Continua sendo
+  o caminho mais curto para uma candidata sair do limbo — era o pendente da
+  sessão 21 e não foi tocado nesta.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~60k tokens (estimativa; sessão curta, sem execução de
+  script — o grosso foi leitura do `Decisoes_pendentes.md`, que já não cabe numa
+  leitura só).
+- **Prompt inicial (verbatim):** "Me dê uma noção geral do que esta acontecendo
+  no projeto agora, especialemente nas decisões e o que elas estão travando"
+- **Iterações até aceitar:** 3 na mensagem à Lia (rascunho como follow-up →
+  correção do que eu havia dito que faltava → reescrita no lugar).
+- **Erros da IA:** dois, ambos pegos pelo dono. (a) Afirmei que a `RESPOSTA6` não
+  trazia a espec do formato, quando ela já trazia convenção (`c >= 1`), chaves de
+  view e formato livre — **superestimei o buraco** por ter listado o que eu
+  escreveria em vez de conferir o que já estava escrito; só ao abrir o arquivo a
+  pedido do dono é que os 4 pontos viraram 2. (b) Escolhi o artefato errado
+  (follow-up de mensagem não enviada).
+- **Decisões escaladas:** — (nenhuma nova; a **D20b** ganhou a precisão do
+  pedido).
+- **Tags:** —
+
+---
+
+## 2026-08-10 (sessão 21) — Felipe
+
+**Contexto da sessão:** o dono pediu uma discussão ampla sobre o destino das
+views, começando por um inventário exaustivo feito por subagente. Objetivo
+declarado: **decidir o critério de admissão de view** e a direção para fechar a
+camada do BL. **Nenhuma linha de código.** Uma decisão **fechada** (D22, por
+instrução explícita), dois arquivos novos, um bloqueio derrubado por leitura.
+
+**1. Inventário completo de views — 41 linhas, o primeiro do projeto.** Um
+subagente varreu `Decisoes_pendentes.md`, o `LOG.md` inteiro, os inventários,
+as especs, `src/` e o `git log --all`. Placar: **2 aceitas · 4 candidatas · ~21
+rejeitadas · 5 adiadas · 4 mortas por dado · 5 indefinidas**. O achado que
+organizou a sessão: **existiam 13 critérios de CORTE e zero critérios de
+ENTRADA** — por isso 4 candidatas medidas há sessões seguiam sem destino.
+
+**2. D22 — régua de admissão, FECHADA pelo dono.** Quatro itens necessários:
+(1) lê o Polymarket · (2) atua na bolsa · (3) teoria não desprovada por teste ·
+(4) ortogonal ao que já está dentro. **Sinal fraco não reprova** — |t| baixo,
+acerto ~50% e Δ negativo no backtest não são critério. O item 4 entrou por
+pedido do dono depois de eu apontar que, sem ele, F e H voltariam à mesa (as
+duas passam os itens 1–3). A D22 **absorve a régua 18a** (item 1), que estava 🟡
+desde a sessão 18, e formaliza o critério de dupla exposição, que era o
+precedente mais aplicado do projeto sem nunca ter sido escrito.
+
+**3. Dois arquivos novos de candidatos.** `Candidatos.md` (views: 15b, 15g, C) e
+`Candidatos_taticos.md` (táticas: 1.1, 3.2, velocidade de ajuste, 1.2). Cada
+entrada traz status, as quatro colunas da D22 e o que falta para entrar. A **3.1
+direcional saiu** por instrução do dono — é a única que falha o item 3 (β troca
+de sinal dentro da amostra, ambos significantes). Aplicada a D22, **só a 15g
+cumpre os quatro hoje** (ângulo 95,6° já medido); 15b e C ganharam o item 4 em
+aberto, que é medição minha e não decisão de reunião.
+
+**4. O bloqueio do `etf_open_daily` NÃO EXISTE MAIS — e eu propaguei ele antes de
+conferir.** A D17e e o `Retomada_tatica.md` registram que os dois parquets estão
+em bases de ajuste diferentes e que por isso "nenhuma tática mede o dia do
+evento". Escrevi isso nos dois arquivos novos e ia mandar um `PEDIDO_G11` ao
+Paulo. Ao abrir a fonte para redigir o pedido: o `Premissa_taticas.md` foi
+**re-gerado em 09/08** e a conferência **passa** — todos os 9 tickers dentro de
+± 0,1%, **XLE em −0,046%**, com o texto dizendo explicitamente que as janelas
+valem "inclusive no dia do próprio evento". **Pedido não escrito**, os dois
+arquivos novos corrigidos.
+
+**5. Triagem das não-candidatas, a pedido do dono.** Rejeitadas de "nível 3"
+(morte por condição, não por evidência): payrolls é a mais limpa mas **fica de
+fora por decisão do dono**; F precisa de redesenho (one-touch) e conflita com a
+C; H está morta por N = 1. Adiadas e indefinidas: **nenhuma vira candidata** —
+3 nem são views (3.5 é Ω da Lia, o catálogo do Paulo é insumo, a 15c é parâmetro
+da 15b), 2 já foram absorvidas (1.3 → virou a 15b; C-alt → é desenho da C), 1
+tem evidência contra (T1+T3, μ invertido no C3), 1 morre na fonte de dados (3.4
+precisa de feed de notícias inexistente) e 1 pertence à outra camada (1.2 → foi
+para o `Candidatos_taticos.md`).
+
+**Quebrou / aprendido:**
+- **Registro de decisão envelhece, e eu tratei registro como fato.** O bloqueio
+  do `etf_open_daily` está escrito em dois documentos como se estivesse de pé, e
+  o dado que o desmente tem **um dia a mais** que eles. Propaguei a versão velha
+  para dois arquivos novos e quase gastei um pedido ao Paulo com ela. A regra que
+  faltou: **antes de propagar um bloqueio, abrir a fonte que ele cita** — a D17e
+  citava o `Premissa_taticas.md`, e a resposta estava lá.
+- **Lista de vetos não é régua.** O projeto acumulou 13 motivos de corte bem
+  documentados e nunca escreveu o que uma view precisa TER. O sintoma não é uma
+  view errada dentro da carteira — é candidata boa parada em limbo por sessões.
+- **O item que faltava na régua era o que mais tinha sido usado.** Dupla
+  exposição derrubou 4 views e salvou 1, e mesmo assim não estava na proposta
+  inicial de três itens. Precedente muito aplicado vira invisível.
+
+**Pendente:**
+- **Próxima sessão (declarado pelo dono):** testar as candidatas e ver se alguma
+  entra na estratégia. O caminho mais curto: medir o **item 4 da D22** para 15b e
+  C (nenhuma das duas tem ângulo medido) e rodar a **janela negociável da C no 2º
+  episódio** — executável aqui, sem depender de terceiros.
+- **Decisões do grupo que travam as candidatas:** D15a (15g lê fonte já em uso),
+  D15b (P direcional) e D15c (escala da incerteza). Nenhuma é medição.
+- **Reunião de 13/08** segue com o que a D20 registrava: série de `c` por decisão
+  (Lia), nível + teto (grupo), interface do volume (Paulo, D20a).
+- **Observação para o dono da D17e (não corrigi):** a D17e e o
+  `Retomada_tatica.md` seguem afirmando o bloqueio do `etf_open_daily`. Corrigir
+  texto de decisão registrada não é alçada desta sessão.
+- **Nada foi commitado.** Três arquivos alterados no working tree
+  (`Decisoes_pendentes.md`, `Candidatos.md`, `Candidatos_taticos.md`).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~120k tokens na sessão (12% de janela de 1M);
+  **1 subagente** (general-purpose, 149k tokens próprios, 20 chamadas de
+  ferramenta) para o inventário.
+- **Prompt inicial (verbatim):** "quero ter uma discussão mais ampla sobre o que
+  fazer as views que temos. Para direcionar a discussão primeiro ative um
+  subagente que vai explorar o repo e montar um report simples, ele deve
+  apresentar TODAS AS VIEWS que pensamos/rejeitamos ou aceitamos. Para cada view
+  ele deve falar o estado, o nome, e uma justificativa em uma frase de porque foi
+  rejeitada/aceita/outro. /goal A partir dessas informações quero decidir quais
+  são os critérios para uma view entrar na estratégia ou não. Com isso então
+  vamos decidir a direção que seguiremos para fechar a camada do black
+  litermann"
+- **Iterações até aceitar:** 2 (a primeira proposta de critério foi interrompida
+  pelo dono para perguntar se as rejeitadas ainda tinham aplicação; a régua saiu
+  depois dessa triagem).
+- **Erros da IA:** 1 — propaguei o bloqueio do `etf_open_daily` a partir da D17e
+  sem abrir o `Premissa_taticas.md` que ela cita. Escrito em dois arquivos novos
+  e quase virou pedido ao Paulo. Detectado por mim ao redigir o pedido e
+  corrigido na mesma sessão.
+- **Decisões escaladas:** **D22 registrada e FECHADA** por instrução explícita do
+  dono ("pode registrar como D22 FECHADA. não será discutida"). Nenhuma outra
+  decisão fechada.
+- **Tags:** `[PROMPT-CHAVE]` — "inventário exaustivo por subagente + /goal de
+  critério" produziu, numa sessão, a régua que quatro sessões de medição não
+  tinham produzido. O formato que funcionou: **levantar tudo primeiro, decidir o
+  critério depois** — o critério caiu sozinho quando as 41 views ficaram na mesma
+  tabela.
+
 ## 2026-08-10 (sessão 20) — Felipe
 
 **Contexto da sessão:** o dono perguntou o que dava para fazer ou decidir agora

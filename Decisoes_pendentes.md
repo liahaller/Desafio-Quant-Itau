@@ -701,6 +701,13 @@ segue: achar bug é uma coisa, inverter sinal porque o dado pediu é outra.
 nenhuma foi empilhada, nenhum número de entrega mudou. O que segue é o que o
 grupo precisa decidir antes de qualquer uma entrar.
 
+> **Atualização de 2026-08-10 (sessão 23) — as três subdecisões desta seção
+> FECHARAM por instrução do dono, nenhuma foi à reunião:** **15a** dupla leitura
+> aceita · **15b** P direcional aceito · **15c** escala = entropia crua. Com
+> isso a **15g não tem mais bloqueio de decisão** e a **15b tem só o item 4 da
+> D22** (medição do dono do módulo, não decisão). A **transversal desta tabela
+> continua fora** pela 15f/19b — nada aqui a reabre.
+
 | | View CPI transversal | View de incerteza de anúncio |
 |---|---|---|
 | Módulo | `src/view_cpi_transversal.py` | `src/view_incerteza_anuncio.py` |
@@ -710,7 +717,7 @@ grupo precisa decidir antes de qualquer uma entrar.
 | P | seção cruzada dos 9 (`P_from_betas`, P[SPY] = 0) | **direcional**: 2 no SPY |
 | Q | (ΣP·β) × divergência_líquida / dias_até_divulgação | (ΣP·β) × incerteza_líquida |
 
-### 15a. As duas views leem sinal que já está em uso — e isso é do grupo 🔴
+### 15a. As duas views leem sinal que já está em uso 🟢 (FECHADA pelo dono, 2026-08-10 — sessão 23)
 
 A **transversal** usa a MESMA divergência da 2.2. Empilhar as duas conta a mesma
 informação duas vezes no BL, que foi um dos três motivos de tirar a view B
@@ -728,7 +735,32 @@ TLT −11,2), então o P que sai é "cíclicos e energia contra duração".
 **Três saídas, nenhuma escolhida aqui:** (a) só a 2.2; (b) só a transversal;
 (c) as duas, com Ω que reconheça a correlação.
 
-### 15b. A view de incerteza é a PRIMEIRA direcional do projeto 🔴
+**DECISÃO (dono, 2026-08-10 — instrução explícita, não vai à reunião): a dupla
+LEITURA é aceita.** Duas views podem ler a mesma fonte do Polymarket desde que
+ocupem dimensão nova no P — que é exatamente o item 4 da D22, já medido para a
+15g (**ângulo 95,6°** contra a 2.3, corr −0,34).
+
+**O que isto libera:** a **15g** (B com β próprio) deixa de travar aqui. Era o
+único bloqueio dela — a objeção "lê a PMF de reunião que a 2.3 já lê" fica
+respondida pelo princípio, não caso a caso.
+
+**O que isto NÃO faz — e é o ponto de não confundir:** dupla leitura ≠ dupla
+contagem. O que continua proibido é **P colinear**, e quem barra isso é o item 4
+da D22, não esta seção. Em particular:
+
+- a **transversal continua fora**, por reprovar no teste de sinal (15f, e a
+  variante ortogonalizada na 19b) — nada disto se reabre por esta decisão;
+- a **B original** (seção 11) continua morta: lá o P era *literalmente idêntico*
+  ao da 2.3, que é o caso que o item 4 barra;
+- as duas views que ainda não têm o ângulo medido (**15b** e **C**) não passam
+  a estar liberadas — a medição segue obrigatória.
+
+**Consequência para o Ω, registrada:** com duas views lendo a mesma fonte, a
+correlação entre elas existe mesmo com P ortogonal. O Ω da Lia é diagonal por
+construção (`diag(P·τΣ·Pᵀ)`), logo **não a enxerga**. Não é bug — é limitação a
+declarar no relatório, junto com a das quatro views.
+
+### 15b. A view de incerteza é a PRIMEIRA direcional do projeto 🟢 (FECHADA pelo dono, 2026-08-10 — sessão 23)
 
 Todas as views estruturais são neutras em mercado por construção (`P_from_betas`
 crava P[SPY] = 0 exato). O prêmio de Savor-Wilson é prêmio de MERCADO, e
@@ -740,7 +772,66 @@ tinha a dizer (D2b). Por isso o P dela é direcional.
 obrigação 5a de `views_common.py` (centragem se troca em TODAS as views juntas)
 precisa ser lida antes de empilhar esta com as neutras.
 
-### 15c. A ESCALA da incerteza muda o resultado, e não há default honesto 🔴
+**DECISÃO (dono, 2026-08-10 — instrução explícita, não vai à reunião): o P
+direcional é ACEITO.** Uma view do modelo pode apostar na direção do mercado
+(`P[SPY] = +2`, ΣP ≠ 0), e não só no preço relativo entre ativos. O motivo é o da
+própria seção: o prêmio de Savor-Wilson **é** prêmio de mercado, e a alternativa
+neutra não é uma versão mais conservadora da view — é a view esvaziada, o mesmo
+que matou a 3.1 (D2b).
+
+**O que o projeto passa a assumir, e precisa estar no relatório:**
+
+1. **O tilt deixa de ser neutro em mercado** nos 27 pregões de anúncio, onde a
+   carteira ganha exposição direcional por decisão do modelo. Não é efeito
+   colateral: é o conteúdo da view.
+
+   ⚠️ **CORREÇÃO da própria linha acima, medida em 2026-08-10 poucas horas depois
+   de ela ser escrita** (`Dump/analises/Ortogonalidade.md`): a premissa de que o
+   tilt *era* neutro antes da 15b **é falsa**. As views ditas neutras carregam
+   ΣP mediano de **+0,96 (2.2) · +1,74 (2.3) · +1,24 (15g)** — `P[SPY] = 0` é
+   exato, mas o resto do vetor é líquido COMPRADO nos outros 8 ativos. A 15b
+   não introduz direcional no modelo: ela **declara** o que já existia sem
+   rótulo. Ver a obrigação 5a abaixo, que deixa de ser formalidade.
+2. **A exposição direcional passa a ter dono.** Antes ela vinha inteira da perna
+   de mercado (`w_mkt`); agora uma view a move. Quem dimensiona continua sendo o
+   BL (τ, Ω, Σ) — não há parâmetro de tamanho novo.
+
+**Obrigação 5a — MEDIDA no mesmo dia, e o resultado é maior que esta decisão.**
+O `P_from_betas` crava `P[market_asset] = 0` exato, mas **os outros 8 pesos não
+precisam somar zero**. Medido (`Dump/analises/Ortogonalidade.md`):
+
+| view | ΣP mediano | Σ\|P\| | leitura |
+|---|---|---|---|
+| 2.2 inflação | **+0,961** | 2,00 | ≈ +1,48 comprado × −0,52 vendido |
+| 2.3 Fed | **+1,736** | 2,00 | ≈ +1,87 comprado × −0,13 vendido |
+| 15g B própria | **+1,241** | 2,00 | ≈ +1,62 comprado × −0,38 vendido |
+| 15b incerteza | +2,000 | 2,00 | direcional por desenho |
+
+**As views ditas neutras nunca foram neutras.** `P[SPY] = 0` significa "a view não
+toma posição no SPY" e **nunca** significou "a view não tem exposição
+direcional": o vetor é líquido COMPRADO nos outros 8 ativos, que têm β próprio ao
+mercado. A exposição direcional agregada da carteira tem mediana **+2,94** nos
+pregões sem a 15b e **+4,27** nos 27 com ela.
+
+**DECISÃO (dono, 2026-08-10): o componente direcional é ACEITO como
+intencional — não se re-centra nada.** Saída (a) das três mapeadas; as outras
+eram (b) re-centrar todas as views juntas e (c) manter como limitação sem
+declará-la. A regra do docstring fica satisfeita pelo caminho de cima: o
+direcional passa a ser **declarado**, e por isso a cláusula "se não for
+intencional, troque a centragem de TODAS as views juntas" não dispara.
+
+**Consequência de relatório, e ela não é opcional:** a frase "as views são
+neutras em mercado" **não pode ser dita** — nem sobre o v1 de duas views. A
+descrição correta passa a ser: o P não toma posição no ativo de mercado, e a
+carteira carrega exposição direcional líquida, declarada e medida.
+
+**Correção de percurso registrada, porque ela é o próprio argumento:** a primeira
+versão desta seção (escrita horas antes, na mesma sessão) dizia que "o tilt
+deixa de ser neutro **com a 15b**". A medição desmentiu — a 15b não introduz o
+direcional, ela **declara** o que já existia sem rótulo em três views. A
+obrigação 5a estava no docstring desde o começo e nunca tinha sido executada.
+
+### 15c. A ESCALA da incerteza muda o resultado, e não há default honesto 🟢 (FECHADA pelo dono, 2026-08-10 — sessão 23)
 
 Medido nos 32 anúncios (7 FOMC + 13 CPI + 12 payrolls), β do SPY — nenhuma das
 duas escalas usa threshold:
@@ -756,6 +847,25 @@ para +0,32. O percentil dentro da família é a versão contínua do MESMO contr
 (a mediana é o percentil dicotomizado) e recupera o sinal sem cravar corte.
 `build_view` aceita as duas e grava qual rodou em `diagnostics["escala"]` — qual
 entra é decisão do grupo.
+
+**DECISÃO (dono, 2026-08-10 — instrução explícita, não vai à reunião): entra a
+ENTROPIA CRUA demeanada por família** (`escala="entropia"`), não o percentil.
+
+**O custo da escolha, declarado para não ser redescoberto:** é a escala com o
+**t mais fraco das duas** na medição da premissa (+0,32 contra +1,96). Pela D22
+isso **não reprova** — sinal fraco não é impedimento, o que reprova é a tese ser
+contrariada, e nenhuma das duas escalas inverte. Mas a frase "a entropia crua
+linear não sustenta a premissa" acima **continua valendo** e vai ao relatório
+como limitação da view, não como nota de rodapé.
+
+**O que a escolha NÃO muda, e é o que tira o peso dela:** a 15h mediu as duas
+escalas no backtest e o achado é o mesmo nas duas — o Δ é **um pregão**
+(2025-04-10) e o acerto de sinal é 48% em ambas. A 15c nunca foi o que separava
+a view de si mesma. Efeito prático da escolha no número entregue: **+3,89 pp
+(crua) contra +2,32 pp (percentil)** de Δ sobre o v1 — e o de baixo é o que
+sobrevive melhor à retirada dos extremos (−0,09 pp contra −0,54 pp), ou seja, a
+escala escolhida é a de número maior e sobrevivência pior. Registrado aqui de
+propósito: quem ler o +3,89 pp precisa achar esta linha.
 
 ### 15d. O que a view de incerteza resolve da 12c
 
@@ -1502,8 +1612,33 @@ Duas leituras, e as duas são insumo da reunião:
    o efeito de verdade é preciso a série de `c` **por decisão**, que ela ofereceu
    mandar — pedido feito na resposta.
 
+**Precisão do pedido, corrigida em 2026-08-10 (sessão 22), antes de a resposta
+sair:** a `RESPOSTA6` pedia "a série" no singular e declarava que com ela eu
+re-rodaria a curva no eixo do **nível** `(1, 2, 3, 5…)`. As duas coisas
+provavelmente não fecham juntas: se o nível é parâmetro de DENTRO da régua dela
+(entra antes do `c` sair), uma série é uma **coluna**, não uma varredura. O
+pedido passou a ser **uma série por nível, em `{1, 3, 5}`** — ou a confirmação
+dela de que o nível é reescalável fora da régua, caso em que uma série basta.
+**Não é decisão, é precisão de pedido**; quem sabe qual dos dois casos vale é
+ela, e a resposta muda só o volume de trabalho, não o eixo da escolha (que
+segue sendo o nível, como este item registra).
+
 **Não fecha nada:** nível e teto saem juntos, uma vez só, pelo protocolo
 anti-overfit da seção 10 — e não por iteração contra esta tabela.
+
+**🛑 A `RESPOSTA6` está SEGURADA por decisão do dono (2026-08-10, sessão 23), e
+isto precisa estar escrito porque o prazo corre.** Ela ainda **não foi enviada**
+e só sai depois de o conjunto de views fechar — a razão é boa: o pedido nomeia as
+views (`"2.2_inflacao"` / `"2.3_fed"`), e mandar antes de o conjunto fechar
+garante uma série que cobre metade do modelo. **O que TEM de ser corrigido antes
+de enviar:** as chaves passam a incluir a **15b** e a **15g** (e a C, se entrar),
+e a mensagem precisa dizer o que sai em dia **sem** view — a 15b só existe em 27
+pregões de anúncio, e "um `c` por pregão por view" não define esse caso.
+
+**O risco que o dono aceitou, declarado:** o corte da 10a é **13/08** e a régua
+dela leva tempo de resposta. Se o conjunto de views não fechar a tempo, vale o
+plano B já pré-registrado (`c = 1`, teto no tilt, nível 1) — que é justamente o
+que a 10a existe para garantir. **Não é atraso sem rede.**
 
 ### 20c. Cristalização perto do evento — o achado (b) dela, medido contra a tática 1.3 🟡
 
@@ -1632,6 +1767,358 @@ da B só existe assim. Fica registrado porque o G10b era o que bloqueava
 
 **Nada fecha aqui.** As pendências de 13/08 seguem as da D20: série de `c` por
 decisão (Lia), nível + teto (grupo, uma vez só), interface do volume (Paulo).
+
+---
+
+## 22 (branch `Felipe`). Régua de admissão de views 🟢 (FECHADA pelo dono, 2026-08-10 — sessão 21)
+
+**Instrução do dono, verbatim:** "a view precisa apenas ler o polymarket, atuar na
+bolsa e não ter sua teoria desprovada por testes" + "coloque a ortogonalidade como
+parte da régua" + "pode registrar como D22 FECHADA. não será discutida".
+
+**Não vai à reunião.** Fechada por instrução explícita, sem ratificação do grupo.
+
+### 22a. A régua — quatro itens, todos necessários
+
+Uma view entra na estratégia se, e só se, cumpre os quatro:
+
+1. **Lê o Polymarket.** O sinal da view vem de preço ou PMF de mercado do poly.
+2. **Atua na bolsa.** A view se expressa em ETFs do universo decidido (D1).
+3. **Teoria não desprovada por teste.** Nenhuma medição contradiz a tese
+   declarada da view.
+4. **Ortogonal ao que já está dentro.** A view ocupa dimensão nova: ângulo alto
+   entre o P dela e o das views ativas, sem ρ alto no sinal-fonte.
+
+**Sinal fraco NÃO é impedimento.** |t| baixo, acerto de sinal perto de 50% e Δ
+negativo no backtest **não reprovam** uma view. O que reprova é a tese ser
+contrariada pelo dado — o precedente D2b ("não se inverte") segue valendo, agora
+como conteúdo do item 3.
+
+### 22b. O que a D22 muda no que já estava registrado
+
+- **Absorve a régua 18a.** O item 1 **é** a 18a ("view que não lê o Polymarket
+  não entra"). A 18a deixa de estar 🟡 pendente de ratificação: seu conteúdo
+  entra fechado aqui. As quatro propostas que ela barrou (drift ΔDTB3 como view,
+  reversão 5d, momentum setorial 12−1, ciclo FOMC) **seguem barradas**, agora
+  pelo item 1 da D22.
+- **Formaliza o critério de dupla exposição.** Era o precedente mais aplicado do
+  projeto sem nunca ter sido escrito como regra — derrubou F (×C), H (×2.3×B), a
+  B original (P idêntico ao da 2.3) e a C2a (ρ −0,68 com a entropia da 15b), e é
+  o único motivo pelo qual a **15g sobreviveu** (ângulo 95,6° com a 2.3). Com o
+  item 4, F e H **continuam mortas** — sem ele, voltariam à mesa, porque passam
+  os itens 1, 2 e 3.
+- **Não revoga o teste de sinal como VETO (15f).** Ele continua sendo a forma de
+  medir o item 3: reprova quem sai significativamente **invertido**, não quem sai
+  fraco. Nenhuma view do v1 "passa" nele (a 2.3 dá t +0,26), e isso é esperado.
+- **Não revoga a atribuição obrigatória (15h).** "Sem os 3 maiores" e acerto de
+  sinal continuam obrigatórios — não como nota de corte, mas para o número do
+  backtest não ser lido como desempenho da view.
+
+### 22c. Efeito imediato nas candidatas
+
+Aplicada às candidatas de `Candidatos.md`:
+
+| View | 1 poly | 2 bolsa | 3 tese | 4 ortogonal | Situação |
+|---|---|---|---|---|---|
+| **15g** B com β próprio | ✅ | ✅ | ✅ t +0,33 | ✅ **95,6° medido** | ~~trava na D15a~~ → **D15a fechada em 10/08: sem bloqueio** |
+| **15b** incerteza | ✅ | ✅ | ✅ t +0,06 | ⬜ **não medido** | ~~D15b/D15c~~ → **fechadas em 10/08; resta só o item 4** |
+| **C** geopolítica | ✅ | ✅ | ✅ | ⬜ **não medido** | trava na janela negociável **+ item 4** |
+
+O item 4 **cria trabalho novo**: a 15b e a C nunca tiveram o ângulo do P delas
+medido contra o das views ativas. Para a 15b isso é especialmente relevante — ela
+é direcional (P[SPY] = 2) e a C2a já mostrou ρ −0,68 entre a entropia dela e
+outro sinal do projeto. É medição, não decisão: entra na fila do dono do módulo.
+
+**A 3.1 direcional segue fora** — falha o item 3 (β troca de sinal dentro da
+amostra, +0,97% na 1ª metade e −0,35% na 2ª, ambos significantes). Removida do
+`Candidatos.md` por instrução do dono nesta sessão.
+
+### 22e. O item 4 medido nas duas candidatas — e o que conta como "ρ alto" 🟢 (FECHADA pelo dono, 2026-08-10 — sessão 23)
+
+Medição em `Dump/analises/Ortogonalidade.md` (`scripts/ortogonalidade.py`, 374
+pregões, escala da 15b = entropia crua).
+
+**Achado de método, e ele muda como o item 4 deve ser aplicado daqui em diante:**
+o ângulo **não testa view direcional**. O P da 15b é `[SPY = 2, 0…]` e o das
+neutras sai de `P_from_betas`, que crava `P[SPY] = 0` EXATO — o produto interno é
+zero **por construção**, então o ângulo dá 90,000° contra qualquer view neutra,
+em qualquer amostra. Para uma view direcional o item 4 se decide **inteiro no
+ρ**. Quem reaplicar a régua precisa saber disto, ou vai ler um 90° como
+aprovação forte quando ele é tautologia.
+
+| par | ângulo mediano | ρ Pearson | ρ Spearman | dias |
+|---|---|---|---|---|
+| 2.2 × 2.3 (as duas da entrega) | 77,9° | −0,197 | −0,380 | 239 |
+| 2.2 × **15g** | 87,5° | **+0,673** | **+0,765** | 168 |
+| 2.3 × **15g** | 70,9° | −0,462 | −0,520 | 203 |
+| 2.2 × **15b** | 90,0° (tautológico) | −0,132 | −0,269 | 13 |
+| 2.3 × **15b** | 90,0° (tautológico) | +0,193 | +0,284 | 19 |
+| 15g × **15b** | 90,0° (tautológico) | −0,091 | −0,043 | 15 |
+
+**DECISÃO (dono, 2026-08-10): ρ +0,673 NÃO reprova. A 15g cumpre o item 4 e
+entra.**
+
+**Consequência que precisa estar escrita, porque é o que um leitor vai cobrar:**
+com isto a barra do "ρ alto" da D22 passa a estar **acima de 0,673** — não por
+um número escolhido, mas por precedente, do mesmo jeito que a D2b virou regra a
+partir de um caso. Nenhum threshold foi cravado (seria parâmetro sem medição,
+CLAUDE.md §6); o que existe é um caso julgado. Quem for aplicar a régua a uma
+view futura compara com este precedente, não com uma constante.
+
+**O que sustenta a decisão, para a ata:** expectativa de inflação e trajetória do
+Fed são economicamente ligadas — o ρ é **real, não artefato de encanamento**. E o
+que o item 4 existe para impedir é **dupla contagem no BL**, que se dá pelo P:
+nesse eixo a 15g está a 87,5° da 2.2. Duas views podem ler sinais correlacionados
+e ainda assim pedir posições diferentes.
+
+**Limitação que fica de pé:** o Ω é diagonal (`diag(P·τΣ·Pᵀ)`), logo **não
+enxerga** essa correlação. Vale para o relatório junto com a mesma ressalva da
+D15a.
+
+**Ressalva de amostra na 15b, registrada:** os ρ dela saem de **13 a 19 pregões**
+de sobreposição — ela só vive em 27 dias de anúncio. Passa como medido; não é
+número robusto, e está aqui para ninguém citá-lo como se fosse.
+
+**Segunda aplicação, no mesmo dia — a view C (candidata).** Medida com o mesmo
+script, contra as quatro ativas:
+
+| C contra | ângulo mediano (k = 3) | ρ Pearson (k = 3) | dias |
+|---|---|---|---|
+| 2.2 inflação | 88,7° | **+0,827** (spearman +0,674) | **25** |
+| 2.3 Fed | 108,6° | +0,107 | 62 |
+| 15g B própria | 116,5° | +0,241 | 46 |
+| 15b incerteza | 90,0° (tautológico) | −0,827 | **4 — sem valor** |
+
+**DECISÃO (dono, 2026-08-10): o ρ da C com a 2.2 NÃO reprova — mesmo critério
+já aplicado à 15g.** O mecanismo é o mesmo tipo: escalada no Irã → petróleo →
+expectativa de inflação, que é o sinal da 2.2. Correlação real de fonte, com P a
+88,7° — não é dupla contagem no BL.
+
+**O que isto acumula, e precisa estar visível:** a barra do "ρ alto" da D22 sobe
+de novo, agora para **acima de 0,827** — e desta vez sobre **25 dias**, contra os
+168 da 15g. Dois precedentes na mesma sessão, na mesma direção. Se um terceiro
+caso aparecer, o item 4 estará operando **só pelo ângulo** na prática, e vale
+dizer isso em vez de manter um critério que nunca barrou ninguém.
+
+### 22d. Alcance
+
+A D22 é régua de **views estruturais** (linha de P/Q do Black-Litterman). A
+camada tática (overlay sobre os pesos) usa os mesmos quatro itens em
+`Candidatos_taticos.md`, mas soma as condições de camada já registradas e não
+revogadas aqui: escopo (decisão 10), tamanho com âncora (12c) e sinal acima do
+tick da fonte (G1, D17).
+
+---
+
+## 23 (branch `Felipe`). A estratégia passa a ter QUATRO views 🟢 (fechada pelo dono, 2026-08-10 — sessão 23)
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D23 do
+> `Felipe`".
+
+**O que fechou:** a 15b (incerteza de anúncio) e a 15g (B com β próprio) saíram
+de candidatas e entraram na entrega. `scripts/backtest_v1.py::VIEWS_V1` deixou de
+ser `()`. Nenhuma das duas foi ligada por resultado — as quatro exigências da D22
+foram verificadas uma a uma, e as três decisões humanas que travavam foram
+fechadas por instrução explícita do dono, sem ir à reunião.
+
+**Cadeia de decisão, para a ata:** D15a (dupla leitura aceita) · D15b (P
+direcional aceito) · D15c (entropia crua) · D22e (item 4 medido; ρ +0,673 não
+reprova) · obrigação 5a (direcional declarado intencional, não se re-centra).
+
+### 23a. As quatro views e a régua da D22
+
+| view | 1 poly | 2 bolsa | 3 tese (teste de sinal) | 4 ortogonal | dias |
+|---|---|---|---|---|---|
+| **2.2 inflação** | ✅ PMF de CPI | ✅ TIP/TLT | t +0,29 (h=0) · 50% | — (incumbente) | 274 |
+| **2.3 Fed** | ✅ PMF de reunião | ✅ 9 ativos | t +0,59 (h=0) · 50% | — (incumbente) | 325 |
+| **15b incerteza** | ✅ entropia da PMF | ✅ SPY | t +0,06 (h=0) · 44% | ✅ ρ ≤ 0,19 | **27** |
+| **15g B própria** | ✅ PMF do M3 | ✅ XLE/XLF vs. XLP/XLU | t +0,33 (h=1) · 51% | ✅ 87,5° · ρ +0,673 | **210** |
+
+**Nenhuma das quatro "passa" no teste de sinal, e isso é esperado** — a 15f
+estabeleceu que ele é **veto e não certificado**: reprova quem sai
+significativamente invertido, não quem sai fraco. As quatro são indistinguíveis
+de zero; nenhuma sai invertida.
+
+### 23b. Registros obrigatórios da D22 — atribuição e concentração 🛑
+
+A D22 exige que "sem os 3 maiores" e o acerto de sinal estejam escritos **antes**
+de a view entrar, não depois. Fonte: `Dump/analises/Views_novas.md`
+(`scripts/views_novas.py`), teto no tilt = 1, γ = 1,0, 374 pregões. A base é o
+**v1 anterior de duas views** (+4,07 pp).
+
+| view | Δ vs. v1 anterior | Σ dos Δ diários | **sem os 3 maiores** | acerto de sinal |
+|---|---|---|---|---|
+| **15b** (entropia crua) | +3,89 pp | +2,74 pp | **−0,54 pp** | **48%** (13/27) |
+| **15g** (β próprio, DGS1) | **−1,38 pp** | −0,96 pp | +2,93 pp | **49%** (102/210) |
+| **as duas juntas** | +2,17 pp | +1,52 pp | +2,51 pp | 49% (109/222) |
+
+**O que estes números dizem, e é o oposto de "as views funcionam":**
+
+- **A 15b é um pregão.** O Δ dela vem de **2025-04-10** (choque tarifário, SPY
+  −4,38%), que sozinho vale +3,21 pp. Tirados os três extremos, o Δ **vira
+  negativo**. O acerto de sinal em 27 anúncios é 48% — cara ou coroa. Duas
+  medições independentes dizem o mesmo: o teste de sinal dá t +0,06 no horizonte
+  que é o dela.
+- **A 15g mede NEGATIVO** no backtest (−1,38 pp), e concentrada do mesmo jeito
+  com o sinal trocado. Acerto 49% em 210 dias.
+- **Pela D22 nada disso reprova** (sinal fraco não é impedimento). Está aqui para
+  que o **+6,24 pp da entrega não seja lido como desempenho das views novas.**
+
+**Limitação de cobertura, declarada:** a 15b vive em **27 de 374 pregões** (só
+dia de anúncio, por desenho) e a 15g em **210** (o M3 acaba em 2025-12-10 e não
+há mercado de trajetória de 2026 no `data/`).
+
+### 23c. O que mudou no número da entrega
+
+Escopo de referência (teto no tilt = 1), `Dump/analises/Backtest_v1.md`:
+
+| | v1 anterior (2 views) | **entrega (4 views)** |
+|---|---|---|
+| excesso × SPY | +4,07 pp | **+6,24 pp** |
+| retorno líquido | +34,2% | **+36,4%** |
+| sharpe | 1,19 | **1,27** |
+| Σ\|w\| média | 1,93 | 1,94 |
+| custo de breakeven | 35,9 bps/lado | **34,5 bps/lado** |
+| views ativas por dia | — | 2,24 |
+
+O sinal do resultado **não depende do γ** na varredura de robustez (+6,24 a
++6,96 pp em γ ∈ {1; 1,1; 1,25}).
+
+### 23d. Três consequências que a entrada cria, e nenhuma é opcional
+
+1. **🛑 A carteira não é neutra em mercado — e nunca foi.** ΣP mediano de +0,96
+   (2.2), +1,74 (2.3), +1,24 (15g), +2,00 (15b). A frase "as views apostam só em
+   preço relativo" **não pode aparecer no relatório**, nem descrevendo o v1 de
+   duas views. Medição e decisão na 15b/obrigação 5a.
+2. **O Ω é diagonal e não enxerga correlação entre views.** Com a 15g e a 2.2 a
+   ρ +0,673 no sinal-fonte, isso deixa de ser hipotético. Limitação de relatório
+   (D15a, D22e), não bug.
+3. **As varreduras irmãs ficaram desatualizadas.** `curva_c.py`, `curva_banda.py`,
+   `curva_orcamento.py`, `tatica_reconstruida.py` e `gate_sleeves.py` leem o
+   default do `carregar` e agora montam 4 views, mas os `.md` salvos foram
+   gerados com 2 — inclusive o **`Curva_c.md`, insumo direto da escolha de nível
+   + teto de 13/08**. Re-rodar como medição declarada depois que o conjunto de
+   views fechar; **não** re-rodar para escolher parâmetro melhor (protocolo
+   anti-overfit da seção 10).
+
+### 23f. A view C foi medida até o fim — e trava em decisão ANTERIOR a ela 🟡
+
+**Registro, não decisão.** Medida na mesma sessão, a pedido do dono, na ordem
+que a D14a manda (veto antes de código de produção).
+
+**Item 3 (tese não desprovada) — PASSA.** `Dump/analises/Teste_sinal.md`,
+grade k ∈ {1…5}, controle reproduzindo:
+
+| k | n | h = 0 | h = 1 |
+|---|---|---|---|
+| 1 | 72 | t −0,43 · 44% | t −0,68 · 53% |
+| 2 | 68 | t −0,75 · 53% | t −0,50 · 53% |
+| 3 | 64 | t +1,29 · 55% | **t +1,44 · 56%** |
+| 4 | 60 | t +0,41 · 47% | t +0,10 · 53% |
+| 5 | 56 | t +0,56 · 55% | t −0,62 · 45% |
+
+Nenhum k sai invertido com significância. Pela D22 isso **não reprova**.
+
+**Item 4 (ortogonalidade) — PASSA, com o ρ liberado pelo dono** (ver 22e):
+ângulo de 88,7° a 160,9° contra as quatro ativas; ρ +0,827 com a 2.2 julgado
+como não reprovando.
+
+**🛑 O k NÃO tem critério que o fixe — e o teste que existia para isso foi
+executado e deu negativo.** `Dump/analises/Absorcao_C.md`
+(`scripts/absorcao_C.py`): a espec 2.4 item 6 pré-registrou "*o perfil decide*",
+isto é, o k é onde a resposta acumulada assenta. Medido nos dois episódios
+separados:
+
+| lag k | fração da resposta acumulada (XLE) — jun/2025 | 2026 |
+|---|---|---|
+| 0 | −0,66 | −0,43 |
+| 1 | −0,83 | +0,20 |
+| 2 | −0,29 | +0,84 |
+| 3 | **+0,97** | +0,03 |
+| 4 | −1,03 | +0,97 |
+| 5 | −0,23 | +1,03 |
+
+**corr entre as duas curvas: +0,08.** A resposta acumulada oscila com amplitude
+maior que o próprio nível e os dois episódios não concordam sobre onde o efeito
+chega. **O perfil não identifica k** — que era o terceiro dos três desfechos
+mapeados antes de medir, e é resultado, não falha da medição.
+
+**Achado que corrobora o corte original da C por um quarto caminho:** o **lag 0
+é positivo nos dois episódios** (+0,0606 e +0,0313) e é o único lag em que os
+dois concordam em sinal. Tudo depois disso é ruído. O lag 0 é exatamente o **gap
+de abertura**, que não é negociável — e `lagged_poly_view` **recusa k < 1** por
+construção ("sem defasagem não há tese"). Ou seja: o único lag com sinal coerente
+é o que a view estruturalmente não pode usar. É o mesmo padrão já medido na
+eleição 2024, na recessão 2025 e na tática de fim de semana (D14, item 3).
+
+**🛑 E há um bloqueio ANTERIOR ao k, que nunca tinha mordido: a DECISAO-4.1.**
+`Dump/analises/View_C_backtest.md` (`scripts/view_C_backtest.py`):
+
+| k | backtest empilhado com as 4 views |
+|---|---|
+| 1 | roda — **Δ −6,40 pp** contra a entrega |
+| 2 a 5 | **bloqueado** pelo `stack_views` |
+
+O `stack_views` recusa empilhar views com `horizonte_q_dias` diferentes — guarda
+que FALHA ALTO de propósito (`src/bl_integration.py`). O Q da C é **acumulado em
+k dias**; o das outras quatro é de **1 dia**. Somar os dois é somar km/h com km.
+**A C só convive com as outras em k = 1**, e para qualquer k ≥ 2 a entrada dela
+exige fechar a D4.1 — decisão de metodologia, aberta desde o começo do projeto e
+que só agora encontrou um consumidor.
+
+**O nó, e ele é fechado:** o único k que a D4.1 permite (k = 1) é o único k que
+**inverte entre os episódios** — t +2,13 em jun/2025 contra t −1,60 em 2026 — e o
+que mede **−6,40 pp** no backtest, com acerto de sinal de 40%. Os k que o teste
+de sinal favorece (k = 3) são os que a D4.1 bloqueia.
+
+**DECISÃO (dono, 2026-08-10 — sessão 23): saída (c). A view C fica FORA, e as
+três medições vão ao relatório como resultado.** As alternativas descartadas
+ficam na ata: (a) fechar a D4.1 e medir a C em k ≥ 2 — mexeria no empilhamento
+de TODAS as views a seis dias da entrega; (b) entrar em k = 1 — o único k
+permitido é o que o próprio dado contradiz.
+
+**Por que este corte é diferente do de 04/08, e é o ponto que vai ao relatório:**
+o corte original disse "o efeito aterrissa no gap" a partir de **um** episódio,
+com 27 observações, e a D19a o enfraqueceu ao medir um segundo episódio que não
+o reproduzia. Agora o mesmo veredito volta por um **caminho independente** — a
+curva de absorção, que não olha janela negociável nenhuma — e com os dois
+episódios concordando exatamente no lag 0. **A C não é cortada por número ruim:
+é cortada porque a premissa de que existe atraso a explorar foi testada pela
+primeira vez e não se sustenta.**
+
+**O que a C entrega ao relatório sem entrar na carteira:**
+
+1. **O poly move o XLE, e move igual nos dois episódios** (+0,0606 e +0,0313 no
+   lag 0; coeficiente de gap +0,0606 × +0,0578 na D19a). A fonte tem conteúdo.
+2. **O efeito inteiro chega enquanto a bolsa está fechada.** Quarta medição
+   independente do mesmo padrão — eleição 2024, recessão 2025, Irã e tática de
+   fim de semana (D14 item 3). Deixa de ser observação e vira **achado sobre o
+   limite da fonte de dados**.
+3. **A D4.1 ganhou um consumidor e um caso concreto.** Ela estava aberta desde o
+   começo do projeto sem nunca morder; agora existe um exemplo medido do que ela
+   impede e por quê. Vai ao relatório como limitação conhecida do desenho, não
+   como pendência esquecida.
+
+**A D4.1 NÃO é fechada aqui.** Continua aberta; o que muda é que deixa de estar
+no caminho crítico da entrega, já que nenhuma view do v1 tem `horizonte_q_dias`
+diferente de 1.
+
+### 23e. O conjunto de views está FECHADO 🟢 (dono, 2026-08-10)
+
+**A estratégia entrega com QUATRO views: 2.2 · 2.3 · 15b · 15g.** Com a decisão
+da 23f (a C fica fora), **não há candidata restante** — o `Candidatos.md` fica
+sem nenhuma view em estado candidato pela primeira vez desde que foi criado.
+
+**O que isto destrava, e passa a ser o caminho crítico:**
+
+1. **A `RESPOSTA6` à Lia pode sair.** Estava segurada exatamente até aqui
+   (D20b). Antes de enviar, as chaves passam de duas para **quatro**
+   (`2.2_inflacao`, `2.3_fed`, `15b_incerteza`, `15g_B_propria`) e a mensagem
+   precisa dizer o que sai em dia **sem** view — a 15b só existe em 27 pregões.
+2. **As varreduras irmãs podem ser re-geradas** (23d item 3), agora sobre o
+   conjunto final. Vale para o `Curva_c.md`, que é insumo do nível + teto.
+3. **Nível do `c` + teto** seguem sendo escolha única do grupo (seção 10 / 10a),
+   agora sem nada de views na frente.
 
 ---
 
