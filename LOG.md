@@ -709,7 +709,7 @@ registrado como posição da Lia, não fechado (é decisão de grupo).
   ligar o portão, que o insumo declarado como entregue não casa com a
   série que ele deveria julgar.
 
-## 2026-08-09 — Lia (segunda sessão: portão no CPI, régua fechada, `calcular_omega`)
+## 2026-08-09 — Lia (segunda sessão: portão no CPI, régua fechada, `calcular_omega`, relatório, robustez)
 
 **Feito:**
 - **O G5 casa com a view 2.2.** 111/111 mercados, casamento por nome exato de
@@ -800,8 +800,11 @@ mesma classe do veto de liquidez.
 
 **Pendente:**
 - **Reunião: nível global do `c` + teto de alavancagem** (6d), uma vez só. A
-  forma não entra nessa conversa. Insumo: com `nivel = 1` a régua é suave
-  (mediana 1,05) e `nivel = 0` devolve He-Litterman puro.
+  forma não entra nessa conversa. Insumos: com `nivel = 1` a régua é suave
+  (mediana 1,05) e `nivel = 0` devolve He-Litterman puro; e — ⚠️ pela 6j — **o
+  eixo da escolha tem de ser o nível da régua, não o `c` da `Curva_c.md`**,
+  que está na convenção inversa. Escolher sobre a curva sem converter leva a
+  um ponto que a régua não alcança.
 - Entregar `c` + `ativa` ao Felipe até 13/08 — **o código está pronto**;
   falta acordar de onde ele passa o `volume_notional` (não existe campo de
   volume no `diagnostics`; hoje é parâmetro separado, chaveado pela view).
@@ -812,15 +815,17 @@ mesma classe do veto de liquidez.
 - **Janela 5 × 10 (aberto para a dona, ver 6h):** no alvo por desfecho a
   janela de 10 fica 0,015 à frente na 2.3. Mantida a de 5, que é o critério
   declarado antes do teste e vence no alvo original nas duas views.
-- Valor realizado do CPI (BLS) — candidato a pedido ao Paulo, **não pedido**:
-  destravaria o alvo por desfecho também na 2.2.
+- Valor realizado do CPI — **pedido ao Paulo** em
+  `PEDIDO_Paulo_cpi_realizado.md`, marcado como última prioridade e sem prazo.
+  Destravaria o alvo por desfecho também na 2.2; sem ele, a limitação segue
+  declarada no relatório e nada precisa mudar.
 - Decisão 9 (matriz de relação) segue aberta.
 - Dados dos outros branches em `%TEMP%\omega_lia`; refazer com
   `git archive origin/Paulo <caminho> | tar -x -C <destino>` se sumir.
-- `git push` da branch `Lia`: **feito** nesta sessão (`759d6ef..1c27a06`), só
-  na `Lia`. A `main` segue em `d4b9a28` — a divergência de numeração do
-  `Decisoes_pendentes.md` entre os três branches continua sem resolução, e
-  merge não é decisão de uma sessão só.
+- `git push` da branch `Lia`: **feito** nesta sessão, `759d6ef..092a91d` (7
+  commits), só na `Lia`. A `main` segue em `d4b9a28` — a divergência de
+  numeração do `Decisoes_pendentes.md` entre os três branches continua sem
+  resolução, e merge não é decisão de uma sessão só.
 
 **Depois do push — aviso do Felipe sobre o calendário do CPI (6i, 6j):**
 - Re-rodada a calibração da 2.2 com o `load_cpi_releases` corrigido
@@ -876,21 +881,38 @@ mesma classe do veto de liquidez.
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
-- **Contexto consumido:** ~60% da janela, estimativa.
+- **Contexto consumido:** ~85% da janela, estimativa.
 - **Prompt inicial (verbatim):** "o que falta fazer na minha parte?"
-- **Iterações até aceitar:** 1 nas quatro decisões (todas confirmadas na
-  recomendação), com um percalço de execução no meio.
-- **Erros da IA:** dois, ambos corrigidos na sessão. (1) Uma substituição em
-  massa no arquivo de testes deixou parênteses desbalanceados em 11 testes; o
-  arquivo foi reescrito com um helper que elimina a repetição que causou o
-  erro. (2) O número "soma do livro chega a 1,725" estava errado e se
-  propagou por quatro arquivos antes de ser pego na conferência do relatório
-  — 1,725 é o desvio `|soma − 1|`, e a soma vai a 2,725. Nenhum dos dois
-  afetou cálculo: a suíte fecha em 55 testes verdes e a régua foi validada
-  contra o `diagnostics` real, não só contra caso sintético.
-- **Decisões escaladas:** 6g (quatro decisões fechadas pela dona; nível
-  global segue para a reunião).
+- **Iterações até aceitar:** 1 em todas as escolhas apresentadas (ponto de
+  partida da sessão; as três decisões da régua; a normalização do `c`;
+  extensão e tratamento de pendências do relatório) — todas confirmadas na
+  opção recomendada, sem contraproposta.
+- **Erros da IA:** três, todos corrigidos na sessão e nenhum com efeito em
+  cálculo:
+  1. Uma substituição em massa no arquivo de testes deixou parênteses
+     desbalanceados em 11 testes; o arquivo foi reescrito com um helper que
+     elimina a repetição que causou o erro.
+  2. O número "soma do livro chega a 1,725" estava errado e se propagou por
+     quatro arquivos antes de ser pego na conferência do relatório — 1,725 é
+     o desvio `|soma − 1|`, e a soma vai a 2,725. Erro de texto: o código
+     sempre usou `abs(soma - 1)`.
+  3. Afirmação feita sem verificar: disse que criar `.gitignore` no branch
+     `Lia` arriscaria conflito com os outros dois. Ao conferir, o `Felipe` já
+     tinha exatamente as mesmas duas linhas. A cautela era infundada e foi
+     corrigida antes de virar decisão.
+  Percalços de ambiente (não são erro de resultado): o `print` de um emoji
+  quebrou por encoding no console do Windows, e o Git Bash converte
+  `origin/X:.gitignore` em caminho — resolvido com `MSYS_NO_PATHCONV=1`.
+- **Decisões escaladas:** **6g** (quatro fechadas pela dona: variação total,
+  portão como veto de volume zero por soma, proximidade fora, normalização em
+  produto de penalidades), **6h** (robustez — não altera a régua; janela 5 × 10
+  registrada em aberto), **6i** (recalibração com o calendário corrigido) e
+  **6j** (⚠️ inversão de convenção entre a curva do Felipe e a saída da régua —
+  aberta, vai à reunião).
 - **Tags:** `[PROMPT-CHAVE]` — a sessão depende de testar a hipótese que a
   rodada anterior deixou em aberto em vez de aceitá-la: o ingrediente mais
   forte da régua estava sob suspeita de ser artefato de medição, e a
-  diferença entre confirmar e refutar isso mudava o que seria entregue.
+  diferença entre confirmar e refutar isso mudava o que seria entregue. O
+  mesmo padrão se repetiu três vezes na sessão — o portão reprovou como
+  score, o alvo circular foi trocado por um independente, e o erro de
+  calendário foi medido em vez de aceito.
