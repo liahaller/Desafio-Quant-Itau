@@ -68,6 +68,16 @@ def test_retorno_da_carteira_comeca_em_d_mais_1():
     assert np.isnan(retorno_da_carteira(retornos, idx[0], [1.0], None))
 
 
+def test_horizonte_zero_e_o_proprio_pregao():
+    """`h = 0` é a exceção: o dia D entra, e só ele. É o horizonte da 15b."""
+    idx = datas(5)
+    retornos = pd.DataFrame({"A": [1.0, 0.1, 0.2, 0.3, 0.4]}, index=idx)
+    assert retorno_da_carteira(retornos, idx[0], [1.0], 0) == 1.0
+    assert retorno_da_carteira(retornos, idx[3], [1.0], 0) == 0.3
+    # data fora da tabela não vira zero silencioso
+    assert np.isnan(retorno_da_carteira(retornos, pd.Timestamp("2030-01-02"), [1.0], 0))
+
+
 def test_medir_separa_view_certa_de_view_invertida():
     """View que acerta dá t > 0 e acerto alto; a invertida dá o espelho."""
     idx = datas(60)

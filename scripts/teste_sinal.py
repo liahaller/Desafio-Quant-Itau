@@ -16,17 +16,31 @@ zero, a transversal (15f) era significativamente ao contrário. Por isso as duas
 views da entrega entram na tabela como **grupo de controle embutido** — se elas
 não reproduzirem o registrado, o errado é o script.
 
-Rodam quatro linhas:
+Rodam seis linhas:
 
   2.2, 2.3            controle, direto do `MontadorV1` (mesma montagem do v1)
   transversal (β cru) reprodução da 15f, que reprovou (t −3,02, acerto 35%)
   transversal (β ⊥)   **a candidata 2 do `leaveoff.md`**: o mesmo desenho com o
                       β estimado contra o Δbreakeven RESIDUALIZADO do canal
                       risk-on (retorno do SPY e ΔDGS10)
+  incerteza (15b)     a view de prêmio de anúncio, `views_novas=("incerteza",)`
+  B com β próprio     a 15g no vértice certo (DGS1), `views_novas=("B",)`
+
+As duas últimas entraram em 2026-08-10 para fechar a pendência registrada no
+fim da sessão 18: elas tinham sido medidas no BACKTEST (15h) e nunca no teste de
+sinal, então a tabela de veto do projeto estava incompleta justo nas duas
+candidatas sem veredito negativo. A 15b roda na escala default (`entropia`); a
+15h mediu as duas escalas da 15c no backtest e o veredito não mudou entre elas.
 
 A ordem é o ponto: a 15f gastou 400 linhas de módulo numa view que este teste
 teria matado em minutos (lição da 14a/D17). A ortogonalização é testada AQUI,
 antes de encostar em `view_cpi_transversal.estimate_betas_breakeven`.
+
+**Sobre o `h = 0`:** é o dia que o backtest de fato ganha — a montagem de D usa
+só dado anterior à abertura de D e carrega o retorno close-to-close de D. Ele
+entra porque é o ÚNICO horizonte da 15b (o Q dela é o retorno do próprio dia do
+anúncio); para as demais é coluna informativa. O controle reproduz no `h = 1`,
+que é a convenção em que 15f e 15g registraram os números.
 
 Uso:
     python scripts/teste_sinal.py --raiz . --saida Dump/analises/Teste_sinal.md
@@ -47,9 +61,10 @@ from config import ASSETS  # noqa: E402
 from view_cpi_transversal import estimate_betas_breakeven  # noqa: E402
 from views_common import P_from_betas  # noqa: E402
 
-# Horizontes reportados. h = 1 é o H da carteira (D9); h = 5 é a janela em que a
-# 15g mediu a B, mantida para as duas medições ficarem comparáveis.
-HORIZONTES = (1, 5, "divulgação")
+# Horizontes reportados. h = 0 é o próprio pregão de D (o que o backtest ganha,
+# e o único horizonte da 15b); h = 1 é o H da carteira (D9) e a convenção do
+# controle; h = 5 é a janela em que a 15g mediu a B.
+HORIZONTES = (0, 1, 5, "divulgação")
 
 # Canal contra o qual o Δbreakeven é residualizado na variante ortogonalizada.
 # São os dois eixos que as três medições da família de inflação apontaram como
@@ -94,13 +109,22 @@ def retorno_da_carteira(retornos, data, P, h):
 
     D+1 e não D é convenção do CONTROLE, não escolha: com ela a 2.3 reproduz
     exatamente o t +0,26 / 51% registrado na 15f (ver 15g).
+
+    `h = 0` é o caso à parte: o retorno do PRÓPRIO D, que é o que o backtest
+    ganha (a montagem de D só olha dado anterior à abertura de D) e o único
+    horizonte que a 15b tem — o Q dela é o close-to-close do dia do anúncio.
     """
     if h is None:
         return float("nan")
-    seguintes = retornos.index[retornos.index > data][:h]
-    if len(seguintes) < h:
-        return float("nan")
-    return float((retornos.loc[seguintes].to_numpy() @ np.asarray(P)).sum())
+    if h == 0:
+        janela = retornos.index[retornos.index == data]
+        if not len(janela):
+            return float("nan")
+    else:
+        janela = retornos.index[retornos.index > data][:h]
+        if len(janela) < h:
+            return float("nan")
+    return float((retornos.loc[janela].to_numpy() @ np.asarray(P)).sum())
 
 
 def medir(registros, retornos, h):
@@ -143,17 +167,20 @@ def transporte(registros, retornos, betas_finais, h):
 def coletar(raiz):
     """Percorre a janela do v1 e devolve os registros (data, P, Q) de cada view.
 
-    As views 2.2 e 2.3 saem do `MontadorV1` — a MESMA montagem da entrega, sem
-    recópia de fórmula. As duas transversais são montadas aqui porque a 15f
-    reprovou e elas não estão no montador; os insumos (divergência líquida e
-    dias até a divulgação) vêm dos diagnostics da 2.2, que é onde a cascata roda.
+    As views 2.2, 2.3, 15b e B saem do `MontadorV1` — a MESMA montagem da
+    entrega e da 15h, sem recópia de fórmula (as duas últimas só existem com
+    `views_novas`, que continua `()` no caminho da entrega). As duas
+    transversais são montadas aqui porque a 15f reprovou e elas não estão no
+    montador; os insumos (divergência líquida e dias até a divulgação) vêm dos
+    diagnostics da 2.2, que é onde a cascata roda.
     """
-    retornos, montador, datas, _ = carregar(raiz)
+    retornos, montador, datas, _ = carregar(raiz, views_novas=("incerteza", "B"))
     dbe = montador.breakeven.diff().dropna()
     dbe_orto = residualizar(dbe, retornos, montador.dgs10)
 
     registros = {n: [] for n in ("2.2", "2.3", "transversal (β cru)",
-                                 "transversal (β ⊥ risk-on)")}
+                                 "transversal (β ⊥ risk-on)",
+                                 "incerteza (15b)", "B com β próprio (15g)")}
     for data in datas:
         _, views, _ = montador(data)
         for view in views:
@@ -175,6 +202,10 @@ def coletar(raiz):
                     registros[rotulo].append((data, P, Q, faltam))
             elif nome == "2.3_fed":
                 registros["2.3"].append((data, view.P, view.Q, None))
+            elif nome == "incerteza_anuncio":
+                registros["incerteza (15b)"].append((data, view.P, view.Q, None))
+            elif nome == "B_trajetoria_propria":
+                registros["B com β próprio (15g)"].append((data, view.P, view.Q, None))
     # β do fim da janela, para o elo 2 (o transporte) das duas transversais.
     betas_finais = {
         "transversal (β cru)": estimate_betas_breakeven(
@@ -203,6 +234,17 @@ def main():
              "Regressão de `r_P(D→D+h)` contra o `Q(D)` da própria view. "
              "As views 2.2 e 2.3 são **controle embutido**: se elas não "
              "reproduzirem o registrado na 15f, o errado é o script.\n")
+    escrever("**`h = 0` é o próprio pregão de D** — o que o backtest de fato "
+             "ganha (a montagem de D só olha dado anterior à abertura de D) e o "
+             "ÚNICO horizonte da 15b, cujo Q é o close-to-close do dia do "
+             "anúncio. O controle reproduz no `h = 1`, que é a convenção em que "
+             "15f e 15g registraram os números.\n")
+    escrever("As linhas **incerteza (15b)** e **B com β próprio (15g)** entraram "
+             "em 2026-08-10: as duas tinham sido medidas no BACKTEST (15h) e "
+             "nunca aqui, e a B com o `DGS1` era pendência de protocolo aberta "
+             "na 15h (`o teste de sinal no vértice certo segue não rodado`). "
+             "Rodam com `views_novas=(\"incerteza\", \"B\")`; a entrega segue "
+             "`views_novas=()`.\n")
     escrever("| view | n | " + " | ".join(
         f"h = {h}: coef · t · acerto" for h in HORIZONTES) + " |")
     escrever("|" + "---|" * (len(HORIZONTES) + 2))
