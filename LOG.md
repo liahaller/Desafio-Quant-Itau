@@ -1,5 +1,77 @@
 # LOG de sessões
 
+## 2026-08-10 (sessão 20) — Felipe
+
+**Contexto da sessão:** o dono perguntou o que dava para fazer ou decidir agora
+do nosso lado e mandou executar a lista triada, na ordem. Cinco frentes, **nenhuma
+decisão metodológica tomada**. Suíte de **244 → 248 testes**; `Backtest_v1.md`
+re-gerado e **byte a byte idêntico**. Tudo na **D21**.
+
+**1. A sessão 19 inteira estava fora do branch.** Oito arquivos no working tree,
+zero commits — a correção de convenção do `c`, a curva na faixa da régua, a
+cristalização e a `RESPOSTA6`. Viraram **5 commits**, um por mudança lógica.
+
+**2. A régua da Lia agora entra por decisão no loop.** O `aplicar_veto` existia
+desde 07/08 e **nunca tinha sido chamado**: o `run_backtest` só aceitava
+`incerteza` ESCALAR, que é o LIMITE da régua e não a régua. Com
+`regua=callable(data) -> (ativa, incerteza)`, o veto tira a view de P e Q antes
+do `stack_views` e o vetor sai na ordem que o `omega_fallback` exige. Era o
+**único item de código no caminho crítico de 13/08**: quando a série de `c` por
+decisão chegar, medir o efeito de cauda (D20b) é rodar, não escrever.
+
+**3. O teste de sinal ficou completo e pagou a pendência de protocolo da 15h.**
+Entraram a 15b e a B com β próprio — as duas tinham sido medidas no BACKTEST e
+nunca no teste de veto — mais a coluna `h = 0` (o pregão que o backtest ganha, e
+o único horizonte da 15b). O controle reproduz e a **B reproduz exato** o
+t +0,33 · 51% da sessão 16, que até hoje só existia no chat. A 15b sai
+**t +0,06, acerto 44%** no horizonte que é o dela.
+
+**4. O experimento pendente da D17e/D18b rodou e morre no G1.** Uma linha no
+`gate_sleeves.py`: mediana |ΔDTB3| = **1 bps = 1,0× o tick do FRED**, e μ
+invertido nos dois ativos. A D18b registrava que, se a régua 18a caísse, este
+item voltaria "na frente dos outros três" — **medido, ele não volta**.
+
+**5. Higiene:** a `RESPOSTA5` da Lia saiu da raiz para `Dump/trocas/` e o
+`leaveoff.md` teve o movimento raiz → `Dump/analises/` registrado no git.
+
+**Quebrou / aprendido:**
+- **Interface pronta e nunca chamada é interface não testada contra o uso.** O
+  `aplicar_veto` estava certo, com testes, e mesmo assim a régua não tinha por
+  onde entrar no backtest — ninguém tinha ligado os dois. O sintoma não aparece
+  em teste de unidade, só na pergunta "como isto roda de ponta a ponta?".
+- **Rodar o experimento barato ANTES da reunião muda a pauta, não só o número.**
+  O C3 era um item de agenda ("se a régua cair, ele volta primeiro") e virou um
+  item resolvido por uma linha. A reunião discute a régua 18a sem ter de
+  ponderar o custo de oportunidade dela.
+- **O `data/` deste branch está atrasado em relação ao `origin/Paulo`**, que já
+  traz os TRÊS itens do `PEDIDO_G10` (D21d). A linha da B no teste de sinal só
+  existe com o extract do branch dele.
+
+**Pendente:**
+- **Nada novo de código do `Felipe`.** O caminho crítico segue de terceiros:
+  série de `c` por decisão (Lia), nível + teto (grupo, uma vez só), interface do
+  volume (Paulo, D20a).
+- **Régua 18a segue 🟡** — a D21c tira o custo de oportunidade dela, não a decide.
+- **As candidatas seguem sem destino** (D19, 15b, 15g): medidas, com
+  recomendação registrada, aguardando o dono/grupo. A D21b acrescenta medição às
+  duas últimas e **não** decide nenhuma.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~95k tokens na sessão; **nenhum subagente**.
+- **Prompt inicial (verbatim):** "O que pode ser feito ou decidido agora da nossa
+  parte?"
+- **Iterações até aceitar:** 1 (o segundo prompt foi "faz nessa ordem mesmo").
+- **Erros da IA:** 1, meu e corrigido antes de sair do branch local — os cinco
+  primeiros commits saíram com a mensagem malformada (usei sintaxe de here-string
+  do PowerShell dentro da ferramenta Bash, e o `@` virou linha de texto).
+  Refeitos com `reset --mixed` sobre commits que ainda não tinham sido
+  publicados; nenhum conteúdo mudou.
+- **Decisões escaladas:** D21 registrada (21a–21d — nenhuma fechada).
+- **Tags:** `[PROMPT-CHAVE]` — "o que pode ser feito ou decidido agora" produziu
+  uma triagem em três baldes (executável aqui · decidível pelo dono · trancado em
+  terceiros) que é o formato certo para abrir sessão com o calendário apertado.
+
 ## 2026-08-10 (sessão 19) — Felipe
 
 **Contexto da sessão:** chegou a `RESPOSTA5_Felipe_calendario_e_nivel.md` da

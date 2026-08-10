@@ -1542,4 +1542,97 @@ reunião (D16/D17), sem mudança.
 
 ---
 
+## 21 (branch `Felipe`). Régua ligada, teste de sinal completo e o experimento pendente da D18b 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D21 do
+> `Felipe`".
+
+**Registro, não decisão.** Sessão de **2026-08-10** (sessão 20). Três frentes de
+execução e **nada fechado** — nenhuma view entrou, nenhuma sleeve entrou, nenhum
+parâmetro foi escolhido. A entrega segue intacta: `Backtest_v1.md` re-gerado e
+**byte a byte idêntico**, suíte de **244 → 248 testes**.
+
+### 21a. A régua da Lia entra POR DECISÃO no loop — encanamento, não escolha
+
+O `aplicar_veto` existia desde 07/08 e **nunca tinha sido chamado**: o
+`run_backtest` só aceitava `incerteza` ESCALAR, que aplica o mesmo `c` a todas as
+views. Isso é o LIMITE da régua, nunca a régua — e a 20b registra que o efeito
+dela é de **cauda**, que grade constante não consegue medir por construção.
+
+Agora `run_backtest(regua=callable(data) -> (ativa, incerteza))` roteia pelo
+`aplicar_veto`: veto tira a view de P e Q antes do `stack_views`, e o vetor sai
+alinhado à ordem que o `omega_fallback` exige. `regua` e `incerteza` são
+mutuamente exclusivos (a grade sobrescreveria a régua em silêncio).
+
+**Não muda nada da entrega** — `regua=None` é o default e o caminho do v1 não
+passa por lá. O que muda é que, quando a **série de `c` por decisão** chegar (o
+pedido do item 2 da `RESPOSTA6`), medir o efeito real é rodar o backtest, não
+escrever módulo. Era o único item de código no caminho crítico do corte de 13/08.
+
+### 21b. O teste de sinal ficou completo — e a pendência de protocolo da 15h está paga 🟢
+
+O `scripts/teste_sinal.py` cobria 4 linhas; agora cobre 6 —
+entraram a **15b (incerteza)** e a **B com β próprio (15g)**, que tinham sido
+medidas no BACKTEST (15h) e nunca no teste de veto. Entrou também a coluna
+`h = 0` (o próprio pregão de D, que é o que o backtest ganha e o **único**
+horizonte da 15b, cujo Q é o close-to-close do dia do anúncio).
+
+**O controle reproduz, o que autoriza ler o resto** (`Dump/analises/Teste_sinal.md`):
+
+| view | n | h = 0 | h = 1 | h = 5 | registrado antes |
+|---|---|---|---|---|---|
+| 2.2 (entrega) | 274 | t +0,29 · 50% | t +0,57 · 53% | t +0,85 · 50% | t +0,57 / 53% ✔ |
+| 2.3 (entrega) | 325 | t +0,59 · 50% | t +0,26 · 51% | t +0,23 · 56% | t +0,26 · 51%/56% ✔ |
+| **incerteza (15b)** | **27** | **t +0,06 · 44%** | t −0,17 · 41% | t +0,93 · 41% | — |
+| **B com β próprio (15g)** | **210** | t +0,05 · 51% | **t +0,33 · 51%** | **t +0,65 · 53%** | t +0,33 · 51% / +0,65 · 53% ✔ |
+
+**O que isto fecha:** a 15h registrou como pendência de protocolo que "o teste de
+sinal no `DGS1` segue não rodado" — a medição da sessão 16 existia só no chat e
+no `LOG.md`. Agora ela roda **a partir do branch** e sai idêntica. A B **passa o
+veto** (não sai invertida), como a 15g já dizia; continua sem entrar, porque o
+teste é veto e não certificado (15f) e ela mede −1,38 pp no backtest (15h).
+
+**A 15b é indistinguível de zero no horizonte que é o dela** (t +0,06, acerto
+44% em 27 anúncios) — coerente com o achado da 15h de que o Δ dela era **um
+pregão**. Duas medições independentes agora dizem o mesmo.
+
+**Achado lateral, contra a candidata já reprovada:** a transversal ⊥ risk-on dá
+**t −2,02 no `h = 0`**, significativamente ao contrário também no horizonte que o
+backtest ganha. Reforça a 19b; não muda o veredito.
+
+### 21c. O experimento pendente da D17e/D18b rodou — e morre no G1 🟢 (medido)
+
+O item registrado como "**uma linha no `gate_sleeves.py`**": a D16 trocou de uma
+vez a âncora de tamanho (orçamento → `inv(δΣ)·μ`) **e** a fonte da surpresa
+(ΔDTB3 → poly), então a fonte ANTIGA nunca rodou com a âncora nova. Rodou
+(`Dump/analises/Gate_sleeves.md`, linha `C3`):
+
+| | medido |
+|---|---|
+| G0 | 37 reuniões, 2022-01-26 → 2026-07-29 (janela maior que as outras linhas — o ΔDTB3 existe desde 2022) |
+| **G1** | mediana \|ΔDTB3\| = **1 bps** = **1,0×** o tick de publicação do FRED |
+| **G2** | μ `SPY +0,55 ❌ · TLT +0,97 ❌` — invertido contra a Bernanke-Kuttner que o controle declara igual |
+| G3 | −0,56 com a entropia de FOMC (15b) |
+
+**A ressalva que a D17e levantou contra a própria ideia se confirmou:** o sinal
+tem o tamanho do tick da fonte. **Consequência de agenda, e é o motivo de ter
+rodado antes da reunião:** a D18b registra que "se a régua 18a cair, este item
+volta na frente dos outros três". **Medido, ele não volta** — reprova pelos
+mesmos critérios que reprovaram os candidatos que leem o poly. A ratificação da
+18a segue sendo decisão do grupo, mas **deixa de custar esta oportunidade**.
+
+### 21d. Observação de dado, não é decisão minha
+
+O `origin/Paulo` já traz **os três itens do `PEDIDO_G10`**: `fred_DGS1.csv`
+(G10a), `payrolls_bucket_labels.csv` (G10b) e `cpi_release_dates_fred.csv`
+(G10c). O `data/` do working tree deste branch **não os tem** — as medições da
+21b rodaram com o `--raiz` apontado para um extract do `origin/Paulo`, e a linha
+da B só existe assim. Fica registrado porque o G10b era o que bloqueava
+`E_poly[payrolls]` (15e) e ninguém tinha registrado a chegada dele.
+
+**Nada fecha aqui.** As pendências de 13/08 seguem as da D20: série de `c` por
+decisão (Lia), nível + teto (grupo, uma vez só), interface do volume (Paulo).
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.
