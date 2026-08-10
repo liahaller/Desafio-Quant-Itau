@@ -817,6 +817,10 @@ mesma classe do veto de liquidez.
 - Decisão 9 (matriz de relação) segue aberta.
 - Dados dos outros branches em `%TEMP%\omega_lia`; refazer com
   `git archive origin/Paulo <caminho> | tar -x -C <destino>` se sumir.
+- `git push` da branch `Lia`: **feito** nesta sessão (`759d6ef..1c27a06`), só
+  na `Lia`. A `main` segue em `d4b9a28` — a divergência de numeração do
+  `Decisoes_pendentes.md` entre os três branches continua sem resolução, e
+  merge não é decisão de uma sessão só.
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
