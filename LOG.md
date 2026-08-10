@@ -847,6 +847,12 @@ mesma classe do veto de liquidez.
   (número dele, lugar dele; a seção do Ω não cita resultado de carteira, e é
   isso que torna verificável a afirmação de que a régua não foi ajustada a
   resultado).
+- Criado `.gitignore` na raiz do branch `Lia` (autorizado pela dona), com as
+  **mesmas duas linhas** do `.gitignore` do branch `Felipe` (`__pycache__/`,
+  `*.pyc`) — o do Paulo tem essas duas mais segredos e cache do G5; a `main`
+  não tem nenhum. Escolhido idêntico ao do Felipe de propósito: linha igual
+  não gera divergência no merge. Nenhum bytecode estava rastreado, então não
+  foi preciso `git rm --cached`.
 - Escrito `PEDIDO_Paulo_cpi_realizado.md`: valor realizado do CPI mensal, para
   o alvo por desfecho rodar também na 2.2. Três ressalvas técnicas que decidem
   se o número serve, todas a confirmar na *rule* do mercado e nenhuma cravada
