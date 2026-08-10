@@ -2,8 +2,56 @@
 
 **Do Felipe. 2026-08-10.** Resposta à sua `RESPOSTA5_Felipe_calendario_e_nivel.md`.
 Tudo o que dava para executar deste lado está executado; o que sobrou é reunião. Suíte em
-**244 testes** (240 + 4 do script novo) e o `Backtest_v1.md` **não foi re-gerado** — a
-entrega do v1 está intacta.
+**248 testes**.
+
+> ⚠️ **Esta mensagem ficou pronta de manhã e só saiu agora — de propósito.** Entre uma
+> coisa e outra a estratégia passou de **duas para quatro views**, e o pedido do item 2
+> nomeia as views uma a uma. Mandar antes teria te feito gerar uma série que cobria metade
+> do modelo, e o erro só apareceria com o arquivo na mão, em cima do corte de 13/08.
+> **O que mudou está no bloco abaixo; o resto da mensagem vale como estava.**
+
+---
+
+## 🆕 O que mudou desde a sua RESPOSTA5: a estratégia tem QUATRO views
+
+| view | chave (`diagnostics["view"]`) | pregões ativos |
+|---|---|---|
+| 2.2 inflação | `2.2_inflacao` | 274 |
+| 2.3 Fed | `2.3_fed` | 325 |
+| **15b incerteza de anúncio** | `incerteza_anuncio` | **27** |
+| **15g B com β próprio** | `B_trajetoria_propria` | **210** |
+
+As duas novas entraram por decisão do dono (D23), depois de cumprirem a régua de admissão
+D22. Duas consequências que tocam o seu lado:
+
+**(a) A 15b é DIRECIONAL** — `P[SPY] = +2`, ΣP ≠ 0. É a primeira do projeto. E a medição que
+isso obrigou derrubou uma crença que nós dois carregávamos: **as views "neutras" nunca foram
+neutras.** ΣP mediano de +0,96 (2.2), +1,74 (2.3), +1,24 (15g) — `P[SPY] = 0` significa que
+a view não toma posição no SPY, não que ela seja neutra em mercado. Está em
+`Dump/analises/Ortogonalidade.md`. **Isso muda a descrição da carteira no relatório**, e
+achei melhor você saber antes de escrever a sua seção.
+
+**(b) O `Backtest_v1.md` FOI re-gerado** — o excesso da entrega sai de **+4,07 pp** para
+**+6,24 pp**. Onde eu escrevi "+4,07 pp" no item 2 abaixo, aquilo passou a ser o v1 de duas
+views. **Os números da `Curva_c_faixa_regua.md` são todos da carteira de duas views** e vão
+ser re-medidos com as quatro antes de 13/08 — a conclusão que eles sustentam (o teto é
+obrigatório em toda a faixa alcançável) não depende disso, mas os valores sim.
+
+---
+
+## 🛑 O que eu preciso de você — e é o único item no caminho crítico de 13/08
+
+**A série de `c` por decisão, em MAIS DE UM NÍVEL: `{1, 3, 5}`**, a mesma grade que você
+mediu na D20b, **agora para as QUATRO views**. Detalhe de formato no item 2; o motivo em
+uma linha: o nível só é escolhido **na reunião de 13/08**, junto com o teto, e pelo
+protocolo anti-overfit da seção 10 os dois saem **uma vez só** — se a reunião abrir com a
+curva medida em um nível, ou se decide sobre um ponto, ou se pede outra rodada depois do
+corte.
+
+**Se o nível for reescalável fora da régua, o pedido encolhe para uma série só** — leia o
+item 2 antes de gerar qualquer coisa, porque aí eu estou pedindo trabalho a mais à toa.
+
+Todo o resto abaixo é ou coisa já feita deste lado, ou item de reunião. Nada mais trava.
 
 ---
 
@@ -31,7 +79,9 @@ os artefatos publicados continuam válidos.
 
 ## 2. Re-medi a curva na faixa que a régua alcança. Sua conclusão fica MAIS forte ✅
 
-`Dump/analises/Curva_c_faixa_regua.md`, com a grade dentro de `[0,36 · 1,0]`:
+`Dump/analises/Curva_c_faixa_regua.md`, com a grade dentro de `[0,36 · 1,0]`. ⚠️ **Toda
+esta tabela é da carteira de DUAS views** — ver o bloco 🆕 no topo; vai ser re-medida com as
+quatro antes de 13/08:
 
 | c (eixo da curva) | incerteza | Σ\|w\| pedida mediana | dias de ruína | excesso (teto no tilt) |
 |---|---|---|---|---|
@@ -54,11 +104,50 @@ construção**: ela aplica o mesmo `c` às duas views todo dia, ou seja, apaga j
 diferenciação entre mercado bom e ruim que é a função da régua.
 
 **Então sim, quero a série de `c` por decisão** — é o único jeito de a curva medir a régua
-em vez de um limite dela. Formato que entra direto: `{data: {view: c}}` com o `c` na sua
-convenção (`>= 1`), as chaves de view sendo `"2.2_inflacao"` / `"2.3_fed"`. Dict, CSV ou
-parquet, tanto faz. Com ele eu re-rodo a curva no eixo do **nível** (1, 2, 3, 5…), que é o
-eixo em que a escolha de 13/08 tem de ser feita — concordo com você e já registrei assim na
-**D20b**.
+em vez de um limite dela.
+
+**Formato que entra direto:** `{data: {view: c}}` com o `c` na sua convenção (`>= 1`), as
+chaves de view sendo as quatro do quadro lá em cima — `"2.2_inflacao"`, `"2.3_fed"`,
+`"incerteza_anuncio"`, `"B_trajetoria_propria"`. São exatamente as strings de
+`diagnostics["view"]`, a mesma convenção de chave por nome que você pediu em 07/08. Dict,
+CSV ou parquet, tanto faz.
+
+**Um `c` por PREGÃO por view** — a `regua(data)` do meu loop é chamada uma vez por pregão e
+a sua grade é de 12h. **O colapso é seu**, pelo mesmo argumento da 6a: escolher como duas
+leituras de 12h viram uma diária é fixar forma da sua régua, e isso não passa pelo meu
+módulo. Só estou dizendo qual granularidade o loop consome, para você não descobrir pelo
+formato.
+
+**E dia sem view não é caso especial — é o caso normal, e o código já te protege.** As
+quatro views não vivem os mesmos dias: a 15b existe em **27 pregões** (só dia de anúncio,
+por desenho) e a 15g em 210. O `aplicar_veto` valida as chaves com **casamento exato contra
+as views vivas naquele pregão** (`_checa_chaves`: sobra e falta são erro, não default).
+Então:
+
+- **não** mande `c` para a 15b nos ~347 pregões em que ela não existe — isso é "sobrando" e
+  levanta `ValueError`;
+- **não** deixe de mandar para uma view viva — isso é "faltando" e levanta igual.
+
+Ou seja: a linha de cada data tem exatamente as views daquela data. Se você preferir mandar
+a matriz cheia com buracos, também serve — eu filtro deste lado, é uma linha. **Diga qual
+dos dois** para eu não ficar adivinhando na hora de ler o arquivo.
+
+**E aqui está o pedido de verdade, que eu quase escrevi errado:** a versão anterior deste
+parágrafo dizia *"com ele eu re-rodo a curva no eixo do **nível** (1, 2, 3, 5…)"* — com
+"ele" sendo **uma** série. Reli e isso provavelmente não fecha: pela sua D20b o nível é
+parâmetro **de dentro** da régua, entra antes do `c` sair. Se for assim, uma série é uma
+**coluna**, não uma varredura, e o eixo que eu disse que ia percorrer eu não percorro.
+
+Então: **manda uma série por nível, em `{1, 3, 5}`** — motivo de calendário no bloco do
+topo. **A menos que** o nível seja reescalável fora da régua (que dê para sair de uma série
+e chegar nas outras por conta): aí a minha frase original estava certa, uma série basta e
+eu não preciso de mais nada.
+
+Eu não sei qual dos dois é, e é sua alçada, não minha — é a forma da sua régua. **Uma linha
+de resposta resolve, e ela vale mais que o arquivo:** se eu adivinhar errado, ou você gera
+três vezes o trabalho à toa, ou eu chego em 13/08 com um ponto onde precisava de um eixo.
+
+O eixo do nível ser o eixo da escolha eu concordo com você, e já registrei assim na **D20b**.
 
 ---
 
@@ -118,6 +207,14 @@ sinal entre anúncios em d = 0** — se ela colapsasse, `dw = orcamento · sinal
 SPY constante em dia de anúncio, que é outra tática. Ela não colapsa: é igual (CPI) ou maior
 (FOMC, payrolls) que nas faixas distantes. A modulação sobrevive.
 
+**⚠️ Atualização, e ela sobe a aposta deste item:** quando escrevi isto, o consumidor da
+medição era a tática 1.3, que está **desligada**. Agora não é mais. A **15b entrou na
+entrega** e lê exatamente o mesmo sinal — a entropia da PMF no slot pré-abertura do dia do
+anúncio. Ou seja: a checagem acima deixou de ser sobre uma tática hipotética e passou a ser
+**a premissa de uma view que está na carteira**. Ela sobreviveu, e é por isso que a 15b pôde
+entrar; mas se o seu lado tiver qualquer medição que contrarie a não-degeneração da
+dispersão em d = 0, isso agora **derruba uma view da entrega**, não adia uma tática.
+
 **Onde eu NÃO estou te contradizendo, e é importante:** as duas medições não são o mesmo
 teste. A minha grade é diária pré-abertura, a sua é de 12h; a sua mede contra **erro de
 previsão** e a minha mede **movimento cru**; e o seu ingrediente é uma distância contínua,
@@ -161,13 +258,44 @@ contra desfecho, é de lá que sai — não vou reimplementar.
 
 **Feito nesta rodada:** convenção corrigida nos três pontos; curva re-medida na faixa
 alcançável; `aplicar_veto` documentado para os dois motivos; cristalização medida contra a
-1.3. Registrado na **D20** (a, b, c). 244 testes, `Backtest_v1.md` intacto.
+1.3. Registrado na **D20** (a, b, c).
 
-**Preciso de você:** a série de `c` por decisão (item 2).
+**Feito depois, e é o que muda o seu pedido:** entraram a 15b e a 15g (**D23**), fechou a
+régua de admissão de views (**D22**) e o conjunto de views está **encerrado em quatro** — a
+última candidata, a view C, foi medida e ficou de fora (D23f). **Não vai mudar de novo**, e
+é por isso que esta mensagem só saiu agora. 248 testes; `Backtest_v1.md` re-gerado
+(+6,24 pp).
+
+**Preciso de você, e é o único item:** a série de `c` por decisão **em `{1, 3, 5}`**, para
+as **quatro** views — ou a linha dizendo que o nível é reescalável e uma série basta
+(item 2). Junto, a linha de formato: dicionário por data só com as views vivas, ou matriz
+cheia com buracos.
 
 **Da reunião:** nível + teto, no eixo do **nível** (D20b); e a interface do volume, com o
 Paulo (D20a).
 
-**Sem bloqueio para 13/08 daqui também.**
+**Sem bloqueio para 13/08 daqui também** — nenhuma linha de código minha está no caminho
+crítico. O que decide se a reunião de 13/08 escolhe o nível com um ponto ou com um eixo é
+o item 2.
+
+---
+
+## 9. Uma assimetria que eu encontrei e NÃO estou te pedindo para resolver agora
+
+Registro para não virar surpresa depois, e porque é do seu módulo: **o portão de qualidade
+vale para as views e não vale para os overlays.**
+
+A sua régua entra em `bl_weights_from_views(..., omega)`; a camada tática entra uma linha
+depois, em `apply_overlays(w_bl, ...)`, e **nunca passa pelo Ω**. Se a PMF de um mercado
+estiver degenerada, a régua mata a view do dia — mas uma sleeve tática que leia o **mesmo**
+mercado ruim passa livre, porque overlay não tem linha em P e portanto não tem `c`.
+
+**Hoje isso é inofensivo:** a camada tática está desligada (12c) e o v1 entrega sem ela. Só
+vira pergunta de verdade se ela for reativada, e aí é decisão de desenho — *sleeve também
+deve ser vetada por qualidade de dado?* Se a resposta for sim, é **pedido novo** (a régua
+passaria a aceitar chaves que não são views), não uma correção deste aqui.
+
+**Fica mapeado como pendência da próxima sessão do meu lado.** Não responde nada agora, e
+não entra no caminho crítico de 13/08.
 
 — Felipe

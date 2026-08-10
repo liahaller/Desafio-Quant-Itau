@@ -1910,6 +1910,51 @@ tick da fonte (G1, D17).
 
 ---
 
+## 24 (branch `Felipe`). O portão de qualidade vale para views e NÃO para overlays 🔴 (pendência da próxima sessão)
+
+> ⚠️ Numeração paralela por branch — cite como "D24 do `Felipe`".
+
+**Registro, não decisão.** Encontrado em 2026-08-10 (sessão 23), ao verificar se a
+reativação da camada tática obrigaria a refazer o pedido do `c` à Lia. **Não
+obriga** — e o motivo de não obrigar é exatamente a assimetria.
+
+**O fato, verificável em `src/backtest.py`:**
+
+```
+294:  w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
+295:  w_pedido, diag = apply_overlays(w_bl, overlay_results or ())
+```
+
+A régua da Lia entra no **Ω**, que é a incerteza **das views**. A camada tática é
+overlay sobre os pesos: entra na linha seguinte, **depois** de o BL terminar, e
+nunca vê o `omega`. O montador devolve as duas coisas em listas separadas.
+
+**A consequência:** se a PMF de um mercado estiver degenerada, o `aplicar_veto`
+mata a view do dia. Uma **sleeve tática que leia o MESMO mercado ruim passa
+livre** — overlay não tem linha em P, logo não tem `c`, logo não tem veto. O
+portão de qualidade do poly cobre metade do modelo.
+
+**Por que não é urgente:** a camada tática está **desligada** (12c) e o v1 entrega
+sem ela. Enquanto isso valer, a assimetria não tem efeito.
+
+**Por que precisa estar escrita:** ela vira pergunta de verdade **no momento em
+que alguém reativar a tática** — que é justamente uma sessão em que a atenção vai
+estar no desenho da sleeve, não no encanamento do Ω. É o tipo de coisa que roda
+calado.
+
+**A pergunta a responder, quando for a hora — e é de desenho, não de
+implementação:** *sleeve também deve ser vetada por qualidade de dado?*
+
+- **Se sim**, é **pedido novo** à Lia (a régua passaria a aceitar chaves que não
+  são views) e mexe na interface — categoria 3. **Não** é correção da `RESPOSTA6`.
+- **Se não**, precisa estar declarado como escolha no relatório, não deixado como
+  omissão: "o overlay é dimensionado por orçamento e não por confiança de dado".
+
+**Comunicado à Lia** na seção 9 da `RESPOSTA6`, explicitamente como coisa que
+**não** se responde agora.
+
+---
+
 ## 23 (branch `Felipe`). A estratégia passa a ter QUATRO views 🟢 (fechada pelo dono, 2026-08-10 — sessão 23)
 
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D23 do

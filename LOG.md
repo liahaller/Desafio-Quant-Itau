@@ -94,9 +94,18 @@ aterrissa no gap de abertura".
 - **O conjunto de views está FECHADO em quatro** (2.2 · 2.3 · 15b · 15g). O
   `Candidatos.md` ficou sem nenhuma candidata pela primeira vez. Isso destrava os
   dois itens abaixo, que estavam presos exatamente por isso.
-- **`RESPOSTA6` liberada para sair, mas AINDA NÃO CORRIGIDA.** As chaves passam
-  de duas para quatro e a mensagem precisa dizer o que sai em dia sem view (a
-  15b só existe em 27 pregões). Corte de 13/08; a rede é o plano B da 10a.
+- **`RESPOSTA6` REESCRITA e pronta — o envio é do dono.** Ganhou o bloco 🆕 das
+  quatro views (com as quatro chaves de `diagnostics["view"]`), o aviso de que os
+  números da `Curva_c_faixa_regua.md` são da carteira de duas views, a atualização
+  do item 5 (a cristalização virou premissa de uma view **da entrega**, não de uma
+  tática desligada) e a seção 9 da assimetria. Corte de 13/08; a rede é o plano B
+  da 10a.
+- **🔴 D24 — o portão de qualidade vale para views e não para overlays.**
+  Pendência da próxima sessão, registrada a pedido do dono. A régua da Lia entra no
+  Ω (views); a tática entra em `apply_overlays`, depois do BL, e nunca vê o `omega`.
+  Hoje é inofensivo porque a tática está desligada; vira pergunta no instante em
+  que alguém a reativar — que é a sessão em que ninguém vai estar olhando o
+  encanamento do Ω.
 - **Varreduras irmãs desatualizadas** (`curva_c.py`, `curva_banda.py`,
   `curva_orcamento.py`, `tatica_reconstruida.py`, `gate_sleeves.py`): já leem 4
   views, mas os `.md` salvos foram gerados com 2 — inclusive o **`Curva_c.md`,
