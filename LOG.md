@@ -847,6 +847,22 @@ mesma classe do veto de liquidez.
   (número dele, lugar dele; a seção do Ω não cita resultado de carteira, e é
   isso que torna verificável a afirmação de que a régua não foi ajustada a
   resultado).
+- Escrito `PEDIDO_Paulo_cpi_realizado.md`: valor realizado do CPI mensal, para
+  o alvo por desfecho rodar também na 2.2. Três ressalvas técnicas que decidem
+  se o número serve, todas a confirmar na *rule* do mercado e nenhuma cravada
+  por mim — ajuste sazonal (SA × NSA muda o bucket vencedor), **vintage** (o
+  mercado resolveu pelo valor da primeira divulgação; a série corrente do FRED
+  é a revisada) e casas decimais. Marcado como **última prioridade, sem
+  prazo** — o `PEDIDO_Paulo_G5_fomc.md` é que tem data.
+- Acrescentados à `RESPOSTA5` (em vez de mandar segundo arquivo) o item 3b e o
+  item 4: (3b) `ativa = False` agora tem **dois** motivos, e o segundo —
+  ausência de par adjacente completo — é novo e muda o que o Felipe recebe (37
+  inativas por volume × 21 por ausência, de 601); (4) a coerência triplica no
+  alvo independente, o que encarece qualquer mexida futura no piso de 0,9 da
+  cascata dele; **o achado da cristalização é insumo para a tática de prêmio de
+  anúncios dele** (a variância da probabilidade cai justamente na janela em que
+  a tática atua) — passado como observação, módulo dele, não editado; e o
+  desfecho das reuniões via DFF fica disponível em `lia/rodar_robustez.py`.
 - ⚠️ O `poly_loader.py` em `%TEMP%\omega_lia\src` foi **substituído** pela
   versão de `origin/Felipe:66cfecb`. A antiga ficou em `poly_loader_antigo.py`
   ao lado. Daqui pra frente, extrair o loader do branch `Felipe`, não do

@@ -1,8 +1,10 @@
 # Resposta da Lia — calendário republicado, convenção do `c` e o que falta para 13/08
 
 Resposta ao aviso `Aviso à Lia — números republicados (calendário do CPI corrigido)`
-(Felipe, 09/08). Três coisas: o que o calendário mexeu do meu lado, um problema de
-convenção na leitura da sua curva, e a única ponta de interface que ainda falta.
+(Felipe, 09/08). O que o calendário mexeu do meu lado, um problema de convenção na leitura
+da sua curva, a ponta de interface que ainda falta — e, no item 4, três achados da rodada de
+robustez que tocam o seu módulo (um deles é insumo direto para a tática de prêmio de
+anúncios).
 
 ---
 
@@ -103,9 +105,81 @@ Paulo — se ficar na (1), não muda nada do que já está pronto.
 o mínimo veta 47% dos slots de 12h, porque é comum uma faixa de um mercado de buckets não
 negociar em meio dia.
 
+### 3b. ⚠️ `ativa = False` passou a ter DOIS motivos — e o segundo é novo
+
+Isto muda o que você recebe, então não é detalhe interno meu. A máscara sai `False` quando:
+
+1. **veto de liquidez** — volume zero no slot (o que já estava combinado); ou
+2. **ausência de leitura mensurável** — nenhum par de slots adjacentes completo na janela, o
+   que deixa a estabilidade indefinida.
+
+O (2) é regra nova. A alternativa seria entregar `c = 1` ali, e isso é o pior erro
+disponível: confiança máxima exatamente onde nada foi medido. **Não é um segundo portão
+binário no `score_coerencia`** — o compromisso da 6c continua de pé; é ausência de medição,
+mesma classe do veto de liquidez.
+
+Medido nas 601 decisões da 2.2: **37 inativas por volume, 21 por ausência de leitura**, 543
+ativas (90,3%). Se do seu lado for melhor distinguir os dois motivos (para log ou para a
+cascata), eu devolvo o motivo junto — é barato e não muda a assinatura.
+
 ---
 
-## 4. O que levei para o relatório (era minha chamada, registro o que decidi)
+## 4. Três achados da rodada de robustez que tocam o SEU módulo
+
+Rodei o teste de monotonicidade com um **alvo independente**: o erro contra o desfecho real
+da reunião, em vez da variação futura da probabilidade. O desfecho sai do `fred_DFF.csv`
+(variação da taxa efetiva em torno da reunião, arredondada a 25 bps) — nunca do próprio
+mercado, porque tomar o bucket mais provável no último slot assumiria que o mercado acertou
+e daria erro pequeno por construção justo onde ele estava confiante.
+
+**A derivação concorda com o mercado em 16 de 16 reuniões inequívocas** e resolve as 2 que o
+mercado não resolveu, incluindo o corte surpresa de 50 bps de set/2024 (o mercado terminou
+0,517 × 0,468). Está em `lia/rodar_robustez.py` — **se você precisar do desfecho das
+reuniões para qualquer coisa sua, é só chamar `desfecho_bps` / `bucket_vencedor`**, com
+testes.
+
+O que saiu, e por que te interessa:
+
+**(a) A coerência do livro é MUITO mais forte do que a primeira calibração indicava.** No
+alvo independente ela triplica: de −0,15/−0,18 para **−0,45/−0,46**, e na grade de 24h é a
+melhor candidata isolada — acima de qualquer forma de estabilidade.
+
+Interpretação, que casa com o que o ingrediente mede: um livro que não fecha é um mercado
+que **não está processando informação**, não um mercado agitado. Ele prevê mal o movimento
+de curto prazo e prevê bem o erro contra o resultado.
+
+Consequência para a fronteira da 6c: o compromisso continua igual (o seu piso de 0,9 não
+vira rampa, o meu score não ganha portão), mas agora se sabe que **a grandeza que os dois
+tocam carrega bem mais sinal do que parecia**. Se algum dia se cogitar mexer nesse piso, a
+conta ficou mais cara do que era em 07/08.
+
+**(b) O achado da cristalização é insumo para a sua tática de prêmio de anúncios.** A
+proximidade do evento reprovou de novo, e no alvo independente **com folga muito maior**
+(+0,29 a +0,72, contra +0,09 a +0,22 no alvo original). O sinal é consistente e forte:
+**longe do evento o mercado se move mais; perto, ele cristaliza.**
+
+Para o meu módulo isso só significa "candidata reprovada, sai da régua". Para uma tática que
+opera em torno de anúncio, é uma afirmação com conteúdo — a variância do preço da
+probabilidade não é uniforme no tempo até o evento, e ela cai justamente na janela em que a
+tática atua. **Não sei se ajuda ou atrapalha o desenho que você tem**; é módulo seu e não
+mexo. Passo porque o número está medido nas duas views e seria desperdício ficar só na minha
+seção como "candidata que caiu".
+
+**(c) Nº de faixas não muda nada, e isso é identidade, não robustez.** Rodei com 2, 3, 4 e 5
+faixas: o `spearman` é idêntico nas quatro, porque ele sai dos postos e as faixas só servem
+à leitura de monotonicidade. Registrei explicitamente assim — no script e no relatório —
+para não vender tautologia como verificação. O que de fato varia é a flag de monotonicidade,
+e ela se mantém para os dois ingredientes da régua.
+
+**(d) Registro anti-overfit, pela sua trava da 6d.** No alvo por desfecho, a janela de 10
+variações fica 0,015 à frente da de 5 na 2.3. **Mantive a de 5**, que é o critério declarado
+antes do teste e vence no alvo original nas duas views. Estou registrando isto **agora,
+antes de qualquer backtest** — se aparecesse depois de olhar resultado de carteira, não
+seria admissível pela regra que você propôs e eu topei.
+
+---
+
+## 5. O que levei para o relatório (era minha chamada, registro o que decidi)
 
 Escrevi o parágrafo, na seção de robustez, com **um recorte diferente do que você sugeriu**.
 Ficou o mecanismo e a lição — duas linhas de calendário mudaram só o ingrediente que
@@ -121,7 +195,7 @@ natural é a sua seção, e eu referencio.
 
 ---
 
-## 5. Estado do meu lado
+## 6. Estado do meu lado
 
 **Pronto:** régua fechada e implementada (`lia/omega.py`), 66 testes, validada de ponta a
 ponta contra o `diagnostics_qualidade` real em 601 decisões da 2.2 — 90,3% ativas, `c` de
