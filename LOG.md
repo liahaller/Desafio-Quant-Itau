@@ -760,6 +760,22 @@ registrado como posição da Lia, não fechado (é decisão de grupo).
   escolha de estrutura foi dar seção própria ao rejeitado e às limitações —
   uma régua que só registra o que entrou não deixa avaliar se a escolha foi
   disciplinada.
+- **Item 4 (robustez) fechado** (`lia/rodar_robustez.py`, 6h), sem alterar a
+  régua — as duas verificações a confirmam:
+  - **Nº de faixas (2/3/4/5):** o `spearman` é idêntico nas quatro, e isso é
+    identidade, não robustez (postos). Registrado como tal para não
+    apresentar tautologia como resultado; o que varia é a flag de
+    monotonicidade, estável para os dois ingredientes da régua.
+  - **Alvo por desfecho, não circular:** massa alocada fora do bucket que
+    resolveu. O desfecho vem do **DFF**, nunca do próprio mercado — usar o
+    argmax final assumiria que o mercado acertou. Derivação validada:
+    **concorda em 16 de 16** reuniões inequívocas e resolve as 2 que o
+    mercado não resolveu, inclusive o corte surpresa de 50 bps de set/2024.
+  - **A coerência triplica no alvo independente** (−0,15/−0,18 → −0,45/−0,46)
+    e é a melhor candidata isolada na grade 24h. A rejeição da proximidade
+    fica mais forte (+0,72 no pior caso). As duas formas de colapso empatam
+    de fato, o que confirma o desempate por parcimônia da 6g.
+  - 11 testes novos (`lia/tests/test_robustez.py`), **66 na suíte**.
 - **Erro numérico próprio, encontrado ao conferir o relatório:** eu vinha
   escrevendo que "a soma do livro chega a 1,725" no CPI. 1,725 é o
   **desvio** `|soma − 1|`; a soma vai de **0,754 a 2,725** (mediana 1,017).
@@ -791,12 +807,13 @@ mesma classe do veto de liquidez.
   volume no `diagnostics`; hoje é parâmetro separado, chaveado pela view).
 - G5 do FOMC (`PEDIDO_Paulo_G5_fomc.md`) segue pendente: sem ele a 2.3 não
   tem portão e o número dela continua provisório. Deixou de ser bloqueio.
-- Robustez da calibração (item 4 da lista da dona): variar `n_faixas` e usar
-  `erro_vs_resolucao` como alvo alternativo — a função existe e segue sem
-  uso. É o que permitiria o relatório afirmar que o resultado não depende do
-  corte escolhido. **Não começou.**
 - Relatório: a seção do Ω está escrita; falta a revisão da dona e, quando o
   modelo for congelado, a seção de resultados de backtest.
+- **Janela 5 × 10 (aberto para a dona, ver 6h):** no alvo por desfecho a
+  janela de 10 fica 0,015 à frente na 2.3. Mantida a de 5, que é o critério
+  declarado antes do teste e vence no alvo original nas duas views.
+- Valor realizado do CPI (BLS) — candidato a pedido ao Paulo, **não pedido**:
+  destravaria o alvo por desfecho também na 2.2.
 - Decisão 9 (matriz de relação) segue aberta.
 - Dados dos outros branches em `%TEMP%\omega_lia`; refazer com
   `git archive origin/Paulo <caminho> | tar -x -C <destino>` se sumir.

@@ -193,6 +193,62 @@ O congelamento existe (é 3,7× mais frequente sem negociação, exatamente como
 previsto), mas é raro demais em termos absolutos para explicar uma correlação
 de −0,46.
 
+### Robustez: os vereditos dependem do corte escolhido?
+
+Duas verificações, porque um teste que só funciona com os parâmetros em que
+foi rodado não é evidência.
+
+**Número de faixas.** O teste roda com 2, 3, 4 e 5 faixas. O `spearman` é
+idêntico nas quatro — e isso não é um resultado, é uma identidade: ele é
+calculado sobre postos, e as faixas existem só para a leitura de
+monotonicidade. Registramos a distinção porque apresentá-la como robustez
+seria vender uma tautologia. O que de fato varia é a **flag de
+monotonicidade**, e ela se mantém em todas as contagens para os dois
+ingredientes que entraram na régua, nas configurações escolhidas. Onde ela
+oscila é nas janelas longas (20 variações) e na grade de 24h — ambas já
+descartadas por outros critérios.
+
+**Alvo alternativo, independente das candidatas.** A calibração usou a
+variação futura da probabilidade, o que é circular para comparar as duas
+formas de colapso: cada uma tende a vencer no alvo medido por ela mesma. O
+segundo alvo é o **erro contra o desfecho real**: a massa de probabilidade que
+o mercado alocou fora do bucket que resolveu.
+
+> O desfecho **não pode** sair do próprio mercado. Tomar como resultado o
+> bucket mais provável no último slot assumiria que o mercado acertou, e o
+> erro contra ele seria pequeno por construção justamente onde o mercado
+> estava confiante — circularidade pior que a original. O desfecho é derivado
+> da **taxa efetiva dos fed funds** (DFF, FRED): a variação da taxa em torno
+> da reunião, arredondada à grade de 25 bps. A derivação foi validada contra
+> as 16 reuniões em que o mercado terminou inequívoco (acima de 0,9 num
+> bucket): **concorda em 16 de 16**, e resolve as 2 reuniões que o mercado não
+> resolveu — incluindo o corte surpresa de 50 bps de setembro de 2024, em que
+> o mercado terminou dividido em 0,517 contra 0,468.
+
+| Ingrediente | Alvo: variação futura | Alvo: desfecho (DFF) |
+|---|---|---|
+| Estabilidade (variação total) | −0,31 a −0,40 | −0,44 a −0,46 |
+| Estabilidade (\|ΔE\|) | −0,29 a −0,38 | −0,43 a −0,47 |
+| **Coerência do livro** | −0,15 a −0,18 | **−0,45 a −0,46** |
+| Proximidade do evento | +0,07 a +0,22 | **+0,29 a +0,72** |
+
+Três leituras, todas favoráveis à régua escolhida:
+
+1. **A coerência é muito mais forte do que a primeira calibração sugeria.**
+   Contra o desfecho ela triplica e passa a competir de igual para igual com a
+   estabilidade — na grade de 24h é a melhor candidata isolada. O desarranjo
+   do livro prevê mal o movimento de curto prazo e prevê bem o erro contra o
+   resultado, o que é coerente com o que ele mede: um livro que não fecha é um
+   mercado que não está processando informação, não um mercado agitado.
+2. **A rejeição da proximidade fica mais forte, não mais fraca.** No alvo
+   independente ela chega a +0,72 — o sinal invertido não era artefato do alvo
+   original.
+3. **As duas formas de colapso empatam no alvo neutro** (diferenças de 0,002 a
+   0,017, com a ordem trocando entre grades). Isso **confirma** que o
+   desempate por parcimônia foi a decisão certa, e não um recurso para
+   escapar de uma comparação inconclusiva: quando o alvo deixa de favorecer
+   qualquer uma delas, não há vencedora.
+
 ---
 
 ## 6. O que foi rejeitado
@@ -204,7 +260,8 @@ que entrou não permite avaliar se a escolha foi disciplinada.
 inicial era que a incerteza aumenta perto de uma decisão agendada. O dado diz
 o contrário, nas duas views, em 16 cortes independentes: **longe do evento o
 mercado se move mais**, não menos — a probabilidade se cristaliza à medida que
-a decisão chega. O ingrediente saiu da régua pelo protocolo. Entrar com o
+a decisão chega. A rejeição sobrevive à troca do alvo, e com folga maior
+(§5). O ingrediente saiu da régua pelo protocolo. Entrar com o
 sinal trocado seria escolher o sinal depois de ver o dado, que é precisamente
 o que a trava do §3 existe para impedir. O achado fica registrado como
 resultado e como candidato para uma versão futura, com hipótese declarada
@@ -345,10 +402,26 @@ não caberia no prazo.
 
 **O empate entre as duas formas de colapso foi resolvido por parcimônia, não
 por evidência.** Na view 2.3 a variação total vencia em todos os cortes; na
-2.2 cada candidata vence no alvo medido por ela mesma, o que é circularidade
-do alvo e não superioridade. A escolha recaiu sobre a variação total por ter
-menos parâmetros e não depender do tratamento da faixa aberta — critérios do
-protocolo, mas não uma vitória estatística.
+2.2 cada candidata vence no alvo medido por ela mesma. O alvo independente
+(§5) mostra que o empate é real e não um artefato da comparação: sem um alvo
+que favoreça qualquer das duas, elas ficam a 0,002–0,017 uma da outra e a
+ordem troca entre grades. A escolha continua sendo do critério de parcimônia
+do protocolo — o que mudou é que agora se sabe que não havia vencedora a ser
+encontrada.
+
+**A janela ideal difere entre os dois alvos.** A régua usa 5 variações, que
+vence com folga no alvo de variação futura nas duas views. No alvo por
+desfecho, a janela de 10 fica ligeiramente à frente na 2.3 (−0,458 contra
+−0,443). A diferença é de 0,015 e existe só na view que ainda não tem portão
+de liquidez; a janela de 5 foi mantida por ser o critério declarado antes do
+teste. Fica registrado como ponto a revisitar quando a 2.3 tiver portão — e
+declarado agora, e não depois de olhar o backtest, justamente porque a regra
+é que a forma não se ajusta a resultado de carteira.
+
+**O alvo por desfecho só existe para a 2.3.** Ele depende do resultado
+realizado, que para o FOMC vem da taxa efetiva (DFF, já no pipeline) mas para
+o CPI exigiria o índice publicado pelo BLS, que não está. A verificação de
+não circularidade da §5, portanto, foi feita numa view só.
 
 **Duas views, não vinte.** A replicação entre 2.2 e 2.3 é o que dá alguma
 confiança de que os resultados não são propriedade de um mercado específico —

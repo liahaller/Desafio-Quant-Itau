@@ -441,3 +441,65 @@ ausência de medição, mesma classe do veto de liquidez.
 conversa: com `nivel = 1` a régua é suave (mediana 1,05), então o `c` cru
 quase não modula — `nivel` é o botão, e `nivel = 0` devolve He-Litterman
 puro. A forma acima **não** é revisitada por resultado de backtest.
+
+### 6h. Robustez da calibração — faixas e alvo por desfecho (09/08/2026) 🟡
+
+Rodada por `lia/rodar_robustez.py` sobre a view 2.3 (18 reuniões). Fecha o
+item 4 da lista de trabalho da Lia. **Não altera a régua da 6g** — as duas
+verificações a confirmam.
+
+**1. Nº de faixas (2, 3, 4, 5).** O `spearman` é **idêntico** nas quatro, e
+isso é identidade, não robustez: ele é calculado sobre postos e as faixas só
+servem à leitura de monotonicidade. Registrado explicitamente no script e no
+relatório para não apresentar tautologia como resultado. O que varia é a
+**flag de monotonicidade**, e ela se mantém nas quatro contagens para os dois
+ingredientes da régua nas configurações escolhidas; oscila só em janela 20 e
+na grade 24h, ambas já descartadas por outro critério.
+
+**2. Alvo por desfecho, independente das candidatas.** A variação futura é
+alvo circular para comparar as duas formas de colapso. O alvo alternativo é a
+massa que o mercado alocou **fora do bucket que resolveu** — `1 − p_vencedor`
+sobre a PMF renormalizada, que é a mesma distância de variação total usada no
+resto, medida contra o resultado em vez de contra a leitura seguinte
+(`erro_vs_resolucao` reusado, sem segunda implementação).
+
+⚠️ **O desfecho não sai do mercado.** Usar o bucket mais provável no último
+slot assumiria que o mercado acertou e daria erro pequeno por construção onde
+ele estava confiante — circularidade pior que a original. Sai do **DFF**
+(taxa efetiva, FRED, já entregue pelo Paulo): média da taxa em [+1, +7] menos
+média em [−7, −1] dias da reunião, arredondada à grade de 25 bps. **Validação:
+concorda com o mercado em 16 de 16 reuniões inequívocas** (p_max > 0,9) e
+resolve as 2 que o mercado não resolveu — inclusive o corte surpresa de 50 bps
+de set/2024, em que o mercado terminou 0,517 × 0,468.
+
+| Ingrediente | Alvo: variação futura | Alvo: desfecho (DFF) |
+|---|---|---|
+| estabilidade (variação total) | −0,31 a −0,40 | −0,44 a −0,46 |
+| estabilidade (\|ΔE\|) | −0,29 a −0,38 | −0,43 a −0,47 |
+| **coerência** | −0,15 a −0,18 | **−0,45 a −0,46** |
+| proximidade | +0,07 a +0,22 | **+0,29 a +0,72** |
+
+**Três consequências:**
+1. **A coerência é bem mais forte do que a 6f indicava** — triplica no alvo
+   independente e é a melhor candidata isolada na grade 24h. Coerente com o
+   que ela mede: livro que não fecha é mercado que não processa informação,
+   não mercado agitado. A ressalva da 6c sobre poder discriminante fica
+   definitivamente para trás.
+2. **A rejeição da proximidade fica mais forte** (+0,72 no pior caso): o sinal
+   invertido não era artefato do alvo.
+3. **As duas formas de colapso empatam de fato** (0,002 a 0,017, ordem
+   trocando entre grades). Confirma o desempate por parcimônia da 6g: não
+   havia vencedora a encontrar.
+
+**Ponto novo, para a dona decidir — janela 5 × 10.** A régua usa 5 variações,
+que vence com folga no alvo de variação futura nas duas views. No alvo por
+desfecho, **10 fica ligeiramente à frente na 2.3** (−0,458 × −0,443, diferença
+de 0,015). Mantida a de 5 por ser o critério declarado antes do teste, e
+porque a diferença aparece só na view que ainda não tem portão. **Registrado
+agora, antes de olhar backtest** — pela 6d, revisitar depois do resultado de
+carteira não seria admissível.
+
+**Limite do escopo:** o alvo por desfecho **só roda na 2.3**. Para a 2.2
+exigiria o CPI publicado pelo BLS; o pipeline traz as datas de divulgação, não
+os valores. Se essa série entrar, a verificação de não circularidade passa a
+ter duas views — **candidato a pedido ao Paulo, não pedido ainda.**
