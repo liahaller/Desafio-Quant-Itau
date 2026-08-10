@@ -1,13 +1,14 @@
 # Backtest com as views novas empilhadas — 15b (incerteza) e 15g (B própria)
 
-> Gerado por `scripts/views_novas.py`. **Mede; não decide** — a entrada das duas é decisão do grupo (15a–15c, 15g) e a entrega segue com `views_novas=()`. Escopo de referência: **teto no tilt = 1**, γ = 1,0 (D1.1), custo de 2.0 bps/lado.
+> Gerado por `scripts/views_novas.py`. **Mede; não decide.** As duas views ENTRARAM na entrega em 2026-08-10 (D15a/D15b/D15c + item 4 na D22e) — este arquivo é o **registro obrigatório da D22** (atribuição 'sem os 3 maiores' + acerto de sinal), não mais uma proposta. Escopo de referência: **teto no tilt = 1**, γ = 1,0 (D1.1), custo de 2.0 bps/lado.
 
 - janela: **2025-02-10 a 2026-08-06** (374 pregões)
-- a primeira linha é o **grupo de controle**: se ela não reproduzir o número registrado da entrega, o errado é este script
+- ⚠️ a primeira linha (`views_novas=()`) é o **v1 de DUAS views**, a configuração ANTERIOR — não a entregue. Ela segue sendo o grupo de controle e a base contra a qual o Δ de cada view é medido: se ela não reproduzir o +4,07 pp registrado, o errado é este script
+- a configuração ENTREGUE é a linha **`+ as duas (entropia crua)`**
 
 | configuração | dias com a view | excesso × SPY | Δ vs. v1 | líquido | sharpe | Σ\|w\| média | giro/dia |
 |---|---|---|---|---|---|---|---|
-| v1 entregue (2.2 + 2.3) | — | +4.07 pp | — | +34.2% | 1.19 | 1.93 | 0.229 |
+| v1 anterior (2.2 + 2.3) | — | +4.07 pp | — | +34.2% | 1.19 | 1.93 | 0.229 |
 | + incerteza (entropia crua) | incerteza 27 | +7.96 pp | +3.89 pp | +38.1% | 1.33 | 1.91 | 0.269 |
 | + incerteza (percentil) | incerteza 27 | +6.39 pp | +2.32 pp | +36.5% | 1.28 | 1.91 | 0.288 |
 | + B com β próprio (DGS1) | B 210 | +2.70 pp | -1.38 pp | +32.8% | 1.14 | 1.95 | 0.253 |
@@ -46,7 +47,7 @@ Os três pregões de maior |Δ| em cada configuração:
 |---|---|---|---|---|---|---|---|---|---|
 | B_trajetoria_propria | +0.00 | +0.02 | -0.05 | +1.04 | +0.29 | +0.15 | -0.20 | -0.19 | -0.06 |
 
-A view de incerteza é **direcional por construção** (15b): P[SPY] = +2 e 0 no resto, Σ|P| = 2. É a única view do projeto com ΣP ≠ 0 — a obrigação 5a de `views_common.py` (centragem se troca em TODAS as views juntas) tem de ser lida antes de qualquer entrada.
+A view de incerteza é **direcional por construção** (15b): P[SPY] = +2 e 0 no resto, Σ|P| = 2. **Ela não é a única view com ΣP ≠ 0** — a obrigação 5a foi finalmente executada em 2026-08-10 (`Dump/analises/Ortogonalidade.md`) e mediu ΣP mediano de +0,96 na 2.2, +1,74 na 2.3 e +1,24 na 15g. As views ditas neutras são líquidas COMPRADAS nos 8 ativos que não são o SPY; a 15b declara o direcional, não o introduz.
 
 
 ## Leitura
@@ -57,7 +58,7 @@ A view de incerteza é **direcional por construção** (15b): P[SPY] = +2 e 0 no
 - **+ as duas (entropia crua)**: excesso +6.24 pp contra +4.07 pp do v1 (+2.17 pp). O Δ **sobrevive** à retirada dos três pregões extremos (+1.52 pp → +2.51 pp), e o acerto de sinal nos dias da view é de 49%.
 - **+ as duas (percentil)**: excesso +4.88 pp contra +4.07 pp do v1 (+0.81 pp). O Δ **sobrevive** à retirada dos três pregões extremos (+0.50 pp → +0.73 pp), e o acerto de sinal nos dias da view é de 47%.
 
-**Pendência de protocolo, e ela é anterior a qualquer entrada da B:** a 15g registra a ordem `DGS1 chegou → refazer o teste de sinal no vértice certo → só então empilhar`. Este script fez a última etapa sem a do meio, a pedido do dono, para medir. O teste de sinal no DGS1 **continua não rodado** — e o precedente da D2b vale igual: se sair invertido, não entra e **não se inverte**.
+**Pendência de protocolo PAGA (D21b):** a 15g exigia a ordem `DGS1 chegou → refazer o teste de sinal no vértice certo → só então empilhar`. Quando este script rodou pela primeira vez, a etapa do meio estava pulada. Ela rodou depois (`scripts/teste_sinal.py`, `Dump/analises/Teste_sinal.md`): a B dá **t +0,33 · 51%** em h = 1 e **não sai invertida** — passa o veto do item 3 da D22.
 
-**O que este arquivo não faz:** não liga view nenhuma. A entrega segue `views_novas=()`, e 15a–15c e 15g continuam abertas.
+**O que este arquivo não faz:** não decide. A entrega roda com as duas ligadas por decisão registrada (D15a/D15b/D15c/D22e), e os números acima existem para que o Δ de cada uma seja lido como contribuição medida, não como desempenho prometido.
 

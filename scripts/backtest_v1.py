@@ -16,15 +16,18 @@ este arquivo aplica em cada montagem do dia D:
 |---|---|---|
 | **2.2 inflação** | **roda** | PMF de CPI + T10YIE + calendário, tudo entregue |
 | **2.3 Fed** | **roda** (desde 2026-08-07) | PMF de decisão por reunião (`polymarket_fed_reunioes.parquet`) + `DTB3 − DFF` como `E_FF`, com a surpresa DEMEANADA |
-| B trajetória | **fora do v1** | decisão 11 — o ZQ de dezembro não tem fonte grátis (F6) e a view duplica o β/P da 2.3 |
+| **15b incerteza** | **roda** (desde 2026-08-10) | entropia da PMF na véspera do anúncio; escala = entropia CRUA (D15c). Direcional (`P[SPY] = 2`), ratificada na D15b. Só existe em dia de anúncio: **27 pregões** |
+| **15g B própria** | **roda** (desde 2026-08-10) | trajetória do Fed com β contra o ΔDGS1 — o vértice da pergunta, não os β da 2.3. Dupla leitura da PMF de reunião aceita na D15a; item 4 da D22 fechado na D22e. **210 pregões** |
 
 A 2.3 destravou com o G8 (`DFF`), mas o que a fez virar view de Polymarket foi
 outra coisa: a perna do poly é a **PMF completa por reunião** do parquet, não o
 binário de −50bp do `clob_exploracao`. Com o binário, o poly explicava 4,6% da
 variância da surpresa e o sinal era o mesmo em 100% dos dias; com a PMF, 53% e
-o poly inverte o sinal do spread de bills. A B saiu por decisão, não por falta:
-a perna do poly (`M3_fed_trajectory_*`) está entregue e disponível se o grupo
-reabrir.
+o poly inverte o sinal do spread de bills.
+
+A B saiu do v1 pela decisão 11 e **voltou em 2026-08-10** com β próprio: o que a
+seção 11 barrava era o desenho que reusava os β da 2.3 (P literalmente idêntico),
+não a view. Com o β contra o ΔDGS1 o ângulo é 87,5°–95,6°, e a objeção cai.
 
 ## Camada tática
 
@@ -51,6 +54,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import view_2_2_inflacao  # noqa: E402
 import view_2_3_fed  # noqa: E402
 import view_B_trajetoria_propria  # noqa: E402
+import view_C_geopolitica_energia  # noqa: E402
 import view_incerteza_anuncio  # noqa: E402
 from backtest import run_backtest, summary  # noqa: E402
 from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # noqa: E402
@@ -64,6 +68,7 @@ from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # 
                          load_pmf)
 from poly_preprocessing import (bucket_values_with_open, carry_missing,  # noqa: E402
                                 favorite_longshot_pmf, soma_faixas)
+from views_common import full_absorption_beta, lag_regression  # noqa: E402
 import tatica_drift_anuncio  # noqa: E402
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
@@ -231,7 +236,8 @@ class MontadorV1:
                  fomc_pmfs=None, e_ff=None, gamma=FL_GAMMA_V1,
                  decisoes_fomc=None, surpresas_cpi=None, tatica=(),
                  anuncios=None, m3=None, dgs1=None, taxa_base_m3=None,
-                 views_novas=(), escala_incerteza="entropia"):
+                 views_novas=(), escala_incerteza="entropia",
+                 series_C=None, k_C=None):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
@@ -263,6 +269,13 @@ class MontadorV1:
         self.taxa_base_m3 = taxa_base_m3  # taxa do fim de 2024, bps (ver M3_INICIO_DO_ANO)
         self.views_novas = tuple(views_novas)
         self.escala_incerteza = escala_incerteza
+        # View C (CANDIDATA, 2026-08-10). `series_C` = {episódio: série p já
+        # pré-processada}; `k_C` = a janela de leitura do poly. O k NÃO tem
+        # default: a curva de absorção (`Absorcao_C.md`) NÃO identifica um k, e
+        # cravar um aqui seria escolher parâmetro sem critério. Quem liga a view
+        # informa qual k está medindo.
+        self.series_C = series_C or {}
+        self.k_C = k_C
         self.surpresas_B = []             # histórico para a média expansiva da B
         self._cache_surpresa_poly = {}    # reuniao -> surpresa (depende do γ)
         self.divergencias = []            # histórico para a média expansiva (2.2)
@@ -571,6 +584,39 @@ class MontadorV1:
             view.diagnostics["n_eventos_beta"] = n_eventos
         return view
 
+    def _view_C(self, data):
+        """View C geopolítica (candidata) do dia, ou None (cascata).
+
+        β EXPANSIVO por episódio, estritamente anterior a D — a maquinaria da
+        2.4 (perfil de lags distribuídos -> absorção plena até k). UM evento por
+        vez, como a espec do módulo manda: o primeiro episódio vivo ganha o dia.
+
+        Sem piso de amostra além do mínimo algébrico do `lag_regression`
+        (precedente D12b: piso que não morde é threshold inventado).
+        """
+        if "C" not in self.views_novas or self.k_C is None:
+            return None
+        k = self.k_C
+        for p in self.series_C.values():
+            historico = p[p.index < data]
+            if data not in p.index or len(historico) < k + 1:
+                continue
+            dp = historico.diff().dropna()
+            R = self.retornos.reindex(dp.index).dropna()
+            try:
+                betas = full_absorption_beta(
+                    lag_regression(R[list(ASSETS)].to_numpy(),
+                                   dp.reindex(R.index).to_numpy(), k), k)
+            except ValueError:
+                continue                  # amostra insuficiente -> cascata
+            ate_hoje = p[p.index <= data]
+            if len(ate_hoje) < k + 1:
+                continue
+            return view_C_geopolitica_energia.build_view(
+                list(ASSETS), betas=betas, k=k,
+                p_series=ate_hoje.to_numpy(dtype=float))
+        return None
+
     # --- camada tática ------------------------------------------------------
 
     def _premio(self, data):
@@ -711,7 +757,8 @@ class MontadorV1:
         pregoes = self.retornos.index
         sigma = sample_covariance(self.retornos, data=data)
         views = [self._view_2_2(data, pregoes), self._view_2_3(data, pregoes),
-                 self._view_incerteza(data), self._view_B(data)]
+                 self._view_incerteza(data), self._view_B(data),
+                 self._view_C(data)]
         overlays = [self._premio(data), self._drift(data),
                     self._drift_fomc(data, sigma), self._drift_cpi(data, sigma)]
         return sigma, views, overlays
@@ -737,8 +784,17 @@ def decisoes_realizadas_fomc(dff, fomc, antes=3, depois=5):
     return pd.Series(saida, dtype=float)
 
 
+# As views que a ENTREGA liga. Deixa de ser `()` em 2026-08-10: a 15b e a 15g
+# passaram a régua da D22 e as três decisões que as travavam fecharam (D15a
+# dupla leitura · D15b P direcional · D15c entropia crua · D22e item 4).
+# Mora aqui, e não no `main`, porque é este default que define "o v1" para as
+# varreduras irmãs (`curva_c.py`, `curva_banda.py`, …) — cravar no `main` faria
+# a entrega e as varreduras medirem carteiras diferentes em silêncio.
+VIEWS_V1 = ("incerteza", "B")
+
+
 def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=(),
-             views_novas=(), escala_incerteza="entropia"):
+             views_novas=VIEWS_V1, escala_incerteza="entropia"):
     """(retornos, montador, datas, w_mkt) — toda a plumbing de dado do v1.
 
     Separado do `main` para as varreduras irmãs (ex.: `curva_c.py`) rodarem o
@@ -869,9 +925,14 @@ def main():
               "decisão humana; a varredura mede, não escolhe.**\n",
               f"- janela: **{datas[0].date()} a {datas[-1].date()}** "
               f"({len(datas)} pregões)",
-              "- views ativas: **2.2 inflação** e **2.3 Fed** (esta desde "
-              "2026-08-07: PMF de decisão por reunião + `DTB3 − DFF` demeanado). "
-              "A B fica fora por decisão 11, não por cascata",
+              "- views ativas: **2.2 inflação** · **2.3 Fed** · **15b incerteza** "
+              "· **15g B com β próprio**. As duas últimas entraram em 2026-08-10 "
+              "(D15a/D15b/D15c fechadas + item 4 da D22 medido na D22e); a 15b é "
+              "**direcional** (`P[SPY] = 2`) e vive só em dia de anúncio",
+              "- ⚠️ **a carteira NÃO é neutra em mercado, e nunca foi**: o ΣP "
+              "mediano das views é +0,96 (2.2), +1,74 (2.3), +1,24 (15g) e +2,00 "
+              "(15b) — `P[SPY] = 0` significa que a view não toma posição no SPY, "
+              "não que ela seja neutra (`Dump/analises/Ortogonalidade.md`)",
               f"- demeanagem da 2.3: média expansiva **semeada** com "
               f"{len(montador._semente_2_3)} pregões anteriores à janela "
               "(2024-04 a 2025-02, dado passado — não lookahead). Sem semente o "

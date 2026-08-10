@@ -1,10 +1,16 @@
 """Backtest com as duas views novas empilhadas — 15b e 15g. Felipe.
 
-**MEDE; não decide.** A entrada das views novas é decisão do grupo (15a–15c e
-15g) e a entrega continua sendo `views_novas=()`. Este script liga cada uma no
-`MontadorV1`, roda o MESMO backtest do v1 e reporta o Δ contra a configuração
-entregue — que entra na tabela como primeira linha, de propósito: é o grupo de
-controle, e se ela não reproduzir o número registrado o errado é o script.
+**MEDE; não decide.** Este script liga cada view no `MontadorV1`, roda o MESMO
+backtest do v1 e reporta o Δ contra a linha de base.
+
+⚠️ **A base mudou de significado em 2026-08-10, e o número não.** As duas
+ENTRARAM na entrega (D15a/D15b/D15c fechadas + item 4 na D22e), então a primeira
+linha — `views_novas=()` — deixou de ser "o v1 entregue" e passou a ser **o v1 de
+DUAS views**, a configuração anterior. A tabela continua valendo e continua sendo
+o artefato obrigatório da D22 ("sem os 3 maiores" + acerto de sinal): ela mede a
+**contribuição marginal de cada view** contra a carteira que existia antes delas,
+que é exatamente a conta que a régua exige. O que mudou é o rótulo, não a
+medição.
 
     incerteza (15b) : view direcional (ΣP ≠ 0) do prêmio de anúncio de
                       Savor-Wilson, ativa só em DIA de anúncio.
@@ -12,9 +18,10 @@ controle, e se ela não reproduzir o número registrado o errado é o script.
                       da pergunta), não contra os β da 2.3 — que era o que fazia
                       o P sair idêntico ao dela.
 
-A escala da incerteza (15c) está ABERTA e mede diferente (entropia crua t +0,32
-× percentil t +1,96), então as duas rodam e as duas vão à tabela. Escolher uma
-aqui seria fechar decisão do grupo olhando o resultado.
+A escala da incerteza (15c) FECHOU em 2026-08-10: entra a **entropia crua**. As
+duas continuam na tabela de propósito — a D15c registra que a escolhida é a de
+número maior e sobrevivência pior, e apagar a linha do percentil esconderia
+justamente a comparação que sustenta essa ressalva.
 
 Uso:
     python scripts/views_novas.py --raiz <dir com data/ do branch Paulo>
@@ -41,7 +48,7 @@ TETO = 1.0
 
 # (rótulo, views ligadas, escala da incerteza)
 CONFIGURACOES = (
-    ("v1 entregue (2.2 + 2.3)", (), "entropia"),
+    ("v1 anterior (2.2 + 2.3)", (), "entropia"),
     ("+ incerteza (entropia crua)", ("incerteza",), "entropia"),
     ("+ incerteza (percentil)", ("incerteza",), "percentil"),
     ("+ B com β próprio (DGS1)", ("B",), "entropia"),
@@ -132,13 +139,18 @@ def main():
     base = resumos[CONFIGURACOES[0][0]]["excesso acumulado (líquido − benchmark)"]
     L = []
     L.append("# Backtest com as views novas empilhadas — 15b (incerteza) e 15g (B própria)\n")
-    L.append("> Gerado por `scripts/views_novas.py`. **Mede; não decide** — a entrada "
-             "das duas é decisão do grupo (15a–15c, 15g) e a entrega segue com "
-             "`views_novas=()`. Escopo de referência: **teto no tilt = 1**, γ = 1,0 "
-             f"(D1.1), custo de {args.custo_bps:.1f} bps/lado.\n")
+    L.append("> Gerado por `scripts/views_novas.py`. **Mede; não decide.** As duas "
+             "views ENTRARAM na entrega em 2026-08-10 (D15a/D15b/D15c + item 4 na "
+             "D22e) — este arquivo é o **registro obrigatório da D22** (atribuição "
+             "'sem os 3 maiores' + acerto de sinal), não mais uma proposta. Escopo "
+             "de referência: **teto no tilt = 1**, γ = 1,0 (D1.1), custo de "
+             f"{args.custo_bps:.1f} bps/lado.\n")
     L.append(f"- janela: **{datas[0].date()} a {datas[-1].date()}** ({len(datas)} pregões)")
-    L.append("- a primeira linha é o **grupo de controle**: se ela não reproduzir o "
-             "número registrado da entrega, o errado é este script\n")
+    L.append("- ⚠️ a primeira linha (`views_novas=()`) é o **v1 de DUAS views**, a "
+             "configuração ANTERIOR — não a entregue. Ela segue sendo o grupo de "
+             "controle e a base contra a qual o Δ de cada view é medido: se ela "
+             "não reproduzir o +4,07 pp registrado, o errado é este script")
+    L.append("- a configuração ENTREGUE é a linha **`+ as duas (entropia crua)`**\n")
 
     L.append("| configuração | dias com a view | excesso × SPY | Δ vs. v1 | líquido | "
              "sharpe | Σ\\|w\\| média | giro/dia |")
@@ -210,9 +222,12 @@ def main():
         L.append("|---" * (len(ASSETS) + 1) + "|")
         L.append("| B_trajetoria_propria | " + " | ".join(f"{v:+.2f}" for v in P_B) + " |")
     L.append("\nA view de incerteza é **direcional por construção** (15b): "
-             "P[SPY] = +2 e 0 no resto, Σ|P| = 2. É a única view do projeto com "
-             "ΣP ≠ 0 — a obrigação 5a de `views_common.py` (centragem se troca em "
-             "TODAS as views juntas) tem de ser lida antes de qualquer entrada.\n")
+             "P[SPY] = +2 e 0 no resto, Σ|P| = 2. **Ela não é a única view com "
+             "ΣP ≠ 0** — a obrigação 5a foi finalmente executada em 2026-08-10 "
+             "(`Dump/analises/Ortogonalidade.md`) e mediu ΣP mediano de +0,96 na "
+             "2.2, +1,74 na 2.3 e +1,24 na 15g. As views ditas neutras são "
+             "líquidas COMPRADAS nos 8 ativos que não são o SPY; a 15b declara o "
+             "direcional, não o introduz.\n")
 
     # Leitura GERADA do que foi medido — frase cravada à mão vira mentira na
     # re-rodada seguinte (lição da sessão 15).
@@ -228,14 +243,16 @@ def main():
             + f" à retirada dos três pregões extremos ({a['soma'] * 100:+.2f} pp → "
             f"{a['sem_3_maiores'] * 100:+.2f} pp), e o acerto de sinal nos dias da "
             f"view é de {a['acerto']:.0%}.")
-    L.append("\n**Pendência de protocolo, e ela é anterior a qualquer entrada da B:** "
-             "a 15g registra a ordem `DGS1 chegou → refazer o teste de sinal no "
-             "vértice certo → só então empilhar`. Este script fez a última etapa "
-             "sem a do meio, a pedido do dono, para medir. O teste de sinal no "
-             "DGS1 **continua não rodado** — e o precedente da D2b vale igual: se "
-             "sair invertido, não entra e **não se inverte**.\n")
-    L.append("**O que este arquivo não faz:** não liga view nenhuma. A entrega "
-             "segue `views_novas=()`, e 15a–15c e 15g continuam abertas.\n")
+    L.append("\n**Pendência de protocolo PAGA (D21b):** a 15g exigia a ordem `DGS1 "
+             "chegou → refazer o teste de sinal no vértice certo → só então "
+             "empilhar`. Quando este script rodou pela primeira vez, a etapa do "
+             "meio estava pulada. Ela rodou depois (`scripts/teste_sinal.py`, "
+             "`Dump/analises/Teste_sinal.md`): a B dá **t +0,33 · 51%** em h = 1 e "
+             "**não sai invertida** — passa o veto do item 3 da D22.\n")
+    L.append("**O que este arquivo não faz:** não decide. A entrega roda com as "
+             "duas ligadas por decisão registrada (D15a/D15b/D15c/D22e), e os "
+             "números acima existem para que o Δ de cada uma seja lido como "
+             "contribuição medida, não como desempenho prometido.\n")
 
     Path(args.saida).write_text("\n".join(L) + "\n", encoding="utf-8")
     sys.stdout.write("\n".join(L[4:]) + f"\n\nescrito: {args.saida}\n")
