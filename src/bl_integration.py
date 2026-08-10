@@ -78,11 +78,19 @@ def _checa_chaves(d, nomes, rotulo):
 
 
 def aplicar_veto(view_results, ativa, incerteza=None):
-    """Aplica o `ativa` do Ω da Lia: view vetada por liquidez vira None.
+    """Aplica o `ativa` do Ω da Lia: view inativa vira None.
 
     Veto é view que SAI de P e Q, não Ω gigante (decisão dela, item 4c da
     resposta de 2026-08-07): é o limite exato de Ω → ∞, sem número mágico e
     sem resíduo da view vetada empurrando peso.
+
+    `ativa = False` tem DOIS motivos desde a resposta dela de 2026-08-10
+    (item 3b): veto de liquidez (volume zero no slot) e ausência de leitura
+    mensurável (nenhum par de slots adjacentes completo na janela). Aqui o
+    tratamento é o MESMO de propósito — nos dois casos não há medição em que
+    apoiar peso, e o limite Ω → ∞ é a resposta certa para ambos. O motivo não
+    entra na assinatura: ele é log do lado dela, não regra deste lado.
+    Medido nas 601 decisões da 2.2: 37 por volume, 21 por ausência, 543 ativas.
 
     `ativa` e `incerteza` são DICTS chaveados pelo identificador da view —
     exatamente a string de `diagnostics["view"]` (`"2.2_inflacao"`,
