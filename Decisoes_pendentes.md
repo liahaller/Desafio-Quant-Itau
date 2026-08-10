@@ -562,3 +562,57 @@ são funções diferentes.
 régua**, não o `c` da curva — senão escolhe-se um ponto que a régua não
 alcança. Oferecida ao Felipe a série de `c` por decisão para ele replotar no
 eixo certo. **Aberto até a reunião.**
+
+### 6k. ⚠️ A régua modula quase só a 2.2 — a 2.3 é quase invariante (10/08/2026) 🟡
+
+Saiu da série de `c` por decisão pedida pelo Felipe (`lia/exportar_c.py` →
+`lia/c_por_decisao.csv`, entregue em `RESPOSTA6_Felipe_serie_c.md`). A tradução
+da 6j para a escala da curva dele era **só da 2.2**; com as duas views:
+
+| nível | 2.2 mediana | 2.2 pior | 2.3 mediana | 2.3 pior |
+|---|---|---|---|---|
+| 1 | 0,950 | 0,362 | **0,988** | **0,817** |
+| 3 | 0,858 | 0,047 | **0,965** | **0,545** |
+| 5 | 0,775 | 0,006 | **0,942** | **0,364** |
+
+(388 decisões ativas na 2.2, 781 na 2.3, 349 dias com as duas ativas)
+
+**Mecanismo, não defeito:** o mercado de decisão do FOMC tem 4–5 buckets, livro
+que fecha (fator de coerência mediano 1,0035 × 1,0200 na 2.2) e PMF que se move
+pouco (estabilidade 1,0065 × 1,0283). Parte da suavidade, porém, é **ausência
+de portão** — sem o G5 do FOMC nenhuma decisão da 2.3 sai por volume zero (0
+contra 17 na 2.2).
+
+**Para a reunião (junto com a 6d/6j):** a curva do nível deve sair **por view**.
+Escolher olhando o efeito agregado subestima quanto o nível morde a 2.2, porque
+a 2.3 dilui. **Não** se propõe nível por view — seriam dois botões onde a 6d
+pediu um; propõe-se só que o gráfico separe.
+
+**Regra de seleção do mercado do dia — lida do módulo do Felipe, não decidida
+aqui.** Em 80 das 496 datas da 2.2 há 2 ou 3 mercados-mês vivos (no FOMC a
+sobreposição é a regra), então `{data: {view: c}}` exige escolher um.
+`_view_2_2`/`_view_2_3` do `scripts/backtest_v1.py` usam `min(eventos futuros)`
+— vale o mercado do **próximo** evento, e é isso que a coluna `selecionado`
+reproduz. A série completa vai junto: se a regra dele mudar, o casamento se
+refaz do CSV sem nova rodada. Cinco mercados de CPI ficam de fora por não terem
+release no calendário do Paulo (inclusive o fantasma da 6i, corretamente).
+
+### 6l. Cristalização: medição do Felipe retirada, frase do relatório congelada (10/08/2026) 🟡
+
+O Felipe mediu entropia e variação total por distância ao evento
+(`Dump/analises/Cristalizacao_entropia.md`) e encontrou **reversão no último
+slot** — o que contradiria a frase interpretativa da seção "o que foi
+rejeitado" do relatório ("a probabilidade se cristaliza à medida que a decisão
+chega"). **Ele avisou depois que o artefato está errado e que envia o
+corrigido.**
+
+**Estado: parado, de propósito.** O relatório **não foi alterado** e a frase
+segue como está — não se corrige texto com base em número que vai mudar, nem se
+defende a frase contra ele. Quando o arquivo certo chegar, a verificação roda no
+dado desta régua (variação total da PMF renormalizada, grade de 12h) e a frase
+vai ao relatório com o recorte que os dois lados sustentarem.
+
+**O que já vale, independentemente do número:** a rejeição da proximidade **não
+depende dessa frase** — ela caiu em 16 cortes do teste de monotonicidade, nas
+duas views, incluindo o alvo por desfecho da 6h. O que está em jogo é uma
+sentença interpretativa, não um ingrediente da régua.
