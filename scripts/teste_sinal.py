@@ -25,6 +25,9 @@ Rodam seis linhas:
                       risk-on (retorno do SPY e ΔDGS10)
   incerteza (15b)     a view de prêmio de anúncio, `views_novas=("incerteza",)`
   B com β próprio     a 15g no vértice certo (DGS1), `views_novas=("B",)`
+  C geopolítica       a última candidata, uma linha por k — montada AQUI e não
+                      no `MontadorV1`, que é a ordem da D14a: o veto roda antes
+                      de a view virar código de produção
 
 As duas últimas entraram em 2026-08-10 para fechar a pendência registrada no
 fim da sessão 18: elas tinham sido medidas no BACKTEST (15h) e nunca no teste de
@@ -58,8 +61,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from backtest_v1 import carregar  # noqa: E402
 from config import ASSETS  # noqa: E402
+from poly_loader import daily_preopen, series_by_slot  # noqa: E402
+from poly_preprocessing import binary_prob_series  # noqa: E402
 from view_cpi_transversal import estimate_betas_breakeven  # noqa: E402
-from views_common import P_from_betas  # noqa: E402
+from views_common import (P_from_betas, full_absorption_beta,  # noqa: E402
+                          lag_regression)
 
 # Horizontes reportados. h = 0 é o próprio pregão de D (o que o backtest ganha,
 # e o único horizonte da 15b); h = 1 é o H da carteira (D9) e a convenção do
@@ -70,6 +76,23 @@ HORIZONTES = (0, 1, 5, "divulgação")
 # São os dois eixos que as três medições da família de inflação apontaram como
 # donos do β (risk-on e duração) — `Convergencia_2_2.md`, 15a, 17b.
 CANAL_RISK_ON = "SPY"
+
+# --- view C (candidata) ------------------------------------------------------
+# Os DOIS episódios do mesmo par de perguntas (ação militar EUA/Israel × Irã).
+# Episódios independentes, sem overlap: o de jun/2025 é o teste fora da amostra
+# do de 2026 (D19a). A view liga e desliga — é o "evento episódico e recorrente"
+# que a espec do módulo declara como a diferença dela para a 2.4.
+MERCADOS_C = {
+    "iran_jun2025": "M7_iran_jun2025_us-military-action-against-iran*.json",
+    "iran_2026": "M7_iran_strike_*.json",
+}
+
+# O k NÃO é escolhido aqui — o critério de tirar k do perfil de defasagem é
+# decisão humana registrada (docstring de `views_common.lag_regression`, especs
+# 2.4/3.1). A grade mede e reporta; escolher a linha de melhor t seria calibrar
+# parâmetro contra o resultado. O `Perfil_defasagem_k.md` aponta k = 3 como o de
+# maior |correlação| no episódio de jun/2025 — é insumo, não decisão.
+K_GRID_C = (1, 2, 3, 4, 5)
 
 
 def ols(y, x):
@@ -164,6 +187,68 @@ def transporte(registros, retornos, betas_finais, h):
     return float(np.corrcoef(par["pred"], par["beta"])[0, 1]) if len(par) > 2 else float("nan")
 
 
+def series_C(raiz, fl, pregoes):
+    """{episódio: série p(evento)} nos pregões, já com o pré-processamento da view.
+
+    A MESMA série vai para a regressão do β e para o `p_t − p_{t−k}` — é o que
+    faz a parte linear da correção FL ser absorvida pelo β (espec 2.4 item 2b),
+    e é por isso que ela é construída UMA vez aqui.
+    """
+    series = {}
+    for rotulo, padrao in MERCADOS_C.items():
+        arquivos = sorted(Path(raiz, "data/raw/clob_exploracao").glob(padrao))
+        if not arquivos:
+            continue
+        bruta = daily_preopen(series_by_slot(str(arquivos[0])))
+        p = pd.Series(binary_prob_series(bruta.to_numpy(), fl_correction=fl),
+                      index=bruta.index)
+        series[rotulo] = p.reindex(pregoes).dropna()
+    return series
+
+
+def registros_C(series, retornos, datas, k):
+    """(registros, divergências) da view C em cada pregão com mercado vivo.
+
+    `registros` = [(data, P, Q, None)], no formato das outras views.
+    `divergências` = Série `p_t − p_{t−k}` — o SINAL-FONTE, que é o que o item 4
+    da D22 quer ver descorrelacionado. Vai separado do Q de propósito: o Q é a
+    divergência já multiplicada por `Σ P·β`, e correlacionar Q com Q mediria o β
+    junto com o sinal.
+
+    β EXPANSIVO por episódio e estritamente anterior a D (sem lookahead), pela
+    maquinaria da 2.4: perfil de lags distribuídos -> absorção plena até k.
+    Sem piso de amostra além do **mínimo algébrico** do `lag_regression` — o
+    precedente da D12b: piso que não morde é threshold inventado. Dia em que a
+    regressão não é identificável cai na cascata e a view não existe.
+    """
+    saida, divergencias = [], {}
+    for data in datas:
+        for p in series.values():
+            historico = p[p.index < data]
+            if data not in p.index or len(historico) < k + 1:
+                continue
+            dp = historico.diff().dropna()
+            R = retornos.reindex(dp.index).dropna()
+            dp = dp.reindex(R.index)
+            try:
+                coefs = lag_regression(R[list(ASSETS)].to_numpy(), dp.to_numpy(), k)
+            except ValueError:
+                continue                      # amostra insuficiente -> cascata
+            betas = full_absorption_beta(coefs, k)
+            ate_hoje = p[p.index <= data]
+            if len(ate_hoje) < k + 1:
+                continue
+            try:
+                P = P_from_betas(betas, list(ASSETS))
+            except ValueError:
+                continue                      # β sem dispersão -> view sem conteúdo
+            divergencia = float(ate_hoje.iloc[-1]) - float(ate_hoje.iloc[-1 - k])
+            saida.append((data, P, float((P @ betas) * divergencia), None))
+            divergencias[data] = divergencia
+            break                             # UM evento por vez (espec do módulo)
+    return saida, pd.Series(divergencias).sort_index()
+
+
 def coletar(raiz):
     """Percorre a janela do v1 e devolve os registros (data, P, Q) de cada view.
 
@@ -206,6 +291,23 @@ def coletar(raiz):
                 registros["incerteza (15b)"].append((data, view.P, view.Q, None))
             elif nome == "B_trajetoria_propria":
                 registros["B com β próprio (15g)"].append((data, view.P, view.Q, None))
+    # View C — montada AQUI e não no montador, de propósito: a ordem da D14a diz
+    # que o veto roda antes de a view virar código de produção. A 15f gastou 400
+    # linhas de módulo numa view que este teste teria matado em minutos.
+    series_c = series_C(raiz, montador._fl, retornos.index)
+    for k in K_GRID_C:
+        registros[f"C geopolítica (k = {k})"], _ = registros_C(
+            series_c, retornos, datas, k)
+    # POR EPISÓDIO — é o que permite escolher o k sem olhar o resultado do
+    # conjunto: os dois episódios do Irã são independentes e não se sobrepõem,
+    # então o k tirado de um é pré-registro para o outro. A tabela pooled acima
+    # NÃO serve para escolher (o k de melhor t nela é o k ajustado à amostra
+    # inteira — overfit em um passo).
+    for rotulo, serie in series_c.items():
+        for k in K_GRID_C:
+            registros[f"C {rotulo} (k = {k})"], _ = registros_C(
+                {rotulo: serie}, retornos, datas, k)
+
     # β do fim da janela, para o elo 2 (o transporte) das duas transversais.
     betas_finais = {
         "transversal (β cru)": estimate_betas_breakeven(
@@ -255,6 +357,15 @@ def main():
             texto = f"{coef:+.4f} · t {t:+.2f} · {acerto:.0%}"
             celulas.append(f"**{texto}**" if abs(t) > 2 else texto)
         escrever(f"| {nome} | {len(regs)} | " + " | ".join(celulas) + " |")
+
+    escrever("\n**Como ler as linhas por episódio da C, e é o ponto todo:** as "
+             "linhas `C geopolítica (k = …)` juntam os dois episódios do Irã, e "
+             "por isso **não servem para escolher o k** — o k de melhor t nelas é "
+             "o k ajustado à amostra inteira. As linhas `C iran_jun2025` e "
+             "`C iran_2026` são os dois episódios SEPARADOS, que não se "
+             "sobrepõem em data. Um k escolhido no primeiro é pré-registro para "
+             "o segundo, e a comparação de SINAL entre os dois é o único teste "
+             "aqui que distingue tese de ajuste de amostra.\n")
 
     escrever("\n## Elo 2 — o transporte do β (foi ele que matou a 15f)\n")
     escrever("corr entre o coeficiente PREDITIVO de cada ativo e o β "
