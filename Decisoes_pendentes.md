@@ -1426,4 +1426,120 @@ pendente de ratificação.
 
 ---
 
+## 20 (branch `Felipe`). A régua da Lia chegou — convenção, volume e eixo da escolha de 13/08 🟡
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D20 do
+> `Felipe`".
+
+**Registro, não decisão.** Sessão de **2026-08-10** (sessão 19), a partir da
+`RESPOSTA5_Felipe_calendario_e_nivel.md` da Lia. A régua do `c` está fechada e
+implementada do lado dela (`lia/omega.py`, 66 testes, 601 decisões da 2.2,
+90,3% ativas). Deste lado nada de comportamento mudou: a suíte sai de 240 para
+**244 testes** (os 4 novos são do script da 20c) e o `Backtest_v1.md` não foi
+re-gerado.
+
+### 20a. De onde vem o volume da régua — INTERFACE, depende do Paulo 🟡
+
+O `diagnostics_qualidade` **não tem campo de volume**, e a régua da Lia precisa
+dele para o veto de liquidez. Hoje a assinatura é
+`calcular_omega(diagnostics, volume_notional, nivel, janela_variacoes)`.
+
+| opção | o que muda | custo | quem toca |
+|---|---|---|---|
+| (1) volume vai como dict separado na chamada | nada — é o que já está pronto dos dois lados | zero | ninguém |
+| (2) volume vira campo `notional_usd_slot` do `diagnostics` | a régua passa a ter uma entrada só, em vez de duas | mudança de INTERFACE do bloco de diagnostics | Paulo (pipeline) + Lia (régua) |
+
+**Preferência declarada da Lia: a (2)** — uma porta em vez de duas, e o volume
+já vem do mesmo pipeline que monta o resto do bloco. **Não fechada aqui:** é
+mudança de interface entre módulos, categoria 3 do CLAUDE.md §1, e depende do
+Paulo. Enquanto não fechar, vale a (1), que não custa linha nenhuma.
+
+**O que já está fechado e não é objeto desta decisão:** a agregação do volume é
+**soma** sobre as faixas do mercado, não mínimo — medido pela Lia, o mínimo
+vetaria 47% dos slots de 12h porque é comum uma faixa de mercado de buckets não
+negociar em meio dia. Ausente ou `NaN` não veta; `0` veta.
+
+### 20b. O eixo da escolha de 13/08 é o NÍVEL da régua, não o `c` das curvas 🟡
+
+As duas convenções são recíprocas e as duas estão em uso:
+
+- **eixo das curvas** (o `curva_c.py` daqui e o gráfico dela): `c ∈ (0,1]` é
+  **confiança**, maior = mais peso;
+- **eixo da entrega** (o que `omega_fallback` recebe): `c >= 1` é
+  **multiplicador de incerteza**, maior = menos peso. `c_curva = 1/c_regua`.
+
+Medido por ela nas 601 decisões da 2.2, traduzido para o eixo das curvas:
+
+| nível | mediana | p95 | pior mercado |
+|---|---|---|---|
+| 1 | 0,953 | 0,805 | 0,362 |
+| 3 | 0,865 | 0,521 | 0,047 |
+| 5 | 0,785 | 0,338 | 0,006 |
+
+**A régua vive no topo da curva:** com nível 1 ela ocupa `[0,36 · 1,0]`, e a
+região onde a Σ|w| desaba (`c = 0,01`) exigiria nível ≈ 95 para a mediana — não
+é escolha, é impossibilidade. Escolher "um `c`" na tabela do `Curva_c.md` é
+portanto escolher um ponto que a régua não alcança.
+
+Re-medido deste lado na faixa alcançável (`Dump/analises/Curva_c_faixa_regua.md`,
+grade constante = LIMITE da régua, já que ela age por view):
+
+| c (eixo da curva) | incerteza | Σ\|w\| pedida mediana | dias de ruína | excesso (teto no tilt) |
+|---|---|---|---|---|
+| 1,000 (hoje) | 1,00 | 192,0 | 35 | +4,07 pp |
+| 0,953 (mediana, nível 1) | 1,05 | 187,3 | 34 | +4,18 pp |
+| 0,785 (mediana, nível 5) | 1,27 | 168,7 | 27 | +4,63 pp |
+| 0,362 (pior mercado, nível 1) | 2,76 | 102,0 | 16 | +5,82 pp |
+
+Duas leituras, e as duas são insumo da reunião:
+
+1. **O teto continua obrigatório em toda a faixa que a régua alcança.** Mesmo no
+   extremo (todas as views tratadas como o pior mercado da amostra) sobram
+   **16 dias de ruína** no irrestrito e Σ|w| mediana de **102**. A conclusão do
+   passo (3) da Lia fica de pé agora medida no eixo certo, não por extrapolação.
+2. **No centro a régua quase não move resultado** (+4,07 → +4,18 pp): o efeito
+   dela está na **cauda**, e grade constante não consegue mostrá-lo. Para medir
+   o efeito de verdade é preciso a série de `c` **por decisão**, que ela ofereceu
+   mandar — pedido feito na resposta.
+
+**Não fecha nada:** nível e teto saem juntos, uma vez só, pelo protocolo
+anti-overfit da seção 10 — e não por iteração contra esta tabela.
+
+### 20c. Cristalização perto do evento — o achado (b) dela, medido contra a tática 1.3 🟡
+
+A Lia passou como insumo: a proximidade do evento reprovou de novo na régua
+dela, com folga maior no alvo por desfecho (+0,29 a +0,72), e o sinal é "longe
+do evento o mercado se move mais; perto, ele cristaliza". Isso toca a 1.3
+porque o sinal dela é a **entropia da PMF no slot pré-abertura do próprio dia do
+anúncio** — dentro da janela onde a cristalização estaria agindo.
+
+Medido em `scripts/cristalizacao_entropia.py` (+ 4 testes) →
+`Dump/analises/Cristalizacao_entropia.md`, nas três famílias de anúncio:
+
+| família | variação total: mínimo | variação em d = 0 | desvio da entropia: 6–10 dias → d = 0 |
+|---|---|---|---|
+| FOMC | 0,0376 (1–2 dias) | **0,0610** | 0,274 → **0,305** |
+| CPI | 0,0640 (6–10 dias) | **0,1717** | 0,205 → 0,202 |
+| Payrolls | 0,1363 (11–20 dias) | **0,3270** | 0,043 → **0,098** |
+
+**A cristalização é real, mas não é monótona — ela reverte no último slot, que é
+justamente o que a sleeve lê.** Nas três famílias o mínimo de variação cai numa
+faixa intermediária e d = 0 volta a ser alto (no CPI e nos payrolls, o mais alto
+da tabela). E o número que decide o desenho — a **dispersão do sinal entre
+anúncios em d = 0** — não colapsa: é igual (CPI) ou maior (FOMC, payrolls) que a
+das faixas distantes. Ou seja: **o achado dela não invalida a modulação da 1.3**;
+`dw = orcamento · sinal` continua diferenciando anúncio de anúncio.
+
+**Ressalvas, que são do registro e não da conversa:** (i) o slot lido tem n = 7
+(FOMC), 12 (CPI) e 13 (payrolls) — o desvio em d = 0 é a estatística mais frágil
+da tabela; (ii) a grade aqui é diária pré-abertura, a dela é de 12h, e a medida
+dela é contra erro de previsão, não movimento cru — as duas leituras não são o
+mesmo teste e a divergência de forma pode ser só isso. **Observação devolvida a
+ela na resposta; nada do módulo dela foi tocado.**
+
+**Nada fecha aqui.** A entrada da 1.3 e o `orcamento_max` seguem pendentes de
+reunião (D16/D17), sem mudança.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

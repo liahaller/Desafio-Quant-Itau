@@ -1,5 +1,93 @@
 # LOG de sessões
 
+## 2026-08-10 (sessão 19) — Felipe
+
+**Contexto da sessão:** chegou a `RESPOSTA5_Felipe_calendario_e_nivel.md` da
+Lia (régua do `c` fechada e implementada do lado dela). O dono pediu para
+executar tudo que a mensagem pede ou que precisa mudar. Quatro frentes
+executadas, uma decisão registrada e nada fechado sozinho. Suíte: **244 testes**
+(240 + 4 do script novo). `Backtest_v1.md` **não foi re-gerado** — a entrega do
+v1 está intacta. Tudo na **D20**.
+
+**1. A convenção do `c` era bug de rótulo, e estava em três lugares.** O
+comportamento sempre esteve certo (`omega_fallback` recebe incerteza; a régua
+entrega em incerteza), mas `market_inputs.omega_fallback`, `backtest.run_backtest`
+e `scripts/curva_c.py` descreviam a saída dela como confiança em (0,1] — e uma
+delas instruía literalmente a inverter. Quem ligasse a régua seguindo a doc
+inverteria o que já vem invertido: **mais** peso onde a régua quis tirar, sem
+exceção e sem sintoma. Mesma classe do erro de índice que motivou a chave por
+nome em 07/08. Zero linha de execução tocada.
+
+**2. A curva do `c` foi re-medida na faixa que a régua alcança, e o argumento
+antigo dependia de um ponto impossível.** Eu sustentava o passo (3) da Lia com
+`c = 0,01`, que pela conta dela exigiria **nível ≈ 95**. Refeito dentro de
+`[0,36 · 1,0]` (`Curva_c_faixa_regua.md`): mesmo tratando todas as views como o
+pior mercado da amostra dela, sobram **16 dias de ruína** e Σ|w| mediana de
+**102**. Conclusão idêntica, premissa honesta. No centro a régua quase não move
+nada (+4,07 → +4,18 pp) — o efeito é de cauda, e **grade constante não consegue
+medi-lo por construção**. Pedida a série de `c` por decisão.
+
+**3. `aplicar_veto` já cobria os dois motivos de `ativa = False`; faltava dizer.**
+Veto de liquidez e ausência de leitura mensurável recebem o mesmo tratamento de
+propósito — nos dois não há medição em que apoiar peso, e Ω → ∞ responde aos
+dois. Recusei o motivo devolvido na assinatura: viraria campo que o código lê e
+ignora.
+
+**4. O achado da cristalização era testável, e no meu dado ele NÃO é monótono.**
+`scripts/cristalizacao_entropia.py` (+ 4 testes) mede entropia e variação total
+por distância ao evento nas três famílias: a variação cai até uma faixa
+intermediária e **volta a subir no último slot** — no CPI (0,064 → 0,172) e nos
+payrolls (0,136 → 0,327), d = 0 é o ponto mais agitado da tabela. Para a 1.3
+isso resolve a pergunta certa: a **dispersão do sinal entre anúncios em d = 0**
+não colapsa, então a modulação sobrevive e a sleeve não degenera em long SPY
+constante.
+
+**Quebrou / aprendido:**
+- **Convenção recíproca é bug silencioso, não detalhe de notação.** Os dois
+  eixos (`confiança ∈ (0,1]` e `incerteza >= 1`) parecem o mesmo número e dão
+  carteiras diferentes. A defesa que sobreviveu foi ter a conversão em **um
+  lugar só**, marcada como propriedade do eixo das curvas — não a doc de cada
+  função.
+- **Argumento certo com premissa impossível continua sendo argumento ruim.** O
+  passo (3) estava certo, mas eu o sustentava num `c` que a régua não alcança.
+  Só a tabela dela expôs isso; o meu número não tinha como.
+- **Insumo passado "sem saber se ajuda" é o mais barato de aproveitar.** A Lia
+  mandou a cristalização como observação lateral e ela virou medição em uma
+  sessão, porque era uma afirmação com conteúdo empírico. Vale como padrão de
+  troca entre módulos.
+- **Contra-medição não é contradição.** A minha grade é diária e mede movimento
+  cru; a dela é de 12h e mede erro de previsão. Registrei a divergência de forma
+  como possivelmente só isso — e limitei a contestação à frase interpretativa,
+  não ao veredito dela.
+
+**Pendente:**
+- **D20a (interface do volume)** — opção (1) dict separado × (2) campo
+  `notional_usd_slot` no diagnostics. Preferência declarada da Lia é a (2), mas
+  é interface e depende do Paulo. Vale a (1) até a reunião; não trava 13/08.
+- **D20b (nível + teto)** — a escolha tem de ser no eixo do **nível** da régua,
+  não no `c` das curvas. Falta a série de `c` por decisão para medir o efeito
+  real (o de cauda) em vez do limite.
+- **D20c** — nada decidido sobre a 1.3: entrada e `orcamento_max` seguem de
+  reunião. A ressalva de amostra (n = 7 / 12 / 13 em d = 0) está no artefato.
+- Fora do meu escopo, observado no disco: `leaveoff.md` mudou de lugar (raiz →
+  `Dump/analises/`) e a `RESPOSTA5` da Lia chegou na raiz em vez de
+  `Dump/trocas/`. **Não mexi em nenhum dos dois.**
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~100k tokens na sessão; **nenhum subagente**.
+- **Prompt inicial (verbatim):** "A lia mandou a reposta5. Leia e me avise o que
+  ela informa"
+- **Iterações até aceitar:** 1 (o segundo prompt foi "execute tudo que a mensagem
+  pede ou que precisam ser mudadas", não correção).
+- **Erros da IA:** nenhum que virasse registro. Uma versão intermediária do
+  `cristalizacao_entropia.py` contava baldes vivos com uma expressão redundante
+  (`and` entre duas somas) — simplificada antes de rodar; não mudava resultado.
+- **Decisões escaladas:** D20 registrada (20a, 20b, 20c — nenhuma fechada).
+- **Tags:** `[PROMPT-CHAVE]` — "execute tudo que a mensagem pede ou que precisam
+  ser mudadas" foi o prompt que transformou uma mensagem recebida em quatro
+  frentes executadas sem nenhuma decisão metodológica tomada pela IA.
+
 ## 2026-08-09 (sessão 18) — Felipe
 
 **Contexto da sessão:** o dono mandou ler o `leaveoff.md` da sessão 17, abrir um
