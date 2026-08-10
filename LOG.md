@@ -2,6 +2,50 @@
 
 ---
 
+## 2026-08-10 (2) — Paulo — CPI realizado (MoM) p/ o teste de não-circularidade da 2.2 (pedido da Lia)
+
+**O que foi feito:** executado o `PEDIDO_Paulo_cpi_realizado.md`. Entregue o CPI MoM (%, pp) por
+mês de referência dos mercados-mês do Polymarket (dez/2024→jul/2026), em ≥2 casas, com SA
+(`CPIAUCSL`) e NSA (`CPIAUCNS`), first-print (ALFRED, vintage=data do release) e revisado lado a
+lado. SA/NSA lido da *rule* de cada mercado na Gamma (não decidido): rule explícita "seasonally
+adjusted" de fev/2025 em diante; 2 legados (dez/2024, jan/2025) com rule vaga → SA por inferência
+(sinalizado). Casas: 2 na tabela, com nota de que a rule resolve em 1 casa.
+- **Checagem de não-circularidade:** first-print SA arredondado casa com o bucket resolvido em
+  **15/15** meses utilizáveis (análogo ao 16/16 do FOMC). Vintage importa: em dez/2024 e ago/2025 o
+  *revisado* cairia no bucket errado; o first-print acerta.
+- **Aside (out/2025 fantasma):** o mercado `october-inflation-monthly` **resolveu** (não cancelado)
+  — UMA resolveu bucket 0,3% em 22/11/2025; o 0,865 era preço, não CPI. FRED não tem out/2025 em
+  nenhuma vintage (ghost). nov/2025 = MoM indefinível (base out ausente). jul/2026 pendente (release
+  12/08).
+- **Escopo:** achei **18** mercados no clob (não 19); buracos = abr/2025 e fev/2026 (sem mercado).
+  Sinalizado à Lia para reconciliar o 19º se existir.
+- Artefatos: `scripts/pedido_cpi_realizado_gamma.py`, `scripts/pedido_cpi_realizado_fred.py`,
+  `data/raw/cpi_rules_gamma.json`, `data/raw/cpi_realizado_mom.json`. Entregável:
+  `docs/RESPOSTA_PEDIDO_Paulo_cpi_realizado.md` (cópia em `~/Downloads`).
+
+**O que quebrou:** 1 chamada FRED transiente (HTTP 500 no NSA de abr/2026) — repuxada e conferida
+(0,85006). Jul/2026 fp deu HTTP 400 (realtime no futuro) — esperado (release ainda não ocorreu).
+
+**Pendente:** decisões da Lia registradas na Decisão 15 (tratamento de out/2025, nov/2025, SA
+inferido nos legados, jul/2026). Nada bloqueia — a limitação anterior do relatório ("verificação
+só na 2.3") já pode ser reescrita com o 15/15.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~55% da janela.
+- **Prompt inicial (verbatim):** "'/Users/paulomello/Downloads/PEDIDO_Paulo_cpi_realizado.md' faca
+  tudo que a lia pediu, responda tudo que ela pediu, nao pule nada ou deixe nada em branco. e
+  responda em um md baixe no meu pc para eu mandar para ela. depois de terminar, revise tudo. ask me
+  clarifying questions. antes de executar, estime quantos tokens vai gastar e quanto tempo vai levar"
+- **Iterações até aceitar:** 1 rodada (perguntas de esclarecimento respondidas com "A"; execução
+  direta e aceita).
+- **Erros da IA:** nenhum material. 1 valor ficou `None` por erro transiente da API (não alucinação)
+  — detectado na revisão e repuxado. Contagem 19→18 conciliada com honestidade (não forcei o 19).
+- **Decisões escaladas:** Decisão 15 (nova; tratamento dos meses sem alvo utilizável — call da Lia).
+- **Tags:** `[PROMPT-CHAVE]` (execução completa do pedido de CPI realizado — reprodutibilidade).
+
+---
+
 ## 2026-08-10 — Paulo — G5 alcança o FOMC (chave `conditionId` + as 76 faixas)
 
 **O que foi feito:** executado o `PEDIDO_Paulo_G5_fomc.md` (recado da Lia) inteiro. Os dois

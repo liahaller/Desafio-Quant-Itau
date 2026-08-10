@@ -274,6 +274,26 @@ fredgraph serve, ou ele precisa da API literal (aí o arquivo não fica idêntic
 troca de fonte de dado (é o mesmo FRED, mesma série) — é detalhe de formato. Reportado em
 `docs/FOLLOWUP_G10_Paulo.md`. **Decisão:** _(confirmação do `Felipe` — não bloqueia)_
 
+## 15. CPI realizado — alvo do teste de não-circularidade da 2.2 (tratamento dos meses sem alvo limpo) 🔴
+Levantado em 2026-08-10 (entrega do `PEDIDO_Paulo_cpi_realizado.md`, dona do Ω é a Lia). O CPI MoM
+realizado foi entregue (`docs/RESPOSTA_PEDIDO_Paulo_cpi_realizado.md`; artefato
+`data/raw/cpi_realizado_mom.json`): SA (`CPIAUCSL`) first-print via ALFRED, casando com o bucket
+resolvido em **15/15** meses utilizáveis. Ficam **abertas** (calls da Lia, não decididas pelo
+Paulo — CLAUDE.md §1):
+- **out/2025 (ghost):** o mercado resolveu 0,3% via UMA (22/11/2025, não cancelado), mas o FRED não
+  tem out/2025 em nenhuma vintage. Usar o desfecho do UMA (0,3%) como "realizado" ou tratar como sem
+  alvo (conservador)?
+- **nov/2025:** índice existe, mas o MoM de 1 mês é indefinível pelo FRED (base out/2025 ausente); o
+  mercado resolveu 0,3%. Aceitar com ressalva ou como sem alvo?
+- **Legados dez/2024 e jan/2025:** rule vaga (não nomeia a série); SA foi *inferido* por casar com
+  os buckets. Aceitar SA por inferência?
+- **jul/2026:** ainda não publicado (release 12/08/2026) — congelar sem ele ou aguardar o valor?
+- **Escopo:** clob tem **18** mercados-mês, não 19 (buracos abr/2025 e fev/2026, sem mercado). Se a
+  Lia listava um 19º, reconciliar o slug.
+
+Lado dos dados (valores, vintages, ghost) é do `Paulo`; o uso no teste do Ω é módulo da `Lia`.
+**Decisão:** _(a registrar — Lia)_
+
 ---
 
 ## Notas de interface (mudanças de formato acordadas — não são decisões metodológicas)

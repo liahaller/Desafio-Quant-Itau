@@ -1,0 +1,433 @@
+[
+  {
+    "slug": "december-inflation-monthly",
+    "title": "December Inflation - Monthly",
+    "mes_referencia": null,
+    "ajuste_sa_nsa": "?",
+    "precisao_regra": "?",
+    "release_agendada": null,
+    "bucket_vencedor": "0.4%",
+    "buckets": [
+      "≤0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 3,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 15185.774769,
+    "description": "This is a market on the inflation rate for December, measuring the monthly increase in consumer prices."
+  },
+  {
+    "slug": "january-inflation-monthly",
+    "title": "January Inflation - Monthly",
+    "mes_referencia": null,
+    "ajuste_sa_nsa": "?",
+    "precisao_regra": "?",
+    "release_agendada": null,
+    "bucket_vencedor": "≥0.4%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "≥0.4%"
+    ],
+    "n_buckets": 4,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 384583.166109,
+    "description": "This is a market on predicting the monthly inflation rate for January."
+  },
+  {
+    "slug": "february-inflation-monthly",
+    "title": "February Inflation - Monthly",
+    "mes_referencia": "February 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "March 12, 2025",
+    "bucket_vencedor": "0.2%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 103829.157936,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in February 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for February 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on March 12, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "march-inflation-monthly",
+    "title": "March Inflation - Monthly",
+    "mes_referencia": "March 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "April 10, 2025",
+    "bucket_vencedor": "≤0.1%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 304092.287775,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in March 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for March 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on April 10, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "may-inflation-monthly",
+    "title": "May Inflation - Monthly",
+    "mes_referencia": "May 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "June 11, 2025",
+    "bucket_vencedor": "0.1%",
+    "buckets": [
+      "≤0.0%",
+      "0.1%",
+      "0.2%",
+      "0.3%",
+      "≥0.4%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 764229.66578,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in May 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for May 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on June 11, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "june-inflation-monthly",
+    "title": "June Inflation - Monthly",
+    "mes_referencia": "June 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "July 15, 2025",
+    "bucket_vencedor": "0.3%",
+    "buckets": [
+      "≤0.0%",
+      "0.1%",
+      "0.2%",
+      "0.3%",
+      "≥0.4%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 847992.353927,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in June 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for June 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on July 15, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "july-inflation-monthly",
+    "title": "July Inflation - Monthly",
+    "mes_referencia": "July 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "August 12, 2025",
+    "bucket_vencedor": "0.2%",
+    "buckets": [
+      "≤0.0%",
+      "0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 6,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 1089177.756468,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in July 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for July 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on August 12, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "august-inflation-monthly",
+    "title": "August Inflation - Monthly",
+    "mes_referencia": "August 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "September 11, 2025",
+    "bucket_vencedor": "≥0.4%",
+    "buckets": [
+      "≤0.0%",
+      "0.1%",
+      "0.2%",
+      "0.3%",
+      "≥0.4%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 628821.738473,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in August 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for August 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on September 11, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "september-inflation-monthly",
+    "title": "September Inflation - Monthly",
+    "mes_referencia": "September 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "October 15, 2025",
+    "bucket_vencedor": "0.3%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 385911.96414,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in September 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for September 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on October 15, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "october-inflation-monthly",
+    "title": "October Inflation - Monthly",
+    "mes_referencia": "October 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "November 13, 2025",
+    "bucket_vencedor": "0.3%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 257539.243746,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in October 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for October 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on November 13, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market."
+  },
+  {
+    "slug": "november-inflation-monthly",
+    "title": "November Inflation - Monthly",
+    "mes_referencia": "November 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "December 18, 2025",
+    "bucket_vencedor": "0.3%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 301954.660528,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in November 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for November 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on December 18, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according the figures of the most recent previous month with available data. "
+  },
+  {
+    "slug": "december-inflation-us-monthly",
+    "title": "December Inflation US - Monthly",
+    "mes_referencia": "December 2025",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "January 13, 2025",
+    "bucket_vencedor": "0.3%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 480240.780985,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased in December 2025 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for December 2025 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on January 13, 2025, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according the figures of the most recent previous month with available data. "
+  },
+  {
+    "slug": "january-inflation-us-monthly",
+    "title": "January Inflation US - Monthly",
+    "mes_referencia": "January 2026",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "February 11, 2026",
+    "bucket_vencedor": "0.2%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "≥0.5%"
+    ],
+    "n_buckets": 5,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 260605.117264,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the number that the one-month seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) increased by in January 2026 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for January 2026 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on February 11, 2026, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which reports to the one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according to the figures of the most recent previous month with available data. "
+  },
+  {
+    "slug": "february-inflation-us-monthly",
+    "erro": "evento não abriu na Gamma"
+  },
+  {
+    "slug": "march-inflation-us-monthly",
+    "title": "March Inflation US - Monthly",
+    "mes_referencia": "March 2026",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "April 10, 2026",
+    "bucket_vencedor": "≥0.8%",
+    "buckets": [
+      "≤0.3%",
+      "0.4%",
+      "0.5%",
+      "0.6%",
+      "≥0.8%",
+      "0.7%"
+    ],
+    "n_buckets": 6,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 703745.2893360002,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) in March 2026 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for March 2026 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on April 10, 2026, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which BLS reports to one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according to the figures of the most recent previous month with available data. \n"
+  },
+  {
+    "slug": "april-inflation-us-monthly",
+    "title": "April Inflation US - Monthly",
+    "mes_referencia": "April 2026",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "May 12, 2026",
+    "bucket_vencedor": "0.6%",
+    "buckets": [
+      "≤0.3%",
+      "0.4%",
+      "0.5%",
+      "0.6%",
+      "0.7%",
+      "0.8%",
+      "0.9%",
+      "1.0%",
+      "≥1.1%"
+    ],
+    "n_buckets": 9,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 128200.78755800003,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) in April 2026 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for April 2026 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on May 12, 2026, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which BLS reports to one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according to the figures of the most recent previous month with available data."
+  },
+  {
+    "slug": "may-inflation-us-monthly",
+    "title": "May Inflation US - Monthly",
+    "mes_referencia": "May 2026",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "June 10, 2026",
+    "bucket_vencedor": "0.5%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "0.5%",
+      "0.6%",
+      "0.7%",
+      "0.8%",
+      "≥0.9%"
+    ],
+    "n_buckets": 9,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 127499.87131200002,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) in May 2026 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for May 2026 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on June 10, 2026, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which BLS reports to one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according to the figures of the most recent previous month with available data."
+  },
+  {
+    "slug": "june-inflation-us-monthly-20260610151033433",
+    "title": "June Inflation US - Monthly",
+    "mes_referencia": "June 2026",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "July 14, 2026",
+    "bucket_vencedor": "≤0.1%",
+    "buckets": [
+      "≤0.1%",
+      "0.2%",
+      "0.3%",
+      "0.4%",
+      "0.5%",
+      "0.6%",
+      "0.7%",
+      "0.8%",
+      "≥0.9%"
+    ],
+    "n_buckets": 9,
+    "uma_status": [
+      "resolved"
+    ],
+    "closed": true,
+    "volume": 52283.034252,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) in June 2026 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for June 2026 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on July 14, 2026, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which BLS reports to one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according to the figures of the most recent previous month with available data."
+  },
+  {
+    "slug": "july-inflation-us-monthly-20260714151042665",
+    "title": "July Inflation US - Monthly",
+    "mes_referencia": "July 2026",
+    "ajuste_sa_nsa": "SA",
+    "precisao_regra": "1 casa (rule)",
+    "release_agendada": "August 12, 2026",
+    "bucket_vencedor": null,
+    "buckets": [
+      "≤-0.7%",
+      "-0.6%",
+      "-0.5%",
+      "-0.4%",
+      "-0.3%",
+      "-0.2%",
+      "-0.1%",
+      "0.0%",
+      "≥0.1%"
+    ],
+    "n_buckets": 9,
+    "uma_status": [],
+    "closed": false,
+    "volume": 185706.894432,
+    "description": "This is a market about the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) published by the Bureau of Labor Statistics (BLS).\n\nThis market will resolve to the one-month percent change in the seasonally adjusted Consumer Price Index for All Urban Consumers (CPI-U) in July 2026 according to the monthly BLS report.\n\nThe resolution source for this market will be the BLS Consumer Price Index report released for July 2026 (https://www.bls.gov/bls/news-release/cpi.htm), currently scheduled to be released on August 12, 2026, at 8:30 AM ET. Resolution of this market will take place upon release of the aforementioned data.\n\nNote: the resolution source for this market will be the official monthly Consumer Price Index for All Urban Consumers (CPI-U) which BLS reports to one decimal point (e.g. 0.4%). Thus, this is the level of precision that will be used when resolving the market.\n\nIf the BLS does not release the relevant figures on the scheduled date, this market may remain open up until the scheduled release time of the next CPI report (https://www.bls.gov/schedule). If the information is not released by that time, this market will resolve according to the figures of the most recent previous month with available data."
+  }
+]
