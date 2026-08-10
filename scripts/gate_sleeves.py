@@ -24,6 +24,13 @@ comprovadamente morto mede.
 G4 (P&L da sleeve sozinha) fica de fora: exige backtest, e backtest exige o
 módulo que este script se recusa a escrever antes do gate.
 
+Em 2026-08-10 entrou o candidato **C3 — drift pós-FOMC com a surpresa em ΔDTB3**,
+que é o experimento registrado como pendente na D17e e na D18b: a D16 trocou de
+uma vez a âncora de tamanho E a fonte da surpresa, então a fonte antiga nunca
+rodou com a âncora nova. É a mesma linha do controle de FOMC com outro sinal, e
+por isso as duas se leem em par. ⚠️ Ele **não lê o Polymarket** e está barrado
+pela régua 18a — está aqui MEDIDO, não proposto.
+
 **Nada em `src/` é tocado.** O μ do G2 é o `estimate_drift_mu` da D16 chamado
 como está — com a subtração de linha de base e o encolhimento pela dispersão,
 que foram as duas partes do desenho que sobreviveram ao teste.
@@ -312,6 +319,19 @@ def main():
              sinal=demeanar_expansivo(cauda_fomc), janela=1, tick=TICK, unidade="prob.",
              livro=("SPY", "TLT"), declarado={"SPY": -1, "TLT": +1},
              premissa="idem, na família do Fed"),
+        # O experimento que a D17e/D18b registraram como "uma linha no
+        # gate_sleeves.py": a D16 trocou DUAS coisas de uma vez — a âncora de
+        # tamanho (orçamento → inv(δΣ)·μ) E a fonte da surpresa (ΔDTB3 → poly).
+        # A surpresa ANTIGA nunca rodou com a âncora nova. Ela é o controle
+        # `drift FOMC 🛑` com o sinal trocado de fonte, e por isso as duas linhas
+        # se leem em par. ⚠️ Barrada pela régua 18a (não lê o poly), que segue
+        # pendente de ratificação — está aqui MEDIDA, não proposta.
+        dict(nome="C3 drift FOMC via ΔDTB3 (D18b)", tipo="candidato",
+             sinal=montador.surpresas[montador.surpresas.index <= datas[-1]],
+             janela=DRIFT_JANELA_ACOES, tick=TICK_FRED_BPS, unidade="bps",
+             livro=DRIFT_LIVRO_FOMC, declarado={"SPY": -1, "TLT": -1},
+             premissa="Bernanke-Kuttner, idêntica à do controle de FOMC — o que "
+                      "muda é só a fonte da surpresa (ΔDTB3 no lugar do poly)"),
         dict(nome="controle D16 · drift FOMC 🛑", tipo="controle",
              sinal=surpresas_fomc, janela=DRIFT_JANELA_ACOES, tick=tick_fomc,
              unidade="bps", livro=DRIFT_LIVRO_FOMC, declarado={"SPY": -1, "TLT": -1},
@@ -363,6 +383,11 @@ def main():
         "- **G2** = μ do `tatica_drift_anuncio.estimate_drift_mu` (linha de base "
         "subtraída, encolhido pela dispersão) contra o sinal DECLARADO a priori",
         "- **G3** = correlação com o sinal que as views já leem\n",
+        "⚠️ **O candidato C3 é o único que NÃO lê o Polymarket** e está barrado "
+        "pela régua 18a, que segue pendente de ratificação. Ele entra na tabela "
+        "porque a D18b registrou que, se a régua cair, ele volta na frente dos "
+        "outros — e saber disso antes da reunião custava uma linha. **Medido, "
+        "não proposto.**\n",
         "**G4 (P&L da sleeve sozinha) não está aqui de propósito:** exige "
         "backtest, backtest exige o módulo, e o módulo é exatamente o que este "
         "gate se recusa a escrever antes de a linha passar.\n",
@@ -401,6 +426,9 @@ def main():
     n_invertidos = por_nome.loc[cauda_cpi_nome, "G2 μ (bps/dia)"].count("❌")
     onde_inverte = ("nos DOIS ativos do livro" if n_invertidos == 2
                     else f"em {n_invertidos} dos 2 ativos do livro")
+    # O C3 é a única linha que não lê o poly: ela existe para responder, ANTES
+    # da reunião, o "se a régua 18a cair, o drift via ΔDTB3 volta na frente".
+    c3 = "C3 drift FOMC via ΔDTB3 (D18b)"
     texto += [
         "## Leitura\n",
         "**O gate está calibrado — o controle reproduz a D16 número a número.** "
@@ -431,10 +459,34 @@ def main():
         "sinal. A 15b demeana POR FAMÍLIA e normaliza a entropia por log(nº de "
         "baldes) justamente por isso. Não muda o veredito: a linha já morre no "
         "G2 e no G3, que não dependem da escala do sinal.\n",
-        f"**Nenhum candidato passa nos três critérios** ({len(passaram)} de "
-        f"{len(candidatos)} com G2 ✅). Pelo protocolo desta rodada, **nenhum "
-        "módulo é escrito** — o gate custou um script e evitou o segundo par de "
-        "sleeves natimortas.\n",
+        "**O experimento que a D17e e a D18b deixaram pendente rodou aqui, e ele "
+        "morre no primeiro critério.** A D16 trocou duas coisas de uma vez — a "
+        "âncora de tamanho e a fonte da surpresa —, então a surpresa ANTIGA "
+        "(ΔDTB3) nunca tinha rodado com a âncora nova. Rodou: a mediana do "
+        f"|ΔDTB3| nas {por_nome.loc[c3, 'G0 dias']} reuniões é "
+        f"`{por_nome.loc[c3, COL_G1]}`, exatamente o tick de publicação do FRED "
+        f"({por_nome.loc[c3, 'G1 razão / tick']}) — a mesma ressalva que a D17e "
+        "levantou contra a própria ideia. E o μ sai "
+        f"`{por_nome.loc[c3, 'G2 μ (bps/dia)']}`, invertido contra a premissa de "
+        "Bernanke-Kuttner que o controle de FOMC declara igual.\n",
+        "> ⚠️ **Ressalva de janela, a favor do candidato:** o ΔDTB3 existe desde "
+        "2022 e os sinais de poly só a partir de 2025, então a linha do C3 cobre "
+        "uma janela maior que as demais — a comparação de G0 entre linhas não é "
+        "de igual para igual. Não muda o veredito: G1 e G2 são medidos dentro da "
+        "própria linha.\n",
+        "**Consequência para a reunião, e ela é de agenda:** a D18b registra que "
+        "\"se a régua 18a cair, este item volta na frente dos outros três\". "
+        "Medido, ele não volta — reprova em G1 e G2 pelos mesmos critérios que "
+        "reprovaram os candidatos que leem o poly. A ratificação da 18a segue "
+        "sendo decisão do grupo, mas **deixa de custar esta oportunidade**.\n",
+        (f"**Nenhum candidato passa nos três critérios** ({len(passaram)} de "
+         f"{len(candidatos)} com G2 ✅). Pelo protocolo desta rodada, **nenhum "
+         "módulo é escrito** — o gate custou um script e evitou o segundo par de "
+         "sleeves natimortas.\n"
+         if not passaram else
+         f"**{len(passaram)} de {len(candidatos)} candidatos passam no G2** "
+         f"({', '.join(passaram)}) — e passar no G2 não é aprovação: o gate mede "
+         "e o destino continua sendo decisão do dono/grupo.\n"),
         "**O que isto NÃO diz:** que a camada tática é inviável. Diz que, no dado "
         "que temos, os sinais de Polymarket que sobraram ou não têm tamanho "
         "(revisão diária, abaixo do tick) ou já pertencem a uma view (cauda ≈ "

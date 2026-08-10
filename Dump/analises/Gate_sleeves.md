@@ -7,29 +7,33 @@
 - **G2** = μ do `tatica_drift_anuncio.estimate_drift_mu` (linha de base subtraída, encolhido pela dispersão) contra o sinal DECLARADO a priori
 - **G3** = correlação com o sinal que as views já leem
 
+⚠️ **O candidato C3 é o único que NÃO lê o Polymarket** e está barrado pela régua 18a, que segue pendente de ratificação. Ele entra na tabela porque a D18b registrou que, se a régua cair, ele volta na frente dos outros — e saber disso antes da reunião custava uma linha. **Medido, não proposto.**
+
 **G4 (P&L da sleeve sozinha) não está aqui de propósito:** exige backtest, backtest exige o módulo, e o módulo é exatamente o que este gate se recusa a escrever antes de a linha passar.
 
 **Convenção de janela:** o sinal do dia D é o slot pré-abertura de D e o retorno medido é o do pregão SEGUINTE — mesma convenção da D16 (a sleeve abre no close de D). Medir o retorno do próprio D exigiria o preço de abertura, e os dois parquets estão em bases de ajuste diferentes (`Premissa_taticas.md`) — conserto é do módulo do Paulo.
 
-| candidato                     |   G0 dias | G0 janela               | G1 mediana \|sinal\|   | G1 razão / tick   | G2 μ (bps/dia)              | G2 bate?   | G3 maior \|corr\|           |
-|:------------------------------|----------:|:------------------------|:-----------------------|:------------------|:----------------------------|:-----------|:----------------------------|
-| C1a revisão M3 (nº de cortes) |       209 | 2025-02-11 → 2025-12-10 | 0.04565 cortes         | 0.5×              | SPY -4.20 ❌ · TLT +0.03 ✅ | ❌         | -0.17 (entropia CPI (15b))  |
-| C1b revisão da reunião (bps)  |       334 | 2025-02-11 → 2026-06-17 | 0.2493 bps             | 0.2×              | SPY -2.75 ❌ · TLT -3.44 ❌ | ❌         | -0.24 (divergência da 2.3)  |
-| C2a cauda da PMF de CPI       |       286 | 2025-02-11 → 2026-07-29 | 0.2007 prob.           | 20.1×             | SPY -0.14 ✅ · TLT -1.56 ❌ | ❌         | -0.69 (entropia CPI (15b))  |
-| C2b cauda da PMF de reunião   |       334 | 2025-02-11 → 2026-06-17 | 0.01164 prob.          | 1.2×              | SPY -2.96 ✅ · TLT -0.87 ❌ | ❌         | +0.58 (entropia FOMC (15b)) |
-| controle D16 · drift FOMC 🛑  |        17 | 2024-05-01 → 2026-06-17 | 0.5242 bps             | 0.5×              | SPY +4.91 ❌ · TLT +1.37 ❌ | ❌         | +0.72 (divergência da 2.3)  |
-| controle D16 · drift CPI 🛑   |        13 | 2025-03-12 → 2026-07-14 | 1 bps                  | 1.0×              | TIP +0.29 ✅ · TLT +1.91 ❌ | ❌         | +0.50 (divergência da 2.2)  |
+| candidato                      |   G0 dias | G0 janela               | G1 mediana \|sinal\|   | G1 razão / tick   | G2 μ (bps/dia)              | G2 bate?   | G3 maior \|corr\|           |
+|:-------------------------------|----------:|:------------------------|:-----------------------|:------------------|:----------------------------|:-----------|:----------------------------|
+| C1a revisão M3 (nº de cortes)  |       209 | 2025-02-11 → 2025-12-10 | 0.04565 cortes         | 0.5×              | SPY -4.20 ❌ · TLT +0.03 ✅ | ❌         | -0.17 (entropia CPI (15b))  |
+| C1b revisão da reunião (bps)   |       334 | 2025-02-11 → 2026-06-17 | 0.2493 bps             | 0.2×              | SPY -2.75 ❌ · TLT -3.44 ❌ | ❌         | -0.24 (divergência da 2.3)  |
+| C2a cauda da PMF de CPI        |       286 | 2025-02-11 → 2026-07-29 | 0.2007 prob.           | 20.1×             | SPY -0.14 ✅ · TLT -1.56 ❌ | ❌         | -0.69 (entropia CPI (15b))  |
+| C2b cauda da PMF de reunião    |       334 | 2025-02-11 → 2026-06-17 | 0.01164 prob.          | 1.2×              | SPY -2.96 ✅ · TLT -0.87 ❌ | ❌         | +0.58 (entropia FOMC (15b)) |
+| C3 drift FOMC via ΔDTB3 (D18b) |        37 | 2022-01-26 → 2026-07-29 | 1 bps                  | 1.0×              | SPY +0.55 ❌ · TLT +0.97 ❌ | ❌         | -0.56 (entropia FOMC (15b)) |
+| controle D16 · drift FOMC 🛑   |        17 | 2024-05-01 → 2026-06-17 | 0.5242 bps             | 0.5×              | SPY +4.91 ❌ · TLT +1.37 ❌ | ❌         | +0.72 (divergência da 2.3)  |
+| controle D16 · drift CPI 🛑    |        13 | 2025-03-12 → 2026-07-14 | 1 bps                  | 1.0×              | TIP +0.29 ✅ · TLT +1.91 ❌ | ❌         | +0.50 (divergência da 2.2)  |
 
 ## Correlações do G3, uma a uma
 
-| candidato                     |   eventos no μ |   corr divergência da 2.2 |   corr divergência da 2.3 |   corr entropia CPI (15b) |   corr entropia FOMC (15b) |
-|:------------------------------|---------------:|--------------------------:|--------------------------:|--------------------------:|---------------------------:|
-| C1a revisão M3 (nº de cortes) |            209 |                      0.08 |                     -0.05 |                     -0.17 |                       0.11 |
-| C1b revisão da reunião (bps)  |            324 |                     -0.02 |                     -0.24 |                     -0.04 |                       0.08 |
-| C2a cauda da PMF de CPI       |            286 |                      0.02 |                      0.06 |                     -0.69 |                      -0.02 |
-| C2b cauda da PMF de reunião   |            334 |                     -0.16 |                     -0.02 |                     -0.01 |                       0.58 |
-| controle D16 · drift FOMC 🛑  |             17 |                     -0.06 |                      0.72 |                      0.44 |                       0.67 |
-| controle D16 · drift CPI 🛑   |             11 |                      0.5  |                      0.14 |                     -0.1  |                      -0.48 |
+| candidato                      |   eventos no μ |   corr divergência da 2.2 |   corr divergência da 2.3 |   corr entropia CPI (15b) |   corr entropia FOMC (15b) |
+|:-------------------------------|---------------:|--------------------------:|--------------------------:|--------------------------:|---------------------------:|
+| C1a revisão M3 (nº de cortes)  |            209 |                      0.08 |                     -0.05 |                     -0.17 |                       0.11 |
+| C1b revisão da reunião (bps)   |            324 |                     -0.02 |                     -0.24 |                     -0.04 |                       0.08 |
+| C2a cauda da PMF de CPI        |            286 |                      0.02 |                      0.06 |                     -0.69 |                      -0.02 |
+| C2b cauda da PMF de reunião    |            334 |                     -0.16 |                     -0.02 |                     -0.01 |                       0.58 |
+| C3 drift FOMC via ΔDTB3 (D18b) |             28 |                      0.22 |                     -0.27 |                     -0    |                      -0.56 |
+| controle D16 · drift FOMC 🛑   |             17 |                     -0.06 |                      0.72 |                      0.44 |                       0.67 |
+| controle D16 · drift CPI 🛑    |             11 |                      0.5  |                      0.14 |                     -0.1  |                      -0.48 |
 
 ## Premissa declarada ANTES de medir
 
@@ -39,6 +43,7 @@ Declarar por escrito antes do event-study é o que faz do G2 um teste em vez de 
 - **C1b revisão da reunião (bps)** — idem, com o sinal invertido porque E_poly é Δtaxa (afrouxar = cair)
 - **C2a cauda da PMF de CPI** — mais massa nas pontas → prêmio de risco sobe → SPY cai, TLT sobe
 - **C2b cauda da PMF de reunião** — idem, na família do Fed
+- **C3 drift FOMC via ΔDTB3 (D18b)** — Bernanke-Kuttner, idêntica à do controle de FOMC — o que muda é só a fonte da surpresa (ΔDTB3 no lugar do poly)
 - **controle D16 · drift FOMC 🛑** — Bernanke-Kuttner: surpresa de ALTA → SPY e TLT caem
 - **controle D16 · drift CPI 🛑** — surpresa inflacionária → o indexado (TIP) bate o nominal (TLT)
 
@@ -52,7 +57,13 @@ Declarar por escrito antes do event-study é o que faz do G2 um teste em vez de 
 
 > ⚠️ **Ressalva no G1 da cauda, contra o próprio candidato:** a média expansiva atravessa a troca de mercado, e a grade do CPI muda de 3 a 9 baldes entre meses — parte do 20.1× é degrau de grade, não sinal. A 15b demeana POR FAMÍLIA e normaliza a entropia por log(nº de baldes) justamente por isso. Não muda o veredito: a linha já morre no G2 e no G3, que não dependem da escala do sinal.
 
-**Nenhum candidato passa nos três critérios** (0 de 4 com G2 ✅). Pelo protocolo desta rodada, **nenhum módulo é escrito** — o gate custou um script e evitou o segundo par de sleeves natimortas.
+**O experimento que a D17e e a D18b deixaram pendente rodou aqui, e ele morre no primeiro critério.** A D16 trocou duas coisas de uma vez — a âncora de tamanho e a fonte da surpresa —, então a surpresa ANTIGA (ΔDTB3) nunca tinha rodado com a âncora nova. Rodou: a mediana do |ΔDTB3| nas 37 reuniões é `1 bps`, exatamente o tick de publicação do FRED (1.0×) — a mesma ressalva que a D17e levantou contra a própria ideia. E o μ sai `SPY +0.55 ❌ · TLT +0.97 ❌`, invertido contra a premissa de Bernanke-Kuttner que o controle de FOMC declara igual.
+
+> ⚠️ **Ressalva de janela, a favor do candidato:** o ΔDTB3 existe desde 2022 e os sinais de poly só a partir de 2025, então a linha do C3 cobre uma janela maior que as demais — a comparação de G0 entre linhas não é de igual para igual. Não muda o veredito: G1 e G2 são medidos dentro da própria linha.
+
+**Consequência para a reunião, e ela é de agenda:** a D18b registra que "se a régua 18a cair, este item volta na frente dos outros três". Medido, ele não volta — reprova em G1 e G2 pelos mesmos critérios que reprovaram os candidatos que leem o poly. A ratificação da 18a segue sendo decisão do grupo, mas **deixa de custar esta oportunidade**.
+
+**Nenhum candidato passa nos três critérios** (0 de 5 com G2 ✅). Pelo protocolo desta rodada, **nenhum módulo é escrito** — o gate custou um script e evitou o segundo par de sleeves natimortas.
 
 **O que isto NÃO diz:** que a camada tática é inviável. Diz que, no dado que temos, os sinais de Polymarket que sobraram ou não têm tamanho (revisão diária, abaixo do tick) ou já pertencem a uma view (cauda ≈ entropia). A âncora de tamanho da D16 segue de pé e sem uso — o que falta é sinal, não dimensionamento.
 
