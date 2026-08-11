@@ -546,6 +546,34 @@ confiança de que os resultados não são propriedade de um mercado específico 
 particularmente no caso da proximidade, reprovada com o mesmo sinal invertido
 nas duas. Ainda assim, são dois mercados.
 
+**E a régua é calibrada em duas views, mas aplicada a quatro.** A estratégia
+final incorporou duas views adicionais — uma que lê a trajetória de juros do ano
+e outra que lê a incerteza no dia do anúncio —, e o multiplicador de confiança
+passou a ser calculado para elas também. Isso é uma extensão, não um resultado:
+nenhuma das duas passou pelo teste de monotonicidade, e os coeficientes da §5
+não são evidência sobre elas.
+
+O que sustenta a extensão é o objeto do que a régua mede. Os dois ingredientes
+são propriedades do **mercado** — quanto a distribuição se moveu e se o livro
+fecha —, não da view que o consome, e os mercados novos são mercados de bucket
+do mesmo Polymarket. A alternativa seria entregar confiança máxima onde nada foi
+qualificado, que é exatamente o erro que a regra de borda da §8 recusa. Duas
+consequências ficam registradas:
+
+- na view de incerteza de anúncio a régua morde bem mais (p95 de 1,55, contra
+  1,06 na 2.3), o que é coerente com ela ler o mercado no dia do evento — o mais
+  agitado da vida dele. A família de emprego, porém, **não tem veto de
+  liquidez** (a reconstrução de volume não cobre esses mercados), então seu
+  multiplicador não passou pelo mesmo crivo dos demais e não é comparável a eles;
+- na view de trajetória, a régua desativa **23,5% dos dias**, todos na cauda
+  final da série. A causa não é qualidade do mercado: dois buckets deixam de ser
+  cotados quando se tornam aritmeticamente impossíveis, e a regra que ignora
+  slots com faixa ausente (§7.3) passa a não encontrar par completo. A regra foi
+  escrita para buraco de coleta e o que ocorre aqui é extinção de bucket com o
+  mercado funcionando. **Foi mantida assim de propósito** — abrir exceção para
+  acomodar um caso é o começo de ajustar a régua a dados particulares —, e o
+  tratamento, se houver, cabe a quem é dono da view.
+
 **O nível global ainda não está fechado.** É o único parâmetro livre da régua,
 e será cravado uma única vez, junto com o teto de alavancagem, por decisão de
 risco declarada. A ordem importa: hoje o teto de alavancagem faz parte do

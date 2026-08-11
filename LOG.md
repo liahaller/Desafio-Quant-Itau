@@ -1175,8 +1175,10 @@ mesma classe do veto de liquidez.
 **Pendente:**
 - **Reunião 13/08: nível global + teto**, agora com quatro views na tabela.
 - Resposta do Felipe sobre a cristalização (6l) e sobre a 15g inativa em 23,5%.
-- Relatório: falta a revisão da dona, a seção de backtest e **a ressalva de que
-  a régua foi calibrada em duas views e aplicada a quatro** (6p).
+- Relatório: falta a revisão da dona e a seção de backtest. **A ressalva da 6p
+  (calibrada em duas views, aplicada a quatro) foi escrita na §9** ainda nesta
+  sessão, com as duas consequências medidas (a 15b morde mais e sem crivo em
+  payrolls; a 15g perde 23,5% dos dias por bucket extinto).
 - ⚠️ Aviso dele que toca o relatório: as views "neutras" nunca foram neutras
   (ΣP mediano +0,96 / +1,74 / +1,24). **Conferido: a minha seção não afirma
   neutralidade em ponto nenhum**, então não há correção a fazer do meu lado.
