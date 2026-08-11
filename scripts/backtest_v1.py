@@ -1100,6 +1100,56 @@ def main():
            "robusta à correção de favorite-longshot, e isso vale mais que o "
            "número central.\n"))
 
+    # --- limitações declaradas (D23b / D23d) ---------------------------------
+    # Obrigatórias pela D22: "sem os 3 maiores" e acerto de sinal têm de estar
+    # escritos, e a leitura do número da entrega não pode ficar por conta de
+    # quem lê. Os NÚMEROS de atribuição são citados do artefato que os mede
+    # (`Views_novas.md`) em vez de copiados: número copiado envelhece calado —
+    # foi assim que a linha "views ativas: 2.2 e 2.3" sobreviveu à D23. O que
+    # dá para derivar da própria rodada é derivado aqui.
+    pregoes_por_view = pd.Series(
+        [d["view"] for d in views_do_dia]).value_counts().sort_values(ascending=False)
+
+    linhas.append("\n## Limitações declaradas — leia antes de citar o número\n")
+    linhas.append(
+        "> Obrigatório pela **D22/D23b**, e escrito aqui porque o lugar de uma "
+        "limitação é o artefato que produz o número, não a seção de quem o cita.\n")
+    linhas.append(
+        "**1. O excesso da entrega NÃO é desempenho das views novas.** Medida uma a "
+        "uma contra o v1 anterior de duas views (`Dump/analises/Views_novas.md`), a "
+        "**15b** entrega quase tudo num único pregão — tirados os três maiores dias, "
+        "o Δ dela vira **negativo** — e a **15g** mede **negativo** no backtest. As "
+        "duas têm acerto de sinal de ~49%, ou seja cara ou coroa. Pela D22 sinal "
+        "fraco **não reprova** (a régua de admissão é mecanismo, não performance), "
+        "mas o número-título não pode ser lido como se as duas o tivessem "
+        "carregado.\n")
+    linhas.append("**2. Cobertura desigual — cada view vive num número diferente de "
+                  "pregões:**\n")
+    for view, n in pregoes_por_view.items():
+        linhas.append(f"- `{view}`: **{n} de {len(datas)}** pregões "
+                      f"({n / len(datas) * 100:.0f}%)")
+    linhas.append(
+        "\nA 15b vive só em dia de anúncio, **por desenho**; a 15g acaba junto com o "
+        "mercado de trajetória (não há mercado de 2026 no `data/`). Média de views "
+        f"por pregão: **{c['views ativas por dia (média)']:.2f}** de "
+        f"{len(pregoes_por_view)}.\n")
+    linhas.append(
+        "**3. O Ω é diagonal e não enxerga correlação entre views.** Com ρ +0,673 "
+        "entre o sinal-fonte da 15g e o da 2.2 (`Dump/analises/Ortogonalidade.md`), "
+        "isso deixou de ser hipotético: duas views correlacionadas entram como se "
+        "fossem informação independente, e o BL soma confiança que não existe. É "
+        "**limitação de modelo declarada** (D15a, D22e), não bug — o Ω da Lia dosa "
+        "cada view, não o par.\n")
+    linhas.append(
+        "**4. Horizonte do Q (D4.1) segue aberto, fora do caminho crítico.** Nenhuma "
+        "das quatro views tem `horizonte_q_dias ≠ 1`, então o empilhamento é "
+        "homogêneo aqui. O caso concreto medido está na view C, que o `stack_views` "
+        "**recusou** empilhar por Q acumulado em k dias — ela ficou fora do v1 "
+        "(D23f), e é o exemplo de que a limitação morde de verdade.\n")
+    linhas.append(
+        "**5. O conjunto de views está FECHADO em quatro** (D23e) e a **camada "
+        "tática está desligada** (12c). Nada nesta tabela mede sleeve.\n")
+
     Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")
 

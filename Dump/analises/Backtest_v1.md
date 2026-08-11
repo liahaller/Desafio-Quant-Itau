@@ -90,3 +90,25 @@ Medido no escopo de referência (**tilt ≤ 1**), com a semente da 2.3 recalcula
 
 **Faixa do excesso na varredura: +6.24 pp a +6.96 pp** — o sinal do resultado **não** depende do γ nesta janela.
 
+
+## Limitações declaradas — leia antes de citar o número
+
+> Obrigatório pela **D22/D23b**, e escrito aqui porque o lugar de uma limitação é o artefato que produz o número, não a seção de quem o cita.
+
+**1. O excesso da entrega NÃO é desempenho das views novas.** Medida uma a uma contra o v1 anterior de duas views (`Dump/analises/Views_novas.md`), a **15b** entrega quase tudo num único pregão — tirados os três maiores dias, o Δ dela vira **negativo** — e a **15g** mede **negativo** no backtest. As duas têm acerto de sinal de ~49%, ou seja cara ou coroa. Pela D22 sinal fraco **não reprova** (a régua de admissão é mecanismo, não performance), mas o número-título não pode ser lido como se as duas o tivessem carregado.
+
+**2. Cobertura desigual — cada view vive num número diferente de pregões:**
+
+- `2.3_fed`: **325 de 374** pregões (87%)
+- `2.2_inflacao`: **274 de 374** pregões (73%)
+- `B_trajetoria_propria`: **210 de 374** pregões (56%)
+- `incerteza_anuncio`: **27 de 374** pregões (7%)
+
+A 15b vive só em dia de anúncio, **por desenho**; a 15g acaba junto com o mercado de trajetória (não há mercado de 2026 no `data/`). Média de views por pregão: **2.24** de 4.
+
+**3. O Ω é diagonal e não enxerga correlação entre views.** Com ρ +0,673 entre o sinal-fonte da 15g e o da 2.2 (`Dump/analises/Ortogonalidade.md`), isso deixou de ser hipotético: duas views correlacionadas entram como se fossem informação independente, e o BL soma confiança que não existe. É **limitação de modelo declarada** (D15a, D22e), não bug — o Ω da Lia dosa cada view, não o par.
+
+**4. Horizonte do Q (D4.1) segue aberto, fora do caminho crítico.** Nenhuma das quatro views tem `horizonte_q_dias ≠ 1`, então o empilhamento é homogêneo aqui. O caso concreto medido está na view C, que o `stack_views` **recusou** empilhar por Q acumulado em k dias — ela ficou fora do v1 (D23f), e é o exemplo de que a limitação morde de verdade.
+
+**5. O conjunto de views está FECHADO em quatro** (D23e) e a **camada tática está desligada** (12c). Nada nesta tabela mede sleeve.
+
