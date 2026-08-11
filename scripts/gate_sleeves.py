@@ -215,6 +215,36 @@ def mu_do_sinal(retornos, eventos, janela, livro, sigma, ate_data):
     return estimate_drift_mu(retornos, eventos, janela, livro, ate_data, sigma, TAU)
 
 
+def referencias_g3(montador, datas, fl):
+    """O sinal que as views VIVAS já leem — o denominador do G3.
+
+    Transformação afim não muda correlação, então basta o NÍVEL da divergência
+    (a 2.2 multiplica por duration, a 2.3 demeana — nenhuma das duas mexe no ρ).
+
+    Função à parte para que qualquer candidato medido fora deste script (o
+    `gate_m3_acumulado.py`, por exemplo) compare contra EXATAMENTE as mesmas
+    séries. Duas cópias divergiriam na primeira view que entrar ou sair.
+    """
+    e_cpi = serie_por_dia(datas, lambda d: (
+        pmf_mean(*pmf_cpi_do_dia(montador, d), fl) if pmf_cpi_do_dia(montador, d) else None))
+    e_fomc = serie_por_dia(datas, lambda d: (
+        pmf_mean(*pmf_fomc_do_dia(montador, d), fl) if pmf_fomc_do_dia(montador, d) else None))
+    entropia_cpi = serie_por_dia(datas, lambda d: (
+        entropia_normalizada(pmf_cpi_do_dia(montador, d)[0])
+        if pmf_cpi_do_dia(montador, d) else None))
+    entropia_fomc = serie_por_dia(datas, lambda d: (
+        entropia_normalizada(pmf_fomc_do_dia(montador, d)[0])
+        if pmf_fomc_do_dia(montador, d) else None))
+    breakeven = serie_por_dia(datas, lambda d: montador._ultimo_antes(montador.breakeven, d))
+    e_ff = serie_por_dia(datas, lambda d: montador._ultimo_antes(montador.e_ff, d))
+    return {
+        "divergência da 2.2": (e_cpi * MESES_MENSAIS - breakeven).dropna(),
+        "divergência da 2.3": (e_fomc - e_ff).dropna(),
+        "entropia CPI (15b)": entropia_cpi,
+        "entropia FOMC (15b)": entropia_fomc,
+    }
+
+
 def main():
     # O console do Windows abre em cp1252 e engasga no Σ dos rótulos.
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -259,24 +289,8 @@ def main():
     cauda_fomc = serie_por_dia(
         datas, lambda d: (massa_de_cauda(pmf_fomc_do_dia(montador, d)[0])
                           if pmf_fomc_do_dia(montador, d) else None))
-    entropia_cpi = serie_por_dia(
-        datas, lambda d: (entropia_normalizada(pmf_cpi_do_dia(montador, d)[0])
-                          if pmf_cpi_do_dia(montador, d) else None))
-    entropia_fomc = serie_por_dia(
-        datas, lambda d: (entropia_normalizada(pmf_fomc_do_dia(montador, d)[0])
-                          if pmf_fomc_do_dia(montador, d) else None))
-
     # --- referências do G3: o sinal que as views já leem --------------------
-    # Transformação afim não muda correlação, então basta o NÍVEL da divergência
-    # (a 2.2 multiplica por duration, a 2.3 demeana — nenhuma das duas mexe no ρ).
-    breakeven = serie_por_dia(datas, lambda d: montador._ultimo_antes(montador.breakeven, d))
-    e_ff = serie_por_dia(datas, lambda d: montador._ultimo_antes(montador.e_ff, d))
-    referencias = {
-        "divergência da 2.2": (e_cpi * MESES_MENSAIS - breakeven).dropna(),
-        "divergência da 2.3": (e_fomc - e_ff).dropna(),
-        "entropia CPI (15b)": entropia_cpi,
-        "entropia FOMC (15b)": entropia_fomc,
-    }
+    referencias = referencias_g3(montador, datas, fl)
 
     # --- ticks: o Δ que UM centavo produz no sinal de cada candidato --------
     def tick_de_pmf(por_dia):
