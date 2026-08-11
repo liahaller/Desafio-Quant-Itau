@@ -322,7 +322,9 @@ um evento fantasma no arquivo.
 Recalculada a calibração com o calendário corrigido, **um único número mudou**:
 o da proximidade do evento, que passou de +0,09/+0,31 para +0,10/+0,37 na 2.2
 (mais reprovada do que antes). Estabilidade, coerência e portão saíram
-idênticos.
+idênticos. (Os dois valores são das rodadas daquele momento, que é o que isola
+o efeito do calendário; a tabela da §5 traz +0,11/+0,37 porque incorpora
+também a remoção da duplicata descrita na §8.)
 
 Não é coincidência, e é o argumento mais forte disponível a favor da régua
 escolhida: **os dois ingredientes que entraram não consultam o calendário.**
