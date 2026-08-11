@@ -173,4 +173,38 @@ mais bem comportado — livro que fecha, distribuição que se move pouco. Isso 
 à reunião de 13/08 como argumento de que a curva do nível precisa sair **por
 view**.
 
+---
+
+## 5. Adendo (escrito algumas horas depois) — payrolls entrou no meu caminho, e **não é pedido**
+
+Quando escrevi o que está acima, a estratégia tinha duas views. O Felipe avisou
+à noite que passou para **quatro** (D23 do branch dele), e uma delas — a 15b,
+"incerteza de anúncio" — lê PMF de **três** famílias: FOMC, CPI e **payrolls**.
+Como a régua agora sai para as quatro views, ela passou a tocar os teus
+`G9_payrolls_*`.
+
+**Consequência:** o G5 cobre `2.2`, `2.3` e `B`, e não os mercados de emprego —
+então **13 dias da 15b saem sem veto de liquidez**. Ficam com os dois fatores
+graduais só. Marquei `tem_portao = False` neles no CSV e declarei a limitação no
+relatório.
+
+**E eu não estou pedindo o G5 de payrolls.** Três razões, para o não ficar
+fundamentado em vez de parecer descuido:
+
+1. são **13 dias**, contra 601 da 2.2 e 801 da 2.3;
+2. o portão só **remove** decisões — a ausência dele não infla `c` nenhum, só
+   deixa passar dias que talvez devessem ser vetados;
+3. a reunião é 13/08 e reconstruir trades de mais uma família custa o teu tempo
+   num item de margem.
+
+Se sobrar tempo depois de 13/08 e tu quiseres fechar a simetria, eu uso; hoje
+seria trabalho teu para ganho pequeno, e prefiro dizer isso do que deixar um
+pedido implícito no ar.
+
+**Um número teu que talvez te interesse:** nesses mercados de emprego a régua dá
+o `c` mais alto das três famílias da 15b — mediano **1,22**, contra 1,09 no CPI
+e 1,03 no FOMC. Ou seja, o mercado de payrolls é o mais agitado dos três no dia
+do anúncio. É medição, não reclamação: o dado está bom, o mercado é que se mexe
+mais.
+
 — Lia
