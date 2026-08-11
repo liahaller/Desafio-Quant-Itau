@@ -72,6 +72,7 @@ from views_common import full_absorption_beta, lag_regression  # noqa: E402
 import tatica_drift_anuncio  # noqa: E402
 import tatica_drift_pos_fomc  # noqa: E402
 import tatica_premio_anuncios  # noqa: E402
+import tatica_sleeves  # noqa: E402
 from poly_preprocessing import pmf_mean  # noqa: E402
 
 PONTOS_PERCENTUAIS = 100.0
@@ -237,7 +238,7 @@ class MontadorV1:
                  decisoes_fomc=None, surpresas_cpi=None, tatica=(),
                  anuncios=None, m3=None, dgs1=None, taxa_base_m3=None,
                  views_novas=(), escala_incerteza="entropia",
-                 series_C=None, k_C=None):
+                 series_C=None, k_C=None, sleeves=()):
         self.retornos = retornos
         self.breakeven = breakeven
         self.dgs10 = dgs10
@@ -276,6 +277,16 @@ class MontadorV1:
         # informa qual k está medindo.
         self.series_C = series_C or {}
         self.k_C = k_C
+        # Camada tática v2 (D28): as sleeves transversais admitidas. Tupla
+        # vazia (default) mantém a entrega da 12c intocada — o `overlays`
+        # devolve None e nada é somado ao tilt.
+        self.sleeves = tuple(sleeves)
+        if self.sleeves:
+            tickers = sorted({a for s in self.sleeves for a in s.livro})
+            self._estendido = tatica_sleeves.pernas_neutras(retornos, tickers).dropna()
+            self._betas = tatica_sleeves.hedge_betas(retornos, tickers)
+        else:
+            self._estendido = self._betas = None
         self.surpresas_B = []             # histórico para a média expansiva da B
         self._cache_surpresa_poly = {}    # reuniao -> surpresa (depende do γ)
         self.divergencias = []            # histórico para a média expansiva (2.2)
@@ -703,6 +714,23 @@ class MontadorV1:
         self._cache_surpresa_poly[reuniao] = surpresa
         return surpresa
 
+    def _sleeves(self, data):
+        """Camada tática v2 — as sleeves transversais da D28, em UM overlay.
+
+        Um overlay só para as duas: elas compartilham o livro (`+XLP −XLK`), e
+        o item 11 manda somar os μ antes do `inv(δΣ)`. Dois `OverlayResult`
+        separados seriam somados pelo `apply_overlays` depois do
+        dimensionamento, que é a dupla contagem que o item existe para barrar.
+
+        A Σ da camada é a diagonal da tabela ESTENDIDA e sai de dentro do
+        módulo — não é a `sigma` amostral das views, que não tem as pernas `⊥`.
+        """
+        if not self.sleeves:
+            return None
+        return tatica_sleeves.sleeve_overlay(
+            list(ASSETS), self._estendido, self._betas, self.sleeves, data,
+            DELTA)
+
     def _drift_fomc(self, data, sigma):
         """Sleeve 1 — drift pós-FOMC com a surpresa medida no Polymarket."""
         if "fomc" not in self.tatica or not len(self.fomc):
@@ -760,7 +788,8 @@ class MontadorV1:
                  self._view_incerteza(data), self._view_B(data),
                  self._view_C(data)]
         overlays = [self._premio(data), self._drift(data),
-                    self._drift_fomc(data, sigma), self._drift_cpi(data, sigma)]
+                    self._drift_fomc(data, sigma), self._drift_cpi(data, sigma),
+                    self._sleeves(data)]
         return sigma, views, overlays
 
 
@@ -792,9 +821,49 @@ def decisoes_realizadas_fomc(dff, fomc, antes=3, depois=5):
 # a entrega e as varreduras medirem carteiras diferentes em silêncio.
 VIEWS_V1 = ("incerteza", "B")
 
+# As sleeves da camada tática v2, ADMITIDAS na D28 depois de passarem G0/G1/G2/
+# G3, o corte da amostra e — na M9 — o teste de mercado irmão. O `k` de cada
+# uma é o BLOCO declarado no item 3, não uma escolha do backtest: mudar esta
+# tupla olhando o resultado é exatamente o overfit que a régua 28.0 barra.
+#
+# ⚠️ **A ENTREGA vai com a camada LIGADA** (D28.13, dono, 2026-08-11), então o
+# `carregar` tem `sleeves=True` por default — mesma lógica do `VIEWS_V1`: é
+# este default que define "o v1" para as varreduras irmãs, e cravar a decisão
+# só no `main` faria a entrega e as varreduras medirem carteiras diferentes em
+# silêncio. Custa −2,16 pp de excesso no teto de referência
+# (`Camada_tatica_v2.md`); a decisão foi tomada com esse número na mesa.
+# (mercado, prefixo do arquivo do poly, lookbacks do bloco)
+SLEEVES_V2 = (
+    ("M4 recessão EUA 2025", "M4_recession_", (3, 5, 10)),
+    ("M9 Câmara",
+     "M9_midterms_2022_will-the-democratic-party-control-the-ho", (20,)),
+)
+
+
+def montar_sleeves(diretorio, retornos, declaradas=SLEEVES_V2):
+    """As `Sleeve` da D28, com a crença já na grade de pregões do mercado.
+
+    O livro NÃO é redigitado aqui: vem do `LIVROS_SETORIAIS` do
+    `gate_transversal`, que é onde ele foi declarado antes de medir. Uma cópia
+    literal nesta função poderia divergir do livro que aprovou a sleeve sem
+    nada acusar. Import local porque o `premissa_g1` importa o `carregar` deste
+    módulo — no nível de módulo o ciclo fecharia.
+    """
+    from gate_transversal import LIVROS_SETORIAIS  # noqa: E402
+    from premissa_g1 import em_pregoes, serie_binaria  # noqa: E402
+
+    saida = []
+    for mercado, prefixo, lookbacks in declaradas:
+        crenca = em_pregoes(serie_binaria(diretorio, prefixo))
+        saida.append(tatica_sleeves.Sleeve(
+            nome=mercado, crenca=crenca.reindex(retornos.index.union(crenca.index)),
+            livro=LIVROS_SETORIAIS[mercado][0], lookbacks=lookbacks))
+    return tuple(saida)
+
 
 def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=(),
-             views_novas=VIEWS_V1, escala_incerteza="entropia"):
+             views_novas=VIEWS_V1, escala_incerteza="entropia",
+             sleeves=True):
     """(retornos, montador, datas, w_mkt) — toda a plumbing de dado do v1.
 
     Separado do `main` para as varreduras irmãs (ex.: `curva_c.py`) rodarem o
@@ -850,7 +919,9 @@ def carregar(raiz, orcamentos=None, gamma=FL_GAMMA_V1, tatica=(),
                           surpresas_cpi=surpresas_cpi, tatica=tatica,
                           anuncios=anuncios, m3=m3, dgs1=dgs1,
                           taxa_base_m3=taxa_base, views_novas=views_novas,
-                          escala_incerteza=escala_incerteza)
+                          escala_incerteza=escala_incerteza,
+                          sleeves=montar_sleeves(diretorio, retornos)
+                          if sleeves else ())
 
     # Começa quando as duas condições existem: Σ com janela cheia e PMF de CPI.
     primeira_pmf = min(probs.index.min() for probs, _, _ in pmfs.values())
