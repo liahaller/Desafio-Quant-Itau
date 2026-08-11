@@ -124,10 +124,10 @@ tercil de confiança. Empates resolvem-se pela forma com menos parâmetros.
 
 | | View 2.3 (FOMC) | View 2.2 (CPI) |
 |---|---|---|
-| Mercados | 18 reuniões | 19 mercados-mês |
-| Slots (grade 12h) | 3.905 | 1.198 |
-| Slots (grade 24h) | 1.952 | 562 |
-| Volume por slot | **indisponível** | 111/111 mercados, 6.360 slots |
+| Mercados | 18 reuniões (76 faixas) | 18 mercados-mês (111 faixas) |
+| Slots (grade 12h) | 3.905 | 1.142 |
+| Slots (grade 24h) | 1.952 | 534 |
+| Volume por slot | 76/76 faixas, 1.242 slots julgáveis | 111/111 faixas, 1.142 slots julgáveis |
 
 Preço: endpoint `/prices-history` do CLOB do Polymarket, passo nativo de 12h.
 Volume: reconstruído trade a trade pela Data API (`/trades`), agregado em
@@ -152,16 +152,25 @@ negativo é melhor** — significa que confiança alta antecede erro pequeno.
 
 | Ingrediente | 2.3 (FOMC) | 2.2 (CPI) | Monotônica | Veredito |
 |---|---|---|---|---|
-| Estabilidade (variação total) | −0,31 a −0,40 | **−0,46** | ✅ | **entra** |
-| Estabilidade (\|ΔE\|) | −0,29 a −0,36 | −0,42 | ✅ | perde no desempate |
-| Coerência do livro | −0,15 a −0,18 | **−0,21 a −0,31** | ✅ | **entra** |
-| Portão de volume (como score) | — | −0,03 a +0,14 | — | reprovado |
-| Proximidade do evento | +0,09 a +0,22 | +0,10 a +0,37 | ✗ | **reprovado** |
+| Estabilidade (variação total) | **−0,40** | **−0,47** | ✅ | **entra** |
+| Estabilidade (\|ΔE\|) | −0,38 | −0,43 | ✅ | perde no desempate |
+| Coerência do livro | −0,15 a −0,18 | **−0,23 a −0,32** | ✅ | **entra** |
+| Portão de volume (como score) | −0,10 a +0,19 | −0,11 a +0,14 | — | reprovado |
+| Proximidade do evento | +0,07 a +0,22 | +0,11 a +0,37 | ✗ | **reprovado** |
 
 Cada faixa cobre as combinações testadas (2 grades temporais × 2 horizontes de
 erro × 3 janelas); os valores em destaque são a melhor configuração de cada
 ingrediente, com o alvo em variação total. A escolha entre as duas formas de
 estabilidade é sensível ao alvo, e isso está tratado na §9.
+
+As duas views rodam com **os quatro ingredientes**. Até 10/08 a 2.3 rodava com
+dois, porque a reconstrução de volume não alcançava os mercados do FOMC; a
+entrega da chave de junção e das 76 faixas fechou essa lacuna, e a rodada
+completa **confirmou a régua sem alterar nenhuma escolha**. A regra que
+decidiria o contrário foi registrada e versionada *antes* de a rodada existir:
+concordância confirmaria, discordância seria declarada como limitação e não
+mudaria a forma — porque trocar a régua ao ver a segunda view é escolher depois
+do dado, e é exatamente o que a trava do §3 proíbe.
 
 Parâmetros que o dado escolheu: **janela de 5 variações** (vence 10 e 20 em
 todos os cortes das duas views) e **grade de 12h** (vence a de 24h em todos).
@@ -192,6 +201,19 @@ negociação:
 O congelamento existe (é 3,7× mais frequente sem negociação, exatamente como
 previsto), mas é raro demais em termos absolutos para explicar uma correlação
 de −0,46.
+
+**O mesmo teste, repetido na segunda view.** Com o volume do FOMC disponível, a
+verificação que sustentava o ingrediente numa view só foi repetida na outra, e
+dá o mesmo veredito: −0,4005 em todos os slots contra −0,3960 apenas nos slots
+com negociação — um movimento de 0,005. A suspeita da §7.1 está encerrada nas
+duas views, e não por analogia.
+
+Vale registrar o que **não** se sustentaria sem esse teste. Na 2.3, os slots
+sem negociação têm erro futuro médio quatro vezes menor que os demais (0,0037
+contra 0,0147), que é precisamente a assinatura do artefato temido: mercado
+parado prevê mercado parado. O que desarma a objeção não é a ausência do
+mecanismo — é a raridade dele: são 24 slots contra 1.139. O mecanismo é real e
+irrelevante em volume, e essas são coisas diferentes que só a medição separa.
 
 ### Robustez: os vereditos dependem do corte escolhido?
 
@@ -248,6 +270,47 @@ Três leituras, todas favoráveis à régua escolhida:
    desempate por parcimônia foi a decisão certa, e não um recurso para
    escapar de uma comparação inconclusiva: quando o alvo deixa de favorecer
    qualquer uma delas, não há vencedora.
+
+**O mesmo alvo na segunda view — e o que ele revela sobre o próprio alvo.** O
+desfecho da 2.2 é o **CPI mensal realizado** (variação mensal com ajuste
+sazonal, na versão publicada no dia do anúncio, do ALFRED — não a série
+revisada, que em dois meses cairia no bucket errado). A derivação foi validada
+como a do DFF: o valor publicado cai no bucket que o mercado resolveu em **15
+de 15** meses, incluindo as três pontas abertas.
+
+| Ingrediente | 2.3: desfecho (DFF) | 2.2: desfecho (CPI) |
+|---|---|---|
+| Estabilidade (variação total) | −0,44 a −0,46 | −0,05 a −0,13 |
+| Estabilidade (\|ΔE\|) | −0,43 a −0,47 | **+0,11 a +0,26** |
+| Coerência do livro | −0,45 a −0,46 | −0,02 a +0,01 |
+| Proximidade do evento | +0,29 a +0,72 | +0,16 a +0,25 |
+
+A leitura honesta tem duas partes, e a segunda é mais importante que a primeira.
+
+**A magnitude despenca — e a causa é medível, não especulativa.** No FOMC o
+mercado converge: no último slot, a probabilidade no bucket que de fato
+resolveu tem mediana **0,97**, e 83% das reuniões terminam acima de 0,90. No
+CPI o mercado não converge: mediana **0,39**, e apenas 7% dos meses passam de
+0,90. Onde o desfecho é antecipável, "quanta massa ficou fora do resultado"
+decai ao longo da vida do mercado e discrimina bem; onde a incerteza é
+irredutível até a publicação, esse alvo é dominado pelo tamanho da surpresa do
+mês — uma propriedade do evento, não da qualidade do livro naquele instante.
+O alvo perde poder na 2.2, e isso é uma limitação **do alvo**, não da régua.
+
+**O que sobrevive é uma distinção, e ela desempata o que faltava.** A variação
+total mantém o sinal correto nos quatro cortes da 2.2; a \|ΔE\| **inverte** o
+sinal nos quatro. Na 2.3 as duas empatavam, e a escolha da régua foi feita por
+parcimônia, explicitamente sem evidência estatística (§9). Num alvo
+independente e numa view diferente, a candidata escolhida é a única que não
+inverte. É pouca magnitude e é evidência fraca — mas aponta na direção da
+escolha já registrada, e não contra ela.
+
+Nenhum dos dois meses em que o resultado existe apenas como resolução do
+mercado (o CPI que o *shutdown* de 2025 impediu de ser publicado, e o mês
+seguinte, sem base de comparação) foi usado. Ambos têm desfecho declarado pelo
+oráculo do Polymarket e nenhum número independente, e aceitá-los reintroduziria
+por uma porta lateral a circularidade que este alvo existe para remover — nos
+dois meses mais anômalos da amostra, ainda por cima.
 
 ### Um teste não planejado: o calendário estava errado
 
@@ -379,14 +442,14 @@ fator de coerência é bilateral; `nível = 0` recupera He-Litterman.
 
 Testes sintéticos, porém, não provam que o contrato com o pipeline funciona.
 A régua foi executada de ponta a ponta sobre o bloco de diagnóstico **real**,
-em 601 decisões da view 2.2:
+em 573 decisões da view 2.2:
 
 | | |
 |---|---|
-| Views ativas | 543 (90,3%) |
+| Views ativas | 515 (89,9%) |
 | Inativas por veto de liquidez | 37 |
 | Inativas por ausência de leitura mensurável | 21 |
-| `c` mínimo · mediana · p95 · máximo (nível = 1) | 1,0016 · 1,0495 · 1,2426 · 2,7653 |
+| `c` mínimo · mediana · p95 · máximo (nível = 1) | 1,0016 · 1,0496 · 1,2488 · 2,7653 |
 
 Nenhum `c` abaixo de 1 e nenhum `NaN` em view ativa, como a forma garante.
 
@@ -409,16 +472,32 @@ ambos invertiam o sinal da régua em silêncio:
    ingredientes: o score de estabilidade era `−desvio`, e portanto `0,0` era o
    **melhor** valor possível.
 
+Um terceiro apareceu por um caminho diferente, e vale registrar o caminho. Ao
+conciliar com o pipeline quantos mercados de CPI existiam, sobrou um: nós
+contávamos 19 e o dado tinha 18. A divergência era pequena o bastante para ser
+tratada como detalhe de contagem — e era o sintoma de um mês (julho de 2025)
+entrando **duas vezes** na calibração, sob dois rótulos diferentes, com os
+mesmos identificadores de mercado, os mesmos 56 instantes e diferença máxima
+zero entre as leituras. A identidade de um mercado passou a ser o identificador
+do contrato, não o nome do arquivo. Removida a duplicata, todos os coeficientes
+melhoram ligeiramente (o principal vai de −0,4615 a −0,4717) e **nenhuma
+ordenação muda** — o efeito era pequeno, mas a lição não é sobre o tamanho do
+efeito: uma discrepância de contagem entre duas pessoas olhando a mesma base é
+barata de investigar e cara de ignorar.
+
 ---
 
 ## 9. Limitações declaradas
 
-**A view 2.3 (FOMC) ainda não tem portão de liquidez.** A reconstrução de
-volume cobre 111 mercados de CPI e apenas 1 dos 76 do FOMC, e não há chave
-comum entre as duas bases. Os números da 2.3 na §5 são, portanto, provisórios
-no mesmo sentido descrito na §7.1 — o teste condicional que valida o
-ingrediente na 2.2 não pôde ser repetido nela. A régua entregue é a mesma; o
-que falta é a verificação independente na segunda view.
+**O portão de liquidez julga menos slots na 2.3 do que na 2.2.** A lacuna
+anterior — a reconstrução de volume não alcançava os mercados do FOMC — foi
+fechada, e as duas views rodam com os quatro ingredientes. O que resta é
+desigual: 42 das 76 faixas do FOMC atingiram o limite de coleta da API, e um
+slot com qualquer faixa truncada sai como volume desconhecido, que **não veta**
+(§7.1). Na prática, o portão desativa 4,0% das decisões da 2.2 e 1,2% das da
+2.3. O truncamento morde os slots antigos e não a janela de decisão de cada
+reunião, o que limita o dano; ainda assim, o veto de liquidez é uma verificação
+mais fraca na 2.3.
 
 **Os dois ingredientes que entraram correlacionam +0,37 a +0,40 entre si.**
 Não é a dupla contagem mecânica que a renormalização eliminou (§2), mas também
@@ -433,21 +512,34 @@ por evidência.** Na view 2.3 a variação total vencia em todos os cortes; na
 que favoreça qualquer das duas, elas ficam a 0,002–0,017 uma da outra e a
 ordem troca entre grades. A escolha continua sendo do critério de parcimônia
 do protocolo — o que mudou é que agora se sabe que não havia vencedora a ser
-encontrada.
+encontrada. O alvo por desfecho na 2.2 é o único corte em que as duas se
+separam de forma consistente, e separa a favor da escolhida; é evidência fraca
+em magnitude, e está registrada como tal, não como confirmação.
 
 **A janela ideal difere entre os dois alvos.** A régua usa 5 variações, que
 vence com folga no alvo de variação futura nas duas views. No alvo por
 desfecho, a janela de 10 fica ligeiramente à frente na 2.3 (−0,458 contra
-−0,443). A diferença é de 0,015 e existe só na view que ainda não tem portão
-de liquidez; a janela de 5 foi mantida por ser o critério declarado antes do
-teste. Fica registrado como ponto a revisitar quando a 2.3 tiver portão — e
-declarado agora, e não depois de olhar o backtest, justamente porque a regra
-é que a forma não se ajusta a resultado de carteira.
+−0,443), e na 2.2 a de 20 fica à frente na grade de 24h. As diferenças são
+pequenas e não apontam todas para a mesma alternativa; a janela de 5 foi
+mantida por ser o critério declarado antes do teste. Fica registrado — e
+declarado agora, não depois de olhar o backtest, justamente porque a regra é
+que a forma não se ajusta a resultado de carteira.
 
-**O alvo por desfecho só existe para a 2.3.** Ele depende do resultado
-realizado, que para o FOMC vem da taxa efetiva (DFF, já no pipeline) mas para
-o CPI exigiria o índice publicado pelo BLS, que não está. A verificação de
-não circularidade da §5, portanto, foi feita numa view só.
+**O alvo por desfecho tem pouco poder discriminante na 2.2.** A verificação de
+não circularidade existe hoje nas duas views, o que não era o caso até
+10/08/2026. Mas os coeficientes na 2.2 são pequenos (−0,05 a −0,13 para o
+ingrediente principal), pela razão medida na §5: o mercado de CPI não converge
+antes da publicação, então a massa alocada fora do resultado mede sobretudo o
+tamanho da surpresa do mês. A conclusão que essa verificação sustenta na 2.2 é
+de **sinal** — qual candidata não inverte —, não de magnitude.
+
+**Dois meses de CPI ficam fora dessa verificação, e um mercado do universo tem
+resolução sem número.** O *shutdown* de 2025 impediu a publicação de um CPI que
+o mercado mesmo assim resolveu, e deixou o mês seguinte sem base para a
+variação mensal. Os dois foram excluídos do alvo por desfecho por não terem
+número independente. Vale notar o que isso implica para o projeto além do Ω: há
+mercado no universo cujo desfecho existe apenas como decisão de um oráculo, sem
+contrapartida verificável em série oficial.
 
 **Duas views, não vinte.** A replicação entre 2.2 e 2.3 é o que dá alguma
 confiança de que os resultados não são propriedade de um mercado específico —
@@ -471,6 +563,28 @@ o que não é uma escolha, é uma impossibilidade. Ou seja: o Ω separa mercado
 confiável de mercado ruim, e não substitui o limitador de tamanho da
 carteira. Os dois têm de conviver, e é por isso que o nível e o teto se
 decidem na mesma conversa.
+
+**E o efeito é muito desigual entre as duas views**, o que importa para essa
+decisão. Em confiança relativa, por view (decisões ativas):
+
+| Nível | 2.2 mediana | 2.2 pior | 2.3 mediana | 2.3 pior |
+|---|---|---|---|---|
+| 1 | 0,950 | 0,362 | 0,988 | 0,817 |
+| 3 | 0,858 | 0,047 | 0,965 | 0,545 |
+| 5 | 0,775 | 0,006 | 0,942 | 0,364 |
+
+O mercado de decisão do Fed tem livro que fecha e distribuição que se move
+pouco, então a régua quase não o modula: com `nível = 5`, o pior dia da 2.3
+ainda está onde a 2.2 já se encontra com `nível = 1`. Isso **não** é defeito —
+é a régua dizendo que aquele mercado é bom —, mas implica que escolher o nível
+pelo efeito agregado subestima quanto ele morde a view de inflação, porque a
+outra dilui a média. A recomendação é que a curva de decisão seja lida por
+view; um nível **por** view seria outra coisa, e criaria dois botões onde o
+protocolo pediu um.
+
+Diferentemente da versão anterior desta tabela, os números acima já incluem o
+veto de liquidez nas duas views. A suavidade da 2.3 não era efeito da falta do
+portão: com ele, apenas 1,2% das decisões saem por liquidez.
 
 ---
 
