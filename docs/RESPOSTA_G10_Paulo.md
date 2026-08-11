@@ -112,7 +112,7 @@ Arquivo salvo:          data/raw/cpi_release_dates_fred.csv   (NÃO sobrescrevi 
 Nº de linhas:           953
 Janela:                 1949-03-24 → 2026-12-10
 Colunas:                release_date, time_et, mes_referencia, fonte
-Bate com o CSV atual?:  12/15 datas idênticas ao FRED; 3 DIVERGEM (detalhe abaixo)
+Bate com o CSV atual?:  13/15 concordam (12 idênticas + a de 2025-01-13 após corrigir o typo-de-ano); 2 DIVERGEM pelo shutdown 2025 (detalhe abaixo)
 ```
 
 - **`release_id` confirmado por nome exato**, não chutado: listei `/fred/releases` e o
@@ -123,22 +123,28 @@ Bate com o CSV atual?:  12/15 datas idênticas ao FRED; 3 DIVERGEM (detalhe abai
   `cpi_release_dates_fred.csv`. Trocar o arquivo que o backtest lê é decisão do grupo.
 - **~250 divulgações desde 2003** confirmado dentro das 953 (a série vai até 1949).
 
-### As 3 divergências — você pediu para saber ANTES de trocar o arquivo
+### As 2 divergências reais + 1 typo-de-ano — você pediu para saber ANTES de trocar o arquivo
 
-Todas são do CSV atual (origem: regras do Polymarket) contra o FRED oficial. Nas três, o
-FRED **não** tem a data que está hoje no arquivo:
+Todas são do CSV atual (origem: regras do Polymarket) contra o FRED oficial. **Duas** são
+divergências reais (o FRED não tem a data do arquivo); a terceira **não** é divergência —
+é typo-de-ano, e com o ano corrigido o FRED **confirma** a data:
 
 | data no CSV atual | ref (atual) | o que o FRED tem | natureza |
 |---|---|---|---|
-| `2025-01-13` | December (2024)¹ | **`2025-01-15`** | data do release de dez/2024 diverge em **2 dias** |
+| `2025-01-13` | December 2025¹ | **`2026-01-13`** (mesmo dia, +1 ano) | **NÃO é divergência**: typo-de-ano do CSV. Corrigido o ano, bate EXATO com o FRED¹ |
 | `2025-10-15` | September 2025 | **`2025-10-24`** | CPI de set/2025 **atrasado +9 dias** pelo shutdown de 2025 |
 | `2025-11-13` | October 2025 | **nenhuma em nov/2025** | CPI de out/2025 **não sai em nov** no FRED — pula de `2025-10-24` direto p/ `2025-12-18` (shutdown) |
 
-¹ O CSV atual escreve `December 2025` nessa linha (aparente typo de ano; o release de
-jan/2025 cobre o CPI de **dezembro de 2024**). Não mexi no arquivo atual — só reporto.
+¹ O CSV atual escreve `December 2025` na linha `2025-01-13`. Como uma divulgação nunca
+precede o mês de referência, o que está errado é o **ano da data**: `2025-01-13` + 1 ano =
+**`2026-01-13`**, e o FRED lista textualmente `2026-01-13 → December 2025`. Bate exato — não
+é diferença de 2 dias contra o release de dez/2024 (esse é outro release, `2025-01-15`, que
+nunca esteve no nosso arquivo por não ter mercado). Não mexi no arquivo atual — só reporto.
 
-**Leitura:** as 12 que batem são o miolo estável. As 3 que divergem são exatamente as
-tocadas pelo **shutdown de 2025** (set→dez) e uma diferença de 2 dias numa data antiga.
+**Leitura:** 13 das 15 concordam com o FRED — 12 idênticas e a de `2025-01-13` batendo
+depois de corrigir o typo-de-ano. As **2 divergências reais** são exatamente as tocadas
+pelo **shutdown de 2025** (`10-15→10-24` e o buraco de `11-13`). (No calendário já tratado,
+com a linha de `11-13` removida como buraco declarado, sobram 14 linhas e as 14 batem.)
 **Divergência muda o dia do evento** — por isso está aqui como aviso, não como troca.
 Trocar `cpi_release_dates.csv` pelo `_fred.csv` é decisão do grupo.
 
