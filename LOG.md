@@ -1086,7 +1086,12 @@ mesma classe do veto de liquidez.
 - Os dois `PEDIDO_Paulo_*.md` estão **atendidos**; nenhum pedido novo foi feito.
 - Dados dos outros branches em `%TEMP%\omega_lia` (atualizados de
   `origin/Paulo` em `9ac04ba`).
-- `git push`: **pendente** nesta sessão.
+- `git push` da branch `Lia`: **feito**, `a58be51..7fc4b39` (5 commits — a regra
+  prévia da 6m, a calibração da 2.3 com o alvo da 2.2, a série de `c` regerada,
+  o relatório e este fechamento). Só na `Lia`; a `main` segue em `d4b9a28` e a
+  divergência de numeração do `Decisoes_pendentes.md` entre os três branches
+  continua sem resolução. **A ordem dos commits é parte do resultado:**
+  `95ebd08` (regra declarada) precede `1a9386d` (rodada que produziu o número).
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
