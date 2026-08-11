@@ -24,10 +24,15 @@ O que sai, por linha (`data`, `view`, `mercado`):
 - `selecionado` — é este o mercado que a view consome nesta data, pela regra
   do backtest dele (abaixo).
 
-⚠️ **A 2.3 sai SEM portão de volume.** O G5 cobre 1 mercado de FOMC (contra os
-111 do CPI) — `PEDIDO_Paulo_G5_fomc.md`. A coluna `tem_portao` marca isso linha
-a linha: onde ela é False, `ativa` só pode cair por ausência de par, e o `c`
-não foi qualificado por liquidez. O número da 2.3 continua provisório.
+**As duas views saem COM portão de volume desde 10/08/2026.** O Paulo entregou
+o G5 do FOMC (`conditionId` no parquet + as 76 faixas × 18 reuniões), que era o
+bloqueio do `PEDIDO_Paulo_G5_fomc.md`. A coluna `tem_portao` continua no CSV,
+agora `True` nas duas views — ela marca por linha se houve leitura de volume
+com que qualificar o `c`.
+
+⚠️ Na 2.3 o portão **julga menos slots** que na 2.2: 42 das 76 faixas bateram o
+cap de 20k trades do `/trades`, e slot com faixa truncada sai `NaN` (não veta,
+pela 6b). O truncamento morde os slots antigos, não o run-up da reunião.
 
 **Regra de seleção do mercado, lida do módulo do Felipe, não inventada aqui.**
 Em 80 das 496 datas da 2.2 há mais de um mercado-mês vivo (2 ou 3), então
@@ -49,7 +54,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from lia.calibracao_omega import agregar_volume_slot
 from lia.omega import calcular_omega, fator_coerencia, fator_estabilidade, pmf_da_serie_janela
+from lia.rodar_calibracao_cpi import _prefixos_sem_duplicata
 
 # Calibrados na 6g; sem default no módulo de lógica, explícitos aqui.
 JANELA_VARIACOES = 5
@@ -86,11 +93,7 @@ def mercados_cpi(raiz, loader):
         for fonte, data in zip(releases.fonte, releases.release_date)
     }
     diretorio = Path(raiz) / "data" / "raw" / "clob_exploracao"
-    prefixos = sorted({
-        arquivo.name.split("_will-")[0]
-        for arquivo in diretorio.glob("*.json")
-        if "_will-" in arquivo.name and "inflation" in arquivo.name
-    })
+    prefixos = _prefixos_sem_duplicata(diretorio, slug_release)
     casados = {}
     for prefixo in prefixos:
         data = next((d for slug, d in slug_release.items() if prefixo.endswith(slug)), pd.NaT)
@@ -100,20 +103,44 @@ def mercados_cpi(raiz, loader):
 
 
 def volume_por_slot(raiz, view):
-    """G5 agregado por SOMA das faixas: `{(mercado, slot): notional_usd}`.
+    """G5 da 2.2 agregado por SOMA das faixas: `{(mercado, slot): notional}`.
 
     Soma, não mínimo (6g): o mínimo veta 47% dos slots de 12h porque é comum
-    uma faixa não negociar em meio dia. `min_count=1` preserva a separação
-    `0` × ausente — zero veta, ausente não.
+    uma faixa não negociar em meio dia. A agregação é a mesma da calibração
+    (`agregar_volume_slot`), que preserva `0` × `NaN` no nível do slot.
     """
     caminho = Path(raiz) / "data" / "raw" / "g5_volume_no_tempo.csv"
     g5 = pd.read_csv(caminho, parse_dates=["slot_utc"])
     g5 = g5[g5.view == view].copy()
     if g5.empty:
         return pd.Series(dtype=float)
-    g5["prefixo"] = g5.mercado.str.split("_will-").str[0]
+    g5["evento"] = g5.mercado.str.split("_will-").str[0]
     g5["slot_utc"] = g5.slot_utc.dt.tz_localize("UTC")
-    return g5.groupby(["prefixo", "slot_utc"]).notional_usd.sum(min_count=1)
+    return agregar_volume_slot(g5).soma
+
+
+def volume_fomc_por_slot(raiz):
+    """G5 da 2.3 agregado por reunião: `{(evento_id, slot): notional}`.
+
+    A chave é o `conditionId` que o Paulo pôs no parquet em 10/08 — a junção
+    por título dava 0 em comum, e era esse o bloqueio. O mapa
+    `conditionId → evento_id` sai do próprio parquet, então volume e PMF são
+    atribuídos à mesma reunião pela mesma fonte.
+    """
+    caminho = Path(raiz) / "data" / "raw" / "g5_volume_no_tempo.csv"
+    parquet = pd.read_parquet(Path(raiz) / "data" / "polymarket_fed_reunioes.parquet")
+    mapa = parquet.drop_duplicates("conditionId").set_index("conditionId")
+    mapa = mapa.evento_id.astype(int)
+
+    g5 = pd.read_csv(caminho, parse_dates=["slot_utc"])
+    g5 = g5[g5.view.astype(str) == "2.3"].copy()
+    if g5.empty:
+        return pd.Series(dtype=float)
+    g5["evento"] = g5.conditionId.map(mapa)
+    if g5.evento.isna().any():
+        raise ValueError("G5 da 2.3 tem conditionId fora do parquet")
+    g5["slot_utc"] = g5.slot_utc.dt.tz_localize("UTC")
+    return agregar_volume_slot(g5).soma
 
 
 def linha_da_decisao(loader, pmf, slot, view, volume, tem_portao):
@@ -176,15 +203,18 @@ def serie_cpi(raiz, loader):
 def serie_fomc(raiz, loader):
     """Linhas da view 2.3, uma por (slot de decisão, reunião).
 
-    Sem portão: o volume entra NaN, que pela 6b **não veta** — é ignorância
-    nossa sobre a liquidez, não iliquidez medida.
+    Com portão desde 10/08. Onde o G5 não alcança (slot com faixa truncada
+    pelo cap de 20k), o volume entra `NaN`, que pela 6b **não veta** — é
+    ignorância nossa sobre a liquidez, não iliquidez medida.
     """
     eventos = loader.load_fomc_pmf(Path(raiz) / "data" / "polymarket_fed_reunioes.parquet")
+    volumes = volume_fomc_por_slot(raiz)
     linhas = []
     for evento, (probs, _valores, _abertos, reuniao) in eventos.items():
         for slot in probs.index[probs.index.hour == 12]:
-            linha = linha_da_decisao(loader, probs, slot, VIEW_23, np.nan,
-                                     tem_portao=False)
+            volume = volumes.get((evento, slot), np.nan)
+            linha = linha_da_decisao(loader, probs, slot, VIEW_23, volume,
+                                     tem_portao=True)
             linha["mercado"] = f"FOMC_{evento}"
             linha["evento"] = pd.Timestamp(reuniao)
             linhas.append(linha)
@@ -195,9 +225,13 @@ def marcar_selecionado(tabela):
     """`selecionado`: o mercado do PRÓXIMO evento em cada (data, view).
 
     Regra do `_view_2_2`/`_view_2_3` do backtest do Felipe — `min` dos eventos
-    ainda não ocorridos. Empate (dois mercados para o mesmo evento, caso do
-    `M1_cpi_monthly` × `CPI_july-inflation-monthly`) é resolvido pelo nome, de
-    forma determinística, e a coluna `mercado` deixa a escolha auditável.
+    ainda não ocorridos. Empate remanescente é resolvido pelo nome, de forma
+    determinística, e a coluna `mercado` deixa a escolha auditável.
+
+    O empate que a versão de 10/08 citava aqui (`M1_cpi_monthly` ×
+    `CPI_july-inflation-monthly`) **não era empate entre dois mercados**: eram
+    os mesmos tokenIds sob dois rótulos, e jul/2025 entrava duas vezes. Agora
+    a duplicata é removida na leitura (`_prefixos_sem_duplicata`).
     """
     futuro = tabela.evento >= tabela.data
     candidatos = tabela[futuro].sort_values(["data", "view", "evento", "mercado"])
