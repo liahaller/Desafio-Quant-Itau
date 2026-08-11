@@ -1086,7 +1086,7 @@ mesma classe do veto de liquidez.
 - Os dois `PEDIDO_Paulo_*.md` estão **atendidos**; nenhum pedido novo foi feito.
 - Dados dos outros branches em `%TEMP%\omega_lia` (atualizados de
   `origin/Paulo` em `9ac04ba`).
-- `git push` da branch `Lia`: **feito**, `a58be51..7fc4b39` (5 commits — a regra
+- `git push` da branch `Lia`: **feito**, `a58be51..be8ff96` (5 commits — a regra
   prévia da 6m, a calibração da 2.3 com o alvo da 2.2, a série de `c` regerada,
   o relatório e este fechamento). Só na `Lia`; a `main` segue em `d4b9a28` e a
   divergência de numeração do `Decisoes_pendentes.md` entre os três branches
@@ -1118,3 +1118,91 @@ mesma classe do veto de liquidez.
   medir *por que* o alvo por desfecho fica fraco na 2.2 em vez de reportar o
   coeficiente baixo, o que transformou um resultado ruim numa limitação
   explicada e localizada no alvo.
+
+
+---
+
+## 2026-08-10 (3ª sessão) — Lia (a régua estendida às quatro views)
+
+**Feito:**
+- **Conferi que a mensagem do Felipe era uma REESCRITA** (`070d3bd`, 20:41),
+  não uma nova: a `RESPOSTA6` dele ganhou o bloco das quatro views, o pedido em
+  `{1,3,5}` e o formato por pregão. Convenção, curva, volume e cristalização
+  são o texto que eu já havia respondido de manhã. Sem essa conferência eu teria
+  respondido duas vezes as mesmas cinco seções.
+- **O pedido crítico dele encolheu para uma linha:** o nível **é** reescalável,
+  porque é expoente (`c(nivel) = c_nivel1 ** nivel`). As três séries em
+  `{1,3,5}` que ele pediu já estavam contidas na que entreguei de manhã — ele
+  reescreveu a mensagem antes de ler a entrega. Nenhum trabalho novo aí.
+- **Estendida a régua às duas views novas** (decisão da dona, 6p): a 15g
+  `B_trajetoria_propria` e a 15b `incerteza_anuncio`. `c_por_decisao.csv` vai a
+  2.795 linhas nas quatro chaves exatas do `diagnostics["view"]`. **A 2.2 e a
+  2.3 saem idênticas às publicadas de manhã** — conferido coluna a coluna.
+- **O casamento data→mercado da 15b foi IMPORTADO do módulo do Felipe**
+  (`premio_condicional.PREFIXO_FOMC`, `prefixos_cpi`, `mercados_de_payroll`),
+  não reimplementado. Descoberta que só sai lendo o código: a família "fomc" da
+  15b lê o **mesmo mercado M3 da 15g**, não o parquet de reuniões. Adivinhar
+  teria dado `c` do mercado errado sem sintoma nenhum.
+- **Formato escolhido: matriz cheia**, não dict esparso — e não é preferência.
+  O esparso exigiria eu reproduzir quais views estão vivas em cada pregão, que
+  depende da cascata dele; ele filtra em uma linha.
+- **2 testes novos** (seleção de view de mercado único, com `evento` NaT), **81
+  na suíte**.
+
+**Dois achados da extensão, ambos avisados a ele:**
+- **A régua desativa a 15g em 81 de 345 dias (23,5%)**, todos entre 20/09 e
+  10/12/2025, com a janela **cheia**. Causa: os buckets "nenhum corte" e "1
+  corte" param de ser cotados a partir de set/2025 porque viraram
+  **impossíveis**. A 6e foi escrita para buraco de coleta, e isto é extinção de
+  bucket com o mercado funcionando. **Decisão da dona: manter a régua como
+  está** — a view sai inativa e o Felipe decide do lado dele, porque a view é
+  dele. Não se abre exceção na régua para acomodar um caso.
+- **A 15b é a view em que a régua mais morde** (p95 1,55 × 1,06 da 2.3), e a
+  família mais penalizada é **payrolls** (`c` mediano 1,22), que é a única
+  **sem portão** — o G5 cobre 2.2, 2.3 e B, não emprego. Avisado para ele não
+  comparar esse 1,22 com o 1,03 da 2.3: não passou pelo mesmo crivo. **Não foi
+  pedido G5 de payrolls** — são 13 dias e o portão só remove decisões.
+
+**Devolvido a ele, sem medir:**
+- **A cristalização.** Ele avisou que o artefato estava errado e mandaria o
+  corrigido; conferi: o arquivo tem **um único commit** e a reescrita de 20:41
+  **manteve o item 5 reafirmando a medição**. E o item agora diz que a 15b
+  entrou na entrega lendo esse mesmo sinal. Pedi a ele qual das duas coisas
+  vale — se o artefato está errado, o problema não é a minha frase do
+  relatório, é uma view da carteira apoiada num número que vai mudar. **6l
+  segue congelada.**
+
+**Pendente:**
+- **Reunião 13/08: nível global + teto**, agora com quatro views na tabela.
+- Resposta do Felipe sobre a cristalização (6l) e sobre a 15g inativa em 23,5%.
+- Relatório: falta a revisão da dona, a seção de backtest e **a ressalva de que
+  a régua foi calibrada em duas views e aplicada a quatro** (6p).
+- ⚠️ Aviso dele que toca o relatório: as views "neutras" nunca foram neutras
+  (ΣP mediano +0,96 / +1,74 / +1,24). **Conferido: a minha seção não afirma
+  neutralidade em ponto nenhum**, então não há correção a fazer do meu lado.
+- Backtest re-gerado por ele: +4,07 → **+6,24 pp** com as quatro views.
+- Dados e módulos dos outros branches em `%TEMP%\omega_lia` (`origin/Felipe`
+  em `cb01901`, `origin/Paulo` em `9ac04ba`).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~70% da janela, estimativa.
+- **Prompt inicial (verbatim):** "antes de mandar alguma mensagem para ele,
+  olhe o que ele me mandou"
+- **Iterações até aceitar:** 1 nas três escolhas apresentadas (estender às duas
+  views; tratar a cristalização sem medir; manter a régua no caso do bucket
+  extinto). A terceira foi decidida CONTRA a minha recomendação, e o registro
+  ficou com o fundamento da dona, não com o meu.
+- **Erros da IA:** nenhum de resultado. Duas correções de rota no meio: o
+  `load_pmf` de payrolls quebra sem `ordenar=False` (os slugs de emprego não
+  são grade de CPI nem de Fed), e `load_fomc_dates` não existe no loader — as
+  datas saem do CSV direto. As duas apareceram na primeira execução.
+- **Decisões escaladas:** **6p** (régua estendida a quatro views; formato de
+  entrega; bucket extinto na 15g mantido como inativo).
+- **Tags:** `[PROMPT-CHAVE]` — o prompt pedia para olhar antes de responder, e
+  era exatamente aí que estava o valor: a mensagem tinha o mesmo título de uma
+  já respondida, e só o `git diff` do arquivo dela separou o que era novo do
+  que era repetido. O segundo ganho foi ler o módulo dele para descobrir que a
+  família "fomc" da 15b lê o M3 — uma suposição razoável (o parquet de
+  reuniões) teria produzido um CSV inteiro com o mercado errado, e nada no
+  formato acusaria.

@@ -65,6 +65,14 @@ NIVEL_BASE = 1.0  # o expoente neutro: `c_nivel1` é o produto dos fatores
 
 VIEW_22 = "2.2_inflacao"
 VIEW_23 = "2.3_fed"
+VIEW_15B = "incerteza_anuncio"
+VIEW_15G = "B_trajetoria_propria"
+
+# Mercado da view B / 15g, e também da família "fomc" da 15b — as duas leem a
+# mesma PMF de trajetória (lido de `premio_condicional.PREFIXO_FOMC`, não
+# suposto). O G5 chama esta família de "B".
+PREFIXO_M3 = "M3_fed_trajectory_"
+VIEW_G5_M3 = "B"
 
 
 def _importar_pipeline(raiz):
@@ -221,6 +229,115 @@ def serie_fomc(raiz, loader):
     return pd.DataFrame(linhas)
 
 
+def serie_b_trajetoria(raiz, loader):
+    """Linhas da view 15g (`B_trajetoria_propria`), do mercado M3.
+
+    Um mercado só (a trajetória de cortes do ano), então não há seleção a
+    fazer: `selecionado` sai True em toda data. O volume vem da view `B` do
+    G5, que cobre os 9 buckets.
+    """
+    diretorio = Path(raiz) / "data" / "raw" / "clob_exploracao"
+    pmf = loader.load_pmf(diretorio, PREFIXO_M3)
+    volumes = volume_por_slot(raiz, VIEW_G5_M3)
+    prefixo = PREFIXO_M3.rstrip("_")
+
+    linhas = []
+    for slot in pmf.index[pmf.index.hour == 12]:
+        volume = volumes.get((prefixo, slot), np.nan)
+        linha = linha_da_decisao(loader, pmf, slot, VIEW_15G, volume,
+                                 tem_portao=True)
+        linha["mercado"] = prefixo
+        linha["evento"] = pd.NaT  # sem evento datado: a view lê o mercado todo dia
+        linhas.append(linha)
+    return pd.DataFrame(linhas)
+
+
+def mercados_de_anuncio(raiz, loader):
+    """`{data de anúncio: (prefixo do mercado, família)}` da view 15b.
+
+    ⚠️ **O casamento data → mercado é IMPORTADO do módulo do Felipe**
+    (`scripts/premio_condicional.py`), não reimplementado aqui. É a mesma
+    disciplina da regra de seleção lida em 10/08: se eu adivinhasse qual
+    mercado a 15b lê em cada dia, o `c` sairia do mercado errado sem nenhum
+    sintoma. As três famílias e as regras de casamento são dele:
+
+    - **fomc** → `PREFIXO_FOMC`, que é o **mesmo M3 da 15g** (não o parquet de
+      reuniões — conferido no código, não suposto);
+    - **cpi** → o slug que vem da coluna `fonte` do calendário do Paulo;
+    - **payrolls** → casamento pela data em que a série termina, com a regra
+      de um evento por release.
+
+    Devolve vazio se os scripts dele não estiverem no path — a 15b some da
+    saída em vez de sair com mercado inventado.
+    """
+    try:
+        from premio_condicional import (  # noqa: E402
+            PREFIXO_FOMC, mercados_de_payroll, prefixos_cpi,
+        )
+    except ImportError:
+        return {}
+
+    raiz = Path(raiz)
+    diretorio = raiz / "data" / "raw" / "clob_exploracao"
+    eventos = {}
+
+    fomc = pd.to_datetime(pd.read_csv(raiz / "data" / "raw" / "fomc_dates.csv")["date"])
+    for data in pd.DatetimeIndex(fomc):
+        eventos[pd.Timestamp(data)] = (PREFIXO_FOMC.rstrip("_"), "fomc")
+
+    releases = loader.load_cpi_releases(raiz / "data" / "raw" / "cpi_release_dates.csv")
+    for data, prefixo in prefixos_cpi(releases, diretorio).items():
+        eventos[pd.Timestamp(data)] = (prefixo.rstrip("_"), "cpi")
+
+    payrolls = loader.load_payroll_releases(raiz / "data" / "raw" / "payrolls_release_dates.csv")
+    for data, (prefixo, _familia) in mercados_de_payroll(diretorio, payrolls).items():
+        eventos[pd.Timestamp(data)] = (prefixo.rstrip("_"), "payrolls")
+
+    return eventos
+
+
+def serie_incerteza_anuncio(raiz, loader):
+    """Linhas da view 15b (`incerteza_anuncio`), uma por data de anúncio.
+
+    A view só existe em dia de anúncio, e o mercado que ela lê muda com a
+    família. O `c` de cada data é o do mercado daquele dia — a régua qualifica
+    o mercado que gerou a leitura, e é essa leitura que a 15b consome.
+
+    ⚠️ **Os dias de payrolls saem sem portão de liquidez** (`tem_portao =
+    False`): o G5 cobre as famílias 2.2, 2.3 e B, e não os mercados de
+    payrolls. Pela 6b, volume ausente é `NaN` e **não veta** — então esses
+    dias saem com `c` medido só pelos dois ingredientes graduais.
+    """
+    diretorio = Path(raiz) / "data" / "raw" / "clob_exploracao"
+    volumes = {
+        "fomc": volume_por_slot(raiz, VIEW_G5_M3),
+        "cpi": volume_por_slot(raiz, "2.2"),
+    }
+
+    linhas = []
+    for data, (prefixo, familia) in sorted(mercados_de_anuncio(raiz, loader).items()):
+        # `ordenar=False` em payrolls espelha a chamada do `entropias_de_anuncio`
+        # dele: o `bucket_value` só conhece as grades de CPI e Fed e levanta
+        # nos slugs de emprego. Os dois fatores da régua (variação total da PMF
+        # e soma do livro) são invariantes a permutação de coluna, então a
+        # ordem não muda o `c` — só a leitura humana da tabela.
+        pmf = loader.load_pmf(diretorio, prefixo + "_", ordenar=(familia != "payrolls"))
+        slots = pmf.index[(pmf.index.hour == 12)
+                          & (pmf.index.tz_convert(None).normalize() == data)]
+        if not len(slots):
+            continue  # sem leitura pré-abertura no dia: a view não roda
+        slot = slots[0]
+        serie = volumes.get(familia)
+        volume = np.nan if serie is None else serie.get((prefixo, slot), np.nan)
+        linha = linha_da_decisao(loader, pmf, slot, VIEW_15B, volume,
+                                 tem_portao=serie is not None)
+        linha["mercado"] = prefixo
+        linha["evento"] = pd.Timestamp(data)
+        linha["familia"] = familia
+        linhas.append(linha)
+    return pd.DataFrame(linhas)
+
+
 def marcar_selecionado(tabela):
     """`selecionado`: o mercado do PRÓXIMO evento em cada (data, view).
 
@@ -233,7 +350,10 @@ def marcar_selecionado(tabela):
     os mesmos tokenIds sob dois rótulos, e jul/2025 entrava duas vezes. Agora
     a duplicata é removida na leitura (`_prefixos_sem_duplicata`).
     """
-    futuro = tabela.evento >= tabela.data
+    # `evento` nulo é a view de mercado único (15g): não há evento datado com
+    # que comparar e não há concorrente a desempatar, então ela é sempre a
+    # escolhida da sua própria data.
+    futuro = tabela.evento.isna() | (tabela.evento >= tabela.data)
     candidatos = tabela[futuro].sort_values(["data", "view", "evento", "mercado"])
     escolhidos = candidatos.groupby(["data", "view"]).head(1).index
     return tabela.index.isin(escolhidos)
@@ -243,19 +363,31 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dados", required=True, help="dir com data/ e src/")
     ap.add_argument("--saida", required=True, help="CSV de saída")
+    ap.add_argument("--scripts", default=None,
+                    help="dir `scripts/` do Felipe (casamento data→mercado da 15b)")
     args = ap.parse_args()
 
     loader = _importar_pipeline(args.dados)
-    tabela = pd.concat([serie_cpi(args.dados, loader), serie_fomc(args.dados, loader)],
-                       ignore_index=True)
+    if args.scripts:
+        sys.path.insert(0, str(Path(args.scripts)))
+    tabela = pd.concat(
+        [
+            serie_cpi(args.dados, loader),
+            serie_fomc(args.dados, loader),
+            serie_b_trajetoria(args.dados, loader),
+            serie_incerteza_anuncio(args.dados, loader),
+        ],
+        ignore_index=True,
+    )
     tabela["dias_corridos_ate_evento"] = (tabela.evento - tabela.data).dt.days
     tabela["selecionado"] = marcar_selecionado(tabela)
     tabela = tabela.sort_values(["view", "data", "mercado"])
 
-    colunas = ["data", "view", "mercado", "evento", "dias_corridos_ate_evento",
-               "selecionado", "ativa", "motivo_inativa", "c_nivel1",
-               "fator_estabilidade", "fator_coerencia", "volume_notional",
-               "tem_portao", "n_pontos_janela", "n_slots_esperados_janela"]
+    colunas = ["data", "view", "mercado", "familia", "evento",
+               "dias_corridos_ate_evento", "selecionado", "ativa",
+               "motivo_inativa", "c_nivel1", "fator_estabilidade",
+               "fator_coerencia", "volume_notional", "tem_portao",
+               "n_pontos_janela", "n_slots_esperados_janela"]
     tabela[colunas].to_csv(args.saida, index=False, float_format="%.6f")
 
     print(f"escrito: {args.saida} — {len(tabela)} linhas")

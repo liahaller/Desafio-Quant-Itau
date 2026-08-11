@@ -774,3 +774,77 @@ portão, a 2.3 perde 1,2% das decisões por liquidez contra 4,0% na 2.2, e os
 quantis do `c` não se movem. O mercado do FOMC é genuinamente mais bem
 comportado. **A conclusão da 6k para a reunião fica de pé e mais forte:** a
 curva do nível tem de sair **por view**.
+
+### 6p. A régua estendida a QUATRO views (10/08/2026) 🟡
+
+O Felipe reescreveu a `RESPOSTA6` dele (`070d3bd`, 20:41) depois de a estratégia
+passar de duas para quatro views (D23 do `Felipe`): entraram a **15b
+`incerteza_anuncio`** (27 pregões, direcional) e a **15g
+`B_trajetoria_propria`** (210). A série de `c` que entreguei de manhã cobria
+duas.
+
+**Decisão da dona: estender a régua às duas views novas**, com a ressalva
+declarada no relatório de que ela foi **calibrada em 2.2 e 2.3 e aplicada a
+quatro**. Fundamento: a régua mede propriedades do **mercado** (movimento da
+PMF, fechamento do livro), não da view — e os mercados das views novas são
+mercados de bucket do Polymarket, mesma natureza. Não estender significaria
+entregar `c = 1` onde nada foi qualificado, que é o pior erro disponível pela
+regra de borda já registrada na 6g.
+
+**De onde sai o `c` de cada view nova** (lido do módulo do Felipe, não suposto —
+`scripts/premio_condicional.py` e `scripts/backtest_v1.py`):
+
+| view | mercado que ela lê | portão |
+|---|---|---|
+| 15g `B_trajetoria_propria` | `M3_fed_trajectory` (9 buckets) | ✅ G5 view `B` |
+| 15b, família **fomc** | **o mesmo M3** (`PREFIXO_FOMC`, conferido no código) | ✅ G5 view `B` |
+| 15b, família **cpi** | os mesmos mercados-mês da 2.2 | ✅ G5 view `2.2` |
+| 15b, família **payrolls** | `G9_payrolls_*` | ❌ **sem G5** |
+
+O casamento data→mercado da 15b é **importado** de `premio_condicional`
+(`PREFIXO_FOMC`, `prefixos_cpi`, `mercados_de_payroll`), não reimplementado:
+adivinhar qual mercado a view lê em cada dia produziria `c` do mercado errado
+sem nenhum sintoma. Mesma disciplina da regra de seleção lida na 6k.
+
+**Resultado (`lia/c_por_decisao.csv`, 2.795 linhas). A 2.2 e a 2.3 saem
+IDÊNTICAS às publicadas** — conferido coluna a coluna, a extensão não tocou no
+que já estava entregue.
+
+| view | linhas | ativas | `c` mediano | p95 |
+|---|---|---|---|---|
+| 2.2_inflacao | 426 sel. | 388 (91,1%) | 1,0523 | 1,2385 |
+| 2.3_fed | 801 sel. | 771 (96,3%) | 1,0120 | 1,0587 |
+| B_trajetoria_propria | 345 | 264 (**76,5%**) | 1,0353 | 1,0698 |
+| incerteza_anuncio | 33 | 30 (90,9%) | **1,0905** | **1,5459** |
+
+**Dois achados da extensão:**
+
+1. **A régua morde MUITO mais na 15b** (p95 1,55 contra 1,06 na 2.3), e a
+   família mais penalizada é **payrolls** (`c` mediano 1,221 × 1,090 do CPI ×
+   1,029 do FOMC) — que é justamente a única **sem portão de liquidez**. Faz
+   sentido: a 15b lê o mercado no dia do anúncio, o mais agitado da vida dele.
+2. **⚠️ A 15g sai inativa em 81 de 345 dias (23,5%)**, todos entre 20/09 e
+   10/12/2025, todos por ausência de par adjacente completo — e a janela está
+   **cheia** (6 de 6 slots). A causa é outra: os buckets "nenhum corte" e "1
+   corte" **param de ser cotados** a partir de set/2025 porque se tornaram
+   **impossíveis** (o Fed já cortara mais que isso em 2025).
+
+**Decisão da dona sobre o item 2: manter a régua como está.** A regra da 6e
+("slot com qualquer faixa sem leitura não entra") foi escrita para buraco de
+coleta, e aqui o que há é **extinção de bucket** com o mercado funcionando —
+mas a régua não se mexe para acomodar um caso, e a alternativa (excluir a faixa
+morta da janela) seria mudança de forma. A view sai `ativa = False` nesses dias
+e o Felipe é avisado do mecanismo: **é view dele**, e a decisão de tratar ou não
+é dele ou da reunião, não desta régua.
+
+**Formato entregue — matriz cheia, não dict esparso.** O Felipe ofereceu os dois
+e pediu que eu escolhesse. Matriz cheia não é preferência: montar o dict
+esparso exigiria eu reproduzir quais views estão **vivas** em cada pregão, o que
+depende da cascata dele (β não identificável, mercado ausente, `views_novas`) —
+lógica do módulo dele que eu replicaria por conta própria, com o erro aparecendo
+só no `ValueError` de `_checa_chaves`. Ele filtra em uma linha; eu não adivinho.
+
+**O nível continua reescalável e uma série basta** — `c(nivel) = c_nivel1 **
+nivel`, porque o nível é **expoente** na régua da 6g. O pedido dele de três
+séries em `{1,3,5}` partia da hipótese contrária, levantada por ele mesmo como
+dúvida; não há trabalho novo aí.

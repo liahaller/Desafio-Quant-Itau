@@ -68,6 +68,30 @@ def test_mercado_com_evento_passado_nunca_e_selecionado():
     assert list(marcar_selecionado(tabela)) == [False, True]
 
 
+def test_view_de_mercado_unico_e_sempre_selecionada():
+    """15g: sem evento datado, `evento` é NaT e a view é a sua própria escolha.
+
+    Sem este caso, `NaT >= data` seria False e a `B_trajetoria_propria`
+    sumiria da série inteira — o mercado M3 é um só, não há concorrente a
+    desempatar, e a view lê o mesmo mercado todo pregão.
+    """
+    tabela = _tabela([
+        ("2026-01-05", "B_trajetoria_propria", "M3_fed_trajectory", None),
+        ("2026-01-06", "B_trajetoria_propria", "M3_fed_trajectory", None),
+    ])
+    assert list(marcar_selecionado(tabela)) == [True, True]
+
+
+def test_view_sem_evento_nao_rouba_selecao_de_outra_view():
+    """A seleção é por (data, view): NaT numa view não afeta a vizinha."""
+    tabela = _tabela([
+        ("2026-01-05", "B_trajetoria_propria", "M3_fed_trajectory", None),
+        ("2026-01-05", "2.2_inflacao", "janeiro", "2026-01-13"),
+        ("2026-01-05", "2.2_inflacao", "fevereiro", "2026-02-10"),
+    ])
+    assert list(marcar_selecionado(tabela)) == [True, True, False]
+
+
 def test_dia_do_evento_ainda_seleciona_o_proprio_mercado():
     """`>= data`: no dia do evento o mercado ainda é o dele.
 
