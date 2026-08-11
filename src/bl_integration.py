@@ -68,6 +68,21 @@ def stack_views(view_results, n_assets):
     return P, Q, [r.diagnostics for r in active]
 
 
+def nomes_ativos(view_results):
+    """As views VIVAS do dia, na ordem de `stack_views` — a chave dos dicts da régua.
+
+    Derivada de `view_results` a cada chamada, nunca de constante escrita à mão
+    (pedido da Lia de 2026-08-07): o nome vive só onde a view o emite. Pública
+    porque quem monta a régua precisa da mesma lista que o `aplicar_veto` vai
+    exigir — se as duas divergissem, a régua produziria chave sobrando ou
+    faltando a cada pregão.
+    """
+    nomes = [r.diagnostics["view"] for r in view_results if r is not None]
+    if len(set(nomes)) != len(nomes):
+        raise ValueError(f"views ativas com nome repetido — a chave não identifica: {nomes}")
+    return nomes
+
+
 def _checa_chaves(d, nomes, rotulo):
     """Casamento EXATO de chaves — sobra e falta são erro, não default."""
     faltando, sobrando = sorted(set(nomes) - set(d)), sorted(set(d) - set(nomes))
@@ -109,9 +124,7 @@ def aplicar_veto(view_results, ativa, incerteza=None):
     vetados virados None, e o `incerteza` como VETOR na ordem de `stack_views`,
     reduzido aos sobreviventes, pronto para `omega_fallback`.
     """
-    nomes = [r.diagnostics["view"] for r in view_results if r is not None]
-    if len(set(nomes)) != len(nomes):
-        raise ValueError(f"views ativas com nome repetido — a chave não identifica: {nomes}")
+    nomes = nomes_ativos(view_results)
     _checa_chaves(ativa, nomes, "ativa")
     if incerteza is not None:
         _checa_chaves(incerteza, nomes, "incerteza")

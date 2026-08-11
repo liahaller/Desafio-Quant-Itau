@@ -42,7 +42,8 @@ from typing import NamedTuple
 import numpy as np
 import pandas as pd
 
-from bl_integration import aplicar_veto, bl_weights_from_views, stack_views
+from bl_integration import (aplicar_veto, bl_weights_from_views, nomes_ativos,
+                            stack_views)
 from config import (ALUGUEL_BPS_ANO, CUSTO_BPS_POR_LADO, DELTA,
                     FINANCIAMENTO_SPREAD_BPS_ANO, PREGOES_POR_ANO, TAU)
 from market_inputs import omega_fallback
@@ -232,10 +233,14 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
                  da Lia entrega (`c >= 1`) — o `c` dela entra DIRETO, sem
                  inverter. O que se inverte é o eixo das curvas de sensibilidade
                  (confiança em (0,1]), e a conversão vive lá, não aqui.
-    regua      : a régua da Lia POR DECISÃO — `callable(data) -> (ativa,
+    regua      : a régua da Lia POR DECISÃO — `callable(data, nomes) -> (ativa,
                  incerteza)`, os dois dicts chaveados pelo nome da view
                  (`diagnostics["view"]`), exatamente a assinatura de
-                 `aplicar_veto`. É por aqui que o vetor de verdade entra: o
+                 `aplicar_veto`. `nomes` são as views VIVAS do pregão: a régua
+                 dela cobre toda data em que mediu, e quem sabe o que a cascata
+                 desativou hoje é este loop — sem essa lista o filtro seria
+                 adivinhação do lado dela (ver `market_inputs.regua_por_decisao`).
+                 É por aqui que o vetor de verdade entra: o
                  `incerteza` escalar acima é grade de varredura e vale para
                  todas as views iguais, o que mede o LIMITE da régua, nunca o
                  efeito dela (que é de cauda — D20b). Os dois são mutuamente
@@ -282,7 +287,8 @@ def run_backtest(retornos, montar_dia, w_mkt, *, datas=None, tau=TAU, delta=DELT
         # é o TETO de confiança (a régua só tira peso, nunca adiciona).
         c_dia = None
         if regua is not None:
-            view_results, c_dia = aplicar_veto(view_results, *regua(data))
+            view_results, c_dia = aplicar_veto(
+                view_results, *regua(data, nomes_ativos(view_results)))
 
         P, _, _ = stack_views(view_results, n_assets=len(ativos))
         if P is None:

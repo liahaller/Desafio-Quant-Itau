@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from bl_integration import bl_weights_from_views  # noqa: E402
 from market_inputs import (  # noqa: E402
     breakeven_duration, equal_weights, market_weights, omega_fallback,
-    sample_covariance)
+    regua_por_decisao, sample_covariance)
 
 ATIVOS = ["SPY", "TIP", "TLT"]
 
@@ -123,3 +123,81 @@ def test_breakeven_duration_exige_amostra():
     curta = pd.Series(np.zeros(30), index=pd.bdate_range("2024-01-01", periods=30))
     with pytest.raises(ValueError, match="amostra curta"):
         breakeven_duration(curta, curta)
+
+
+# --- régua da Lia lida do CSV (D25c) -----------------------------------------
+
+_COLUNAS = "data,view,selecionado,ativa,c_nivel1\n"
+
+
+def _csv_regua(tmp_path, linhas, nome="c_por_decisao.csv"):
+    caminho = tmp_path / nome
+    caminho.write_text(_COLUNAS + "".join(l + "\n" for l in linhas), encoding="utf-8")
+    return caminho
+
+
+def test_regua_filtra_pelas_views_vivas_e_escala_pelo_nivel(tmp_path):
+    """Linha sem view viva é descartada; o nível é EXPOENTE (c_nivel1 ** nivel).
+
+    O caso é o real: o CSV traz a matriz cheia (três views no dia) e o loop só
+    tem duas vivas — a terceira é sobra, e sobra vira `ValueError` no
+    `aplicar_veto` se chegar lá.
+    """
+    csv = _csv_regua(tmp_path, [
+        "2025-03-10,2.2_inflacao,True,True,2.0",
+        "2025-03-10,2.3_fed,True,True,1.5",
+        "2025-03-10,incerteza_anuncio,True,True,1.1",   # não está viva no loop
+        "2025-03-10,2.2_inflacao,False,True,9.9",       # slot não selecionado
+    ])
+    vivas = ["2.2_inflacao", "2.3_fed"]
+
+    ativa, c = regua_por_decisao(csv)("2025-03-10", vivas)
+    assert sorted(ativa) == vivas and sorted(c) == vivas   # a terceira ficou fora
+    assert c == {"2.2_inflacao": 2.0, "2.3_fed": 1.5}
+
+    _, c3 = regua_por_decisao(csv, nivel=3)("2025-03-10", vivas)
+    assert c3 == {"2.2_inflacao": 8.0, "2.3_fed": 3.375}
+
+    # nível 0 = He-Litterman puro: a régua some sem precisar ser desligada
+    _, c0 = regua_por_decisao(csv, nivel=0)("2025-03-10", vivas)
+    assert set(c0.values()) == {1.0}
+
+
+def test_regua_devolve_o_veto_e_nao_inventa_c_na_linha_inativa(tmp_path):
+    """`ativa = False` vem com `c_nivel1` vazio — o NaN passa, não vira 1,0."""
+    csv = _csv_regua(tmp_path, ["2025-03-10,2.2_inflacao,True,False,"])
+    ativa, c = regua_por_decisao(csv)("2025-03-10", ["2.2_inflacao"])
+    assert ativa == {"2.2_inflacao": False}
+    assert np.isnan(c["2.2_inflacao"])
+
+
+def test_regua_com_view_viva_sem_linha_falha_alto(tmp_path):
+    """Chave faltando é erro no `aplicar_veto` — nunca `c = 1` por default."""
+    from bl_integration import aplicar_veto
+    from views_common import ViewResult
+
+    csv = _csv_regua(tmp_path, ["2025-03-10,2.2_inflacao,True,True,1.2"])
+    viva = ViewResult(P=np.array([1.0, -1.0, 0.0]), Q=0.01,
+                      diagnostics={"view": "2.3_fed", "horizonte_q_dias": 1})
+    with pytest.raises(ValueError, match="não casa"):
+        aplicar_veto([viva], *regua_por_decisao(csv)("2025-03-10", ["2.3_fed"]))
+
+
+def test_regua_recusa_csv_fora_da_convencao(tmp_path):
+    """c < 1 seria confiança ACIMA do fallback — a régua só tira peso."""
+    csv = _csv_regua(tmp_path, ["2025-03-10,2.2_inflacao,True,True,0.8"])
+    with pytest.raises(ValueError, match="c_nivel1 < 1"):
+        regua_por_decisao(csv)
+
+    vazio = _csv_regua(tmp_path, ["2025-03-10,2.2_inflacao,True,True,"], "vazio.csv")
+    with pytest.raises(ValueError, match="linha ATIVA sem"):
+        regua_por_decisao(vazio)
+
+    with pytest.raises(ValueError, match="expoente"):
+        regua_por_decisao(csv, nivel=-1)
+
+
+def test_regua_recusa_data_que_nao_cobre(tmp_path):
+    csv = _csv_regua(tmp_path, ["2025-03-10,2.2_inflacao,True,True,1.2"])
+    with pytest.raises(ValueError, match="não cobre"):
+        regua_por_decisao(csv)("2025-03-11", ["2.2_inflacao"])

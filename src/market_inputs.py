@@ -149,6 +149,75 @@ def equal_weights(assets):
     return np.full(len(assets), 1.0 / len(assets))
 
 
+def regua_por_decisao(csv, nivel=1):
+    """A régua do Ω da Lia lida do CSV dela → `callable(data, nomes)` do backtest.
+
+    Fecha o último item do caminho crítico de 13/08: até aqui o `run_backtest`
+    só sabia receber `incerteza` ESCALAR (grade constante), que mede o LIMITE
+    da régua e nunca o efeito dela — que é de cauda (D20b).
+
+    csv   : `lia/c_por_decisao.csv` do branch dela, extraído local (o `data/` é
+            ignorado no branch do Felipe):
+                git show origin/Lia:lia/c_por_decisao.csv > data/lia/c_por_decisao.csv
+    nivel : expoente da régua. `c(nivel) = c_nivel1 ** nivel` — o nível é
+            REESCALÁVEL fora da régua (D25c), então uma série só cobre o eixo
+            inteiro e `nivel = 0` devolve He-Litterman puro. É por isso que a
+            coluna se chama `c_nivel1` e não `c`. **Não é escolha:** o valor sai
+            da reunião de 13/08 (seção 10), aqui é parâmetro de varredura.
+
+    A saída entra DIRETO no `omega_fallback` — o `c` dela já é incerteza
+    (`>= 1`, maior = menos peso), a mesma convenção deste módulo. Nada se
+    inverte no caminho; o que se inverte é o eixo das curvas, e a conversão
+    vive lá (`curva_c.py`).
+
+    **O filtro é a razão de esta função existir.** O CSV vem como MATRIZ CHEIA
+    com buracos (escolha dela, RESPOSTA7): as quatro views em toda data em que
+    a régua mediu, sem saber quais estão VIVAS no loop daqui. Quem sabe isso é
+    o `montar_dia` — a cascata desativa view por β não identificável, mercado
+    ausente no dia ou `views_novas`. Por isso a régua recebe `nomes`, as views
+    vivas do pregão, e devolve exatamente elas: linha do CSV sem view viva é
+    descartada aqui (29 pregões na janela do v1), e view viva sem linha no CSV
+    sai como chave FALTANDO, que o `_checa_chaves` transforma em `ValueError`.
+    Medido na janela do v1 (374 pregões): **nenhuma view viva sem linha**.
+
+    Só as linhas `selecionado` entram: é o colapso 12h → diário do lado dela,
+    no slot das 12:00 UTC, o mesmo pré-abertura que as views consomem.
+
+    `ativa = False` chega com `c_nivel1` VAZIO no CSV (152/152 das linhas
+    inativas) — a view sai de P e Q no `aplicar_veto` e o `c` dela nunca é
+    lido, então o NaN é repassado como está em vez de virar 1,0. Preencher com
+    1,0 seria escrever confiança máxima onde nada foi medido, que é o erro que
+    a própria régua existe para evitar.
+    """
+    if nivel < 0:
+        raise ValueError(f"nível é expoente de uma penalidade >= 1: {nivel} < 0 daria peso EXTRA")
+    tabela = pd.read_csv(csv, parse_dates=["data"])
+    tabela = tabela[tabela["selecionado"].astype(bool)]
+    if tabela.duplicated(["data", "view"]).any():
+        raise ValueError("(data, view) repetido no CSV da régua — a chave não identifica a decisão")
+    ativas = tabela[tabela["ativa"].astype(bool)]
+    if not np.isfinite(ativas["c_nivel1"]).all():
+        raise ValueError("linha ATIVA sem `c_nivel1` no CSV da régua — Ω não tem o que multiplicar")
+    if (ativas["c_nivel1"] < 1.0).any():
+        raise ValueError(
+            "`c_nivel1 < 1` no CSV da régua: nesta convenção isso é confiança ACIMA do "
+            "fallback He-Litterman, e a régua só tira peso — conferir a convenção antes de rodar")
+    por_data = {data: grupo.set_index("view") for data, grupo in tabela.groupby("data")}
+
+    def regua(data, nomes):
+        if not nomes:
+            return {}, {}   # pregão sem view viva: nada a vetar nem a dosar
+        linhas = por_data.get(pd.Timestamp(data))
+        if linhas is None:
+            raise ValueError(f"o CSV da régua não cobre {pd.Timestamp(data).date()}, "
+                             f"e há view viva nesse pregão: {sorted(nomes)}")
+        vivas = [n for n in nomes if n in linhas.index]
+        ativa = {n: bool(linhas.at[n, "ativa"]) for n in vivas}
+        return ativa, {n: float(linhas.at[n, "c_nivel1"]) ** nivel for n in vivas}
+
+    return regua
+
+
 def omega_fallback(P, sigma, tau, incerteza=None):
     """Ω (k, k) diagonal na convenção He-Litterman: diag(P·τΣ·Pᵀ).
 

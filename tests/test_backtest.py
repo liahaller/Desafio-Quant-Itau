@@ -303,15 +303,15 @@ def test_regua_veta_uma_view_e_dosa_a_outra():
     pedida = lambda reg: run_backtest(  # noqa: E731
         r, montar, w_mkt, teto_alavancagem=1.0, regua=reg)
 
-    solta = pedida(lambda _d: ({"A": True, "B": False}, {"A": 1.0, "B": 1.0}))
-    apertada = pedida(lambda _d: ({"A": True, "B": False}, {"A": 100.0, "B": 1.0}))
+    solta = pedida(lambda _d, _n: ({"A": True, "B": False}, {"A": 1.0, "B": 1.0}))
+    apertada = pedida(lambda _d, _n: ({"A": True, "B": False}, {"A": 100.0, "B": 1.0}))
     assert (solta.diario["n_views"] == 1).all()          # a B saiu do stack
     assert (apertada.diario["n_views"] == 1).all()
     assert (apertada.diario["alavancagem_pedida"].median()
             < solta.diario["alavancagem_pedida"].median())
 
     # veto das duas = caso neutro da D8, w = w_mkt exato
-    nenhuma = pedida(lambda _d: ({"A": False, "B": False}, {"A": 1.0, "B": 1.0}))
+    nenhuma = pedida(lambda _d, _n: ({"A": False, "B": False}, {"A": 1.0, "B": 1.0}))
     assert (nenhuma.diario["n_views"] == 0).all()
     assert np.allclose(nenhuma.pesos.to_numpy(), np.tile(w_mkt, (len(r), 1)))
 
@@ -322,7 +322,7 @@ def test_regua_e_grade_constante_nao_convivem():
     with pytest.raises(ValueError, match="mutuamente exclusivos"):
         run_backtest(_retornos(), lambda _d: (_sigma(), views, []),
                      np.array([1.0, 0.0, 0.0]), incerteza=2.0,
-                     regua=lambda _d: ({"A": True, "B": True}, None))
+                     regua=lambda _d, _n: ({"A": True, "B": True}, None))
 
 
 def test_regua_com_chave_errada_falha_alto():
@@ -331,7 +331,7 @@ def test_regua_com_chave_errada_falha_alto():
     with pytest.raises(ValueError, match="não casa"):
         run_backtest(_retornos(), lambda _d: (_sigma(), views, []),
                      np.array([1.0, 0.0, 0.0]),
-                     regua=lambda _d: ({"A": True, "2.2_inflacao": True}, None))
+                     regua=lambda _d, _n: ({"A": True, "2.2_inflacao": True}, None))
 
 
 def test_data_fora_da_tabela_falha_alto():
