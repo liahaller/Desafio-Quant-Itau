@@ -1012,3 +1012,104 @@ mesma classe do veto de liquidez.
   que a 2.3 é quase invariante à régua. Entregar o formato pedido sem essas
   duas coisas teria produzido um artefato correto e uma decisão de reunião mal
   informada.
+
+---
+
+## 2026-08-10 (2ª sessão) — Lia (entregas do Paulo: G5 do FOMC + CPI realizado)
+
+**Feito:**
+- **Conferi os dois entregáveis antes de usar.** G5 do FOMC: 76/76
+  `conditionId` em comum, casamento slot-a-slot **exato** (0 órfão nos dois
+  sentidos, 16.321 pares), 3.905/3.905 slots de PMF com linha de volume,
+  separação `NaN`/`0`/`>0` preservada (9.090/445/6.803). CPI realizado: 18
+  registros, derivação do bucket casa **15/15** com a resolução, incluindo as
+  3 pontas abertas.
+- **Registrei a regra de decisão ANTES de rodar (6m, commit `95ebd08`).** A
+  rodada da 2.3 com 4 ingredientes é confirmatória: concordância confirma a 6g
+  em duas views; discordância **não** muda a régua (fechada por parcimônia) e
+  vira limitação declarada. O commit da regra é anterior ao commit que produz
+  o número — é isso que torna a confirmação verificável.
+- **Recalibrei a 2.3 com os quatro ingredientes (a primeira vez).**
+  Confirmatória em todos os pontos: variação total −0,4005 (melhor de novo),
+  |ΔE| −0,3756, coerência −0,15/−0,18, portão reprovado como score,
+  proximidade reprovada com sinal invertido. 12h vence 24h de novo.
+- **A ressalva da 6f caiu, e nas duas views.** Estabilidade condicionada ao
+  portão: −0,4005 → −0,3960 (delta 0,005). O artefato do midpoint **existe**
+  (slots sem negociação têm erro futuro 4× menor) e é **irrelevante em volume**
+  (24 slots contra 1.139) — coisas diferentes, que só a medição separa.
+- **Regra nova (registrada na 6m): faixa `NaN` contamina o slot inteiro.** 908
+  dos 3.905 slots do FOMC misturam faixa truncada com faixa medida; somar `NaN`
+  como ausente vetaria 6 slots por "ninguém negociou" onde parte é
+  desconhecida. `agregar_volume_slot`, usada pela calibração e pelo exportador,
+  3 testes. **A 2.2 saiu idêntica** — não há slot misto lá.
+- **Estendi o alvo por desfecho à 2.2** (`rodar_robustez`), fechando a
+  limitação "verificação de não circularidade numa view só". 15 meses.
+- **⚠️ Achado 6n: `M1_cpi_monthly` é duplicata exata de
+  `CPI_july-inflation-monthly`** — mesmos 6 tokenIds, 56 slots, diferença
+  máxima 0,0. Jul/2025 entrava **duas vezes** na calibração da 2.2. Saiu de
+  investigar a divergência de contagem com o Paulo (19 × 18) em vez de corrigir
+  o número. Régua não muda (todos os coeficientes melhoram, nenhuma ordenação
+  se altera); validação passa de 601 para 573 decisões. Não contaminava o
+  `c_por_decisao.csv`.
+- **Regerei o `c_por_decisao.csv` com portão nas duas views** (6o): a 2.2 saiu
+  idêntica, a 2.3 tem agora 10 decisões vetadas por volume (antes 0). **A
+  ressalva da 6k caiu:** a suavidade da 2.3 não era ausência de portão — com
+  ele, 1,2% das decisões saem por liquidez contra 4,0% na 2.2. A conclusão para
+  a reunião fica mais forte, não mais fraca.
+- **Relatório atualizado**: tabela de resultados com as duas views completas,
+  o teste condicional repetido na 2.3, o alvo por desfecho nas duas views com o
+  mecanismo da queda de magnitude medido, a duplicata como terceiro defeito
+  encontrado, tabela do nível por view, e §9 reescrita (duas limitações caíram,
+  duas novas entraram).
+- **Resposta ao Paulo** em `RESPOSTA7_Paulo_g5_fomc_e_cpi.md`.
+- **79 testes** na suíte (76 + 3 do `agregar_volume_slot`).
+
+**O resultado menos confortável, registrado como tal:**
+- **O alvo por desfecho tem pouco poder na 2.2** (−0,05/−0,13 contra
+  −0,45 na 2.3). O mecanismo foi medido, não suposto: no último slot a
+  probabilidade no bucket que resolveu tem mediana 0,97 no FOMC (83% acima de
+  0,9) e 0,39 no CPI (7%). O mercado de inflação não converge, então o alvo
+  mede o tamanho da surpresa do mês. **É limitação do alvo, não da régua.**
+- O que sobrevive: variação total mantém o sinal nos 4 cortes, |ΔE| **inverte**
+  nos 4 — o único corte que separa as duas separa a favor da escolhida. Vai ao
+  relatório como evidência **fraca em magnitude**, não como confirmação.
+
+**Pendente:**
+- **Reunião 13/08: nível global + teto** (6d/6j), com a tabela por view da 6o.
+- **Arquivo corrigido da cristalização** (Felipe) — 6l segue congelada.
+- **Interface do volume (D20a do `Felipe`)**: segue na opção (1) até a reunião.
+- Janela 5 × 10 (6h) segue em aberto — o alvo por desfecho da 2.2 não a
+  resolve (lá a de 20 fica à frente na grade 24h, apontando para uma terceira
+  alternativa); mantida a de 5 pelo critério declarado antes do teste.
+- Relatório: falta a revisão da dona e a seção de resultados de backtest.
+- Decisão 9 segue aberta.
+- Os dois `PEDIDO_Paulo_*.md` estão **atendidos**; nenhum pedido novo foi feito.
+- Dados dos outros branches em `%TEMP%\omega_lia` (atualizados de
+  `origin/Paulo` em `9ac04ba`).
+- `git push`: **pendente** nesta sessão.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~55% da janela, estimativa.
+- **Prompt inicial (verbatim):** "o paulo me respondeu e mandou os documentos
+  que faltavam. quer que mande os dois juntos ou um de cada vez?"
+- **Iterações até aceitar:** 1 — as três escolhas metodológicas foram
+  apresentadas juntas antes de qualquer rodada (out/nov 2025 fora do teste; SA
+  inferido com sensibilidade; regra de decisão declarada antes), e nenhuma
+  precisou de correção depois.
+- **Erros da IA:** nenhum de resultado. Um erro de classificação **anterior**
+  foi corrigido nesta sessão: na sessão de 10/08 (1ª) eu tinha visto o par
+  `M1_cpi_monthly` × `CPI_july-inflation-monthly` e o classifiquei no código
+  como "empate entre dois mercados para o mesmo evento", quando era duplicata
+  exata do mesmo contrato. O sintoma foi visto e a conclusão foi errada.
+- **Decisões escaladas:** **6m** (regra prévia + recorte do alvo da 2.2, com os
+  resultados registrados na mesma entrada), **6n** (duplicata do CPI) e **6o**
+  (tabela por view com portão).
+- **Tags:** `[PROMPT-CHAVE]` — o valor da sessão está em três recusas de
+  atalho, e as três produziram resultado: (i) registrar e commitar a regra de
+  decisão *antes* de rodar, o que é a diferença entre confirmar uma régua e
+  dizer que se confirmou; (ii) investigar uma divergência de contagem de "1
+  mercado" em vez de corrigir o número, o que revelou um mês duplicado; (iii)
+  medir *por que* o alvo por desfecho fica fraco na 2.2 em vez de reportar o
+  coeficiente baixo, o que transformou um resultado ruim numa limitação
+  explicada e localizada no alvo.

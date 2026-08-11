@@ -664,4 +664,113 @@ Paulo na entrega do CPI realizado):
 **Correção de fato na 6g:** lá está escrito "19 mercados-mês de CPI". São
 **18** — contados os slugs distintos no `clob_exploracao`, que é a mesma conta
 do Paulo. As 111 faixas (que o G5 casa 111/111) estão certas; o erro era só no
-número de mercados-mês.
+número de mercados-mês. ⚠️ **Este item deixou de ser correção de texto ao ser
+investigado — virou a 6n.**
+
+**RESULTADO da rodada declarada acima (mesma sessão, commits `1a9386d` e
+`0f01741`): confirmatória em todos os pontos.** Nada da régua muda.
+
+| Ingrediente (alvo variação total) | 2.3 sem portão (6f) | 2.3 COM portão | Veredito |
+|---|---|---|---|
+| estabilidade (variação total, j5) | −0,40 | **−0,4005** | melhor candidata de novo |
+| estabilidade (\|ΔE\|, j5) | −0,36 | −0,3756 | perde de novo |
+| coerência | −0,15 a −0,18 | −0,15 a −0,18 | sinal correto, estável |
+| portão como score | não testável | −0,10 a +0,19 | reprovado, como na 2.2 |
+| proximidade | +0,09 a +0,22 | +0,07 a +0,22 | reprovada, sinal invertido |
+
+- **A ressalva da 6f cai.** Condicionar a estabilidade aos slots que passam
+  pelo portão move o spearman de −0,4005 para −0,3960 (delta +0,005). O
+  ingrediente não vivia do artefato do midpoint, e agora isso está medido nas
+  **duas** views, não por analogia.
+- **O mecanismo da 6b existe e é irrelevante em volume**, que são coisas
+  diferentes: na 2.3 os slots sem negociação têm erro futuro médio 4× menor
+  (0,0037 × 0,0147) — a assinatura exata do artefato — mas são **24 contra
+  1.139**. O diagnóstico vai ao relatório com esse recorte.
+- **12h vence 24h** de novo em todos os cortes, e j5 vence em h=2 (j10 vence em
+  h=5, coerente com o já registrado na 6h).
+
+**Regra nova de escopo da Lia, registrada porque muda o que o Felipe recebe:
+faixa com volume `NaN` contamina o slot inteiro.** No G5 do FOMC, 908 dos 3.905
+slots misturam faixa truncada pelo cap de 20k (`NaN`) com faixa medida. Somar
+tratando `NaN` como ausente daria soma zero e **vetaria** em 6 desses slots,
+afirmando "ninguém negociou" onde parte é desconhecida — o contrário da
+separação `0` × `NaN` combinada com o Paulo em 07/08. A regra é a mesma
+disciplina da 6e (linha incompleta não entra). **Não muda a 2.2**: lá nenhuma
+faixa bateu o cap, não há slot misto, e a re-rodada saiu idêntica à publicada.
+Implementada em `agregar_volume_slot`, usada pelos dois lados (calibração e
+exportador), com 3 testes.
+
+**Resultado do alvo por desfecho na 2.2** (15 meses, derivação casa o bucket
+resolvido em **15/15**, incluindo as 3 pontas abertas):
+
+| Ingrediente | 2.3 (DFF) | 2.2 (CPI realizado) |
+|---|---|---|
+| estabilidade (variação total) | −0,44 a −0,46 | −0,05 a −0,13 |
+| estabilidade (\|ΔE\|) | −0,43 a −0,47 | **+0,11 a +0,26** |
+| coerência | −0,45 a −0,46 | −0,02 a +0,01 |
+| proximidade | +0,29 a +0,72 | +0,16 a +0,25 |
+
+- **A magnitude despenca na 2.2, e a causa foi medida, não suposta:** no último
+  slot, a probabilidade no bucket que resolveu tem mediana **0,97** no FOMC
+  (83% acima de 0,9) e **0,39** no CPI (7% acima de 0,9). O mercado de inflação
+  não converge, então `1 − p_vencedor` mede sobretudo o tamanho da surpresa do
+  mês — propriedade do evento, não da qualidade do livro. **É limitação do
+  alvo, não da régua**, e vai declarada assim.
+- **O que sobrevive é a distinção que faltava:** a variação total mantém o
+  sinal correto nos 4 cortes; a \|ΔE\| **inverte** nos 4. O empate da 6h/6g era
+  real, e o único corte que separa as duas separa a favor da escolhida. Vai ao
+  relatório como **evidência fraca em magnitude e favorável em direção** — não
+  como confirmação.
+- **Sensibilidade dos dois legados (SA inferido) — imaterial**, como a 6m
+  antecipava: sem eles a estabilidade vai de −0,047 para −0,065 e a coerência
+  de +0,002 para −0,025. Muda pouco, e sempre para o lado certo.
+- **Proximidade reprovada mais uma vez**, agora também no alvo independente da
+  2.2. São 20 cortes acumulados.
+
+### 6n. ⚠️ Um mês de CPI entrava DUAS vezes na calibração (10/08/2026) 🟢
+
+Saiu de investigar a divergência de contagem da 6m (nós 19, o Paulo 18) em vez
+de tratá-la como detalhe. O 19º "mercado" era `M1_cpi_monthly`, rótulo de um
+marco anterior do pipeline: **os mesmos 6 tokenIds, os mesmos 56 slots e
+diferença máxima 0,0** contra `CPI_july-inflation-monthly`. Não é mercado
+parecido — é o mesmo contrato sob dois nomes de arquivo, e jul/2025 entrava
+duplicado na 2.2 (56 de 1.198 slots da grade de 12h, 4,7%).
+
+**Correção:** a identidade do mercado passa a ser o **tokenId**, não o nome do
+arquivo (`_prefixos_sem_duplicata`); entre prefixos com o mesmo conjunto de
+tokens fica o que casa com o calendário de releases.
+
+**Impacto medido — a régua não muda:** todas as candidatas melhoram
+ligeiramente (vt_j5 de −0,4615 para −0,4717; coerência de −0,3131 para
+−0,3214) e **nenhuma ordenação se altera**. A validação de ponta a ponta passa
+de 601 para 573 decisões (515 ativas, 89,9%; os 37 vetos de liquidez e 21 sem
+par não mudam).
+
+**Não contaminava o `c_por_decisao.csv`** — o exportador já filtrava por
+casamento com o calendário, e `M1_cpi_monthly` nunca casava. A versão de 10/08
+do `marcar_selecionado` citava esse par como "empate entre dois mercados para o
+mesmo evento": o sintoma tinha sido visto e classificado errado.
+
+**Observação para o Paulo (não é edição em módulo dele):** o
+`clob_exploracao` guarda o mesmo mercado sob dois rótulos. Nada a corrigir no
+dado — o G5 casa por nome de arquivo e está consistente —, mas quem varrer o
+diretório por prefixo conta um mercado a mais.
+
+### 6o. Tabela por view atualizada COM portão na 2.3 (10/08/2026) 🟡
+
+Regerado o `c_por_decisao.csv` (`0f01741`). A 2.2 saiu **idêntica**; a 2.3 tem
+agora **10 decisões inativas por veto de volume** (antes 0), de 801.
+
+| nível | 2.2 mediana | 2.2 pior | 2.3 mediana | 2.3 pior |
+|---|---|---|---|---|
+| 1 | 0,950 | 0,362 | 0,988 | 0,817 |
+| 3 | 0,858 | 0,047 | 0,965 | 0,545 |
+| 5 | 0,775 | 0,006 | 0,942 | 0,364 |
+
+(388 decisões ativas na 2.2, 771 na 2.3, 349 dias com as duas ativas)
+
+**A ressalva da 6k cai: a suavidade da 2.3 não era ausência de portão.** Com o
+portão, a 2.3 perde 1,2% das decisões por liquidez contra 4,0% na 2.2, e os
+quantis do `c` não se movem. O mercado do FOMC é genuinamente mais bem
+comportado. **A conclusão da 6k para a reunião fica de pé e mais forte:** a
+curva do nível tem de sair **por view**.
