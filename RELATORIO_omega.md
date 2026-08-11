@@ -271,12 +271,12 @@ Três leituras, todas favoráveis à régua escolhida:
    escapar de uma comparação inconclusiva: quando o alvo deixa de favorecer
    qualquer uma delas, não há vencedora.
 
-**O mesmo alvo na segunda view — e o que ele revela sobre o próprio alvo.** O
-desfecho da 2.2 é o **CPI mensal realizado** (variação mensal com ajuste
-sazonal, na versão publicada no dia do anúncio, do ALFRED — não a série
-revisada, que em dois meses cairia no bucket errado). A derivação foi validada
-como a do DFF: o valor publicado cai no bucket que o mercado resolveu em **15
-de 15** meses, incluindo as três pontas abertas.
+**O mesmo alvo na segunda view.** O desfecho da 2.2 é o **CPI mensal
+realizado** (variação mensal com ajuste sazonal, na versão publicada no dia do
+anúncio, do ALFRED — não a série revisada, que em dois meses cairia no bucket
+errado). A derivação foi validada como a do DFF: o valor publicado cai no
+bucket que o mercado resolveu em **15 de 15** meses, incluindo as três pontas
+abertas.
 
 | Ingrediente | 2.3: desfecho (DFF) | 2.2: desfecho (CPI) |
 |---|---|---|
@@ -285,25 +285,40 @@ de 15** meses, incluindo as três pontas abertas.
 | Coerência do livro | −0,45 a −0,46 | −0,02 a +0,01 |
 | Proximidade do evento | +0,29 a +0,72 | +0,16 a +0,25 |
 
-A leitura honesta tem duas partes, e a segunda é mais importante que a primeira.
+**Na 2.2 este alvo não discrimina.** O ingrediente principal fica em −0,05 a
+−0,13 e a coerência é indistinguível de zero. A replicação que a 2.3 oferece —
+os dois ingredientes confirmados contra um resultado externo, com coeficientes
+da ordem de −0,45 — **não existe na view de inflação**.
 
-**A magnitude despenca — e a causa é medível, não especulativa.** No FOMC o
-mercado converge: no último slot, a probabilidade no bucket que de fato
-resolveu tem mediana **0,97**, e 83% das reuniões terminam acima de 0,90. No
-CPI o mercado não converge: mediana **0,39**, e apenas 7% dos meses passam de
-0,90. Onde o desfecho é antecipável, "quanta massa ficou fora do resultado"
-decai ao longo da vida do mercado e discrimina bem; onde a incerteza é
-irredutível até a publicação, esse alvo é dominado pelo tamanho da surpresa do
-mês — uma propriedade do evento, não da qualidade do livro naquele instante.
-O alvo perde poder na 2.2, e isso é uma limitação **do alvo**, não da régua.
+Os dois mercados diferem numa propriedade que é medível e que decide o que este
+alvo consegue enxergar. No último slot antes da resolução, a probabilidade que
+o mercado atribuía ao bucket vencedor tem mediana **0,97** no FOMC (83% das
+reuniões acima de 0,90) e **0,39** no CPI (7% dos meses). O mercado de decisão
+do Fed converge para o resultado; o de inflação não. Como o alvo é a massa
+alocada fora do bucket que venceu, ele decai ao longo da vida de um mercado que
+converge e fica dominado pelo tamanho da surpresa num mercado que não converge
+— e o tamanho da surpresa é propriedade do mês, não da leitura do livro naquele
+instante.
 
-**O que sobrevive é uma distinção, e ela desempata o que faltava.** A variação
-total mantém o sinal correto nos quatro cortes da 2.2; a \|ΔE\| **inverte** o
-sinal nos quatro. Na 2.3 as duas empatavam, e a escolha da régua foi feita por
-parcimônia, explicitamente sem evidência estatística (§9). Num alvo
-independente e numa view diferente, a candidata escolhida é a única que não
-inverte. É pouca magnitude e é evidência fraca — mas aponta na direção da
-escolha já registrada, e não contra ela.
+Duas consequências, e a primeira é um custo:
+
+1. **A verificação de não circularidade vale, em magnitude, para uma view.**
+   Ter estendido o alvo à 2.2 não dobrou a evidência: mostrou que a técnica só
+   morde onde o desfecho é antecipável. Quem quiser a régua validada contra
+   resultado externo tem o FOMC, e tem na inflação apenas a checagem de sinal
+   abaixo.
+2. **A 2.2 desempata o que a 2.3 não desempatou.** A variação total mantém o
+   sinal correto nos quatro cortes; a \|ΔE\| **inverte** o sinal nos quatro. Na
+   2.3 as duas ficavam a 0,002–0,017 uma da outra, e a régua escolheu por
+   parcimônia, sem evidência (§9). Este é o único corte de todo o trabalho em
+   que elas se separam de forma consistente, e separa a favor da que já estava
+   escolhida.
+
+O peso disso é o que os coeficientes permitem: −0,05 contra +0,11 é uma
+diferença de sinal em correlações pequenas, não uma demonstração. Entra no
+relatório porque a alternativa seria omitir o único teste independente que
+distingue as duas candidatas, e porque ele foi rodado depois de a escolha já
+estar registrada e commitada — não antes.
 
 Nenhum dos dois meses em que o resultado existe apenas como resolução do
 mercado (o CPI que o *shutdown* de 2025 impediu de ser publicado, e o mês
@@ -532,13 +547,13 @@ mantida por ser o critério declarado antes do teste. Fica registrado — e
 declarado agora, não depois de olhar o backtest, justamente porque a regra é
 que a forma não se ajusta a resultado de carteira.
 
-**O alvo por desfecho tem pouco poder discriminante na 2.2.** A verificação de
-não circularidade existe hoje nas duas views, o que não era o caso até
-10/08/2026. Mas os coeficientes na 2.2 são pequenos (−0,05 a −0,13 para o
-ingrediente principal), pela razão medida na §5: o mercado de CPI não converge
-antes da publicação, então a massa alocada fora do resultado mede sobretudo o
-tamanho da surpresa do mês. A conclusão que essa verificação sustenta na 2.2 é
-de **sinal** — qual candidata não inverte —, não de magnitude.
+**A validação contra resultado externo vale, em magnitude, para uma view só.**
+O alvo por desfecho roda nas duas, mas na 2.2 os coeficientes são pequenos
+(−0,05 a −0,13 no ingrediente principal, e a coerência indistinguível de zero).
+A razão está medida na §5 — o mercado de inflação não converge antes da
+publicação —, e a consequência é que a replicação entre views, que sustenta o
+resto do trabalho, **não se repete aqui**: o que a 2.2 acrescenta é uma
+checagem de sinal, não uma segunda confirmação de magnitude.
 
 **Dois meses de CPI ficam fora dessa verificação, e um mercado do universo tem
 resolução sem número.** O *shutdown* de 2025 impediu a publicação de um CPI que
