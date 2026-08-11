@@ -2175,4 +2175,156 @@ sem nenhuma view em estado candidato pela primeira vez desde que foi criado.
 
 ---
 
+## 25 (branch `Felipe`). Resposta à `RESPOSTA7` da Lia — três fechamentos 🟢 (fechadas pelo dono, 2026-08-11)
+
+> Contexto: a Lia respondeu ao pedido da `RESPOSTA6` em
+> `RESPOSTA7_Felipe_quatro_views.md`. A resposta devolveu duas decisões e uma
+> pergunta bloqueante. Fechadas todas em `Dump/trocas/RESPOSTA7_Lia_cristalizacao_nivel_e_81_dias.md`.
+
+### 25a. Os 81 dias inativos da 15g — ACEITOS 🟢 (fechada pelo dono, 2026-08-11)
+
+A régua da Lia desativa a `B_trajetoria_propria` em **81 de 345 dias (23,5%)**,
+todos entre 20/09 e 10/12/2025, todos com motivo `sem_par_adjacente`.
+
+**A causa não é qualidade de dado, e isso muda a leitura do número.** A partir de
+set/2025 os baldes "nenhum corte" e "1 corte" pararam de ser cotados (141 e 84
+slots sem leitura) porque se tornaram **impossíveis** — o Fed já cortara mais que
+isso em 2025. Toda linha da janela passa a ter ao menos uma faixa sem leitura, e a
+regra 6e (slot com faixa ausente não entra no cálculo de variação) mata o par. A
+janela está **cheia** (6 de 6 slots): **bucket extinto com mercado funcionando**,
+não buraco de coleta e não livro degenerado.
+
+**Decisão: opção (a) — aceitar.** A 15g roda em **264 dias em vez de 345** e a
+causa vai declarada no relatório, creditada à medição da Lia.
+
+**As duas rejeitadas, e o motivo de cada uma:**
+
+- **(b) tratar do lado do Felipe** (o `c` está no CSV mesmo nas linhas inativas):
+  seria passar por cima da semântica da régua num caso específico — o mesmo vício
+  que a 6e existe para evitar, só que escondido no meu módulo em vez de no dela.
+- **(c) levar à reunião de 13/08** (a régua passaria a excluir faixa morta na
+  janela inteira, uniformemente nas quatro views): mudar o instrumento de medida a
+  dois dias de escolher **nível e teto com esse mesmo instrumento** contraria o
+  protocolo anti-overfit da seção 10. **Fica registrada como melhoria pós-v1** —
+  se for feita, que seja uniforme nas quatro views e **antes** de qualquer escolha
+  de parâmetro.
+
+**A régua da Lia não muda.** Nenhum pedido foi feito ao módulo dela.
+
+### 25b. O `Cristalizacao_entropia.md` está CORRETO — confirmado contra o registro 🟢
+
+**Registro, não decisão nova.** A Lia congelou a verificação dela (6l) porque foi
+avisada de que o artefato estava errado e que viria um corrigido. Conferido antes
+de responder: o arquivo tem **um commit só** (`b895277`), nunca foi alterado, a
+**D20c** registra a medição como válida e **não existe registro de erro em lugar
+nenhum**.
+
+**O que estava errado era o enquadramento, não o número:** o item 5 descrevia o
+consumidor da medição como a tática 1.3 (desligada), e isso deixou de valer quando
+a 15b entrou na carteira — foi exatamente esse parágrafo que a reescrita da
+`RESPOSTA6` (`070d3bd`) trocou. Erro de comunicação do dono, e custou à Lia uma
+verificação cancelada no meio.
+
+**Consequências:** (i) a 6l dela descongela; (ii) a **15b NÃO está apoiada num
+número que vá mudar**; (iii) a frase interpretativa do relatório dela ganha o
+recorte — a cristalização acontece e **reverte no último slot** (CPI 0,0640 →
+**0,1717**; payrolls 0,1363 → **0,3270**; FOMC 0,0376 → **0,0610**), então "longe
+se move mais, perto cristaliza" vale no trecho médio da aproximação, não até o
+evento. Ressalva de amostra mantida: **n = 7 / 12 / 13** em d = 0.
+
+### 25c. O nível é reescalável e o formato do `c` está fechado 🟢
+
+- **`c(nivel) = c_nivel1 ** nivel`** — o nível é **expoente** e sai por fora da
+  régua. O pedido de `{1, 3, 5}` da `RESPOSTA6` **morre**: uma série basta, e o
+  eixo do nível passa a ser **contínuo**, não três pontos. A frase original da
+  `RESPOSTA6` estava certa; a releitura que a "corrigiu" é que errou.
+- **Formato: matriz cheia com buracos** (`lia/c_por_decisao.csv`, 2.795 linhas, em
+  `origin/Lia`), escolha dela com argumento: montar o esparso exigiria ela
+  reproduzir a cascata de views vivas do módulo do Felipe. **O filtro é do
+  Felipe**, uma linha, com a verdade do loop.
+- **Um `c` por pregão no slot das 12:00 UTC**, coluna `selecionado` marcando a
+  linha do dia — o mesmo slot pré-abertura que as views consomem.
+
+### 25d. Duas declarações de relatório que a resposta dela obriga
+
+1. **A régua foi calibrada em 2.2 e 2.3 e está sendo aplicada a QUATRO.** Vai
+   declarado assim nas duas seções — não como se as quatro tivessem passado pelo
+   teste de monotonicidade. O que sustenta a extensão: a régua mede propriedade do
+   **mercado** (movimento da PMF, fechamento do livro), não da view.
+2. **O `c` mediano de 1,2215 da família payrolls da 15b não é comparável** ao
+   1,0120 da 2.3: o G5 do Paulo cobre `2.2`, `2.3` e `B`, não os mercados de
+   emprego. **G5 de payrolls NÃO foi pedido** — são 13 dias e o portão só *remove*
+   decisões, então a falta dele não infla o `c`.
+
+### 25f. A régua entrou em produção — e o veto é um canal separado do nível 🟢 (medido)
+
+`market_inputs.regua_por_decisao` lê o CSV dela e devolve o `callable(data,
+nomes)` do loop; o `run_backtest` passou a informar as **views vivas do pregão**
+à régua (antes ela só recebia a data, e sem a lista o filtro seria adivinhação).
+O `bl_integration.nomes_ativos` virou público para as duas pontas usarem a mesma
+lista. **Nada da entrega muda:** sem régua o backtest sai no `+6,24 pp` idêntico.
+
+**Cobertura conferida antes de confiar:** nos 374 pregões, **nenhuma view viva
+ficou sem linha** no CSV; as 29 divergências são todas no outro sentido (linha
+sem view viva) e o filtro as descarta. A falta continua sendo `ValueError`.
+
+**O achado que separa dois efeitos** (`Dump/analises/Curva_c.md`, tabela nova no
+eixo do nível):
+
+| nível | views/dia | Σ\|w\| pedida mediana | dias de ruína | excesso (tilt ≤ 1) |
+|---|---|---|---|---|
+| sem régua | 2,24 | 220,5 | 33 | +6,24 pp |
+| **0 (só veto)** | **1,99** | **177,3** | 31 | +6,16 pp |
+| 1 | 1,99 | 174,3 | 28 | +5,98 pp |
+| 5 | 1,99 | 146,6 | 26 | +4,74 pp |
+| 8 | 1,99 | 130,3 | 24 | +3,48 pp |
+
+1. **O veto não tem nível.** O `ativa = False` sozinho já tira 0,25 view/dia e
+   21% da Σ|w| pedida, antes de qualquer dosagem. A reunião de 13/08 escolhe
+   **parte** do efeito da régua, não o efeito.
+2. **A conclusão do passo (3) da Lia sobrevive no eixo certo e com quatro
+   views:** a ruína do irrestrito **nunca zera** (24 dias no nível 8). O teto é
+   obrigatório em toda a faixa alcançável — agora medido com a régua real, não
+   com grade constante.
+3. **🛑 O excesso cai monotonicamente com o nível.** Escolher o nível olhando
+   essa coluna escolheria **zero**. É exatamente o que o protocolo anti-overfit
+   da seção 10 existe para impedir, e está declarado assim no artefato.
+
+**Correção factual devolvida à Lia:** o `c` **não** está no CSV nas linhas
+inativas — `c_nivel1` é vazio em **152/152**. A opção (b) dos 81 dias (que ela
+ofereceu como "usar o `c` das linhas inativas sob tua responsabilidade") não
+existia no arquivo. Não muda a 25a. Do lado do Felipe o NaN é **repassado**, não
+preenchido com 1,0: a view sai de P e Q e o `c` dela nunca chega ao Ω.
+
+### 25g. Bug de registro pego na re-geração: as views estavam HARDCODED 🛑
+
+O cabeçalho do `Curva_c.md` dizia `views ativas: **2.2 e 2.3** (a B fora do v1
+pela decisão 11)` — texto fixo no `curva_c.py`, escrito quando eram duas views e
+**sobrevivente à D23**. A primeira re-geração desta sessão saiu descrevendo uma
+carteira que não era a medida. Agora a lista é **derivada da rodada**
+(`res.diagnostics`), como já era o `n_views`.
+
+**Mesmo modo de falha da D17e** (bloqueio do `etf_open_daily` propagado sem abrir
+a fonte) e da linha da 15h ("já medido" que era metade): **registro que envelhece
+não levanta exceção**. A régua que fica: campo que descreve a rodada sai da
+rodada, nunca do texto.
+
+Segundo caso na mesma sessão, e vale registrar junto: o `--regua` do `curva_c.py`
+tinha caminho relativo fixo, então rodar contra a cópia do Paulo (`--raiz
+/outro`) faria a tabela do nível — o insumo de 13/08 — **sumir calada**. O
+default passou a seguir o `--raiz`; só `--regua ""` desliga, e desliga explícito.
+
+### 25e. Observação de dado devolvida à Lia (não é decisão)
+
+A duplicata que ela achou (`M1_cpi_monthly` é duplicata exata de
+`CPI_july-inflation-monthly`) **não atinge o caminho de produção**: o
+`prefixos_cpi` casa release → mercado pela coluna `fonte` do calendário e devolve
+dicionário indexado por data, sempre com prefixo `CPI_*`. O único lugar onde o
+duplicado aparece é o `scripts/sensibilidade_reuniao.py`, que lista
+`M1_cpi_monthly_` explicitamente — logo o `Sensibilidade_decisoes_1.1_1.2_6.1.md`
+(30/07) tem julho duas vezes. Artefato antigo, não alimenta decisão viva, **não
+re-gerado**.
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.

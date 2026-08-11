@@ -1,5 +1,107 @@
 # LOG de sessões
 
+## 2026-08-11 (sessão 24) — Felipe
+
+**Contexto da sessão:** chegaram as respostas do Paulo (G10 consolidado) e da Lia
+(`RESPOSTA7`). O dono mandou ler as duas, montar um to-do do que era dele, e
+executar. A sessão fechou **três decisões**, **ligou a régua da Lia em produção**
+e re-gerou os seis artefatos que estavam medidos com a carteira de duas views.
+Suíte: **253 testes** (248 + 5 novos).
+
+**1. O que as duas respostas fecharam.** O Paulo entregou os três itens do G10 e
+**não trava nada**; o achado novo dele é que o `2025-01-13` era **typo de ano**,
+não divergência — sobram duas, as do shutdown, e a correção já vivia no
+`load_cpi_releases`. A Lia derrubou o pedido do caminho crítico: **o nível é
+reescalável** (`c = c_nivel1 ** nivel`), então uma série cobre o eixo inteiro e o
+`{1, 3, 5}` da `RESPOSTA6` era trabalho à toa.
+
+**2. Três decisões fechadas (D25), nenhuma foi à reunião:**
+- **25a — os 81 dias inativos da 15g: ACEITOS.** A view roda em 264 dias. A régua
+  dela fica intacta; a opção de excluir faixa morta fica como melhoria pós-v1,
+  fora de 13/08 (mudar o instrumento a dois dias de escolher nível e teto **com
+  ele** contraria o protocolo da seção 10).
+- **25b — o `Cristalizacao_entropia.md` está CORRETO.** A Lia tinha congelado a
+  6l dela por um aviso meu de que o artefato estava errado. Conferido contra o
+  registro: um commit só, D20c o dá como válido, nenhuma correção existiu. **O
+  errado era o enquadramento** (o consumidor era a tática 1.3, desligada), que é
+  o que a reescrita da `RESPOSTA6` já tinha trocado. A 15b **não** está apoiada
+  num número que vá mudar.
+- **25c — formato fechado:** matriz cheia com buracos, filtro do meu lado.
+
+**3. A régua entrou em produção (25f).** `market_inputs.regua_por_decisao` +
+`run_backtest` passando as **views vivas** à régua + `nomes_ativos` público. A
+cobertura dela foi **conferida antes de confiar**: nenhuma view viva sem linha em
+374 pregões. O achado que a ligação produziu e que muda a leitura de 13/08: **o
+veto e a dosagem são canais separados, e o veto não tem nível** — sozinho ele já
+tira 0,25 view/dia e 21% da Σ|w| pedida. E a conclusão do passo (3) da Lia
+sobrevive no eixo certo: a ruína **nunca zera** (24 dias no nível 8).
+
+**4. Seis artefatos re-gerados** com quatro views: `Curva_c.md` (ganhou a tabela
+do eixo do **nível**, o insumo de 13/08), `Curva_c_faixa_regua.md`,
+`Curva_banda.md`, `Curva_orcamento.md`, `Tatica_reconstruida.md` e
+`Backtest_v1.md` (ganhou a seção **Limitações declaradas**, obrigatória pela
+D22/D23b). `Gate_sleeves.md` saiu idêntico. A entrega não mudou: **+6,24 pp**.
+
+**5. Duas mensagens escritas, nenhuma enviada** (envio é do dono):
+`RESPOSTA7_Lia_...` e `RECADO_Paulo_G10b_sem_consumidor.md` — o G10b está correto
+e **ficou sem consumidor**, porque o conjunto de views fechou em quatro e a 15b
+lê só entropia da PMF, nunca valor de balde.
+
+**Quebrou / aprendido:**
+- **🛑 As views estavam HARDCODED no cabeçalho do `Curva_c.md`** ("2.2 e 2.3") e o
+  texto sobreviveu à D23: a primeira re-geração da sessão saiu **descrevendo uma
+  carteira que não era a medida**. Agora a lista é derivada de
+  `res.diagnostics`. **Terceira ocorrência do mesmo modo de falha** (D17e; a 15h
+  "já medida" pela metade): registro que envelhece não levanta exceção. A régua
+  que fica: **campo que descreve a rodada sai da rodada, nunca do texto.**
+- **Caminho relativo fixo faz insumo sumir calado.** O `--regua` do `curva_c.py`
+  não seguia o `--raiz`, então rodar contra a cópia do Paulo apagaria a tabela do
+  nível sem erro nenhum. Corrigido; só `--regua ""` desliga, e explícito.
+- **A opção que o outro módulo ofereceu não existia no arquivo dele.** A Lia
+  ofereceu "usar o `c` das linhas inativas"; `c_nivel1` é vazio em **152/152**
+  delas. Só apareceu ao ligar o dado. Aprendizado: **opção oferecida em mensagem
+  se confere no arquivo antes de entrar na decisão** — a nossa não dependeu dela,
+  mas poderia.
+- **Guarda na ordem errada falha pelo motivo certo.** A primeira versão do loader
+  explodia nos 11 pregões **sem nenhuma view viva**: a checagem de cobertura
+  rodava antes de olhar se havia o que dosar.
+
+**Pendente:**
+- **Caminho crítico de 13/08 vazio do meu lado.** O que falta é reunião: **nível
+  + teto** (D20b) e a **interface do volume** (D20a, com o Paulo).
+- **A Lia precisa de uma linha do dono:** a `RESPOSTA7` responde a pergunta que
+  congelou a 6l dela, mas **não foi enviada**.
+- **🔴 D24** (portão de qualidade vale para views e não para overlays) segue como
+  pendência da próxima sessão — inofensiva com a tática desligada.
+- **O relatório é módulo da Lia.** Os registros obrigatórios e as limitações
+  foram escritos no **`Backtest_v1.md`**, que é meu artefato; entrar no relatório
+  depende dela citá-los.
+- **Reprodutibilidade:** o README ganhou o passo de extrair `lia/c_por_decisao.csv`
+  do `origin/Lia` e o aviso de que o `data/` do `origin/Paulo` tem de incluir o
+  `fred_DGS1.csv`.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~230k tokens (23% de janela de 1M).
+- **Prompt inicial (verbatim):** "Chegaram as respostas do paulo e da lia para o
+  G10 e a resposta 6. Leia as duas. Me fale o que elas fecham e se liberam alguma
+  coisa"
+- **Iterações até aceitar:** 1 por entrega (leitura das respostas, panorama,
+  to-do, resposta à Lia, ligação da régua e re-geração aceitos sem rodada de
+  correção do dono). As duas decisões que a IA não podia tomar foram escaladas ao
+  dono antes de escrever a resposta.
+- **Erros da IA:** 2, ambos pegos por execução na mesma sessão. (a) A primeira
+  versão do loader punha a guarda de cobertura antes da checagem de views vivas e
+  quebrava nos 11 pregões sem view. (b) Re-gerei o `Curva_c.md` sem notar que o
+  cabeçalho tinha as views escritas à mão — o artefato saiu com "2.2 e 2.3"
+  depois da D23; corrigido na fonte e re-gerado.
+- **Decisões escaladas:** **D25** criada (25a–25g); 25a, 25b e 25c fechadas por
+  instrução explícita do dono.
+- **Tags:** `[PROMPT-CHAVE]` — "Leia as duas. Me fale o que elas fecham e se
+  liberam alguma coisa" força o inventário do que a mensagem do outro módulo
+  **destrava** antes de qualquer execução, e foi o que reduziu o pedido do
+  caminho crítico de três séries para zero.
+
 ## 2026-08-10 (sessão 23) — Felipe
 
 **Contexto da sessão:** o dono pediu para testar as candidatas do
