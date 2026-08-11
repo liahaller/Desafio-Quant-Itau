@@ -94,7 +94,8 @@ aterrissa no gap de abertura".
 - **O conjunto de views está FECHADO em quatro** (2.2 · 2.3 · 15b · 15g). O
   `Candidatos.md` ficou sem nenhuma candidata pela primeira vez. Isso destrava os
   dois itens abaixo, que estavam presos exatamente por isso.
-- **`RESPOSTA6` REESCRITA e pronta — o envio é do dono.** Ganhou o bloco 🆕 das
+- **`RESPOSTA6` reescrita e ✅ ENVIADA pelo dono em 2026-08-10**, no fim desta
+  sessão. Ganhou o bloco 🆕 das
   quatro views (com as quatro chaves de `diagnostics["view"]`), o aviso de que os
   números da `Curva_c_faixa_regua.md` são da carteira de duas views, a atualização
   do item 5 (a cristalização virou premissa de uma view **da entrega**, não de uma

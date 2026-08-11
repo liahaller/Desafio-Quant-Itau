@@ -1626,19 +1626,27 @@ segue sendo o nível, como este item registra).
 **Não fecha nada:** nível e teto saem juntos, uma vez só, pelo protocolo
 anti-overfit da seção 10 — e não por iteração contra esta tabela.
 
-**🛑 A `RESPOSTA6` está SEGURADA por decisão do dono (2026-08-10, sessão 23), e
-isto precisa estar escrito porque o prazo corre.** Ela ainda **não foi enviada**
-e só sai depois de o conjunto de views fechar — a razão é boa: o pedido nomeia as
-views (`"2.2_inflacao"` / `"2.3_fed"`), e mandar antes de o conjunto fechar
-garante uma série que cobre metade do modelo. **O que TEM de ser corrigido antes
-de enviar:** as chaves passam a incluir a **15b** e a **15g** (e a C, se entrar),
-e a mensagem precisa dizer o que sai em dia **sem** view — a 15b só existe em 27
-pregões de anúncio, e "um `c` por pregão por view" não define esse caso.
+**✅ A `RESPOSTA6` foi SEGURADA e depois ENVIADA, tudo em 2026-08-10 (sessão
+23).** Ficou retida por decisão do dono até o conjunto de views fechar, foi
+reescrita quando fechou (D23e) e o dono a enviou no fim da sessão.
 
-**O risco que o dono aceitou, declarado:** o corte da 10a é **13/08** e a régua
-dela leva tempo de resposta. Se o conjunto de views não fechar a tempo, vale o
-plano B já pré-registrado (`c = 1`, teto no tilt, nível 1) — que é justamente o
-que a 10a existe para garantir. **Não é atraso sem rede.**
+**Por que a espera valeu:** o pedido nomeia as views uma a uma, e na versão
+original nomeava só `"2.2_inflacao"` e `"2.3_fed"`. Enviada de manhã, ela teria
+produzido uma série de `c` cobrindo **metade do modelo** — e o erro só apareceria
+com o arquivo na mão, em cima do corte de 13/08. É o mesmo modo de falha que a
+sessão 22 pegou no mesmo arquivo: **o que roda calado é o caro.**
+
+**O que a reescrita acrescentou, além das quatro chaves:** o aviso de que a 15b é
+direcional e de que as views ditas neutras nunca foram neutras (muda a descrição
+da carteira na seção dela); a marcação de que os números da
+`Curva_c_faixa_regua.md` são da carteira de duas views; a resolução de "e dia sem
+view?" como **fato de interface** e não como pergunta (o `_checa_chaves` faz
+casamento exato contra as views vivas do pregão); e a seção 9 com a assimetria da
+**D24**, explicitamente marcada como coisa que não se responde agora.
+
+**O risco que o dono aceitou ao segurar, e ele não se materializou:** o corte da
+10a é **13/08**. Se o conjunto de views não tivesse fechado a tempo, valeria o
+plano B pré-registrado (`c = 1`, teto no tilt, nível 1). Fechou no mesmo dia.
 
 ### 20c. Cristalização perto do evento — o achado (b) dela, medido contra a tática 1.3 🟡
 
