@@ -4,7 +4,6 @@ Este arquivo define como qualquer instância do Claude Code deve se comportar ne
 
 ## 1. Regra de ouro: Claude não decide sozinho — mas tria antes de travar
 
-- **Decisões metodológicas são tomadas por humanos**, nunca pelo Claude: fontes de dados, universo de ativos, forma funcional de fórmulas (Q, Ω), mapeamento cenário→ativo, parâmetros do modelo.
 - Ao surgir uma decisão nova, **classificar antes de parar** — a maioria das dúvidas não justifica travar a tarefa:
   1. **Detalhe de implementação** (nome, estrutura de código, escolha técnica sem impacto metodológico): decidir sozinho e seguir. Não perguntar, não registrar.
   2. **Decisão do escopo do dono da sessão** (afeta só módulos do dono; não muda interface, premissa compartilhada nem dado entregue por outro membro): apresentar ao usuário na hora, com recomendação, e resolver na conversa. Só vai para `Decisoes_pendentes.md` se o usuário mandar.
@@ -63,9 +62,7 @@ Este arquivo define como qualquer instância do Claude Code deve se comportar ne
 
 ## 6. O que o Claude NUNCA faz neste projeto
 
-- Fechar uma decisão de `Decisoes_pendentes.md` por conta própria.
 - Editar módulo de outro membro.
 - Trocar fonte de dados, universo de ativos ou fórmula sem instrução explícita.
 - Fazer merge entre branches.
-- Deletar ou reescrever `Decisoes_pendentes.md`, `LOG.md` ou os arquivos de arquitetura.
 - Inventar valores numéricos "razoáveis" para parâmetros do modelo (τ, magnitudes de view, thresholds) — todos vêm de decisão registrada.
