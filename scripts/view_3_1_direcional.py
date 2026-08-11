@@ -64,6 +64,23 @@ MINIMO_PREGOES = 60
 MARKET_ASSET = "SPY"
 
 
+def componentes_expansivos(p_poly, spread):
+    """`(z(p_poly), z(−spread))` — as duas parcelas da discordância, separadas.
+
+    Existe como função à parte porque o `gate_recessao_2x2.py` precisa medir
+    cada parcela sozinha (o poly sem o mercado, o mercado sem o poly) contra o
+    mesmo livro. Recopiar a padronização lá daria duas definições do mesmo `z`,
+    que divergem na primeira correção.
+    """
+    par = pd.concat([p_poly.rename("p"), (-spread).rename("s")], axis=1).dropna()
+    z = {}
+    for col in ("p", "s"):
+        media = par[col].expanding(MINIMO_PREGOES).mean()
+        desvio = par[col].expanding(MINIMO_PREGOES).std()
+        z[col] = (par[col] - media) / desvio
+    return z["p"], z["s"]
+
+
 def divergencia_expansiva(p_poly, spread):
     """`z(p_poly) − z(−spread)` com média e desvio EXPANSIVOS.
 
@@ -74,13 +91,8 @@ def divergencia_expansiva(p_poly, spread):
     das 12:00 UTC de D e o spread de D−1 são conhecidos na abertura de D, então
     incluir o próprio dia na janela não é lookahead.
     """
-    par = pd.concat([p_poly.rename("p"), (-spread).rename("s")], axis=1).dropna()
-    z = {}
-    for col in ("p", "s"):
-        media = par[col].expanding(MINIMO_PREGOES).mean()
-        desvio = par[col].expanding(MINIMO_PREGOES).std()
-        z[col] = (par[col] - media) / desvio
-    return (z["p"] - z["s"]).dropna()
+    z_poly, z_mercado = componentes_expansivos(p_poly, spread)
+    return (z_poly - z_mercado).dropna()
 
 
 def beta_expansivo(retornos, divergencia, data, assets):
