@@ -42,7 +42,8 @@ do eixo do **nível**, o insumo de 13/08), `Curva_c_faixa_regua.md`,
 `Backtest_v1.md` (ganhou a seção **Limitações declaradas**, obrigatória pela
 D22/D23b). `Gate_sleeves.md` saiu idêntico. A entrega não mudou: **+6,24 pp**.
 
-**5. Duas mensagens escritas, nenhuma enviada** (envio é do dono):
+**5. Duas mensagens escritas e ✅ ENVIADAS pelo dono em 2026-08-11**, no fim desta
+sessão:
 `RESPOSTA7_Lia_...` e `RECADO_Paulo_G10b_sem_consumidor.md` — o G10b está correto
 e **ficou sem consumidor**, porque o conjunto de views fechou em quatro e a 15b
 lê só entropia da PMF, nunca valor de balde.
@@ -69,8 +70,9 @@ lê só entropia da PMF, nunca valor de balde.
 **Pendente:**
 - **Caminho crítico de 13/08 vazio do meu lado.** O que falta é reunião: **nível
   + teto** (D20b) e a **interface do volume** (D20a, com o Paulo).
-- **A Lia precisa de uma linha do dono:** a `RESPOSTA7` responde a pergunta que
-  congelou a 6l dela, mas **não foi enviada**.
+- **A 6l da Lia está descongelada:** a `RESPOSTA7` responde a pergunta que a
+  congelou e **foi enviada em 2026-08-11**. O que sobra do lado dela é seguir com
+  a seção do relatório, com o recorte da frase da cristalização que foi junto.
 - **🔴 D24** (portão de qualidade vale para views e não para overlays) segue como
   pendência da próxima sessão — inofensiva com a tática desligada.
 - **O relatório é módulo da Lia.** Os registros obrigatórios e as limitações

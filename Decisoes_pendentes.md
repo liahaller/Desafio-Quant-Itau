@@ -2179,7 +2179,8 @@ sem nenhuma view em estado candidato pela primeira vez desde que foi criado.
 
 > Contexto: a Lia respondeu ao pedido da `RESPOSTA6` em
 > `RESPOSTA7_Felipe_quatro_views.md`. A resposta devolveu duas decisões e uma
-> pergunta bloqueante. Fechadas todas em `Dump/trocas/RESPOSTA7_Lia_cristalizacao_nivel_e_81_dias.md`.
+> pergunta bloqueante. Fechadas todas em `Dump/trocas/RESPOSTA7_Lia_cristalizacao_nivel_e_81_dias.md`,
+> **enviada pelo dono em 2026-08-11** (o `RECADO_Paulo_G10b_sem_consumidor.md` saiu junto).
 
 ### 25a. Os 81 dias inativos da 15g — ACEITOS 🟢 (fechada pelo dono, 2026-08-11)
 
