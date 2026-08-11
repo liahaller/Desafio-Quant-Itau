@@ -7,10 +7,10 @@
 
 | configuração | dias com sleeve | excesso | Δ vs. desligada | sharpe | giro diário | Σ\|dw\| mediano | P&L da sleeve sozinha |
 |---|---|---|---|---|---|---|---|
-| desligada (v1, 12c) | 0 | +4.07 pp | +0.00 pp | 1.19 | 0.229 | — | — |
-| só drift FOMC (poly) | 158 | -1.75 pp | -5.83 pp | 1.03 | 0.253 | 72.72 | -35.23 pp |
-| só drift CPI | 135 | +1.83 pp | -2.24 pp | 1.13 | 0.228 | 6.39 | -3.83 pp |
-| as duas sleeves | 245 | -2.76 pp | -6.83 pp | 1.00 | 0.252 | 40.21 | -39.07 pp |
+| desligada (v1, 12c) | 0 | +6.24 pp | +0.00 pp | 1.27 | 0.274 | — | — |
+| só drift FOMC (poly) | 158 | +2.60 pp | -3.64 pp | 1.16 | 0.288 | 72.72 | -35.23 pp |
+| só drift CPI | 135 | +3.77 pp | -2.47 pp | 1.20 | 0.272 | 6.39 | -3.83 pp |
+| as duas sleeves | 245 | +1.36 pp | -4.88 pp | 1.13 | 0.286 | 40.21 | -39.07 pp |
 
 ## A surpresa que as sleeves condicionam
 
