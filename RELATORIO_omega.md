@@ -124,10 +124,10 @@ tercil de confiança. Empates resolvem-se pela forma com menos parâmetros.
 
 | | View 2.3 (FOMC) | View 2.2 (CPI) |
 |---|---|---|
-| Mercados | 18 reuniões (76 faixas) | 18 mercados-mês (111 faixas) |
+| Mercados | 18 reuniões (76 faixas) | 18 mercados-mês (105 faixas) |
 | Slots (grade 12h) | 3.905 | 1.142 |
 | Slots (grade 24h) | 1.952 | 534 |
-| Volume por slot | 76/76 faixas, 1.242 slots julgáveis | 111/111 faixas, 1.142 slots julgáveis |
+| Volume por slot | 76/76 faixas, 1.242 slots julgáveis | 105/105 faixas, 1.142 slots julgáveis |
 
 Preço: endpoint `/prices-history` do CLOB do Polymarket, passo nativo de 12h.
 Volume: reconstruído trade a trade pela Data API (`/trades`), agregado em
@@ -347,7 +347,8 @@ que entrou não permite avaliar se a escolha foi disciplinada.
 
 **Proximidade do evento — reprovada com o sinal invertido.** A hipótese
 inicial era que a incerteza aumenta perto de uma decisão agendada. O dado diz
-o contrário, nas duas views, em 16 cortes independentes: **longe do evento o
+o contrário, nas duas views, em 16 cortes do alvo principal — e em todos os do
+alvo por desfecho, nas duas views, sem uma única exceção: **longe do evento o
 mercado se move mais**, não menos — a probabilidade se cristaliza à medida que
 a decisão chega. A rejeição sobrevive à troca do alvo, e com folga maior
 (§5). O ingrediente saiu da régua pelo protocolo. Entrar com o
@@ -356,9 +357,9 @@ o que a trava do §3 existe para impedir. O achado fica registrado como
 resultado e como candidato para uma versão futura, com hipótese declarada
 antes do teste.
 
-**Volume como ingrediente gradual — reprovado.** Não pontua sozinho (−0,03 a
-+0,14, sinal predominantemente invertido: mais volume antecede *mais*
-movimento, o que é econômicamente sensato — volume chega com notícia). E
+**Volume como ingrediente gradual — reprovado.** Não pontua sozinho (−0,11 a
++0,19 nas duas views, sinal predominantemente invertido: mais volume antecede
+*mais* movimento, o que é econômicamente sensato — volume chega com notícia). E
 nenhum threshold calibrado melhora a régua: exigir liquidez acima do 1º, 2º ou
 3º quartil piora o Spearman em até 0,14 e consome amostra. Sobrevive apenas o
 veto do slot sem **nenhuma** negociação, que é gratuito e tem justificativa
@@ -371,7 +372,7 @@ mede atividade do mercado, não da faixa menos ativa.
 
 **A forma simétrica `(1 − x)` para os fatores — rejeitada por medição.** Seria
 a escolha natural ("fração da massa que ficou parada" × "quanto o livro
-fecha"), mas o fator de coerência **fica negativo em 7 de 1.139 leituras**
+fecha"), mas o fator de coerência **fica negativo em 7 de 1.087 leituras**
 completas do CPI, onde a soma do livro chega a 2,73. Corrigir isso exigiria
 truncar o fator em zero, o que criaria um segundo veto binário — e o
 compromisso metodológico assumido é que o **único** veto binário da régua é o
@@ -435,8 +436,9 @@ de 12h antes de qualquer diferença, e há teste dedicado a esse caso.
 
 ## 8. Implementação e validação
 
-A régua está implementada em `lia/omega.py`, com **55 testes** na suíte do
-módulo. Toda função matemática tem caso sintético com resultado conhecido:
+A régua está implementada em `lia/omega.py`, com **81 testes** na suíte do
+módulo (23 deles sobre a régua de produção em si). Toda função matemática tem
+caso sintético com resultado conhecido:
 PMF parada devolve fator 1,0; massa movida conhecida devolve o valor exato; o
 fator de coerência é bilateral; `nível = 0` recupera He-Litterman.
 
@@ -499,11 +501,14 @@ slot com qualquer faixa truncada sai como volume desconhecido, que **não veta**
 reunião, o que limita o dano; ainda assim, o veto de liquidez é uma verificação
 mais fraca na 2.3.
 
-**Os dois ingredientes que entraram correlacionam +0,37 a +0,40 entre si.**
-Não é a dupla contagem mecânica que a renormalização eliminou (§2), mas também
-não são medidas ortogonais: parte da penalidade é cobrada duas vezes no
-produto. Registrado e não resolvido — separá-los exigiria uma reformulação que
-não caberia no prazo.
+**Os dois ingredientes que entraram correlacionam entre si, e de forma
+desigual: +0,38 na 2.2 e +0,18 na 2.3** (Spearman, na janela da régua). Não é a
+dupla contagem mecânica que a renormalização eliminou (§2), mas também não são
+medidas ortogonais: parte da penalidade é cobrada duas vezes no produto.
+Registrado e não resolvido — separá-los exigiria uma reformulação que não
+caberia no prazo. A diferença entre as views é ela própria informativa: no
+mercado de decisão do Fed, livro que não fecha e distribuição que se move são
+quase independentes; nos mercados de inflação, andam mais juntos.
 
 **O empate entre as duas formas de colapso foi resolvido por parcimônia, não
 por evidência.** Na view 2.3 a variação total vencia em todos os cortes; na
