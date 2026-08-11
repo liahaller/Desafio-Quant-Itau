@@ -17,15 +17,26 @@ git fetch origin Paulo
 git archive origin/Paulo data | tar -x
 echo "data/" >> .git/info/exclude     # só uma vez, é local
 
-# 2. suíte (183 testes, ~3 s) — roda sem o data/, é tudo sintético
+# 2. régua do Ω da Lia (o `c` por decisão) — sem ela o eixo do NÍVEL não sai
+git fetch origin Lia
+mkdir -p data/lia
+git show origin/Lia:lia/c_por_decisao.csv > data/lia/c_por_decisao.csv
+
+# 3. suíte (253 testes, ~3 s) — roda sem o data/, é tudo sintético
 python -m pytest tests/ -q
 
-# 3. os quatro artefatos do relatório, nesta ordem
+# 4. os quatro artefatos do relatório, nesta ordem
 python scripts/backtest_v1.py    --raiz .   # -> Dump/analises/Backtest_v1.md
 python scripts/curva_c.py        --raiz .   # -> Dump/analises/Curva_c.md
 python scripts/curva_orcamento.py --raiz .  # -> Dump/analises/Curva_orcamento.md
 python scripts/curva_banda.py    --raiz .   # -> Dump/analises/Curva_banda.md
 ```
+
+**O passo 1 não é opcional nem parcial.** A 15g lê o `data/raw/fred_DGS1.csv`,
+que chegou no G10 e existe só no `origin/Paulo` — quem extrair um `data/` antigo
+não roda o v1 de hoje. Falha alto (`FileNotFoundError` no `load_fred`), nunca
+calado. O passo 2 só é exigido pelo `curva_c.py`: sem o CSV ele emite a grade
+constante e **pula** a tabela do nível, sem quebrar.
 
 Os quatro escrevem em `Dump/analises/` e são independentes — cada um recarrega o
 dado do zero. O `--raiz` é o diretório que contém `data/`, e não precisa ser o
@@ -51,7 +62,8 @@ divergirem, comece conferindo a versão do pandas (a leitura de PMF depende de
 | `src/bl_optimizer.py` | reverse optimization, posterior He & Litterman, pesos |
 | `src/bl_integration.py` | empilha as views ativas e devolve o `w` do dia |
 | `src/backtest.py` | motor do loop: composição, custo, giro, teto, banda |
-| `src/view_2_2_inflacao.py`, `src/view_2_3_fed.py` | as duas views ativas do v1 |
+| `src/view_2_2_inflacao.py`, `src/view_2_3_fed.py`, `src/view_incerteza_anuncio.py`, `src/view_B_trajetoria_propria.py` | as **quatro** views do v1 (D23; o conjunto está fechado) |
+| `src/market_inputs.py` | Σ, w_mkt, Ω de fallback e a leitura da régua da Lia |
 | `src/poly_loader.py`, `src/poly_preprocessing.py` | leitura e tratamento da PMF |
 | `scripts/backtest_v1.py` | o backtest do v1 ponta a ponta (plumbing de dado) |
 | `scripts/curva_*.py` | varreduras de parâmetro — **medem e reportam, não escolhem** |
