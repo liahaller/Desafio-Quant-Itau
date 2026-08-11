@@ -1208,3 +1208,86 @@ mesma classe do veto de liquidez.
   família "fomc" da 15b lê o M3 — uma suposição razoável (o parquet de
   reuniões) teria produzido um CSV inteiro com o mercado errado, e nada no
   formato acusaria.
+
+
+---
+
+## 2026-08-11 — Lia (resposta do Felipe: 6l descongela, errata do `c` nas inativas)
+
+**Feito:**
+- **6l RESOLVIDA.** O Felipe conferiu contra o próprio registro: o
+  `Cristalizacao_entropia.md` **está correto**, nunca foi alterado e não há
+  registro de erro em lugar nenhum. O que estava errado era o **enquadramento**
+  do item 5 (descrevia a tática 1.3, desligada, como consumidora da medição), e
+  ele assume como falha de comunicação dele.
+- **A frase do relatório foi corrigida, não removida** (§6). "A probabilidade se
+  cristaliza à medida que a decisão chega" vale **só no trecho médio da
+  aproximação**: a variação total volta a subir no último slot (CPI 0,064 →
+  0,172; payrolls 0,136 → 0,327; FOMC 0,038 → 0,061), e no CPI e nos payrolls o
+  dia do anúncio é o ponto mais agitado. Citada com o `n` do slot final
+  (7/12/13) e com a nota de que as duas medições não se contradizem (grade
+  diária × 12h, movimento cru × erro de previsão).
+- **⚠️ ERRATA minha, apontada por ele e conferida:** na `RESPOSTA7` eu escrevi
+  que "o `c` está no CSV mesmo nas linhas inativas". **É falso** — `c_nivel1`
+  vem vazio em **todas as 185** linhas com `ativa = False`. Afirmei sobre um
+  arquivo que eu mesma gerei sem abrir. Corrigido no documento com tachado e
+  errata. Ao escrever a errata **errei de novo** (disse 158 sem par, são 153) e
+  só peguei porque medi antes de commitar; a decomposição certa é 153
+  `sem_par_adjacente` (0 com `fator_estabilidade`) e 32 `volume_zero` (27 com).
+- **Limitação nova declarada na §9: o Ω é diagonal.** A régua qualifica cada
+  view isoladamente e não desconta redundância entre views — há um par com
+  correlação de +0,67 entre os sinais-fonte na carteira final. É a limitação do
+  módulo com a maior distância entre o que seria correto e o que foi feito.
+- **Conferido que "as views apostam só em preço relativo" NÃO aparece** no meu
+  texto — o aviso dele sobre a carteira não ser neutra em mercado não obriga
+  correção do meu lado (já tinha sido verificado em 10/08 e reconfirmado).
+
+**Fechado por ele, sem volta para mim:**
+- **Os 81 dias da 15g: aceitos.** A régua não muda, ele não trata do lado dele
+  (seria o mesmo vício escondido em outro módulo) e não vai à reunião de 13/08
+  (mudar o instrumento a dois dias de escolher nível e teto com esse mesmo
+  instrumento). Fica como melhoria pós-v1, aplicada uniformemente às quatro
+  views e **antes** de qualquer escolha de parâmetro. O diagnóstico do bucket
+  extinto vai à seção dele creditado à medição desta.
+- **Nível reescalável confirmado** — o pedido de `{1,3,5}` morreu; ele varre o
+  eixo contínuo com `c_nivel1 ** nivel`.
+- **Matriz cheia aceita**, e a medição dele confirma a escolha: nos 374 pregões
+  do v1 **nenhuma view viva ficou sem linha**; as 29 divergências são todas no
+  outro sentido (linha minha sem view viva dele), que é o que o filtro descarta.
+- **A duplicata do CPI não o atinge** em produção (o `prefixos_cpi` casa por
+  data e só aceita prefixo `CPI_*`); aparece só num artefato antigo de
+  sensibilidade, que ele não vai re-gerar.
+- **D24 (portão para overlays)**: fechado como pendência da próxima sessão dele,
+  e quando for é **pedido novo**, não correção pendente daqui.
+
+**Pendente:**
+- **Reunião 13/08: nível global + teto.** Insumo pronto dos dois lados; ele
+  re-gera as cinco varreduras irmãs com as quatro views e o `c` por decisão.
+  ⚠️ Aviso dele que vale para a reunião: o excesso **cai monotonicamente** com o
+  nível (+6,16 pp no 0 a +3,48 pp no 8), então escolher o nível olhando essa
+  coluna escolhe zero — é o que o protocolo anti-overfit existe para impedir.
+- Relatório: falta a revisão da dona nas §§ 1–4, 6, 7 e 10 (a 5 e a 9 já foram)
+  e a seção de backtest dele.
+- Janela 5 × 10 (6h) e Decisão 9 seguem abertas, ambas com motivo registrado.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~80% da janela, estimativa.
+- **Prompt inicial (verbatim):** "o felipe me respondeu # Resposta à Lia — o
+  artefato está correto (descongela a 6l), o pedido encolheu para nada, e os 81
+  dias ficam aceitos [...]"
+- **Iterações até aceitar:** 0 — nenhuma decisão nova precisou ser escalada; a
+  sessão foi executar o que a resposta dele destravou.
+- **Erros da IA:** **um de resultado, meu, e propagado numa mensagem enviada.**
+  Afirmei na `RESPOSTA7` que o `c` estava no CSV nas linhas inativas sem abrir o
+  arquivo que eu mesma tinha gerado; ele conferiu e me corrigiu. Ao escrever a
+  errata, errei a decomposição (158 × 153) e só não saiu porque medi antes de
+  commitar. A lição é a mesma nas duas: afirmar sobre arquivo sem ler o arquivo.
+- **Decisões escaladas:** — (nenhuma; a **6l** foi fechada por informação nova
+  do Felipe, não por decisão nova daqui).
+- **Tags:** `[PROMPT-CHAVE]` — o item que mais rendeu foi ter perguntado a ele
+  "qual das duas coisas vale" em vez de escolher uma. O repositório dizia que o
+  artefato estava íntegro e a mensagem verbal dizia que estava errado; se eu
+  tivesse seguido qualquer um dos dois sem perguntar, ou a frase do relatório
+  sairia errada ou uma verificação seria refeita à toa. O contra-exemplo da
+  mesma sessão é o meu erro do `c`: ali eu **não** conferi a fonte e afirmei.

@@ -366,13 +366,28 @@ que entrou não permite avaliar se a escolha foi disciplinada.
 inicial era que a incerteza aumenta perto de uma decisão agendada. O dado diz
 o contrário, nas duas views, em 16 cortes do alvo principal — e em todos os do
 alvo por desfecho, nas duas views, sem uma única exceção: **longe do evento o
-mercado se move mais**, não menos — a probabilidade se cristaliza à medida que
-a decisão chega. A rejeição sobrevive à troca do alvo, e com folga maior
-(§5). O ingrediente saiu da régua pelo protocolo. Entrar com o
+mercado se move mais**, não menos. A rejeição sobrevive à troca do alvo, e com
+folga maior (§5). O ingrediente saiu da régua pelo protocolo. Entrar com o
 sinal trocado seria escolher o sinal depois de ver o dado, que é precisamente
 o que a trava do §3 existe para impedir. O achado fica registrado como
 resultado e como candidato para uma versão futura, com hipótese declarada
 antes do teste.
+
+A leitura intuitiva desse resultado — "a probabilidade se cristaliza à medida
+que a decisão chega" — **é verdadeira apenas no trecho médio da aproximação, e
+não até o evento**. Uma medição independente feita no mesmo dado, em grade
+diária e sobre movimento cru, mostra que a variação total cai até uma faixa
+intermediária e **volta a subir no último slot**: no CPI, de 0,064 (6 a 10 dias
+antes) para 0,172 no dia; nos payrolls, de 0,136 (11 a 20 dias) para 0,327; no
+FOMC, de 0,038 (1 a 2 dias) para 0,061. No CPI e nos payrolls, o dia do anúncio
+é o ponto **mais agitado** da série. O slot final tem `n` de 7 a 13 eventos por
+família, então a reversão é o número mais frágil citado neste texto.
+
+As duas medições não se contradizem: esta mede movimento cru em grade diária,
+e a rejeição do ingrediente mede erro de previsão em grade de 12h contra uma
+distância contínua, que um pico de slot único quase não move. O ponto de
+registrar a divergência é outro — a frase intuitiva teria entrado no relatório
+como se fosse o achado, e ela é mais forte do que o dado sustenta.
 
 **Volume como ingrediente gradual — reprovado.** Não pontua sozinho (−0,11 a
 +0,19 nas duas views, sinal predominantemente invertido: mais volume antecede
@@ -517,6 +532,18 @@ slot com qualquer faixa truncada sai como volume desconhecido, que **não veta**
 2.3. O truncamento morde os slots antigos e não a janela de decisão de cada
 reunião, o que limita o dano; ainda assim, o veto de liquidez é uma verificação
 mais fraca na 2.3.
+
+**O Ω é diagonal: ele qualifica cada view isoladamente e não enxerga
+correlação entre views.** A régua responde "quão confiável é a leitura deste
+mercado", nunca "quanta informação nova esta view traz dado o que as outras já
+dizem". Duas views que leem sinais correlacionados — e há um par com correlação
+de +0,67 entre os sinais-fonte na carteira final — recebem cada uma o seu
+multiplicador como se fossem independentes, e a redundância entre elas não é
+descontada em lugar nenhum. Um Ω com termos fora da diagonal seria a resposta
+formal; ele exigiria estimar covariância de erro entre views a partir de poucos
+eventos por view, o que não caberia nesta amostra. Fica declarado como escolha
+de escopo, não como descuido — e é a limitação do módulo com a maior distância
+entre o que seria correto e o que foi feito.
 
 **Os dois ingredientes que entraram correlacionam entre si, e de forma
 desigual: +0,38 na 2.2 e +0,18 na 2.3** (Spearman, na janela da régua). Não é a

@@ -617,6 +617,32 @@ depende dessa frase** — ela caiu em 16 cortes do teste de monotonicidade, nas
 duas views, incluindo o alvo por desfecho da 6h. O que está em jogo é uma
 sentença interpretativa, não um ingrediente da régua.
 
+**🟢 RESOLVIDA em 11/08/2026 — o artefato estava certo; o aviso de erro era
+sobre a moldura.** O Felipe conferiu contra o próprio registro e respondeu que
+`Cristalizacao_entropia.md` vale, nunca foi alterado, e que **não existe
+registro de erro em lugar nenhum**. O que estava errado era o **enquadramento**
+do item 5 da mensagem dele — descrevia a tática 1.3 (desligada) como consumidora
+da medição, e isso deixou de valer quando a 15b entrou na carteira. Ele assume
+a confusão como falha de comunicação dele.
+
+**Consequência: a frase do relatório foi corrigida, não removida.** A leitura
+"a probabilidade se cristaliza à medida que a decisão chega" vale **só no trecho
+médio da aproximação**: a variação total cai até uma faixa intermediária e
+**volta a subir no último slot** (CPI 0,064 → 0,172; payrolls 0,136 → 0,327;
+FOMC 0,038 → 0,061), e no CPI e nos payrolls o dia do anúncio é o ponto mais
+agitado. Citada com o `n` do slot final (7/12/13), como ele pediu — é o número
+mais frágil do texto.
+
+**As duas medições não se contradizem** (grade diária × 12h; movimento cru ×
+erro de previsão; pico de slot único × distância contínua). O valor de ter
+esperado: a frase intuitiva teria entrado no relatório como achado, e ela é
+mais forte do que o dado sustenta.
+
+**Custo registrado:** a verificação cancelada em 10/08 (script escrito e
+apagado) foi desperdício causado por um aviso que não correspondia ao estado do
+repositório — e o repositório é que estava certo. Na próxima vez, conferir o
+artefato antes de cancelar trabalho por aviso verbal.
+
 ### 6m. Regra de decisão declarada ANTES de rodar a 2.3 com portão (10/08/2026) 🟡
 
 O Paulo entregou o G5 do FOMC (`conditionId` no parquet + as 76 faixas × 18

@@ -103,8 +103,16 @@ mercado funcionando, não livro degenerado.
 perde dias. As opções que eu vejo, sem recomendar nenhuma:
 
 - aceitar (a 15g roda em 264 dias em vez de 345);
-- tu tratares do teu lado (a coluna `motivo_inativa` distingue, e o `c` está no
-  CSV mesmo nas linhas inativas — dá para usar sob tua responsabilidade);
+- ~~tu tratares do teu lado (a coluna `motivo_inativa` distingue, e o `c` está
+  no CSV mesmo nas linhas inativas — dá para usar sob tua responsabilidade)~~
+  → **ERRATA (11/08, apontada por ti e conferida): esta opção não existe.**
+  `c_nivel1` vem **vazio em todas as 185 linhas** com `ativa = False` — eu
+  afirmei o contrário sem conferir o arquivo que eu mesma gerei. Nem
+  reconstruível na maioria: `fator_coerencia` está preenchido nas 185, mas
+  `fator_estabilidade` só em 27 — e as 27 estão todas entre as **32** vetadas
+  por volume. Nas **153** sem par adjacente ele é vazio em 100% dos casos, que
+  é a definição do motivo: sem par não há variação a medir. E o vazio é o
+  comportamento certo — a view sai de P e Q, e o `c` dela nunca chega ao Ω;
 - virar item de reunião, e aí a régua passa a excluir faixa morta na janela
   inteira, aplicada uniformemente às quatro views.
 
