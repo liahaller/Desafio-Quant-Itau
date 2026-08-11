@@ -1,5 +1,24 @@
 # Conclusões sobre a camada tática — sessão 25 (2026-08-11, Felipe)
 
+> 🟢 **SUPERADO em parte na sessão 27 (2026-08-11).** A camada tática **entrou
+> na entrega**, com duas sleeves transversais (M4 recessão, M9 Câmara) —
+> **D28**, `src/tatica_sleeves.py`, `Dump/analises/Camada_tatica_v2.md`.
+>
+> **O que este arquivo acertou e continua de pé:** o eixo 1 da seção 5 (*livro
+> transversal em vez de direcional*) foi exatamente por onde a camada saiu do
+> zero, e o eixo 2 (*mercado com fluxo de notícia*) segue barrado por cobertura.
+> A conclusão da seção 1 — *"o sinal tem tamanho, não se encadeia e não antecipa
+> o retorno dos ativos"* — vale para o sinal **direcional**; no livro **neutro**
+> ele antecipa, e é essa a diferença que a camada explora.
+>
+> **O que este arquivo diz e NÃO vale mais:** a seção 4 lista a *1.1 PEAD* como
+> "intocada" e travada pela decisão 5. A decisão 5 **fechou** e a 1.1 foi
+> **medida e reprovada** fora do Fed (D28.c). A seção 7 lista a decisão 5 e a
+> D24 como travas — as duas **fecharam** (D28, itens 7 e 2).
+>
+> Nada abaixo foi reescrito: fica como o registro do que se sabia ao fim da
+> sessão 25.
+
 Escrito para a **próxima sessão**, cujo objetivo declarado pelo dono é *achar uma
 nova forma de ativar a camada tática*. Este arquivo diz o que ficou medido, o que
 ficou morto **com número**, o que nenhum teste tocou, e o que teria de ser
@@ -127,7 +146,7 @@ mudar significa **mudar de eixo**, não insistir.
 | premissa da camada até aqui | estado | o que sobra |
 |---|---|---|
 | o poly está **errado** sobre o Fed | ❌ D16: surpresa mediana 0,52 bps em 17 reuniões | procurar onde ele NÃO é preciso |
-| o poly está **atrasado** (move-se e o mercado ainda não) | ❌ esta sessão: VR ≈ 1, ρ ex-ante ≈ 0 | — |
+| o poly ajusta em **rampa** (a crença leva dias para assentar, e dá para entrar no meio do movimento) | ❌ esta sessão: VR ≈ 1, ρ ex-ante ≈ 0 — ele reprecifica **de uma vez** | — |
 | **acumular horizonte** cria sinal | ❌ esta sessão: resolve tamanho, não previsão | — |
 | a informação é **negociável** quando aterrissa | ⚠️ nunca medido para a 3.2 | teste do resíduo pós-gap |
 | o sinal está no **nível/forma**, não no movimento | ⚠️ parcialmente ocupado pela 15b | famílias que a 15b não lê |

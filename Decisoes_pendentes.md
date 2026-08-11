@@ -79,10 +79,26 @@ Como converter probabilidade do poly em retorno esperado (unidade que o BL exige
 
 **Decisão:** _(a registrar)_
 
-## 5. Definição operacional de "surpresa" (PEAD, 1.1) 🔴
+## 5. Definição operacional de "surpresa" (PEAD, 1.1) 🟢 (fechada pelo dono, 2026-08-11 — sessão 27)
 Fórmula da surpresa. `1 − prob_atribuída`? Contínua ou por threshold?
 
-**Decisão:** _(a registrar)_
+**Decisão:** **`surpresa = resolução − probabilidade precificada na véspera`, CONTÍNUA
+(sem threshold).** Fechada pelo dono em 2026-08-11, junto com o pacote da **D28**.
+
+- **Contínua e não por faixa:** um threshold seria um parâmetro livre novo,
+  escolhido sem medição — exatamente o que a regra 6 do `CLAUDE.md` barra. A
+  forma contínua não introduz número nenhum.
+- **"Véspera" é o slot pré-abertura do dia anterior à resolução**, que é o
+  último dado conhecido antes do evento. Não é escolha de janela: é o que o
+  dado tem (a série do poly termina na véspera — medido no `Gate_PEAD.md`).
+- **Não é definição nova:** é o **placeholder declarado** que o `Gate_PEAD.md`
+  já usou e que o `Candidatos_taticos.md` carrega por escrito. O que muda é o
+  status — deixa de ser placeholder e passa a ser a definição do projeto, o que
+  torna a medição do `Gate_PEAD.md` válida em vez de provisória.
+
+**Consequência imediata:** destrava a **1.1 PEAD**, que estava parada aqui desde
+2026-07-09. O que continua faltando para ela é dado (valor realizado), não
+definição — ver o item 8 da D28.
 
 ## 6. Forma funcional do Ω reativo 🔴
 Como volume, estabilidade, convergência e proximidade de evento viram um número de confiança. Versão mínima para o mock vs. versão completa.
@@ -2389,6 +2405,282 @@ escolher entre **(a)** destravar a decisão 5 e medir a 1.1, **(b)** medir o
 resíduo pós-gap da 3.2, ou **(c)** pedir dado novo ao Paulo (mercados com fluxo
 de notícia têm dispersão de sobra — Irã 4,0×, tarifas 3,5× — mas duram 3 a 59
 pregões, e cobertura e dispersão são quase disjuntas no que temos).
+
+---
+
+## 27 (branch `Felipe`). Maratona de medição da camada tática — 4 candidatos testados, 2 células vivas 🔴 (registro, 2026-08-11 — sessão 26)
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D27 do
+> `Felipe`".
+
+**Registro, não decisão.** Nada aqui fecha, nada reabre escopo e **nenhum
+candidato foi movido de estado** — quem move é o dono. Por instrução dele a
+sessão implementou e testou um a um os candidatos válidos, só para ver quem
+passa. Seis scripts, seis artefatos, **nenhum módulo em `src/`** (protocolo da
+D17). Suíte: **259 → 289 testes**. Detalhe completo em `Candidatos_taticos.md`.
+
+**As quatro candidatas medidas, e a causa de morte de cada uma:**
+
+| candidato | causa | número |
+|---|---|---|
+| **1.1 PEAD** · Fed | SEM SINAL | surpresa mediana **0,52 bps** contra tick de 1 bp; e o `h = 15` sai `SPY +4.91 ❌ · TLT +1.37 ❌`, **dígito por dígito** o controle da D16 |
+| **1.1 PEAD** · CPI/binários | DADO | a série do poly **termina na véspera** da resolução; sem valor resolvido não há surpresa. Binários: 1 evento por mercado |
+| **3.2 event-driven** | SEM SINAL | resíduo pós-gap de **mediana −1%**, 4 de 8 mercados na direção declarada |
+| **notícia** | DADO | 2, 8, 28 e 58 pregões nos mercados que se mexem |
+| **transversal** | — | eixo confirmado (ver abaixo), sem gatilho próprio |
+
+**1. A 1.1 no Fed não é candidata nunca medida — É a sleeve da D16.** A
+reprodução é exata, não aproximada, e isso deixou de ser argumento e virou
+medida (`Gate_PEAD.md`). O que continua intocado é a 1.1 **fora** do Fed, e o
+que impede é G0 + a **decisão 5**, que segue 🔴 aberta. A definição usada aqui
+(*resolução − probabilidade da véspera*) entrou como **placeholder declarado** e
+**não fecha a decisão 5**.
+
+**2. O eixo do INSTRUMENTO existe, e sobrevive à neutralização de beta.**
+Mesmo sinal, mesma grade, trocando só o livro: **8 pares passam só com livro
+setorial, 0 só com o direcional** (`Gate_transversal.md`). Metade dos livros
+declarados, porém, era **beta disfarçado** (`+XLF −XLP` +0,59 · `+XLP −XLK`
+−0,56 · `+XLF −XLU` +0,48). Com as pernas hedgeadas contra o SPY por β expansivo
+defasado, a maior |corr| cai para **0,17** e o placar **sobe para 14 × 0**
+(`Gate_transversal_neutro.md`). A vantagem do livro **não era** alavancagem
+direcional disfarçada.
+
+**3. Um modo de falha novo entrou no repertório da camada, e derrubou a
+maioria: INSTÁVEL.** Não é invenção desta sessão — é o corte da amostra em duas
+metades que a **D19c** usou para derrubar a 3.1 direcional. **Das 10 aprovações
+de G2 da maratona, 8 morrem nele.** Formalizá-lo como quinto item da D22 é
+decisão do dono; **não estou tratando como se já fosse**.
+
+**4. O teste entre mercados IRMÃOS liquidou o resto** (`Gate_mercados_irmaos.md`).
+Partir a amostra usa o mesmo mercado, ano e regime; o teste forte é se o
+mecanismo se repete num segundo mercado — foi assim que a 2.4 morreu. Relação
+declarada antes de medir (partidário = **espelho**, geopolítico = **igual**), μ
+**cru** e não alinhado:
+
+- **M7 Irã k = 20 — ❌**, não reproduz no segundo episódio. Mesmo padrão da view
+  C (D23f), agora medido na camada tática.
+- **M5 Trump — ❌**. (Ressalva: a célula viva dele é corte de salto `q0.00`, que
+  não existe na grade de lookbacks; leu-se k = 1, correspondência aproximada.)
+- **M9 Câmara k = 20 — ✅.**
+
+**As duas células que sobraram, e nenhuma pode entrar:**
+
+| célula | o que passou | o que falta |
+|---|---|---|
+| **M4 recessão** — direcional k = 5 · setorial neutro **k = 3, 5, 10** | G0 249 · G1 2,0× · G2 ✅ · G3 −0,20 · corte da amostra ✅, em **três horizontes contíguos** | 🛑 **a contradição com a D19c**, no mesmo mercado. E **nunca** terá teste de irmão: não existe segundo mercado de recessão (D18d) |
+| **M9 Câmara** — setorial neutro k = 20 | tudo acima **+ reprodução em mercado irmão** — única do projeto | 🛑 tensão com a **2.4**: ressuscitar como *overlay* um mecanismo cortado como *view* é decisão de grupo. E é **célula única**, não bloco |
+
+⚠️ **Contra as duas, e precisa estar visível:** elas saíram de uma seleção de
+~200 células (mercado × horizonte × livro) em seis artefatos. **Nenhum teste
+rodado corrige para comparações múltiplas.** O M4 tem proteção parcial (três
+horizontes contíguos — garimpo tende a produzir célula isolada); o **M9 não
+tem**, e é o mais exposto.
+
+⚠️ **A taxa de reprodução por par NÃO é teste estatístico** (43% partidário, 28%
+geopolítico, contra 25% de acaso): as células não são independentes — horizontes
+vizinhos leem quase os mesmos dias e os livros compartilham perna. Está dito no
+artefato para ninguém citar como significância.
+
+**O G4 (P&L da sleeve sozinha) continua sem ser rodado para NADA.** Tudo acima é
+critério de admissão — responde *"o sinal existe e aponta certo?"*, nunca *"isso
+ganha dinheiro?"*. O G4 é o primeiro que exige módulo, e por protocolo vem
+depois das duas pendências acima.
+
+**Três portões continuam fechados e nenhum é técnico:** reabertura de escopo da
+camada (grupo) · **D24 🔴** (o portão de qualidade do poly vale para views e não
+para overlays) · **12c** — esta resolvida na prática, já que a âncora
+`inv(δΣ)·μ` da D16 tem zero parâmetro livre e segue sem uso. **Não voltar a
+introduzir `orcamento`.**
+
+**Correção de registro feita nesta sessão:** o `Conclusoes.md` rotulava uma
+premissa morta como *"o poly está atrasado"*, o que se lê como o contrário do
+que a tese diz. O rótulo virou *"o poly ajusta em rampa"* — a medição (VR ≈ 1) é
+sobre o repreçamento ser gradual ou instantâneo, e ele é instantâneo.
+
+**Decisão do dono ao fim da sessão:** a avaliação das duas candidatas fica para
+a **próxima sessão**.
+
+---
+
+## 28 (branch `Felipe`). A camada tática é REABERTA e as candidatas são admitidas por uma régua nova 🟢 (fechadas pelo dono, 2026-08-11 — sessão 27)
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D28 do
+> `Felipe`".
+
+**Doze decisões, todas fechadas pelo dono em sessão**, por instrução explícita
+("aceito todas as recomendações"). Elas não vão à reunião: com o v1 virando a
+entrega, não existe versão seguinte para onde empurrar. Seguem o regime das
+seções 9/10 — **provisórias, o grupo revisa**.
+
+### 28.0. A régua do dono, e ela precede as doze 🟢
+
+Declarada por ele nesta sessão, ao recusar que eu rejeitasse candidata sem que
+ele entendesse o motivo:
+
+> "Para mim não é problema que ela esteja no prejuízo, desde que a estratégia
+> não seja desprovada, leia o polymarket e não tenha overfit ou variável não
+> teórica estou aceitando."
+
+**Quatro itens, todos necessários:** (1) a tese não pode estar contrariada pelo
+dado; (2) o sinal vem do Polymarket; (3) nenhum parâmetro escolhido olhando o
+resultado; (4) toda variável declarada pelo mecanismo, antes de medir.
+
+**O que esta régua NÃO contém, e é deliberado: resultado.** Excesso negativo não
+reprova. Isso é consistente com o que já estava registrado — a **14a** ("fazer
+sentido vale mais que medir positivo") e o fato de **nenhuma view do projeto ter
+sido cortada por excesso negativo** (17e). O que ela muda é o alcance: passa a
+valer também para a camada tática, onde o **G4** vinha sendo tratado como
+portão implícito.
+
+**Efeito imediato no placar da D27:** o inventário de "2 células vivas" era
+contra a régua antiga. Contra esta, **três candidatas** ficam de pé (M4, M9,
+1.1 fora do Fed), e **três estão desprovadas de verdade** — 1.1 no Fed, 3.2
+event-driven, 1.2 momentum e velocidade de ajuste foram medidas e a tese caiu.
+A **transversal não é candidata**: é o *livro* que a M4 e a M9 usam.
+
+### 28.1 a 28.12 — as doze
+
+| # | decisão | motivo registrado |
+|---|---|---|
+| **1** | **A camada tática está REABERTA.** | O ponteiro da "decisão 10" aponta para o vazio desde a reorganização do arquivo (levantado na sessão 25). O dono declara a reabertura e admite candidata a candidata pela 28.0. |
+| **2** | **D24 fechada: o portão de qualidade VALE para overlay**, adaptado a binário — leitura ausente no slot pré-abertura desativa o dia. | Estava 🔴 desde a sessão 25. Sem isso uma sleeve passaria livre pelo veto que mata a view equivalente, que é a assimetria que a própria D24 existe para nomear. |
+| **3** | **M4: o `k` é o BLOCO k = 3, 5, 10, com peso igual.** | Declarar antes é o único jeito de não escolher o horizonte pela tabela. O bloco não seleciona nada: é exatamente o conjunto que sobrevive ao corte da amostra, e é contíguo. |
+| **4** | **Livro HEDGEADO (`⊥`)**, β expansivo defasado, semeado em 60 pregões. | É o que foi medido (`Gate_transversal_neutro.md`) e o que sustenta a tese: com o índice removido das duas pernas a maior \|corr\| com o SPY cai de 0,59 para 0,17 e o placar sobe de 8×0 para 14×0. O livro cru mediria alavancagem direcional disfarçada. |
+| **5** | **A M9 pode entrar como overlay**, condicionada a a objeção da 2.4 não sobreviver ao livro neutro. | A 2.4 morreu com o mecanismo partidário no livro **direcional**. É a mesma estrutura que a D19c tinha contra a M4 e que a **28.a** abaixo resolveu a favor. Se a objeção sobreviver ao livro neutro, a M9 cai. |
+| **6** | **Comparações múltiplas: aceitas e DECLARADAS no relatório.** | ~200 células em seis artefatos, nenhuma correção. A régua 28.0 não exige significância; esconder a exposição é que violaria o item (3). M4 tem defesa parcial (bloco contíguo); a M9 não tem. |
+| **7** | **Decisão 5 fechada** — surpresa = `resolução − prob. da véspera`, contínua. | Ver a seção 5, reescrita. Destrava a 1.1. |
+| **8** | **Autorizado UM csv do FRED** (`CPIAUCSL`) com o valor realizado. | Sem valor resolvido não existe surpresa, e o `data/` só tem as **datas** de release. É uma coluna no formato dos `fred_*.csv` que o repositório já lê — ordem de grandeza diferente de um pull novo de mercados, que foi recusado no mesmo fôlego. ⚠️ **Encosta no módulo do Paulo** (pipeline de dados): fica registrado como exceção autorizada pelo dono, não como precedente. |
+| **9** | **Tamanho pela âncora `inv(δΣ)·μ` da D16. NÃO se reintroduz `orcamento`.** | Zero parâmetro livre. A falta disso é o que matou a **12c**: o Δ era monótono no orçamento, sem ótimo interior, então a grade não selecionava tamanho. |
+| **10** | **O tilt tático entra DENTRO do teto** (Σ\|w\| ≤ 1 no tilt). | Não cria parâmetro novo e mantém o escopo de referência de todas as varreduras desde 05/08. |
+| **11** | **Sleeves que compartilham livro têm os μ SOMADOS antes do `inv(δΣ)`.** | A M4 e a M9 usam o **mesmo** livro (`+XLP −XLK`). Somadas como posições independentes, virariam dupla contagem da mesma perna. |
+| **12** | **O G4 é RELATÓRIO, não portão.** | Ele nunca rodou para nada. Pela 28.0 o resultado não reprova, e usá-lo como portão reintroduziria a escolha por resultado — o overfit em dois passos do protocolo da seção 10, agora sem rodada seguinte para desmentir. |
+
+### 28.a. A contradição com a D19c está RESOLVIDA — e por um eixo que ninguém tinha proposto 🟢 (medido, 2026-08-11)
+
+Era o **primeiro item da sessão por decisão do dono** e travava a candidata mais
+forte. Medido em `Dump/analises/Gate_recessao_2x2.md`
+(`scripts/gate_recessao_2x2.py`, 7 testes; suíte **289 → 296**). Nenhum módulo
+em `src/`; livros, premissas e partição importados **por referência**.
+
+**O problema:** a D19c mediu que o coeficiente da view 3.1 no M4 troca de sinal
+dentro da amostra; a D27 mediu que a sleeve no MESMO mercado sobrevive ao mesmo
+corte. As amostras se sobrepõem quase inteiras (2025-01/04 a 2025-12), então
+"é outro período" não era saída.
+
+**Conserto no próprio teste, antes de qualquer leitura:** em h = 10 o critério
+"trocou de sinal" marca **13 das 14 células** — com janelas sobrepostas e
+n ≈ 200, girar é barato. Passou a valer o critério **literal da D19c** (*as duas
+metades significantes e opostas*, \|t\| > 2), que marca **3 de 14**.
+
+| | livro: SPY direcional | livro: spread neutro |
+|---|---|---|
+| **nível** (discordância) | 🛑 gira — **a D19c, reproduzida** | 🛑 **gira também** |
+| **incremento** (Δp k = 3, 5, 10) | não gira | não gira — **a sleeve** |
+
+Marginais na régua forte: **nível 3 de 6 · incremento 0 de 8**; por livro, 1 de
+7 e 2 de 7. **Nenhuma das duas explicações que eu havia pré-registrado se
+sustenta:** o giro não se concentra num livro (cai "é o canal de direção") e não
+alcança sinal de incremento nenhum (cai "o mercado M4 é instável").
+
+**O eixo é a TRANSFORMAÇÃO do sinal.** O NÍVEL da crença tem relação instável
+com os retornos; o INCREMENTO não. O mecanismo é banal e verificável: um nível
+que sobe e desce com o medo de recessão ao longo de 2025 fica correlacionado com
+o que o mercado fez em cada regime, e o coeficiente ajustado vira afirmação
+sobre o regime. Diferenciar remove isso por construção. Corroborado por dois
+controles: o giro vem da perna `z(poly)` e **nunca** da perna `z(−spread)`, e a
+correlação entre as duas séries de `p` é **+1,000**, o que exclui a construção
+do `p` como explicação.
+
+**Consequência:** a D19c **deixa de ser objeção** à sleeve M4. O que sobra dela
+é uma **limitação a declarar**: neste mercado, qualquer view que leia NÍVEL está
+medindo regime.
+
+⚠️ **Limitação nova, que saiu junto e não é pequena:** em k = 3, 5 e 10 a sleeve
+**reprova a premissa em h = 10** na amostra inteira. Ela é estável, mas a
+vantagem que o G2 mede vive na janela de **1 pregão** e não se estende a dez.
+**Estabilidade não é alcance** — e é a segunda coisa que o G4 vai medir.
+
+⚠️ **Refactor verificado, não confiado:** `componentes_expansivos` saiu de dentro
+do `divergencia_expansiva` (`view_3_1_direcional.py`) para as duas parcelas do
+`z` serem medíveis sozinhas. O `Recessao_direcional.md` foi re-gerado e conferido
+**por hash — idêntico** (`04cfda9835cba307`).
+
+### 28.b. A M9 passa pelo mesmo 2×2, e some a condição do item 5 🟢 (medido, 2026-08-11)
+
+`Dump/analises/Gate_2x2_M9.md`, mesmo script parametrizado por mercado. A
+objeção da 2.4 (o mecanismo partidário não reproduz fora da amostra) foi medida
+**no livro neutro**, que é o da sleeve:
+
+| | SPY direcional | spread neutro |
+|---|---|---|
+| **nível** `z(p)` | 🛑 gira (forte) | 🛑 gira (forte) |
+| **incremento** Δp k = 20 | não gira | **não gira** — G2 ✅✅ nas duas metades |
+
+Marginais: **nível 2 de 2 · incremento 0 de 2**, nos dois livros — o mesmo eixo
+da 28.a, achado por medição independente. **A condição do item 5 está cumprida.**
+
+**E a M9 tem o que a M4 nunca terá:** a célula viva dela (`neutro +XLP −XLK⊥`,
+k = 20) **reproduz em mercado irmão** (`Gate_mercados_irmaos.md`: `XLP⊥
+−1,39/+2,23 ✅ · XLK⊥ +0,08/−2,62 ✅`), com k = 3 e k = 5 reproduzindo no mesmo
+livro. É a única célula do projeto com fora-da-amostra de verdade.
+
+### 28.c. A 1.1 fora do Fed foi destravada e REPROVOU 🟢 (medido, 2026-08-11)
+
+O item 8 autorizou o `CPIAUCSL`; com ele o G0 do CPI abriu — **12 divulgações
+pareadas**. O bloqueio nunca foi a série do poly terminar na véspera (a véspera
+é o lado que a surpresa usa), era o valor realizado.
+
+| | medido |
+|---|---|
+| G1 | **0,6×** — mediana da \|surpresa\| **0,06 p.p.** contra grade de 0,1 p.p. |
+| G2 | **nenhuma** das 5 janelas passa; o TIP anda contra a premissa em todas |
+| G3 | **+0,58** com a divergência da 2.2, que uma view VIVA já lê |
+
+**Pela régua 28.0 isto é tese contrariada pelo dado**, não prejuízo: a 1.1 sai
+do estoque. Custou um CSV de uma coluna descobrir, contra a estimativa anterior
+de "pedido ao Paulo". Três registros que haviam envelhecido no `gate_pead.py`
+foram corrigidos junto (decisão 5 "aberta", CPI ❌ no G0, "falta pedir ao Paulo").
+
+### 28.13. A entrega vai com a camada LIGADA 🟢 (fechada pelo dono, 2026-08-11)
+
+**Decisão do dono, com o número na mesa.** O `carregar` passa a ter
+`sleeves=True` por default — mesma lógica do `VIEWS_V1`: é o default do módulo
+que define "o v1" para as varreduras irmãs, e cravar a decisão só no `main`
+faria a entrega e as varreduras medirem carteiras diferentes em silêncio.
+
+**Medido antes de decidir** (`Dump/analises/Camada_tatica_v2.md`, teto no tilt):
+
+| teto | excesso × SPY sem | com | Δ |
+|---|---|---|---|
+| **1** (referência) | +6,24 pp | **+4,08 pp** | **−2,16 pp** |
+| 2 | +8,51 pp | +3,29 pp | −5,22 pp |
+| 3 | +13,22 pp | +5,06 pp | −8,16 pp |
+| 5 | +16,03 pp | +16,85 pp | +0,82 pp |
+
+**O achado da rodada, e ele não é o Δ:** a camada é **positiva sozinha** (G4:
+**+42,6 pp** em 327 pregões, acerto de sinal 54%, e **+64 pp** sem os 3 maiores
+dias em \|valor\| — não é um punhado de pregões) e **negativa quando somada**.
+Não há contradição: com o teto no tilt, o corte reescala o tilt das views e o da
+camada **juntos**, então entrar não é somar — é **dividir um orçamento fixo de
+risco**. Ela pede Σ\|dw\| mediano de **2,54** contra um teto de **1** para o
+tilt inteiro, e nesta janela não rende mais por unidade de Σ\|w\| do que o tilt
+que desloca.
+
+⚠️ **O Δ não é monótono no teto** (−2,16 · −5,22 · −8,16 · +0,82): não se lê nem
+como "a camada perde" nem como "ela só disputa espaço". **Nenhuma linha da grade
+é proposta** — ler o teto 5 como recomendação seria escolher configuração pelo
+resultado, que é o que a régua 28.0 barra. O teto de referência continua sendo
+**1**, pela 10a.
+
+⚠️ **O G4 é bruto de custo e sem teto** — mede o `dw` pedido, não uma carteira
+executável. O custo aparece na entrega: breakeven de **28,5 bps por lado** contra
+os 2 bps premissados (era 34,5 sem a camada), ainda **14× de folga**.
+
+**Artefatos que ficaram DESATUALIZADOS com esta decisão** e precisam ser
+re-gerados por quem retomar — a carteira de referência deles mudou:
+`Curva_c.md`, `Curva_banda.md`, `Curva_orcamento.md`, `Teste_sinal.md`,
+`View_C_backtest.md`, `Ortogonalidade.md`. O `Backtest_v1.md` já foi re-gerado
+nesta sessão.
 
 ---
 

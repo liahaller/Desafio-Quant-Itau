@@ -1,5 +1,243 @@
 # LOG de sessões
 
+## 2026-08-11 (sessão 27) — Felipe
+
+**Contexto da sessão:** retomada do primeiro item pendente da sessão 26 (a
+contradição com a D19c). A resposta dele destravou a candidata mais forte, o
+dono declarou uma **régua própria de admissão** ao recusar que eu rejeitasse
+candidata sem explicar, e a sessão virou a construção da camada tática inteira:
+**12 decisões fechadas, 2 sleeves admitidas, módulo escrito, camada LIGADA na
+entrega**. Suíte: **289 → 305 testes** (+16). Registro na **D28**.
+
+**1. A contradição com a D19c está resolvida, e por um eixo que ninguém tinha
+proposto** (`Gate_recessao_2x2.md`). Antes de ler qualquer célula, um conserto
+no teste: o critério "trocou de sinal" marca **13 das 14 células** em h = 10 —
+com janelas sobrepostas e n ≈ 200, girar é barato. Com o critério **literal da
+D19c** (as duas metades significantes e opostas), marca **3**. Aí o 2×2 fecha:
+o **nível** gira nos DOIS livros (3 de 6), o **incremento** não gira em livro
+nenhum (0 de 8). **Nenhuma das duas explicações que eu havia pré-registrado se
+sustenta** — não é o canal de direção nem o mercado instável, é a
+**transformação do sinal**. A D19c mede nível, a D27 mede incremento; as duas
+estão certas. Corroborado por dois controles: o giro vem da perna `z(poly)` e
+**nunca** da `z(−spread)`, e `corr(p_norm, p_cru) = +1,000`.
+
+**2. A régua do dono, e ela precede tudo** (D28.0): *não desprovada · lê o
+Polymarket · sem overfit · sem variável não teórica* — **sem resultado**. Contra
+ela o placar da D27 muda: de "2 células vivas" para **3 candidatas** (M4, M9,
+1.1 fora do Fed) e **3 desprovadas de verdade**.
+
+**3. Doze decisões fechadas de uma vez** (D28.1–12), todas com recomendação
+minha e aceitas em bloco. As que mais mexem: `k` = o BLOCO com peso igual (item
+3), livro hedgeado (4), D24 fechada (2), decisão 5 fechada (7), um CSV do FRED
+autorizado (8), tilt dentro do teto (10), μ somados no livro compartilhado (11),
+G4 como relatório (12).
+
+**4. As três candidatas, medidas:**
+- **M9** passa o mesmo 2×2 (`Gate_2x2_M9.md`): nível gira 2 de 2, incremento 0
+  de 2. Some a condição do item 5. E ela tem o que a M4 nunca terá — **reprodução
+  em mercado irmão**, a única do projeto.
+- **1.1 fora do Fed** foi destravada por um CSV (`CPIAUCSL`) e **reprovou**: 12
+  divulgações, G1 **0,6×**, **nenhuma** janela no G2, G3 **+0,58** com a 2.2. O
+  bloqueio nunca foi "a série do poly termina na véspera" — era o valor
+  realizado.
+- **M4 e M9 entram.**
+
+**5. A camada foi construída e ligada.** `src/tatica_sleeves.py` (um módulo, não
+um por sleeve), 9 testes; `MontadorV1._sleeves`; `scripts/camada_tatica_v2.py` +
+`Camada_tatica_v2.md`. **Com a camada desligada o backtest reproduz o v1 dígito
+por dígito** (líquido 0.363617 contra 0.3636 publicado, breakeven 34.4646, Σ|w|
+1.9376) — era o teste de encanamento embutido no plano.
+
+**6. O achado da rodada é uma tensão, não um número.** A camada é **positiva
+sozinha** (G4: **+42,6 pp** em 327 pregões, acerto 54%, **+64 pp** sem os 3
+maiores dias em |valor|) e **negativa quando somada** (**−2,16 pp** no teto de
+referência). Com o teto no tilt, o corte reescala o tilt das views e o da camada
+**juntos**: entrar não é somar, é **dividir um orçamento fixo de risco**. Ela
+pede Σ|dw| mediano **2,54** contra teto **1**. **O dono decidiu entregar com a
+camada LIGADA** com esse número na mesa (D28.13).
+
+**Quebrou / aprendido:**
+- **🛑 Meu teste de estabilidade não discriminava, e eu quase publiquei assim.**
+  O critério fraco marcava 13 de 14 células. Se eu tivesse lido a tabela sem
+  perceber, teria concluído "tudo é instável" — e a conclusão certa é a oposta.
+  A régua que fica: **teste que reprova quase todo mundo não é teste**, é ruído
+  com aparência de rigor.
+- **🛑 Prosa gerada não protege de frase colada entre mercados.** O primeiro
+  artefato da M9 saiu afirmando *"nada sobre mercado irmão, que para recessão
+  não existe"* — **falso justamente para a M9**, que tem irmão e passou nele.
+  Sexta ocorrência do modo "registro que envelhece não levanta exceção", e a
+  primeira em que o registro nasceu velho por **parametrização faltando**, não
+  por tempo. Conserto: toda frase específica de mercado virou ramificação.
+- **🛑 Meus dois pré-registros estavam errados, e é o melhor resultado da
+  sessão.** Declarei duas explicações antes de medir e o dado escolheu uma
+  terceira. Ter declarado antes é o que permitiu perceber — se eu tivesse
+  medido primeiro, teria escrito a explicação certa como se fosse previsão.
+- **Σ singular por coluna irrelevante.** O `optimal_weights` reprovava porque
+  ativo fora do livro tinha variância zero no recorte sintético. Conserto: o
+  `inv(δΣ)` roda só nas pernas dos livros — equivalente com Σ diagonal, e não
+  refém de coluna que a camada não usa.
+- **Refactor verificado por hash, três vezes:** `componentes_expansivos`
+  (`Recessao_direcional.md` idêntico) e `pernas_neutras` movido para `src/`
+  (`Gate_transversal_neutro.md` e `Gate_mercados_irmaos.md` idênticos).
+- **Três heredocs `<<'PYEOF'` corromperam `\n` em quebra de linha real** dentro
+  de strings Python, uma delas duplicando um bloco inteiro. Para editar código
+  com strings escapadas, usar o editor, não patch por script.
+
+**Pendente:**
+- 🛑 **Seis artefatos ficaram desatualizados** com a camada ligada (a carteira
+  de referência mudou): `Curva_c.md`, `Curva_banda.md`, `Curva_orcamento.md`,
+  `Teste_sinal.md`, `View_C_backtest.md`, `Ortogonalidade.md`. O
+  `Backtest_v1.md` já foi re-gerado.
+- **Limitações a declarar no relatório:** ~200 células da D27 **sem correção
+  para comparações múltiplas** (a M4 tem defesa parcial, a M9 não tem) · o
+  alcance da M4 vive em **1 pregão** e não se estende a h = 10 · o Ω diagonal
+  **não enxerga** a correlação entre as duas sleeves, que compartilham livro.
+- Nada foi commitado.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** 217k de 1M (**22%**) no ponto do `/context`.
+- **Prompt inicial (verbatim):** "vamos retomar de onde paramos na ultima sessão"
+- **Iterações até aceitar:** 5 — (1) o dono recusou o enquadramento de rejeição
+  e declarou a régua 28.0; (2) pediu o placar direto das candidatas; (3) mandou
+  a 1.1 fora do Fed de volta e cortou o pedido ao Paulo; (4) aceitou as 12
+  recomendações em bloco e pediu o to-do; (5) decidiu a camada ligada.
+- **Erros da IA:** critério de estabilidade não discriminante quase publicado;
+  frase específica de mercado colada no artefato da M9 (falsa, corrigida antes
+  de reportar); duas explicações pré-registradas ambas erradas (declaradas antes
+  de medir, o que é o procedimento certo); Σ singular por coluna irrelevante;
+  três patches por heredoc corrompendo escapes.
+- **Decisões escaladas:** **D28** — 12 decisões fechadas pelo dono em bloco,
+  mais a **28.13** (entrega com a camada ligada) e a **decisão 5** (aberta e
+  vazia desde 2026-07-09). Nenhuma foi à reunião.
+- **Tags:** `[PROMPT-CHAVE]` — "Vamos fazer tudo o necessário para que elas
+  entrem como parte de uma nova camada tática que finalmente funciona. Comece
+  com todas as decisões que preciso matar eu mesmo, respondo todas elas e então
+  você monta e liga a camada tática" é candidato ao teste de reprodutibilidade:
+  separa decisão humana de execução, e produziu a camada inteira sem intervenção
+  no meio.
+
+## 2026-08-11 (sessão 26) — Felipe
+
+**Contexto da sessão:** o dono pediu primeiro um resumo leigo do `Conclusoes.md`,
+depois um levantamento de quais candidatos táticos ainda estavam de pé, e daí
+autorizou uma **maratona: implementar e testar um a um os candidatos válidos, só
+para ver quem passa**, anotando no `Candidatos_taticos.md` e sem parar para
+editar outros arquivos. Seis scripts, seis artefatos, **zero módulos em `src/`**.
+Suíte: **259 → 289 testes** (+30). Registro na **D27**.
+
+**1. Antes da maratona, o `Candidatos_taticos.md` foi acertado.** A velocidade de
+ajuste e a 1.2 momentum ainda constavam com item 3 "✅ por vacuidade" — a D26 já
+tinha medido contra as duas. Entraram também as duas candidatas que o
+`Conclusoes.md` §5 abriu (transversal e notícia), que não estavam registradas em
+lugar nenhum. Três correções de registro no mesmo passe: a leitura do G1 mudou na
+D26 (vale para o `k` medido, não para a série); "não há pedido ao Paulo aqui"
+deixou de ser verdade; e o ponteiro para `Candidatos.md` estava quebrado desde a
+mudança para `Dump/analises/`.
+
+**2. Os quatro candidatos, medidos:**
+- **1.1 PEAD** (`Gate_PEAD.md`) — o achado é de **G0**: só o Fed tem resolução no
+  dado (a série do poly **termina na véspera**; não há CPI realizado em `data/`).
+  E onde é mensurável **não é território novo**: mediana da |surpresa| = 0,52 bps
+  e o `h = 15` sai `SPY +4.91 ❌ · TLT +1.37 ❌`, **dígito por dígito** o controle
+  da D16. A 1.1 no Fed **é** a sleeve reprovada da D16.
+- **3.2 event-driven** (`Gate_event_driven.md`) — o teste de uma linha da D26
+  rodou. Resíduo pós-gap de **mediana −1%**, 4 de 8 mercados na direção
+  declarada. Não é o zero categórico do C3; é empate.
+- **notícia** (`Gate_noticia.md`) — gate completo nos 7 binários. Cobertura ×
+  dispersão confirmada como quase disjunta (o de maior dispersão tem 2 pregões).
+  E **quem passou não foi um mercado de notícia**: foi o **M4 recessão em k = 5**,
+  vizinho de tabela.
+- **transversal** (`Gate_transversal.md`) — **8 pares passam só com livro
+  setorial, 0 só com o direcional**. Mas metade dos livros era beta disfarçado, e
+  6 das 8 morrem no corte da amostra.
+
+**3. Duas rodadas de follow-up, a pedido do dono, e as duas mudaram a conclusão:**
+- **`Gate_transversal_neutro.md`** — pernas hedgeadas contra o SPY por β
+  expansivo defasado (semeado em `MINIMO_PREGOES = 60`, constante já usada pela
+  15f e pela 3.1). A maior |corr| cai de **0,59 → 0,17** e o placar **sobe de
+  8 × 0 para 14 × 0**: a vantagem do livro **não era** beta disfarçado. E o M4
+  passa a sobreviver em **k = 3, 5 e 10 — três horizontes contíguos**, o que
+  responde a ressalva de "célula isolada é padrão de garimpo". Fechou também a
+  célula **salto × setorial**, que não existia em artefato nenhum (6 × 1).
+- **`Gate_mercados_irmaos.md`** — o único fora-da-amostra de verdade. Relação
+  declarada antes de medir (partidário = espelho, geopolítico = igual), sobre o μ
+  **cru**. **M7 Irã ❌ · M5 Trump ❌ · M9 Câmara ✅.**
+
+**4. Sobraram duas células, e nenhuma pode entrar.** M4 recessão (sem irmão
+possível, travada na contradição com a **D19c**) e M9 Câmara (única do projeto a
+passar reprodução em irmão, travada na tensão com a **2.4**). **O G4 nunca foi
+rodado para nada** — tudo medido é critério de admissão, não de resultado.
+
+**Quebrou / aprendido:**
+- **🛑 Modo de falha novo na camada: INSTÁVEL.** O corte da amostra em duas
+  metades — que a D19c usou contra uma *view* — **derrubou 8 das 10 aprovações de
+  G2 desta maratona**. Sem ele eu teria entregado oito falsos positivos. Não
+  estou tratando como quinto item da D22; formalizar é do dono.
+- **🛑 Conversão de unidade errada em artefato publicado.** O μ do
+  `gate_mercados_irmaos.py` saiu **100× inflado** (usei `1e4 × 100` no lugar de
+  `PONTOS_PERCENTUAIS × 100`). Os sinais — que é o que o teste lê — não mudavam,
+  mas o artefato foi escrito com número errado antes de eu pegar. Consertado
+  importando a constante do `backtest_v1` **por referência**, em vez de recriar o
+  fator. A regra que fica: **fator de unidade se importa, não se redigita.**
+- **🛑 A prosa gerada dos números salvou uma afirmação falsa, de novo.** O
+  `gate_transversal.py` escrevia "os spreads são de fato quase neutros a mercado"
+  numa tabela cujo maior valor era **+0,59**. Só apareceu porque li a saída antes
+  de aceitar. Quinta ocorrência do modo "registro que envelhece não levanta
+  exceção" — e desta vez o registro nasceu velho.
+- **Meu prognóstico do teste de irmãos estava errado.** Previ que zeraria o nível
+  2; sobreviveu o M9 Câmara, justamente o mercado com precedente adverso mais
+  forte. Fica registrado porque a previsão foi comunicada ao dono antes de medir.
+- **Σ da tabela estendida é singular por construção** — `XLP⊥` é combinação
+  linear de `XLP` e `SPY`, e o guarda de condicionamento do `sample_covariance`
+  reprovou (cond 1,1e8), corretamente. Conserto: Σ **diagonal**, que é o que o
+  `estimate_drift_mu` de fato lê (só `np.diag`).
+- **Rótulo confuso no `Conclusoes.md`, apontado pelo dono:** "o poly está
+  atrasado" lê-se como o oposto da tese. Virou "o poly ajusta em rampa" — a
+  medição é sobre o repreçamento ser gradual ou instantâneo, e ele é instantâneo.
+- **~200 células testadas, 2 sobreviventes.** Nenhum teste rodado corrige para
+  comparações múltiplas. Está dito na D27 e no `Candidatos_taticos.md`; o M4 tem
+  proteção parcial (bloco contíguo), o M9 não tem.
+
+**Pendente:**
+- 🛑 **A contradição com a D19c** — no mercado de recessão a view 3.1 inverteu
+  dentro da amostra e a sleeve não. É análise, não script, e trava a candidata
+  mais forte. **É o primeiro item da próxima sessão, por decisão do dono.**
+- 🛑 **A tensão do M9 Câmara com a 2.4** — decisão de grupo.
+- **G4** para as duas, e por protocolo só depois das duas acima. Escrever **um**
+  módulo que sirva às duas, não dois.
+- **Sobreposição do `dw` com a carteira do v1** — o G3 mediu correlação de
+  *sinal*, não conflito de posição. Exige o módulo.
+- 🔴 **Decisão 5** · 🔴 **D24** · reabertura de escopo da camada (grupo).
+- Nada foi commitado.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** 368,3k de 1M (**37%**) no ponto do `/context`.
+- **Prompt inicial (verbatim):** "na ultima sessão vimos que a camada tática
+  tinha alguns problemas. Leia Conclusões.md e me resuma de forma leiga o que
+  vimos e concluimos"
+- **Iterações até aceitar:** 4 rodadas de correção — (1) rótulo "atrasado"
+  apontado pelo dono; (2) frase minha de que a estratégia verde teria sido
+  substituída, quando é a mesma com outro livro; (3) pedido de tabela por causa
+  de morte, que reorganizou o registro inteiro; (4) os dois follow-ups
+  (neutralização e irmãos), que mudaram a conclusão da transversal.
+- **Erros da IA:** conversão de unidade 100× errada num artefato publicado
+  (corrigida); prosa gerada afirmando neutralidade contra os próprios números
+  (pega na leitura da saída); prognóstico errado sobre o teste de irmãos,
+  comunicado antes de medir; item duplicado no `Candidatos_taticos.md` ao editar
+  a seção da 1.2; imprecisão ao dizer que a camada tinha "uma estratégia viva e
+  não é nenhuma das quatro", que se leu como troca da candidata verde.
+- **Decisões escaladas:** **D27** (registro; nenhuma decisão fechada). Duas
+  questões novas para o grupo: formalizar ou não o corte da amostra como quinto
+  item da D22, e o que fazer com um mecanismo cortado como view que reaparece
+  como overlay (M9 × 2.4).
+- **Tags:** `[PROMPT-CHAVE]` — o prompt da maratona ("vamos agora então
+  implementar e testar um a um dos candidatos válidos… Monte um to-do com cada
+  uma das estratégias na ordem que achar melhor") é candidato ao teste de
+  reprodutibilidade: define escopo, ordem, critério de parada e o que **não**
+  tocar, e produziu seis artefatos sem intervenção intermediária.
+
 ## 2026-08-11 (sessão 25) — Felipe
 
 **Contexto da sessão:** o dono quis reativar a camada tática e pediu primeiro um
