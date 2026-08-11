@@ -1,5 +1,104 @@
 # LOG de sessões
 
+## 2026-08-11 (sessão 25) — Felipe
+
+**Contexto da sessão:** o dono quis reativar a camada tática e pediu primeiro um
+panorama do que já se tentou. O levantamento (subagente, repositório inteiro)
+achou **13 desenhos em cinco ondas, 0 vivos**. A partir daí a sessão virou uma
+cadeia de três medições que **derrubou a justificativa do corte antigo e fechou
+a camada por um motivo novo e mais forte**. Suíte: **259 testes** (253 + 6
+novos). **Nenhum módulo escrito** — de propósito.
+
+**1. O panorama corrigiu três coisas do registro.** A "decisão 10" que o
+`CLAUDE.md`, o `data/README.md` e o `Candidatos_taticos.md` (10×) citam **não
+existe** — o número foi reutilizado numa reorganização, e o corte real só está
+no `LOG.md:3013` (já apontado no `DOSSIE_limitacoes_v1.md`). A camada original
+tinha **4** desenhos, não 3 (faltava a 1.2 momentum). E a "espec canônica
+perdida" é recuperável: `git show "7b9d036^:Informações_uteis/Ideias_consolidadas.md"`.
+
+**2. Três medições encadeadas, cada uma derrubando uma premissa tratada como
+fato:**
+- **`Premissa_G1.md`** — a generalização da D17 ("Δ de um dia para o outro é
+  ruído de discretização") vale para o `k` medido, **não para a série**: o M3 vai
+  de 0,5× em k=1 para 1,2× em k=3 e 3,7× em k=20. O tick é fixo e o erro de
+  discretização no incremento fica preso em ~1 tick por mais que `k` cresça.
+  Mediu também as **famílias nunca olhadas**: o corte não é "Fed × não-Fed", é
+  **fluxo de notícia** (Irã 1,2× e 4,0× em k=1, tarifas 3,5×; contra recessão
+  0,7×, Trump 0,5× e Câmara **0,0×**).
+- **`Premissa_tendencia.md`** — o acúmulo **não** é tendência: variance ratio do
+  M3 entre 0,97 e 1,18 e **nenhuma** autocorrelação ex-ante com |t| ≥ 2 (deriva
+  removida pela média expansiva, incrementos não sobrepostos). Isso tira a
+  hipótese da **1.2 momentum** e da **velocidade de ajuste**.
+- **`Gate_M3_acumulado.md`** — o último candidato de pé (única série com
+  cobertura *e* dispersão *e* sem duplicação) **reprova no G2 nos seis
+  lookbacks**, com a premissa herdada da D17 palavra por palavra. E o **G3
+  degrada exatamente onde o G1 melhora** (−0,19 → −0,42 contra a entropia da
+  15b): a janela fecha pelos dois lados.
+
+**3. A conclusão que substitui a antiga.** Era *"o sinal é pequeno demais"*.
+Passa a ser: **o sinal tem tamanho, não se encadeia e não antecipa o retorno dos
+ativos.** Fecha por medição em vez de por limitação instrumental, e elimina a
+saída fácil de "então vamos olhar com mais resolução". Registrado na **D26**;
+conclusões para a próxima sessão em **`Conclusoes.md`** (novo).
+
+**4. Refactor verificado, não confiado.** `referencias_g3` saiu de dentro do
+`main` do `gate_sleeves.py` para ser reusável pelo script novo. `Gate_sleeves.md`
+re-gerado e conferido **por hash — idêntico** (`de18397a…`), 10 testes do gate
+passando. Foi a única mudança em arquivo existente da sessão.
+
+**Quebrou / aprendido:**
+- **🛑 Mediana não julga acúmulo.** Li o crescimento da mediana como "mais rápido
+  que √k, logo tendência", e **comuniquei isso ao dono antes de medir**. Era
+  artefato: em k=1 a maioria dos dias tem variação zero, o que prende a mediana
+  perto do zero e faz qualquer acúmulo parecer explosivo. O variance ratio diz 1.
+  A régua que fica: **acúmulo se julga em variância, nunca em mediana.**
+- **A prosa gerada dos números salvou duas afirmações falsas.** Um parágrafo meu
+  afirmava reversão dominante — a checagem embutida derrubou porque o placar real
+  era 4×3 e um dos positivos tinha n=216. Outro dava o estoque de candidatos por
+  esgotado e ignorava a **1.1 PEAD**, que nada nesta cadeia toca. **Quarta
+  ocorrência** do modo de falha "registro que envelhece não levanta exceção"
+  (D17e; a 15h; o cabeçalho hardcoded do `Curva_c.md`).
+- **`diff(k)` sem reindexar em dias úteis anda LEITURAS, não pregões** — e o dado
+  tem buracos de 24/36/48h. É por isso que o k=1 do gate novo dá SPY −3,87 contra
+  os −4,20 do `Gate_sleeves.md`: mesmo veredito, dígito diferente, e a diferença
+  **é** a correção.
+- **Premissa do G2 se herda, não se reescreve.** A do M3 acumulado é a da D17
+  palavra por palavra. Reescrevê-la depois de ver o k=1 falhar destruiria o único
+  mecanismo que faz do G2 um teste em vez de racionalização.
+
+**Pendente:**
+- **🔴 Decisão 5** (definição operacional de "surpresa") — **gargalo número um**
+  da reativação. Está aberta e vazia desde 2026-07-09, e é o que trava a **1.1
+  PEAD**, a única candidata que nenhuma medição desta sessão toca. É humana.
+- **🔴 D24** (portão de qualidade vale para views e não para overlays) — vira
+  pergunta real na próxima sessão, que é justamente a de reativar.
+- **3.2 event-driven** — não medida. Falta o teste de uma linha: quanto do
+  movimento sobra do fechamento do dia do salto em diante.
+- **Registros desatualizados não corrigidos** (não são meus de mexer sozinho):
+  `gate_sleeves.py:394-398`, D17e e `Retomada_tatica.md` ainda afirmam o bloqueio
+  do `etf_open_daily.parquet`, que caiu em 2026-08-09.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5 (um subagente `general-purpose` para o
+  levantamento do repositório).
+- **Contexto consumido:** ~25% da janela (≈250k de 1M tokens).
+- **Prompt inicial (verbatim):** `o que 'e o D24 reposta curta`
+- **Iterações até aceitar:** nenhuma rodada de correção pedida pelo humano nos
+  entregáveis; **3 auto-correções** dentro da sessão (a mediana × variance ratio,
+  e os dois parágrafos gerados que afirmavam demais).
+- **Erros da IA:** **1 relevante** — a leitura de "cresce mais rápido que √k logo
+  é tendência", comunicada ao dono antes de ser medida e corrigida no mesmo dia
+  pelo variance ratio. Também 2 afirmações excessivas em prosa gerada, barradas
+  antes de virar artefato. Nenhuma alucinação de arquivo, número ou API.
+- **Decisões escaladas:** D26.
+- **Tags:** `[PROMPT-CHAVE]` — não o prompt inicial, mas o pivô da sessão:
+  *"estou falando em caso mais geral, queria saber se a falha vem do desenho
+  geral da camada ou por falhas pontuais das views"*, seguido de *"então vamos
+  trabalhar nessas premissas"*. Foi o par que transformou levantamento em
+  medição.
+
+---
+
 ## 2026-08-11 (sessão 24) — Felipe
 
 **Contexto da sessão:** chegaram as respostas do Paulo (G10 consolidado) e da Lia

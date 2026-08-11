@@ -2328,4 +2328,68 @@ re-gerado**.
 
 ---
 
+## 26 (branch `Felipe`). A generalização do G1 da D17 caiu — e a camada tática reprova por MOTIVO NOVO 🔴 (registro, 2026-08-11 — sessão 25)
+
+> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D26 do
+> `Felipe`".
+
+**Registro, não decisão.** Nada aqui fecha e nada aqui reabre escopo — a
+reabertura da camada continua sendo decisão de grupo. O que muda é **o motivo**
+pelo qual ela não entra, e o motivo importa porque determina o que se tenta
+depois. Conclusões completas em `Conclusoes.md`.
+
+**O que estava escrito e não se sustenta.** O `Gate_sleeves.md` generaliza o
+achado da D17 assim: *"qualquer sleeve que leia Δ de PMF de um dia para o outro
+está condicionando em ruído de discretização"*. A frase vale para o `k` que a
+D17 mediu, **não para a série** — o tick é fixo e o erro de discretização no
+incremento fica preso em ~1 tick por mais que `k` cresça, enquanto o movimento
+verdadeiro acumula (`Premissa_G1.md`):
+
+| | k=1 | k=3 | k=10 | k=20 |
+|---|---|---|---|---|
+| M3 trajetória do Fed | 0,5× | **1,2×** | 2,9× | 3,7× |
+| C1b reunião do FOMC | 0,2× | 0,5× | **1,6×** | 2,4× |
+
+**O veredito da D17 sobrevive; a justificativa muda.** Acumular resolve o
+problema de **tamanho** e não produz **previsão** (`Gate_M3_acumulado.md`): o M3
+acumulado reprova no G2 em todos os seis lookbacks da grade, com a premissa
+herdada da D17 palavra por palavra. E o **G3 degrada exatamente onde o G1
+melhora** (−0,19 em k=1 → −0,42 em k=20, contra a entropia da 15b), o que fecha
+a janela pelos dois lados.
+
+**Duas candidatas nunca medidas passam a ter evidência CONTRA** (`Premissa_tendencia.md`):
+variance ratio do M3 entre 0,97 e 1,18 e nenhuma autocorrelação ex-ante com
+|t| ≥ 2. A *1.2 momentum* e a *velocidade de ajuste* leem o movimento da crença
+para prever o próximo movimento da crença, e esse encadeamento não existe. Pela
+régua D22 isso é **tese contrariada pelo dado**, não sinal fraco — a diferença
+que o `Candidatos_taticos.md` registra como decisiva. **Não estou marcando as
+duas como reprovadas:** quem move candidato de estado é o dono.
+
+**O que NÃO foi tocado, e é o que sobra:** a **1.1 PEAD** lê a *resolução*, não
+o Δ diário — nenhuma medida desta sessão diz coisa alguma sobre ela. Ela segue
+travada pela **decisão 5** (definição operacional de "surpresa"), que está 🔴
+aberta e vazia desde que foi fechada "sem objeto" em 2026-07-09. **É o gargalo
+número um da reativação, e é humano.** A **3.2 event-driven** também segue não
+medida, e o teste que falta é de uma linha: quanto do movimento sobra do
+fechamento do dia do salto em diante.
+
+**Correção de um achado meu, dentro da própria sessão:** li o crescimento da
+mediana como "mais rápido que √k, logo tendência". Era artefato — em k=1 a
+maioria dos dias tem variação zero, o que prende a mediana. O variance ratio diz
+1. Fica registrado porque a leitura errada chegou a ser comunicada ao dono antes
+de ser medida.
+
+**Nada em `src/` foi tocado.** O `referencias_g3` saiu de dentro do `main` do
+`gate_sleeves.py` para poder ser reusado; o artefato `Gate_sleeves.md` foi
+re-gerado e conferido por hash — **idêntico**.
+
+**A pergunta que fica para a reunião, e ela não é técnica:** com o caminho de
+"ler o repreçamento do poly" esgotado no dado entregue, reabrir a camada exige
+escolher entre **(a)** destravar a decisão 5 e medir a 1.1, **(b)** medir o
+resíduo pós-gap da 3.2, ou **(c)** pedir dado novo ao Paulo (mercados com fluxo
+de notícia têm dispersão de sobra — Irã 4,0×, tarifas 3,5× — mas duram 3 a 59
+pregões, e cobertura e dispersão são quase disjuntas no que temos).
+
+---
+
 **Próximo passo:** voltar para a Decisão 1.
