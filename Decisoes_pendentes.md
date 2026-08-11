@@ -261,7 +261,17 @@ aberto (trade-offs a decidir — NÃO decidido):
 
 Reportado ao `Felipe` em `docs/FOLLOWUP_G10_Paulo.md`. Lado dos dados (trocar arquivo /
 tratar mês de referência) é do `Paulo`; refazer o event-study é módulo do `Felipe`.
-**Decisão:** _(a registrar — grupo)_
+
+**Atualização 2026-08-10:** o `Felipe` respondeu em `docs/RESPOSTA_FOLLOWUP_G10_Paulo.md`
+(cópia em `~/Downloads`): **não trocar** o `cpi_release_dates.csv` — os dois arquivos ficam,
+com consumidores diferentes (o do `Paulo` casa release→mercado via coluna `fonte`; o do FRED
+alimenta só o event-study, sem mercado; apontar o `premio_condicional.py` p/ o CSV do FRED
+derruba o CPI de 13 eventos p/ 0). As 2 divergências reais (`10-15→10-24`, `11-13`) são
+corrigidas na camada de tratamento dele (`load_cpi_releases`), não no CSV cru; `2025-11-13` =
+**buraco declarado** (não remanejado). A "divergência" de `2025-01-13` era **typo-de-ano**
+(não é divergência; +1 ano bate exato com o FRED). Fecho formal do marcador aguarda
+confirmação humana (CLAUDE.md §6).
+**Decisão:** _(a registrar — grupo; veredito do `Felipe` acima)_
 
 ## 14. Fonte do `DGS1` (G10a) — fredgraph vs. API `series/observations` 🟡
 Levantado em 2026-08-08 (G10a). O pedido templou a URL da API
@@ -272,7 +282,12 @@ o `DGS1` foi baixado do **fredgraph** (a mesma fonte do G2/G8 que gerou os irmã
 de fato idêntico. Mesma série, muda só a formatação. Confirmação pendente do `Felipe`:
 fredgraph serve, ou ele precisa da API literal (aí o arquivo não fica idêntico)? Não é
 troca de fonte de dado (é o mesmo FRED, mesma série) — é detalhe de formato. Reportado em
-`docs/FOLLOWUP_G10_Paulo.md`. **Decisão:** _(confirmação do `Felipe` — não bloqueia)_
+`docs/FOLLOWUP_G10_Paulo.md`.
+
+**Atualização 2026-08-10:** o `Felipe` confirmou em `docs/RESPOSTA_FOLLOWUP_G10_Paulo.md`: **o
+fredgraph serve** ("a sua escolha foi a certa"), não trocar para a API literal. Fecho formal do
+marcador aguarda confirmação humana (CLAUDE.md §6).
+**Decisão:** _(confirmação do `Felipe` — não bloqueia; confirmada acima)_
 
 ## 15. CPI realizado — alvo do teste de não-circularidade da 2.2 (tratamento dos meses sem alvo limpo) 🔴
 Levantado em 2026-08-10 (entrega do `PEDIDO_Paulo_cpi_realizado.md`, dona do Ω é a Lia). O CPI MoM

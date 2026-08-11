@@ -2,6 +2,50 @@
 
 ---
 
+## 2026-08-10 (3) — Paulo — G10 fecho: resposta completa ao Felipe + correção da linha 2025-01-13
+
+**O que foi feito:**
+- Reconstruída a tríade do G10 a partir dos docs em `~/Downloads` (PEDIDO → FOLLOWUP →
+  RESPOSTA_FOLLOWUP) e do repo. Confirmado que os 3 entregáveis (G10a `DGS1`, G10b rótulos
+  de payrolls, G10c calendário CPI) já estavam entregues e commitados em `b19c440`, e que o
+  `docs/RESPOSTA_G10_Paulo.md` (resposta formal ao pedido) já fora entregue junto com o
+  `FOLLOWUP_G10` (b45a602). Ou seja: o pedido original já estava respondido; a sessão foi de
+  fecho, não de execução.
+- **Correção no entregável:** o `RESPOSTA_FOLLOWUP_G10_Paulo.md` do Felipe mostrou que
+  `2025-01-13` NÃO diverge do FRED — é typo-de-ano (+1 ano = `2026-01-13`, que o FRED
+  confirma p/ December 2025). Ajustado o bloco G10c de `docs/RESPOSTA_G10_Paulo.md`: 13/15
+  concordam (12 idênticas + 1 typo corrigido); 2 divergências reais (shutdown 2025). Commit
+  `ae2b4be`.
+- **Resposta total ao PEDIDO_G10:** escrito `docs/RESPOSTA_G10_Paulo_COMPLETA.md` (cópia em
+  `~/Downloads`) — documento autossuficiente cobrindo os 3 entregáveis + as 2 decisões que o
+  Felipe fechou (fredgraph confirmado; calendário não troca, os dois arquivos ficam) + aviso
+  da re-puxada dos parquets (06/08, commit `87721ae`) + os 2 avisos do Felipe sobre o arquivo
+  FRED (18 fevereiros de fatores sazonais no `release_id=10`; `mes_referencia` no shutdown) +
+  o "o que eu NÃO fiz" (escopo respeitado: ZQ, EXPINF1YR, mercado novo, re-download, 2026, G6).
+
+**O que quebrou:** nada de código. Busca semântica da memória offline (runtime worker,
+`observation_search` exige server-beta) — usei git/arquivos direto.
+
+**Pendente:**
+- Fecho formal das Decisões 13 e 14 (calendário CPI / fonte do `DGS1`): o Felipe já deu o
+  veredito no `RESPOSTA_FOLLOWUP_G10`; adicionada a atualização em `Decisoes_pendentes.md`,
+  mas o flip do marcador (🔴/🟡 → fechada) aguarda confirmação humana (CLAUDE.md §6).
+- Enviar `~/Downloads/RESPOSTA_G10_Paulo_COMPLETA.md` ao Felipe (ação do Paulo).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 4.8.
+- **Contexto consumido:** ~55% da janela.
+- **Prompt inicial (verbatim):** "teste"
+- **Iterações até aceitar:** ~5 rodadas de esclarecimento (o Paulo reenquadrou a sequência do
+  G10 várias vezes até ficar claro que a resposta formal já existia; depois a escolha entre
+  corrigir a linha do `2025-01-13` vs. enviar como estava).
+- **Erros da IA:** nenhum dado fabricado. Atrito de comunicação: insisti na cronologia (git)
+  quando o Paulo queria um sim/não direto sobre "já respondi o pedido?" — corrigido ao
+  responder as duas perguntas literais de forma direta.
+- **Decisões escaladas:** — (nenhuma nova; Decisões 13/14 atualizadas com o veredito do
+  Felipe, fecho formal a confirmar pelo humano).
+- **Tags:** —
+
 ## 2026-08-10 (2) — Paulo — CPI realizado (MoM) p/ o teste de não-circularidade da 2.2 (pedido da Lia)
 
 **O que foi feito:** executado o `PEDIDO_Paulo_cpi_realizado.md`. Entregue o CPI MoM (%, pp) por
