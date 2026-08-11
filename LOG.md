@@ -1291,3 +1291,26 @@ mesma classe do veto de liquidez.
   tivesse seguido qualquer um dos dois sem perguntar, ou a frase do relatório
   sairia errada ou uma verificação seria refeita à toa. O contra-exemplo da
   mesma sessão é o meu erro do `c`: ali eu **não** conferi a fonte e afirmei.
+
+**Adendo de fechamento — manutenção de ambiente, fora do repositório.** Depois do
+bloco acima a sessão seguiu com um health-check do Claude Code (`/doctor`), que
+**não tocou em nenhum arquivo do projeto**. Registrado aqui só para o histórico
+ficar completo, já que alterou a máquina da dona:
+
+- `~/.claude/settings.json`: `permissions.defaultMode = "auto"`.
+- `~/.claude.json`: `autoUpdates` de `false` para `true`.
+- `~/.claude/.last-update-result.json`: removido. Era registro **obsoleto** de
+  uma falha das 13:08 (`version_to: null`, `downloads/` vazio — não havia versão
+  de destino), e era ele que fazia a UI insistir em "auto update failed". O
+  `claude update` manual roda limpo e confirma 2.1.227 = a mais recente; o
+  arquivo não é reescrito quando não há atualização a fazer, então o aviso ficaria
+  para sempre.
+- Os três backups (`*.bak-doctor`) ficaram ao lado dos originais.
+- Pendente do lado dela: `/mcp` para desativar os três conectores não usados
+  (Canva, Google Calendar, Google Drive) — não dava para fazer daqui, porque eles
+  não existem em arquivo local nenhum e só o nome normalizado é conhecido.
+
+O diagnóstico do repositório em si veio limpo: instalação única e nativa, sem
+resíduo de npm, todos os JSONs válidos, nenhum hook, nenhuma skill ou plugin
+instalado, `CLAUDE.md` do projeto já enxuto (6.194 chars, muito abaixo do limiar
+de aviso) e sem conteúdo derivável que valesse cortar.
