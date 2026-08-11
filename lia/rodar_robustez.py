@@ -24,9 +24,20 @@ estava confiante — circularidade pior que a que se queria remover. O desfecho
 vem do **DFF** (taxa efetiva dos fed funds, FRED, entregue pelo Paulo), e a
 derivação é validada contra as reuniões em que o mercado estava inequívoco.
 
-Escopo: o alvo por resolução roda só na **2.3 (FOMC)**. Para a 2.2 (CPI) seria
-preciso o valor realizado do CPI mensal, que não está no pipeline — o
-calendário do Paulo traz as datas de divulgação, não os valores.
+Escopo: desde 10/08/2026 o alvo por desfecho roda nas **duas views**. Na 2.3 o
+desfecho vem do DFF; na 2.2 vem do **CPI MoM realizado** que o Paulo entregou
+(`cpi_realizado_mom.json`) — SA *first-print* do ALFRED, o valor que existia no
+dia do release, arredondado à casa decimal em que a própria rule do mercado
+resolve. Antes disso o pipeline trazia só as datas de divulgação, e a limitação
+"a verificação existe numa view só" era declarada no relatório.
+
+Decisões da dona sobre o recorte da 2.2 (registradas na 6m, antes de rodar):
+out/2025 e nov/2025 ficam **fora** — têm resolução do UMA mas nenhum valor do
+BLS, e desfecho que sai do mercado é a circularidade que o teste existe para
+evitar; jul/2026 fica fora por calendário (release em 12/08, mercado aberto).
+Sobram **15 meses**. Os dois mercados legados (dez/2024, jan/2025) têm rule que
+não nomeia a série, então "SA" ali é inferência — roda-se a **sensibilidade sem
+os dois** para medir se a ressalva importa.
 
 Uso:
 
@@ -34,6 +45,7 @@ Uso:
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -164,6 +176,102 @@ def erro_contra_desfecho(eventos, dff, grade, daily_preopen):
     return pd.concat(pedacos).sort_index() if pedacos else pd.Series(dtype=float)
 
 
+def carregar_cpi_realizado(raiz):
+    """CPI MoM realizado por mercado-mês, do arquivo do Paulo.
+
+    Devolve `{slug: (valor_1casa, bucket_resolvido, legado)}`. `legado`
+    marca os dois mercados cuja rule não nomeia a série (dez/2024 e
+    jan/2025), para a sensibilidade da 6m.
+
+    Fica de fora quem não tem `sa_fp_1dec`: out/2025 (o BLS nunca publicou
+    — shutdown) e nov/2025 (sem MoM, porque falta a base de outubro) têm
+    resolução do UMA mas nenhum valor independente, e a 6h fixou que o
+    desfecho não sai do mercado; jul/2026 ainda não teve release.
+    """
+    caminho = Path(raiz) / "data" / "raw" / "cpi_realizado_mom.json"
+    with open(caminho, encoding="utf-8") as arquivo:
+        registros = json.load(arquivo)
+    return {
+        r["slug"]: (r["sa_fp_1dec"], r["bucket_vencedor"], r["ajuste_regra"] == "?")
+        for r in registros
+        if r.get("sa_fp_1dec") is not None
+    }
+
+
+def bucket_do_valor(valores, realizado):
+    """Índice do bucket de CPI que o valor realizado resolveu, ou -1.
+
+    Mesma regra do `bucket_vencedor` do FOMC, com a diferença registrada na
+    decisão 11b: no CPI as **pontas são abertas** pelas regras do mercado
+    ("0,1% ou menos"), mas o slug não diz isso — sai `increase-by-0pt1`
+    igual a um bucket interno. Então trata-se primeira e última coluna como
+    abertas, e as internas exigem casamento exato com a grade de 0,1 pp.
+    """
+    if realizado is None or np.isnan(realizado):
+        return -1
+    if realizado <= valores[0]:
+        return 0
+    if realizado >= valores[-1]:
+        return len(valores) - 1
+    casam = np.flatnonzero(np.isclose(valores, realizado, atol=1e-6))
+    return int(casam[0]) if casam.size else -1
+
+
+def validar_desfechos_cpi(eventos, realizado):
+    """Confere a derivação do CPI do FRED contra o bucket que o UMA resolveu.
+
+    Análoga à validação do DFF na 2.3, e com o mesmo estatuto: o alvo é o
+    valor do BLS, e a concordância com a resolução do mercado só mostra que
+    a leitura da grade de buckets está certa. Discordância aqui seria erro
+    de grade, não evidência sobre o mercado.
+    """
+    linhas = []
+    for evento, (pmf, valores, _data) in eventos.items():
+        chave = next((s for s in realizado if evento.endswith(s)), None)
+        if chave is None:
+            continue
+        valor, bucket_uma, legado = realizado[chave]
+        indice = bucket_do_valor(valores, valor)
+        derivado = pmf.columns[indice] if indice >= 0 else None
+        linhas.append({
+            "slug": chave,
+            "cpi_realizado": valor,
+            "bucket_derivado": derivado.split("increase-by-")[-1] if derivado else None,
+            "bucket_uma": bucket_uma,
+            "legado": legado,
+        })
+    return pd.DataFrame(linhas).set_index("slug")
+
+
+def erro_contra_desfecho_cpi(eventos, realizado, grade, daily_preopen, sem_legados=False):
+    """Massa que o mercado alocou fora do bucket que o CPI realizado resolveu.
+
+    Mesma métrica da 2.3 (`erro_vs_resolucao` sobre a PMF renormalizada),
+    com o desfecho vindo do BLS em vez do DFF. `sem_legados` remove
+    dez/2024 e jan/2025 — a sensibilidade da 6m.
+    """
+    pedacos = []
+    for evento, (pmf, valores, _data) in eventos.items():
+        chave = next((s for s in realizado if evento.endswith(s)), None)
+        if chave is None:
+            continue
+        valor, _bucket_uma, legado = realizado[chave]
+        if sem_legados and legado:
+            continue
+        indice = bucket_do_valor(valores, valor)
+        if indice < 0:
+            continue
+        crua = pmf if grade == "12h" else daily_preopen(pmf)
+        pronta = preparar_pmf(crua)
+        if pronta.empty:
+            continue
+        erro = erro_vs_resolucao(pronta.iloc[:, indice], 1.0)
+        erro.index = pd.MultiIndex.from_product(
+            [[evento], erro.index], names=["evento", "data"])
+        pedacos.append(erro)
+    return pd.concat(pedacos).sort_index() if pedacos else pd.Series(dtype=float)
+
+
 def relatar_faixas(candidatas, erro, rotulo):
     """Roda o teste com 2, 3, 4 e 5 faixas e mostra onde a flag muda."""
     with np.errstate(invalid="ignore", divide="ignore"):
@@ -233,6 +341,54 @@ def main():
         if alinhado.notna().sum() > max(FAIXAS_EM_TESTE):
             relatar_faixas(candidatas, alinhado,
                            "alvo: erro contra o DESFECHO (DFF) — não circular")
+
+    rodar_cpi(args.dados, daily_preopen)
+
+
+def rodar_cpi(raiz, daily_preopen):
+    """O mesmo teste por desfecho na 2.2, com o CPI realizado do Paulo.
+
+    Fecha a limitação que o relatório declarava: até 10/08/2026 a
+    verificação de não circularidade existia numa view só.
+    """
+    from lia.rodar_calibracao_cpi import (  # noqa: E402
+        carregar_eventos_cpi,
+        carregar_volume,
+    )
+    from lia.rodar_calibracao_cpi import montar_candidatas as montar_candidatas_cpi
+    from lia.rodar_calibracao_cpi import montar_painel as montar_painel_cpi
+
+    eventos = carregar_eventos_cpi(raiz)
+    realizado = carregar_cpi_realizado(raiz)
+    volume = carregar_volume(raiz)
+
+    print("\n" + "=" * 72)
+    print("VIEW 2.2 (CPI) — DESFECHO DERIVADO DO CPI REALIZADO (BLS/ALFRED)")
+    validacao = validar_desfechos_cpi(eventos, realizado)
+    print(validacao.to_string())
+    concorda = validacao.bucket_derivado.notna()
+    print(f"\nmeses com desfecho derivável: {len(validacao)} de {len(eventos)} "
+          f"mercados-mês ({len(realizado)} com valor no arquivo do Paulo)")
+    print(f"derivação casa a grade da PMF em: {int(concorda.sum())} de "
+          f"{len(validacao)}")
+    print(f"legados com SA inferido (dez/2024, jan/2025): "
+          f"{int(validacao.legado.sum())}")
+
+    for grade in ("12h", "24h"):
+        painel = montar_painel_cpi(eventos, volume, daily_preopen, grade)
+        candidatas = montar_candidatas_cpi(painel, grade)
+        print("\n" + "=" * 72)
+        print(f"CPI · GRADE {grade} — {len(painel)} slots")
+        for sem_legados in (False, True):
+            erro = erro_contra_desfecho_cpi(
+                eventos, realizado, grade, daily_preopen, sem_legados
+            )
+            alinhado = erro.reindex(painel.index)
+            if alinhado.notna().sum() <= max(FAIXAS_EM_TESTE):
+                continue
+            rotulo = ("alvo: erro contra o DESFECHO (CPI realizado)"
+                      + (" — SEM os 2 legados" if sem_legados else ""))
+            relatar_faixas(candidatas, alinhado, rotulo)
 
 
 if __name__ == "__main__":

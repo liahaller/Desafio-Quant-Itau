@@ -233,6 +233,41 @@ def portao_volume(volume: pd.Series, threshold: float) -> pd.Series:
     return portao.where(volume.notna())
 
 
+def agregar_volume_slot(long: pd.DataFrame) -> pd.DataFrame:
+    """Agrega o volume das faixas de um evento em volume do slot.
+
+    Recebe o G5 em formato long (colunas `evento`, `slot_utc`,
+    `notional_usd`) e devolve `soma` e `minimo` por (evento, slot).
+
+    **Faixa `NaN` contamina o slot inteiro** (Decisão 6b, generalizada ao
+    slot em 10/08/2026). O G5 separa `0` (pré-primeiro-trade: ninguém
+    negociou, veta) de `NaN` (truncamento do cap de 20k: o dado existe e
+    nós é que não o alcançamos, não veta). Somar tratando `NaN` como
+    ausente destrói a separação no agregado: um slot com uma faixa
+    truncada e as demais em zero somaria zero e **vetaria**, afirmando
+    "ninguém negociou" onde parte é desconhecida.
+
+    Isso não aparecia na 2.2 — lá nenhuma faixa bateu o cap, e nenhum
+    slot mistura os dois tipos de célula, então esta função reproduz
+    exatamente a agregação anterior naquele dado. No FOMC, 42 das 76
+    faixas bateram o cap: 908 slots de 3.905 misturam, e 6 deles
+    receberiam veto espúrio pela regra ingênua.
+
+    O `minimo` admite um caso a mais: se alguma faixa conhecida é zero, o
+    mínimo é zero mesmo com outras desconhecidas — volume não é negativo,
+    então nenhuma faixa faltante poderia baixá-lo. Só quando todas as
+    conhecidas são positivas é que a faixa ausente pode esconder o mínimo.
+    """
+    grupos = long.groupby(["evento", "slot_utc"]).notional_usd
+    completo = grupos.apply(lambda s: s.notna().all())
+    soma = grupos.sum(min_count=1).where(completo)
+    minimo = grupos.min()  # `min` já ignora NaN
+    return pd.DataFrame({
+        "soma": soma,
+        "minimo": minimo.where(completo | (minimo == 0)),
+    })
+
+
 def combinar_por_rank(
     scores: list[pd.Series], veto: pd.Series | None = None
 ) -> pd.Series:

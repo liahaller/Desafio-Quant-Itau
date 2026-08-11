@@ -44,6 +44,7 @@ import numpy as np
 import pandas as pd
 
 from lia.calibracao_omega import (
+    agregar_volume_slot,
     comparar_candidatas,
     portao_volume,
     preparar_pmf,
@@ -70,6 +71,39 @@ N_FAIXAS = 3
 VIEW = "2.2"
 
 
+def _prefixos_sem_duplicata(diretorio, slug_release):
+    """Um prefixo por mercado-mês, deduplicado pelo conjunto de tokenIds.
+
+    ⚠️ Achado de 10/08/2026: o `clob_exploracao` traz o mercado de jul/2025
+    sob **dois** rótulos — `CPI_july-inflation-monthly` e `M1_cpi_monthly`,
+    de um marco anterior do pipeline. Não são mercados parecidos: são os
+    mesmos 6 tokenIds, os mesmos 56 slots e diferença máxima 0,0 entre as
+    células. Contar prefixo distinto como evento distinto fazia jul/2025
+    entrar duas vezes na calibração (e no G5, que casa por nome de arquivo).
+
+    A identidade do mercado é o **tokenId**, não o rótulo: dois prefixos que
+    compartilham tokenIds são o mesmo mercado. Entre eles fica o que casa
+    com um slug do calendário de releases — é o nome real do mercado, e é
+    por ele que a data de divulgação é encontrada. Sem casamento, fica o
+    primeiro em ordem alfabética, só para a escolha ser determinística.
+    """
+    tokens = {}
+    for arquivo in diretorio.glob("*.json"):
+        if "_will-" not in arquivo.name or "inflation" not in arquivo.name:
+            continue
+        prefixo, resto = arquivo.name.split("_will-", 1)
+        tokens.setdefault(prefixo, set()).add(resto.rsplit("_", 1)[-1])
+
+    escolhidos = {}
+    for prefixo in sorted(tokens):
+        chave = frozenset(tokens[prefixo])
+        atual = escolhidos.get(chave)
+        casa_calendario = any(prefixo.endswith(slug) for slug in slug_release)
+        if atual is None or (casa_calendario and not atual[1]):
+            escolhidos[chave] = (prefixo, casa_calendario)
+    return sorted(prefixo for prefixo, _ in escolhidos.values())
+
+
 def carregar_eventos_cpi(raiz):
     """Lê a PMF de cada mês de CPI pelo loader do pipeline (módulo do Paulo).
 
@@ -93,11 +127,7 @@ def carregar_eventos_cpi(raiz):
         for fonte, data in zip(releases.fonte, releases.release_date)
     }
 
-    prefixos = sorted({
-        arquivo.name.split("_will-")[0]
-        for arquivo in diretorio.glob("*.json")
-        if "_will-" in arquivo.name and "inflation" in arquivo.name
-    })
+    prefixos = _prefixos_sem_duplicata(diretorio, slug_release)
 
     eventos = {}
     for prefixo in prefixos:
@@ -119,14 +149,18 @@ def carregar_volume(raiz):
     entra como ausente, não como zero: `min` de um subconjunto de buckets
     ainda é o pior bucket observado, e inventar zero para faixa não reportada
     inverteria o portão no mercado que tem mais faixas.
+
+    A agregação passou a `agregar_volume_slot` em 10/08/2026, quando o G5 do
+    FOMC trouxe slots que misturam faixa truncada com faixa medida. **Os
+    números da 6g não mudam**: na 2.2 nenhuma faixa bateu o cap de 20k, então
+    não há slot misto e as duas regras coincidem — conferido ao re-rodar.
     """
     caminho = Path(raiz) / "data" / "raw" / "g5_volume_no_tempo.csv"
     g5 = pd.read_csv(caminho, parse_dates=["slot_utc"])
     g5 = g5[g5.view == VIEW].copy()
     g5["evento"] = g5.mercado.str.split("_will-").str[0]
     g5["slot_utc"] = g5.slot_utc.dt.tz_localize("UTC")
-    agrupado = g5.groupby(["evento", "slot_utc"]).notional_usd
-    return pd.DataFrame({"soma": agrupado.sum(min_count=1), "minimo": agrupado.min()})
+    return agregar_volume_slot(g5)
 
 
 def montar_painel(eventos, volume, daily_preopen, grade):

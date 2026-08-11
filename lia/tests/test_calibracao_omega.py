@@ -16,6 +16,7 @@ import pandas as pd
 import pytest
 
 from lia.calibracao_omega import (
+    agregar_volume_slot,
     avaliar_monotonicidade,
     combinar_por_rank,
     comparar_candidatas,
@@ -135,6 +136,65 @@ def test_portao_volume_nao_veta_volume_desconhecido():
     assert portao.iloc[0] == 1.0
     assert portao.iloc[1] == 0.0  # negociação de fato ausente → veta
     assert np.isnan(portao.iloc[2])  # sem dado → não decide, não veta
+
+
+def _long_volume(linhas):
+    """G5 em formato long: (evento, slot, notional) → DataFrame."""
+    return pd.DataFrame(linhas, columns=["evento", "slot_utc", "notional_usd"])
+
+
+def test_agregar_volume_slot_faixa_truncada_contamina_o_slot():
+    """Faixa NaN + faixas zeradas NÃO pode virar veto (Decisão 6b no slot).
+
+    Somar tratando NaN como ausente daria soma 0 e vetaria o slot,
+    afirmando "ninguém negociou" onde uma das faixas é desconhecida. Era
+    o caso de 6 slots reais do FOMC.
+    """
+    long = _long_volume([
+        (1, "2026-01-01 00:00", 0.0),
+        (1, "2026-01-01 00:00", np.nan),
+        (1, "2026-01-01 12:00", 0.0),
+        (1, "2026-01-01 12:00", 0.0),
+        (1, "2026-01-02 00:00", 40.0),
+        (1, "2026-01-02 00:00", 60.0),
+    ])
+    saida = agregar_volume_slot(long)
+    assert np.isnan(saida.loc[(1, "2026-01-01 00:00"), "soma"])  # parcial
+    assert saida.loc[(1, "2026-01-01 12:00"), "soma"] == 0.0  # veto legítimo
+    assert saida.loc[(1, "2026-01-02 00:00"), "soma"] == 100.0
+
+
+def test_agregar_volume_slot_minimo_conhecido_apesar_do_truncamento():
+    """Faixa zerada fixa o mínimo mesmo com outra faixa desconhecida.
+
+    Volume não é negativo, então nenhuma faixa faltante poderia baixar um
+    mínimo que já é zero — é o único caso em que o slot parcial ainda
+    responde.
+    """
+    long = _long_volume([
+        (1, "2026-01-01 00:00", 0.0),
+        (1, "2026-01-01 00:00", np.nan),
+        (1, "2026-01-01 12:00", 30.0),
+        (1, "2026-01-01 12:00", np.nan),
+    ])
+    saida = agregar_volume_slot(long)
+    assert saida.loc[(1, "2026-01-01 00:00"), "minimo"] == 0.0
+    assert np.isnan(saida.loc[(1, "2026-01-01 12:00"), "minimo"])
+
+
+def test_agregar_volume_slot_sem_truncamento_reproduz_a_soma_simples():
+    """Sem faixa NaN, é a agregação da 6g — é o que preserva os números da 2.2."""
+    long = _long_volume([
+        (1, "2026-01-01 00:00", 10.0),
+        (1, "2026-01-01 00:00", 5.0),
+        (2, "2026-01-01 00:00", 0.0),
+        (2, "2026-01-01 00:00", 7.0),
+    ])
+    saida = agregar_volume_slot(long)
+    assert saida.loc[(1, "2026-01-01 00:00"), "soma"] == 15.0
+    assert saida.loc[(1, "2026-01-01 00:00"), "minimo"] == 5.0
+    assert saida.loc[(2, "2026-01-01 00:00"), "soma"] == 7.0
+    assert saida.loc[(2, "2026-01-01 00:00"), "minimo"] == 0.0
 
 
 def test_combinar_por_rank_veto_explicito_zera():
