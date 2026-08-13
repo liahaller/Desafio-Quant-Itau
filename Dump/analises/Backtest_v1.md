@@ -7,7 +7,8 @@
 - ⚠️ **a carteira NÃO é neutra em mercado, e nunca foi**: o ΣP mediano das views é +0,96 (2.2), +1,74 (2.3), +1,24 (15g) e +2,00 (15b) — `P[SPY] = 0` significa que a view não toma posição no SPY, não que ela seja neutra (`Dump/analises/Ortogonalidade.md`)
 - demeanagem da 2.3: média expansiva **semeada** com 206 pregões anteriores à janela (2024-04 a 2025-02, dado passado — não lookahead). Sem semente o primeiro dia demeana por 0,0; o sinal líquido sai 22% positivo, contra 34% com semente
 - duration do breakeven: **medida** no par da própria view, janela expansiva — variou de **8.31 a 8.38** na amostra (a espec supunha "~8"; o dado confirmou, e agora o número é medido em vez de suposto)
-- camada tática: **desligada** — os orçamentos são parâmetro de reunião
+- camada tática v2 (sleeves da D28): **LIGADA** (D28.13) — M4 recessão EUA 2025, M9 Câmara. Os números desta tabela **já incluem** o overlay das sleeves
+- camada tática antiga (orçamentos de drift, 12c): **desligada** — os orçamentos são parâmetro de reunião
 
 - **duas varreduras de escopo do teto:** `Σ|w| ≤ t` corta a carteira inteira; `tilt ≤ t` corta só `Σ|w − w_mkt|` e deixa a perna de mercado do prior intacta
 
@@ -110,5 +111,5 @@ A 15b vive só em dia de anúncio, **por desenho**; a 15g acaba junto com o merc
 
 **4. Horizonte do Q (D4.1) segue aberto, fora do caminho crítico.** Nenhuma das quatro views tem `horizonte_q_dias ≠ 1`, então o empilhamento é homogêneo aqui. O caso concreto medido está na view C, que o `stack_views` **recusou** empilhar por Q acumulado em k dias — ela ficou fora do v1 (D23f), e é o exemplo de que a limitação morde de verdade.
 
-**5. O conjunto de views está FECHADO em quatro** (D23e) e a **camada tática está desligada** (12c). Nada nesta tabela mede sleeve.
+**5. O conjunto de views está FECHADO em quatro** (D23e). A camada tática ANTIGA (orçamentos de drift, 12c) segue desligada; a camada v2 está **LIGADA** (D28.13) e o overlay das sleeves entra nos números acima.
 

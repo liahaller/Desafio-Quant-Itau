@@ -1,5 +1,57 @@
 # LOG de sessões
 
+## 2026-08-13 (sessão 28) — Felipe
+
+**Contexto da sessão:** sessão curta de verificação. Pergunta do dono sobre o
+estado da camada tática no backtest; a checagem achou um texto desatualizado no
+relatório gerado e ele foi corrigido. Nenhuma decisão nova, nenhuma mudança de
+metodologia ou de número.
+
+**Feito:**
+- Confirmado que a **camada tática v2 está LIGADA** por default: `carregar(...,
+  sleeves=True)` em `scripts/backtest_v1.py`, com o `main` chamando sem
+  sobrescrever. Sleeves ativas: M4 recessão (k = 3, 5, 10) e M9 Câmara (k = 20).
+  A camada **antiga** (orçamentos de drift, 12c) segue desligada.
+- **Bug de relatório corrigido** (era o único achado real): as duas menções à
+  camada tática no `Backtest_v1.md` eram texto cravado da era pré-D28.13 — a
+  linha do cabeçalho só olhava `orcamentos` e imprimia "desligada", e o item 5
+  afirmava "nada nesta tabela mede sleeve". Ambas falsas desde o commit 739c799:
+  os números publicados já incluíam o overlay. Agora o cabeçalho tem duas linhas
+  separadas (v2 ligada, com os nomes das sleeves ativas; antiga desligada) e o
+  item 5 acompanha o estado real.
+- `Dump/analises/Backtest_v1.md` regenerado: **só o texto mudou** — os números
+  batem dígito por dígito com a versão anterior, o que confirma que o run do
+  739c799 já era com a camada ligada.
+- Respondido, para registro: a camada entra como **overlay aditivo de peso**
+  (`w = w_bl + Σ dw`, `src/taticas_common.py:88`), dimensionada por um único
+  `inv(δΣ)` sobre a soma dos μ — **não** por orçamento percentual. O único
+  limitador é o teto de alavancagem no tilt, aplicado depois. É isso que faz a
+  camada ser positiva sozinha e negativa somada: dentro de teto fixo ela divide
+  o orçamento de risco com as views, não soma.
+
+**Quebrou / aprendido:**
+- Nada quebrou. Aprendizado que vale para o resto da entrega: **texto cravado em
+  gerador de relatório envelhece calado**. O commit que ligou a camada
+  regenerou os números e deixou a legenda dizendo o contrário — quem lesse o md
+  concluiria que a tabela mede o v1 sem sleeve. Vale varrer os outros geradores
+  do `Dump/analises/` atrás do mesmo padrão antes da entrega.
+
+**Pendente:**
+- Varredura dos demais relatórios gerados atrás de estado cravado em texto (não
+  feita nesta sessão).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~35k tokens (~2% da janela).
+- **Prompt inicial (verbatim):** "A camada tática já esta ativada no backtest?"
+- **Iterações até aceitar:** 1 (diagnóstico e correção aceitos sem rodada de
+  correção; duas perguntas de acompanhamento do dono, não retrabalho).
+- **Erros da IA:** dois erros de digitação meus na primeira escrita da correção
+  ("sleeges" e uma concatenação sem espaço), pegos e corrigidos antes de rodar o
+  script — não chegaram ao md publicado.
+- **Decisões escaladas:** — (nenhuma; a correção implementa a D28.13 já fechada).
+- **Tags:** —
+
 ## 2026-08-11 (sessão 27) — Felipe
 
 **Contexto da sessão:** retomada do primeiro item pendente da sessão 26 (a

@@ -988,6 +988,7 @@ def main():
     durations = [d["duration"] for d in views_do_dia if d["view"] == "2.2_inflacao"]
 
     tatica_ligada = [f"{k} = {v}" for k, v in orcamentos.items() if v is not None]
+    sleeves_ligadas = ", ".join(s.nome for s in montador.sleeves)
     linhas = ["# Backtest do v1 — BL com as views ativas (I5)\n",
               "> Gerado por `scripts/backtest_v1.py`. Benchmark = comprar e "
               "segurar SPY (consequência do `w_mkt` do prior CAPM). Custo de "
@@ -1013,7 +1014,11 @@ def main():
               f"janela expansiva — variou de **{min(durations):.2f} a "
               f"{max(durations):.2f}** na amostra (a espec supunha \"~8\"; o dado "
               f"confirmou, e agora o número é medido em vez de suposto)",
-              "- camada tática: "
+              "- camada tática v2 (sleeves da D28): "
+              + (f"**LIGADA** (D28.13) — {sleeves_ligadas}. Os números desta "
+                 "tabela **já incluem** o overlay das sleeves"
+                 if sleeves_ligadas else "**desligada**"),
+              "- camada tática antiga (orçamentos de drift, 12c): "
               + (", ".join(tatica_ligada) if tatica_ligada
                  else "**desligada** — os orçamentos são parâmetro de reunião") + "\n",
               "- **duas varreduras de escopo do teto:** `Σ|w| ≤ t` corta a "
@@ -1218,8 +1223,11 @@ def main():
         "**recusou** empilhar por Q acumulado em k dias — ela ficou fora do v1 "
         "(D23f), e é o exemplo de que a limitação morde de verdade.\n")
     linhas.append(
-        "**5. O conjunto de views está FECHADO em quatro** (D23e) e a **camada "
-        "tática está desligada** (12c). Nada nesta tabela mede sleeve.\n")
+        "**5. O conjunto de views está FECHADO em quatro** (D23e). A camada "
+        "tática ANTIGA (orçamentos de drift, 12c) segue desligada; a camada "
+        + ("v2 está **LIGADA** (D28.13) e o overlay das sleeves entra nos "
+           "números acima" if sleeves_ligadas else "v2 está desligada")
+        + ".\n")
 
     Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")
