@@ -1,0 +1,153 @@
+PLANO DE ESTRUTURA — RELATORIO FINAL (v2)
+5 paginas, 16:9, ~750 palavras. Densidade vem de visual (diagrama, tabela, grafico), nao de texto corrido.
+Abaixo: titulo da pagina, titulo das secoes e uma frase do que cada uma carrega.
+
+
+PAGINA 1 — CAPA / IDENTIDADE DO ROBO
+Funcao: dizer em 10 segundos o que a estrategia e, de onde vem o nome e qual o placar.
+
+Kairos — Black-Litterman movido a probabilidade negociada
+  Nome, arte do robo e subtitulo que ja e a tese: o modelo se posiciona em torno de eventos com data marcada.
+
+Por que Kairos
+  Explicacao do nome (o instante oportuno x o tempo que apenas passa) amarrada ao desenho da estrategia, nao como enfeite.
+
+A tese em uma frase
+  Uma linha que diz qual a fonte explorada e a ideia de aplicação geral
+
+Ficha tecnica
+  Classe de ativos, universo, sinal, benchmark, rebalanceamento, janela testada e horizonte de carteira, no formato de tabela dos relatorios de referencia.
+
+Placar de entrega
+  Tres a quatro KPIs (retorno liquido, Sharpe, excesso vs SPY, drawdown) com o benchmark ao lado.
+
+Mapa do relatorio
+  Faixa de rodape com as quatro etapas seguintes (Ideia, modelagem, backtest, autoavaliacao) para o avaliador saber onde cada criterio esta.
+
+
+PAGINA 2 — A Ideia E O DADO - Um texto mais detalhado explicando de onde está vindo a ideia, porque achamos que iria funcionar. POrque BL etc
+Funcao: sustentar o conceito da estrategia (20% da nota) e mostrar que o dado existe e foi tratado.
+
+O elo mais fragil do Black-Litterman e uma opiniao
+  Argumento central: Q e Omega costumam ser declarados por quem monta o modelo, o que permite produzir qualquer resultado depois de ver o backtest.
+
+O que o mercado de previsao oferece no lugar
+  Por que um contrato com dinheiro em risco entrega uma distribuicao de cenarios com preco todo dia, e por que isso e melhor do que a opiniao que o BL consome.
+
+A tese nao e que o mercado erre
+  Evidencia de que o mercado de previsao e calibrado (surpresa mediana medida nas reunioes do Fed) e a consequencia: o ganho esta na conversao disciplinada em posicao, nao em apostar contra o poly.
+
+Onde a informacao aterrissa
+  Achado que delimita a estrategia e vale como diagnostico honesto: a informacao do evento chega no gap de abertura, o que define o que da e o que nao da para negociar.
+
+Dados: fontes, janela e tratamento
+  Fontes (Polymarket Gamma+CLOB, precos diarios de 9 ETFs, series macro do FRED), periodo, passo nativo de 12h, reconstrucao de volume e o tratamento de faixas faltantes na distribuicao.
+
+Filtros de qualidade do livro
+  Regra que desativa a view quando o livro degenera, com o numero de dias em que ela morde — mostra que o pipeline foi auditado, nao assumido.
+
+
+PAGINA 3 — Explicando o modelo
+Funcao: modelagem (20% da nota) — a pagina que o v1 mais devia e onde entra a camada tatica.
+Convencao da pagina: a justificativa anda junto da escolha, nao numa tabela a parte — cada bloco fecha com
+uma linha curta "por que assim, e nao X". Uma frase no topo declara o criterio comum a todas: a forma sai de
+medicao ou de principio declarado antes, nunca do resultado do backtest.
+
+Arquitetura em duas camadas
+  Diagrama unico do contrato ao peso: camada estrutural (views no BL) e camada tatica (overlay de peso), com o teto de risco no fim, deixando claro que as duas dividem um orcamento e nao somam.
+  Por que assim: overlay aditivo dimensionado pelo mesmo inv(dS) das views, e nao orcamento percentual do patrimonio — orcamento exigiria escolher um tamanho, e a varredura nao tinha otimo interior para escolher por.
+
+Da probabilidade ao vetor Q
+  Como a esperanca da distribuicao menos a ancora de mercado vira surpresa em bps e depois retorno por ativo, via beta medido por evento — com a formula que importa e a matriz P explicada em uma linha.
+  Por que assim: beta estimado nos eventos passados, e nao magnitude de view arbitrada — e a mesma troca de opiniao por medicao que a pagina 2 defende, agora do lado do retorno.
+
+As views estruturais, uma tabela
+  Cada view ativa com o que le, o horizonte, a cobertura em pregoes e a direcao que expressa; media de views vivas por pregao e o caso "sem view ativa, a carteira e o prior".
+  Por que assim: P neutro em mercado por construcao nas estruturais, com uma unica excecao direcional onde o premio E de mercado — view que so se expressa no preco relativo entre ativos foi medida e sai esvaziada.
+
+A regua de confianca (Omega)
+  Formula do multiplicador c, o que cada ingrediente mede, e o principio que o torna nao arbitrario: c >= 1 sempre, entao o BL classico e o teto de confianca.
+  Por que assim: forma escolhida contra o erro realizado da probabilidade, e nao contra o retorno da carteira — calibrar no retorno faria a regua herdar o resultado que ela deveria julgar.
+
+Como cada ingrediente foi julgado
+  Grafico do placar: criterio declarado antes da calibracao (confianca maior tem de anteceder erro menor), quais ingredientes entraram, qual virou veto e qual foi reprovado.
+
+A camada tatica: o que ela le e por que entrou
+  Descricao das sleeves ativas, a regua de admissao usada para aceita-las (le o mercado de previsao, nao desprovada, sem overfit, sem variavel nao teorica) e a decisao explicita de liga-la na entrega.
+
+Controle de risco
+  Teto de alavancagem aplicado ao desvio em relacao ao prior, e Sigma amostral no passo final de pesos.
+  Por que assim: teto no tilt e nao na carteira — cortar a carteira inteira misturava o tilt da view com a perna de mercado, diferenca medida em duas casas decimais; Sigma amostral e nao a posterior de He-Litterman — da o caso neutro limpo, em que confianca zero devolve exatamente a carteira de equilibrio e o encolhimento por incerteza fica num lugar so, o Omega.
+
+
+PAGINA 4 — BACKTEST, RESULTADOS E AUTOAVALIACAO
+Funcao: backtest (15%) e analise de resultados (15%) numa leitura so — a curva, de onde ela vem, e o julgamento
+do proprio trabalho. A metade de baixo da pagina e critica, nao resultado.
+
+Metodologia e vieses tratados
+  Janela, frequencia, preco de execucao e custo por lado sobre o giro; e a lista verificavel do que foi contido — informacao sempre anterior a decisao, media expansiva semeada fora da janela, universo fixo sem survivorship — mais o que NAO foi corrigido (multiplicidade das buscas).
+
+Curva acumulada e drawdown
+  Grafico principal contra o SPY, com o drawdown embaixo — e a legenda dizendo o que ele mostra, inclusive o drawdown pior que o do benchmark.
+
+Tabela de metricas
+  Retorno liquido, volatilidade, Sharpe, drawdown maximo, alavancagem media e giro, sempre com a coluna do benchmark.
+
+Atribuicao: de onde vem o excesso
+  Decomposicao por view e por camada, incluindo a coluna "sem os tres maiores dias" e o acerto de sinal, para separar sinal de sorte concentrada.
+
+Sensibilidades
+  Aqui se justifica o NUMERO, como a pagina 3 justificou a forma — varreduras de nivel da confianca, teto de alavancagem, custo de breakeven e correcao favorite-longshot, mostrando que o valor entregue nao foi escolhido pelo resultado.
+
+O que o numero nao diz
+  Bloco critico: a tensao da camada tatica (positiva sozinha, negativa somada sob teto fixo), o giro revertido em dois pregoes e a limitacao de uma unica janela em regime de alta.
+
+Autoavaliacao: o placar, nao a curva
+  O protocolo que evitou overfit (forma julgada contra erro da probabilidade, nivel escolhido uma unica vez, decisao registrada antes de ver o resultado) e o placar que ele produziu — views cortadas, ingrediente derrubado por replicacao, candidata tatica desprovada; a tese se sustenta pelo que foi reprovado.
+
+Autoavaliacao: onde erramos
+  Erros reais do processo com a licao de cada um — medida errada sustentando conclusao certa, teste que reprova quase todo mundo e por isso nao discrimina, texto cravado em gerador que envelhece calado.
+
+Autoavaliação: Simulação de Fundo
+  Observando os drawdowns, retorno ao longo do tempo, trades por dia. Com auxilio de Ia para simular diferentes perfiis de clientes, analisamos a opinião e adesão dos clientes à nossa estratégia se realmente compose um fundo.
+
+
+PAGINA 5 — USO DE IA GENERATIVA E PROXIMOS PASSOS
+Funcao: uso de IA (15%) ocupando no minimo a parte da esquerda da página;
+conclusao e proximos passos (10%) na restante esquerd.
+
+1. A regra que organizou o trabalho com IA
+  Tres frentes paralelas, cada uma dona dos seus modulos, com as regras versionadas no repositorio — e a regra central: a IA nunca fecha decisao metodologica; fonte, universo, forma funcional e parametro saem de decisao humana registrada, e o agente segue com placeholder ate ela existir.
+  Além disso explicar a estrutura de conhecimento que foi formada ao longo das pesquisas e analises da estratégia, criando quase que um second-brain personalizado para cada branch e controlado pelo usuario e pela IA
+
+2. Dados Gerais - Dados numéricos sobre o trabalho
+  Usando os Logs levantamos um dashboard pequeno com Numero de sessões, media de tokens por sessão, Decisões registradas, taxa de recorreção
+
+  Linha do tempo do projeto
+    Barras = tokens por sessão nos 29 dias, linha acumulada = decisões registradas. Mostra o arco: exploração cara no meio, sessões curtas de execução no fim. Nenhum trabalho manual, sai do parser acima.
+
+3. A separação do trabalho
+  Esquema visual da divisao de trabalho: o que a IA fez sozinha (codigo, medicao, varredura, redacao a partir dos numeros), o que exigiu decisao humana registrada e o que nenhum dos dois pode fazer sem o outro.
+
+  Donut de tipo de sessão por token - 
+    (pesquisa, análise, escrever código) - por token e por num de sessão
+
+Onde a IA agregou
+  Ganhos mensuraveis: varredura exaustiva barata (cada ingrediente testado em multiplas grades, horizontes e janelas), prosa gerada dos numeros em vez de escrita a mao, revisao cruzada entre agentes achando defeito que o dono do modulo nao veria — com a contagem de decisoes, sessoes e celulas testadas.
+  Aqui quero um pequeno texto explicando onde ela agregou mais, o que teve mais adesão dos membros do grupo etc...
+ 
+Onde a IA falhou, e o que conteve
+  Falhas especificas e o mecanismo que as pegou: Um registro especifico de erros que ocorreram, um ou dois casos especificos e o que foi que capturou o erro. Teste, humano ou outro
+   
+  Erros da IA × mecanismo que pegou. 
+    Barra empilhada: tipo do erro (alucinação numérica, premissa herdada, generalização além do teste, código quebrado) × quem barrou (conferência do diff, decisão humana, auto-correção na sessão). É o gráfico que sustenta a seção "onde a IA falhou, e o que conteve" — e é o que nenhum relatório de referência tem. Custa uma passada de classificação em 51 blocos.
+
+Limitacoes declaradas
+  Omega diagonal que nao desconta views correlacionadas, regua calibrada em duas views e aplicada a quatro, amostra curta de um so regime e o parametro que segue em aberto.
+
+Proximos passos
+  Melhorias com endereco: termos fora da diagonal no Omega, banda de nao-negociacao contra o giro revertido, ampliacao do universo pelo criterio de "haver noticia a que o preco responda" e validacao em regime de queda.
+
+Fechamento
+  Uma frase que devolve o robo ao argumento: a estrategia troca opiniao por preco observavel, e o que ela entrega e disciplina, nao adivinhacao.
+
