@@ -874,3 +874,84 @@ só no `ValueError` de `_checa_chaves`. Ele filtra em uma linha; eu não adivinh
 nivel`, porque o nível é **expoente** na régua da 6g. O pedido dele de três
 séries em `{1,3,5}` partia da hipótese contrária, levantada por ele mesmo como
 dúvida; não há trabalho novo aí.
+
+---
+
+### 6q. O NÍVEL da régua está fechado em 1 (13/08/2026) 🟢 (fechada pela dona)
+
+**Decisão da dona: `nível = 1`.** Era o único parâmetro livre do Ω (§9 do
+`RELATORIO_omega.md`), e fecha aqui. `c = c_nivel1 ** 1`, ou seja a régua entra
+na carteira exatamente como foi calibrada e publicada no
+`lia/c_por_decisao.csv` — sem amplificação nem atenuação.
+
+**⚠️ A tabela que embasava a escolha estava desatualizada.** A grade de nível do
+`Curva_c.md` foi medida antes de a camada tática entrar (D28.13), e a própria
+D28.13 lista aquele artefato como invalidado. Re-gerada em 13/08 com a entrega
+atual (camada ligada, teto 1 no tilt), rodando `scripts/curva_c.py` do branch
+`Felipe` com o `data/` do branch `Paulo` num diretório de trabalho fora do
+repositório. **Nada dos módulos de origem foi tocado.**
+
+| nível | `c` mediano | views/dia | Σ\|w\| pedida mediana | dias de ruína | excesso (tilt ≤ 1) |
+|---|---|---|---|---|---|
+| sem régua | — | 2,24 | 221,8 | 33 | +4,08 pp |
+| **0** (só veto) | 1,0000 | 1,99 | 177,5 | 31 | +3,17 pp |
+| **1** ← escolhido | 1,0242 | 1,99 | 174,5 | 28 | +3,04 pp |
+| 2 | 1,0489 | 1,99 | 168,6 | 28 | +2,87 pp |
+| 3 | 1,0743 | 1,99 | 162,6 | 27 | +2,60 pp |
+| 5 | 1,1269 | 1,99 | 147,8 | 26 | +1,88 pp |
+| 8 | 1,2106 | 1,99 | 130,5 | 24 | +0,49 pp |
+
+**O fundamento — e ele NÃO usa a coluna de excesso em nenhum ponto:**
+
+1. **O nível 0 contradiz o resultado do próprio módulo.** Com expoente zero os
+   dois ingredientes que **passaram** no teste de monotonicidade (Spearman
+   −0,40 na 2.3 e −0,47 na 2.2) deixam de operar, e sobra apenas o veto — que é
+   o ingrediente **reprovado como score** e rebaixado a portão. O §10 afirma
+   "dois entraram, um virou veto, um foi reprovado"; nível 0 entrega uma régua
+   em que só o rebaixado age.
+2. **Níveis altos concentram poder onde a régua NÃO foi validada.** A régua foi
+   calibrada em duas views e aplicada a quatro (§9), e nem a B nem a 15b
+   passaram pelo teste. Fração de decisões com confiança relativa ≤ 0,5:
+
+   | nível | 2.3 Fed (calibrada) | 2.2 CPI (calibrada) | B traj. (extensão) | 15b incerteza (extensão) |
+   |---|---|---|---|---|
+   | 1 | 0,0% | 0,5% | 0,0% | 0,0% |
+   | 3 | 0,0% | 4,4% | 0,4% | 26,7% |
+   | 5 | 0,1% | 9,8% | 0,4% | 33,3% |
+
+   Subir o nível praticamente não move o mercado do Fed — que é a régua dizendo
+   que aquele mercado é bom — e morde cada vez mais a 15b, a view sem evidência
+   e cuja família (payrolls) sequer tem veto de liquidez (§9).
+3. **Subir o nível não compra controle de tamanho.** Os dias de ruína **nunca
+   zeram** (24 no nível 8 contra 33 sem régua) e o §9 já media que seria preciso
+   nível da ordem de 95 para mover a mediana do dimensionamento. Quem limita
+   tamanho é o **teto**, não a régua — então não há razão de risco para subir o
+   nível, e o §9 fica confirmado agora com a camada ligada.
+
+**Declaração obrigatória, para não parecer escolha post-hoc:** o nível 1 é
+também quase o topo da coluna de excesso (+3,04 pp, atrás só do nível 0). O
+fundamento acima é inteiramente sobre onde a régua foi validada e não consultou
+essa coluna — mas a coincidência existe e fica registrada aqui, e não descoberta
+por terceiros depois. O protocolo do §3 continua valendo: a forma não se
+revisita por resultado de carteira.
+
+**Duas pendências que esta decisão NÃO fecha:**
+
+- 🔴 **A entrega ainda não roda com a régua acoplada.** O `run_backtest` já
+  expõe `regua=`, mas o `scripts/backtest_v1.py` não passa o parâmetro — é
+  **módulo do Felipe** e não foi tocado. Medido por fora, com `regua=` no nível
+  1: o excesso da entrega vai de **+4,08 pp para +3,04 pp**. Ligar de fato é
+  decisão/edição dele.
+- 🟡 **O nível fica condicionado ao teto.** Pelo §9 a ordem é: entra o `c`,
+  mede-se a Σ|w| resultante, e só então se decide o teto — que é da D12, do
+  grupo. Se o teto mudar, esta conta se refaz.
+
+**Efeito colateral medido: a régua encarece a camada tática.** Com as duas
+pontas na MESMA configuração (régua nível 1, teto 1 no tilt), o custo da camada
+passa de **−2,16 pp** (medição da D28.13, as duas pontas sem régua) para
+**−2,94 pp**: +5,98 pp sem camada contra +3,04 pp com. Faz sentido — a régua
+encolhe o tilt das views e a camada disputa o mesmo orçamento de risco, então
+cortar de um lado aumenta o peso relativo do outro. **Não reabre a D28.13**
+(a decisão de entregar com a camada ligada é do dono e não foi tomada por este
+número), mas o `Camada_tatica_v2.md` fica desatualizado no mesmo sentido em que
+o `Curva_c.md` estava.
