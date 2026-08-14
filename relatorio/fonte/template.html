@@ -1,0 +1,431 @@
+<meta charset="utf-8">
+<title>KAIRÓS</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+
+  :root {
+    --fundo:    #0B1622;
+    --fundo2:   #101F2E;
+    --linha:    #24384B;
+    --tinta:    #E8EDF2;
+    --tinta2:   #9BAEC0;
+    --tinta3:   #6B8299;
+    --ambar:    #F5A623;
+    --ambar-d:  #C9820C;
+    --azul:     #3D8FC4;
+    --vermelho: #C2544D;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--fundo); }
+
+  body {
+    font-family: "Segoe UI", "Inter", system-ui, sans-serif;
+    color: var(--tinta);
+    font-size: 11pt;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .slide {
+    width: 13.333in;
+    height: 7.5in;
+    padding: 0.46in 0.62in 0.40in;
+    background: var(--fundo);
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .slide:last-child { page-break-after: auto; }
+
+  /* ---- cabeçalho corrente ---- */
+  .topo {
+    display: flex; justify-content: space-between; align-items: baseline;
+    border-bottom: 1px solid var(--linha);
+    padding-bottom: 7px; margin-bottom: 18px;
+    flex: 0 0 auto;
+  }
+  .marca { font-size: 12pt; font-weight: 700; letter-spacing: .20em; color: var(--ambar); }
+  .marca span { color: var(--tinta3); font-weight: 400; letter-spacing: .06em; margin-left: 10px; }
+  .pag { font-size: 9pt; color: var(--tinta3); letter-spacing: .05em; }
+
+  h1 { font-size: 21pt; font-weight: 600; margin: 0 0 4px; letter-spacing: -.01em; }
+  h2 {
+    font-size: 9pt; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--ambar); margin: 0 0 8px;
+  }
+  p { margin: 0 0 9px; color: var(--tinta2); }
+  strong { color: var(--tinta); font-weight: 600; }
+  .num { color: var(--ambar); font-weight: 700; }
+  em { color: var(--tinta); font-style: italic; }
+
+  .corpo { flex: 1 1 auto; min-height: 0; }
+  .rodape {
+    flex: 0 0 auto; border-top: 1px solid var(--linha); padding-top: 7px; margin-top: 12px;
+    font-size: 8.5pt; color: var(--tinta3); line-height: 1.4;
+  }
+
+  .col2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+  .col2b { display: grid; grid-template-columns: 1.25fr 1fr; gap: 30px; }
+  .col3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+  /* ---- cartões e tiles ---- */
+  .card {
+    background: var(--fundo2); border: 1px solid var(--linha);
+    border-radius: 5px; padding: 12px 14px;
+  }
+  .tile { text-align: left; }
+  .tile .v { font-size: 20pt; font-weight: 700; color: var(--ambar); line-height: 1.05; }
+  .tile .v.neutro { color: var(--tinta); }
+  .tile .k { font-size: 8pt; color: var(--tinta3); text-transform: uppercase; letter-spacing: .09em; margin-top: 3px; }
+
+  /* ---- ficha técnica ---- */
+  .ficha { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+  .ficha td { padding: 5.5px 0; border-bottom: 1px solid var(--linha); }
+  .ficha td:first-child { color: var(--tinta3); }
+  .ficha td:last-child { text-align: right; color: var(--tinta); font-weight: 600; }
+
+  /* ---- tabela de dados ---- */
+  table.dados { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  table.dados th {
+    text-align: right; font-weight: 600; color: var(--tinta3); font-size: 8pt;
+    text-transform: uppercase; letter-spacing: .07em;
+    padding: 0 0 6px; border-bottom: 1px solid var(--linha);
+  }
+  table.dados th:first-child, table.dados td:first-child { text-align: left; }
+  table.dados td { padding: 5px 0; border-bottom: 1px solid rgba(36,56,75,.55); color: var(--tinta2); text-align: right; }
+  table.dados td.d { color: var(--tinta); font-weight: 600; }
+  table.dados tr:last-child td { border-bottom: none; }
+
+  ul { margin: 0; padding-left: 15px; color: var(--tinta2); }
+  li { margin-bottom: 5px; }
+  li::marker { color: var(--ambar-d); }
+
+  .selo {
+    display: inline-block; font-size: 7.5pt; font-weight: 700; letter-spacing: .09em;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 3px; vertical-align: middle;
+  }
+  .selo.ok  { color: var(--ambar);    border: 1px solid rgba(245,166,35,.45); }
+  .selo.no  { color: var(--vermelho); border: 1px solid rgba(194,84,77,.45); }
+  .selo.neu { color: var(--tinta3);   border: 1px solid var(--linha); }
+
+  figure { margin: 0; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 8pt; color: var(--tinta3); margin-top: 5px; }
+
+  .nota { font-size: 8.5pt; color: var(--tinta3); line-height: 1.42; }
+  .destaque { color: var(--ambar); }
+
+  /* =================== PÁGINA 1 =================== */
+  .capa { display: grid; grid-template-columns: 1.32fr 1fr; height: 100%; }
+  .capa-txt { padding-right: 34px; display: flex; flex-direction: column; justify-content: center; }
+  .logo { font-size: 52pt; font-weight: 200; letter-spacing: .17em; color: var(--tinta); margin: 0 0 2px; }
+  .tagline { font-size: 12.5pt; color: var(--ambar); font-weight: 500; margin-bottom: 22px; letter-spacing: .01em; }
+  .regua-h { width: 76px; height: 2px; background: var(--ambar); margin-bottom: 20px; }
+  .capa-dir { display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .foto { position: relative; }
+  .foto img {
+    width: 100%; height: 4.30in; object-fit: cover; object-position: center 18%;
+    border-radius: 6px; display: block;
+  }
+  .foto::after {
+    content: ""; position: absolute; inset: 0; border-radius: 6px;
+    background: linear-gradient(90deg, var(--fundo) 0%, rgba(11,22,34,.30) 24%, rgba(11,22,34,0) 52%);
+  }
+</style>
+
+
+<!-- ============================== PÁGINA 1 ============================== -->
+<section class="slide">
+  <div class="capa">
+    <div class="capa-txt">
+      <div class="logo">KAIRÓS</div>
+      <div class="tagline">Black-Litterman movido a probabilidade negociada</div>
+      <div class="regua-h"></div>
+
+      <h2>Por que Kairós</h2>
+      <p style="margin-bottom:18px">
+        <em>Kairós</em> é o grego para o <strong>instante oportuno</strong> — por oposição
+        a <em>chronos</em>, o tempo que apenas passa. A estratégia não tenta adivinhar o
+        mercado todo dia: ela se posiciona em torno de <strong>eventos com data
+        marcada</strong>, reuniões do Fed e divulgações de inflação. As três telas do robô
+        são o mesmo evento lido por ângulos diferentes; a ampulheta é o prazo correndo
+        até a decisão.
+      </p>
+
+      <div class="col3" style="gap:14px">
+        <div class="card tile"><div class="v">+33,2%</div><div class="k">retorno líquido</div></div>
+        <div class="card tile"><div class="v">1,18</div><div class="k">sharpe</div></div>
+        <div class="card tile"><div class="v">+3,0 pp</div><div class="k">excesso vs SPY</div></div>
+      </div>
+    </div>
+
+    <div class="capa-dir">
+      <div class="foto"><img src="{{KAIROS_IMG}}" alt=""></div>
+      <table class="ficha">
+        <tr><td>Classe de ativos</td><td>ETFs — ações e renda fixa</td></tr>
+        <tr><td>Universo</td><td>9 ETFs (EUA)</td></tr>
+        <tr><td>Sinal</td><td>Polymarket</td></tr>
+        <tr><td>Benchmark</td><td>SPY comprar-e-segurar</td></tr>
+        <tr><td>Rebalanceamento</td><td>Diário</td></tr>
+        <tr><td>Janela testada</td><td>374 pregões</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================== PÁGINA 2 ============================== -->
+<section class="slide">
+  <div class="topo"><div class="marca">KAIRÓS <span>A ineficiência</span></div><div class="pag">02</div></div>
+
+  <div class="corpo">
+    <div class="col2b">
+      <div>
+        <h1>O elo mais frágil do Black-Litterman é uma opinião</h1>
+        <p>
+          Duas peças decidem o resultado: <strong>Q</strong>, o retorno que a visão afirma,
+          e <strong>Ω</strong>, a incerteza atribuída a ela. Ambas costumam ser
+          declaradas — <em>"estou 60% confiante"</em>. A subjetividade fica escondida atrás
+          de uma matriz: dá para produzir qualquer resultado escolhendo os números depois
+          de ver o backtest.
+        </p>
+        <p>
+          <strong>Kairós substitui as duas por dado observável.</strong> Q vem do preço de
+          contratos com dinheiro em risco sobre o desfecho de um evento macro. Ω vem de uma
+          régua cuja forma foi escolhida por teste contra o <strong>erro realizado da
+          probabilidade</strong> — nunca contra o retorno da carteira.
+        </p>
+
+        <div class="card" style="margin-top:12px; border-left:2px solid var(--ambar)">
+          <p style="margin:0; font-size:10pt">
+            <strong>A tese não é que o mercado de previsão erre</strong> — medimos que ele
+            acerta: surpresa mediana de <span class="num">0,52 bps</span> em 17 reuniões do
+            Fed. Ele oferece uma <strong>distribuição de cenários com preço</strong>, todo
+            dia, melhor que a opinião que o BL costuma consumir. O ganho está em convertê-la
+            em posição com disciplina — e em recuar quando a leitura piora.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h2>Do contrato ao peso</h2>
+        {{SVG_PIPELINE}}
+      </div>
+    </div>
+  </div>
+
+  <div class="rodape">
+    Fontes: Polymarket (Gamma + CLOB, passo nativo de 12h) · preços diários ajustados de
+    9 ETFs · séries macro do FRED. Volume reconstruído negócio a negócio — não há endpoint
+    de volume histórico pronto.
+  </div>
+</section>
+
+
+<!-- ============================== PÁGINA 3 ============================== -->
+<section class="slide">
+  <div class="topo"><div class="marca">KAIRÓS <span>Modelagem</span></div><div class="pag">03</div></div>
+
+  <div class="corpo">
+    <div class="col2" style="gap:34px">
+      <div>
+        <h1 style="font-size:18pt">Quatro views, uma régua de confiança</h1>
+        <table class="dados" style="margin-top:12px">
+          <tr><th>View — o que lê</th><th>Cobertura</th></tr>
+          <tr><td class="d">2.3 · decisão do FOMC</td><td>325/374</td></tr>
+          <tr><td class="d">2.2 · inflação mensal</td><td>274/374</td></tr>
+          <tr><td class="d">B · trajetória de juros do ano</td><td>210/374</td></tr>
+          <tr><td class="d">15b · incerteza no dia do anúncio</td><td>27/374</td></tr>
+        </table>
+        <p class="nota" style="margin-top:6px">
+          O calendário entrega 2,24 views por pregão; o veto de liquidez derruba para
+          <span class="destaque">1,99</span>. Sem nenhuma view ativa, a carteira é
+          exatamente o prior de mercado.
+        </p>
+
+        <h2 style="margin-top:20px">A régua do Ω</h2>
+        <div class="card" style="text-align:center; padding:14px 10px">
+          <div style="font-size:14pt; letter-spacing:.02em">
+            c = ( (1 + <span class="destaque">v̄</span>) · (1 + |<span class="destaque">Σp − 1</span>| ) )<sup style="font-size:9pt">nível</sup>
+          </div>
+          <div class="nota" style="margin-top:8px; text-align:left">
+            <strong>v̄</strong> — quanto a distribuição se moveu nas últimas 5 leituras.
+            <strong>Σp − 1</strong> — quanto o livro deixa de fechar como distribuição.
+            Cada defeito multiplica a incerteza; <strong>c ≥ 1 sempre</strong>, então o
+            BL clássico é o teto de confiança, nunca o piso.
+          </div>
+        </div>
+        <p class="nota" style="margin-top:8px">
+          Mercado sem negociação não recebe c grande: <strong>sai da carteira</strong>.
+          Foram <span class="destaque">185 de 2.795</span> decisões vetadas assim.
+        </p>
+      </div>
+
+      <div>
+        <h2>Como cada ingrediente foi julgado</h2>
+        <figure>
+          {{SVG_INGREDIENTES}}
+          <figcaption>
+            Critério declarado <strong>antes</strong> da calibração: confiança maior tem de
+            anteceder erro menor. A proximidade do evento foi reprovada com o sinal
+            invertido nas <em>duas</em> views — derrubada por replicação, não por acaso.
+          </figcaption>
+        </figure>
+
+        <h2 style="margin-top:16px">Quanto a régua morde</h2>
+        <figure>
+          {{SVG_REGUA}}
+        </figure>
+      </div>
+    </div>
+  </div>
+
+  <div class="rodape">
+    Calibrado sobre a história completa dos mercados (3.905 slots de 12h no FOMC, 1.142 na
+    inflação), não sobre a janela do backtest: o erro da probabilidade existe mesmo nos dias
+    em que a view não seria negociada.
+  </div>
+</section>
+
+
+<!-- ============================== PÁGINA 4 ============================== -->
+<section class="slide">
+  <div class="topo"><div class="marca">KAIRÓS <span>Backtest e resultados</span></div><div class="pag">04</div></div>
+
+  <div class="corpo">
+    <div class="col2b" style="gap:28px">
+      <figure>
+        {{SVG_CURVA}}
+        <figcaption>
+          374 pregões (10/02/2025 a 06/08/2026), com a régua de confiança acoplada.
+          Custo de 2 bps por lado sobre o giro contra o peso derivado. Teto de risco
+          aplicado ao desvio em relação ao prior.
+        </figcaption>
+      </figure>
+
+      <div>
+        <table class="dados">
+          <tr><th>Métrica</th><th>Kairós</th><th>SPY</th></tr>
+          <tr><td class="d">Retorno líquido</td><td class="d">+33,2%</td><td>+30,1%</td></tr>
+          <tr><td class="d">Vol. anualizada</td><td class="d">17,6%</td><td>—</td></tr>
+          <tr><td class="d">Sharpe</td><td class="d">1,18</td><td>—</td></tr>
+          <tr><td class="d">Máx. drawdown</td><td class="d">−19,6%</td><td>−18,8%</td></tr>
+          <tr><td class="d">Σ|w| média</td><td class="d">1,91</td><td>1,00</td></tr>
+          <tr><td class="d">Giro diário</td><td class="d">0,40</td><td>—</td></tr>
+        </table>
+
+        <div class="col2" style="gap:12px; margin-top:14px">
+          <div class="card tile">
+            <div class="v">22,9<span style="font-size:10pt"> bps</span></div>
+            <div class="k">custo de breakeven</div>
+            <div class="nota" style="margin-top:5px">11× a premissa de 2 bps — o custo não
+              decide o resultado.</div>
+          </div>
+          <div class="card tile">
+            <div class="v neutro">+3,0<span style="font-size:10pt"> a </span>+3,9<span style="font-size:10pt"> pp</span></div>
+            <div class="k" style="text-transform:none; letter-spacing:.04em">excesso sob varredura de γ</div>
+            <div class="nota" style="margin-top:5px">O resultado não depende da correção
+              <em>favorite-longshot</em>.</div>
+          </div>
+        </div>
+
+        <h2 style="margin-top:16px">O que o número <em>não</em> diz</h2>
+        <ul class="nota" style="font-size:9pt">
+          <li><strong>O excesso não é mérito das views novas.</strong> A de incerteza
+            entrega quase tudo em três pregões; a de trajetória mede negativo. Ambas
+            acertam o sinal em ~49% — cara ou coroa.</li>
+          <li><strong>A camada tática ganha sozinha e perde somada:</strong> +42,6 pp
+            isolada, <span class="selo no">−2,9 pp</span> na entrega. Sob teto de risco,
+            entrar não é somar — é dividir um orçamento fixo.</li>
+          <li><strong>42% do giro é desfeito em dois pregões.</strong> Material, mas
+            dominado pela folga de custo acima.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="rodape">
+    Uma única janela, um único regime de alta do S&amp;P. O drawdown do Kairós é
+    <strong>pior</strong> que o do benchmark: o excesso vem de retorno, não de proteção.
+  </div>
+</section>
+
+
+<!-- ============================== PÁGINA 5 ============================== -->
+<section class="slide">
+  <div class="topo"><div class="marca">KAIRÓS <span>IA generativa · limites · próximos passos</span></div><div class="pag">05</div></div>
+
+  <div class="corpo">
+    <div class="col2b" style="gap:30px">
+      <div>
+        <h1 style="font-size:18pt">A IA escreveu o código; o protocolo decidiu o modelo</h1>
+        <p style="font-size:10pt">
+          Três frentes paralelas, cada uma dona dos seus módulos, com as regras versionadas
+          no repositório. A regra central: <strong>a IA nunca fecha decisão
+          metodológica</strong> — fonte, universo, forma funcional e parâmetro saem de
+          decisão humana registrada, e o agente segue com <em>placeholder</em> até ela existir.
+        </p>
+
+        <div class="col3" style="gap:12px; margin:14px 0">
+          <div class="card tile"><div class="v">28</div><div class="k">decisões registradas</div></div>
+          <div class="card tile"><div class="v">27</div><div class="k">sessões em log</div></div>
+          <div class="card tile"><div class="v">~200</div><div class="k">células testadas</div></div>
+        </div>
+
+        <h2>Onde a IA agregou</h2>
+        <ul style="font-size:9.5pt">
+          <li><strong>Varredura exaustiva barata:</strong> cada ingrediente do Ω testado em
+            2 grades × 2 horizontes × 3 janelas, nas duas views.</li>
+          <li><strong>Prosa gerada dos números,</strong> não escrita à mão — registro que
+            envelhece não levanta exceção.</li>
+          <li><strong>Revisão cruzada entre agentes:</strong> dois defeitos do módulo de
+            confiança saíram de um agente lendo o artefato de outro.</li>
+        </ul>
+
+        <h2 style="margin-top:14px">Onde ela falhou</h2>
+        <ul style="font-size:9.5pt">
+          <li><strong>Conclusão certa por medida errada:</strong> um crescimento lido como
+            tendência era artefato da mediana — o <em>variance ratio</em> dizia passeio
+            aleatório. A camada tática quase entrou por isso.</li>
+          <li><strong>Herdou premissa sem reescrever</strong> ao mudar de contexto, e
+            <strong>generalizou veredito</strong> além do que o teste mediu.</li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Limitações declaradas</h2>
+        <ul style="font-size:9.5pt">
+          <li><strong>Ω é diagonal:</strong> não desconta redundância — um par de views com
+            ρ <span class="num">+0,67</span> entra como informação independente.</li>
+          <li><strong>Calibrado em 2 views, aplicado a 4.</strong> A régua mede propriedades
+            do <em>mercado</em>, não da view; ainda assim é extensão, não resultado.</li>
+          <li><strong>Amostra curta, um só regime:</strong> 374 pregões de alta, sem correção
+            para as ~200 comparações da busca tática.</li>
+          <li><strong>O nível da régua custa retorno:</strong> acoplá-la tira 1,04 pp do
+            excesso. Foi fechada em 1 por onde a régua está validada, não por
+            resultado — o eixo inteiro está medido e registrado.</li>
+        </ul>
+
+        <h2 style="margin-top:16px">Próximos passos</h2>
+        <ul style="font-size:9.5pt">
+          <li>Ω com termos fora da diagonal, descontando views correlacionadas.</li>
+          <li>Banda de não-negociação contra os 42% de giro revertido.</li>
+          <li>Ampliar o universo: o corte que separa sinal de ruído não é "Fed × não-Fed",
+            é <strong>haver notícia a que o preço responda</strong>.</li>
+          <li>Validar fora da amostra em regime de queda.</li>
+        </ul>
+
+        <div class="card" style="margin-top:16px; border-left:2px solid var(--ambar)">
+          <p style="margin:0; font-size:9.5pt">
+            O que sustenta a tese não é a régua final: é o <strong>placar</strong>. Quatro
+            ingredientes testados, dois aprovados, um rebaixado a veto, um reprovado —
+            inclusive o que a intuição dava como certo.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

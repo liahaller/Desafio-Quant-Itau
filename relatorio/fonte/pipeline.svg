@@ -1,0 +1,62 @@
+<svg viewBox="0 0 420 430" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI, sans-serif">
+  <defs>
+    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto">
+      <path d="M0,1 L9,5 L0,9 z" fill="#6B8299"/>
+    </marker>
+  </defs>
+
+  <!-- 1. mercado de previsão: PMF por faixa -->
+  <rect x="8" y="6" width="404" height="96" rx="5" fill="#101F2E" stroke="#24384B"/>
+  <text x="20" y="26" fill="#F5A623" font-size="10.5" font-weight="700" letter-spacing="1.6">MERCADO DE PREVISÃO</text>
+  <text x="20" y="41" fill="#9BAEC0" font-size="10">Preço do contrato = probabilidade do desfecho</text>
+
+  <!-- barras da PMF -->
+  <g>
+    <rect x="22"  y="86" width="34" height="8"  rx="2.5" fill="#3D8FC4"/>
+    <rect x="62"  y="72" width="34" height="22" rx="2.5" fill="#3D8FC4"/>
+    <rect x="102" y="58" width="34" height="36" rx="2.5" fill="#C9820C"/>
+    <rect x="142" y="66" width="34" height="28" rx="2.5" fill="#3D8FC4"/>
+    <rect x="182" y="82" width="34" height="12" rx="2.5" fill="#3D8FC4"/>
+  </g>
+  <text x="240" y="70" fill="#E8EDF2" font-size="10.5" font-weight="600">−25 bps: 62%</text>
+  <text x="240" y="87" fill="#6B8299" font-size="9.5">uma faixa por cenário</text>
+
+  <!-- setas para os dois ramos -->
+  <path d="M140,104 L108,132" stroke="#6B8299" stroke-width="1.4" fill="none" marker-end="url(#seta)"/>
+  <path d="M280,104 L312,132" stroke="#6B8299" stroke-width="1.4" fill="none" marker-end="url(#seta)"/>
+
+  <!-- 2a. Q -->
+  <rect x="8" y="138" width="196" height="92" rx="5" fill="#101F2E" stroke="#C9820C"/>
+  <text x="20" y="158" fill="#F5A623" font-size="13" font-weight="700">Q</text>
+  <text x="38" y="158" fill="#E8EDF2" font-size="10" font-weight="600">o que a view afirma</text>
+  <text x="20" y="177" fill="#9BAEC0" font-size="9.5">Esperança da distribuição menos</text>
+  <text x="20" y="191" fill="#9BAEC0" font-size="9.5">a âncora do mercado, convertida</text>
+  <text x="20" y="205" fill="#9BAEC0" font-size="9.5">em retorno pelo β do par medido</text>
+  <text x="20" y="221" fill="#6B8299" font-size="9">→ surpresa, em bps</text>
+
+  <!-- 2b. Omega -->
+  <rect x="216" y="138" width="196" height="92" rx="5" fill="#101F2E" stroke="#C9820C"/>
+  <text x="228" y="158" fill="#F5A623" font-size="13" font-weight="700">Ω</text>
+  <text x="246" y="158" fill="#E8EDF2" font-size="10" font-weight="600">quanto confiar nela</text>
+  <text x="228" y="177" fill="#9BAEC0" font-size="9.5">Estabilidade da distribuição e</text>
+  <text x="228" y="191" fill="#9BAEC0" font-size="9.5">coerência do livro, medidas no</text>
+  <text x="228" y="205" fill="#9BAEC0" font-size="9.5">próprio mercado que gerou a view</text>
+  <text x="228" y="221" fill="#6B8299" font-size="9">→ multiplicador c ≥ 1</text>
+
+  <path d="M106,232 L106,258" stroke="#6B8299" stroke-width="1.4" fill="none" marker-end="url(#seta)"/>
+  <path d="M314,232 L314,258" stroke="#6B8299" stroke-width="1.4" fill="none" marker-end="url(#seta)"/>
+
+  <!-- 3. BL -->
+  <rect x="8" y="264" width="404" height="66" rx="5" fill="#16283A" stroke="#C9820C" stroke-width="1.4"/>
+  <text x="20" y="285" fill="#F5A623" font-size="10.5" font-weight="700" letter-spacing="1.6">BLACK-LITTERMAN</text>
+  <text x="20" y="303" fill="#9BAEC0" font-size="9.5">Parte da carteira de equilíbrio e se afasta dela na</text>
+  <text x="20" y="317" fill="#9BAEC0" font-size="9.5">direção das views, proporcionalmente à confiança.</text>
+
+  <path d="M210,332 L210,356" stroke="#6B8299" stroke-width="1.4" fill="none" marker-end="url(#seta)"/>
+
+  <!-- 4. carteira -->
+  <rect x="8" y="362" width="404" height="62" rx="5" fill="#101F2E" stroke="#24384B"/>
+  <text x="20" y="382" fill="#F5A623" font-size="10.5" font-weight="700" letter-spacing="1.6">CARTEIRA DO DIA</text>
+  <text x="20" y="400" fill="#9BAEC0" font-size="9.5">Pesos sobre 9 ETFs, com teto de risco sobre o desvio</text>
+  <text x="20" y="414" fill="#9BAEC0" font-size="9.5">em relação ao prior. Sem view ativa, é o prior.</text>
+</svg>

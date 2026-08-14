@@ -1,0 +1,17 @@
+,0
+pregões,374.0
+retorno acumulado bruto,0.37168731619596795
+retorno acumulado líquido,0.33164150375670154
+retorno médio diário líquido,0.000827105582953053
+vol anualizada,0.17641334451327373
+sharpe anualizado (excesso zero),1.1814900254809613
+giro diário médio,0.39634122516246617
+giro desfeito em 1–2 pregões,0.41882291419890955
+custo pago (fração do patrimônio),0.02964632364215247
+custo de breakeven (bps por lado),22.868522637634022
+alavancagem média (Σ|w|),1.9146333768997865
+views ativas por dia (média),1.9919786096256684
+perna de mercado (composta),0.3011928586581776
+tilt (soma das contribuições diárias),0.05215184693858744
+benchmark acumulado,0.3011928586581776
+excesso acumulado (líquido − benchmark),0.030448645098523963
