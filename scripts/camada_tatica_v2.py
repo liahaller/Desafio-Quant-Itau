@@ -42,6 +42,7 @@ from backtest import run_backtest, summary  # noqa: E402
 from backtest_v1 import (PONTOS_PERCENTUAIS, SLEEVES_V2,  # noqa: E402
                          carregar)
 from config import ASSETS  # noqa: E402
+from market_inputs import regua_por_decisao  # noqa: E402
 
 # Tetos varridos. É a MESMA grade da D10, herdada — 1 é o de referência da
 # entrega (10a) e os outros existem para responder "a camada perde por si ou
@@ -107,14 +108,28 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raiz", default=".")
     parser.add_argument("--saida", default="Dump/analises/Camada_tatica_v2.md")
+    parser.add_argument("--regua", default=None,
+                        help="CSV do `c` por decisão da Lia; o default segue o "
+                             "--raiz. `--regua \"\"` mede as duas pontas SEM "
+                             "régua, que é como o −2,16 pp da D28.13 saiu")
+    parser.add_argument("--regua-nivel", type=float, default=1.0,
+                        help="nível da régua (6q). As duas pontas usam o mesmo: "
+                             "comparar ponta com régua contra ponta sem mediria "
+                             "a régua, não a camada")
     args = parser.parse_args()
+
+    if args.regua is None:
+        args.regua = str(Path(args.raiz) / "data" / "lia" / "c_por_decisao.csv")
+    regua = (regua_por_decisao(args.regua, nivel=args.regua_nivel)
+             if args.regua else None)
 
     rodadas = {}
     for ligada in (False, True):
         retornos, montador, datas, w_mkt = carregar(args.raiz, sleeves=ligada)
         for teto in TETOS:
             resultado = run_backtest(retornos, montador, w_mkt, datas=datas,
-                                     teto_alavancagem=teto, teto_no_tilt=True)
+                                     teto_alavancagem=teto, teto_no_tilt=True,
+                                     regua=regua)
             rodadas[(ligada, teto)] = (resultado, retornos, datas)
     spy = rodadas[(False, TETOS[0])][1]["SPY"].reindex(
         rodadas[(False, TETOS[0])][2])
@@ -175,7 +190,14 @@ def main():
         f"- janela: **{datas[0]:%Y-%m-%d} a {datas[-1]:%Y-%m-%d}** "
         f"({len(datas)} pregões); teto de referência = **1**, no tilt (10a)",
         "- tamanho pela âncora `inv(δΣ)·μ` da D16 — **sem `orcamento`**, zero "
-        "parâmetro livre\n",
+        "parâmetro livre",
+        "- régua do Ω (Lia): "
+        + (f"**LIGADA nas DUAS pontas**, nível {args.regua_nivel:g} (6q) — é a "
+           "configuração da entrega. O Δ desta página mede a camada, e não a "
+           "régua, porque ela é a mesma dos dois lados"
+           if regua else
+           "**DESLIGADA nas duas pontas** — não é a configuração da entrega "
+           "desde a 6q") + "\n",
         "## 1. O que a camada muda na ENTREGA\n",
         formatada.to_markdown(index=False), "",
         "## 2. O G4 — a camada SOZINHA, no `dw` pedido\n",

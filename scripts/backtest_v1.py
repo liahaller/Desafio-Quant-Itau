@@ -61,7 +61,8 @@ from config import (ASSETS, CUSTO_BPS_POR_LADO, DELTA, DRIFT_JANELA_ACOES,  # no
                     DRIFT_JANELA_RF, FL_GAMMA_V1, FL_GAMMA_VARREDURA,
                     SIGMA_JANELA_PREGOES, TAU)
 from market_inputs import (breakeven_duration, daily_returns,  # noqa: E402
-                           empirical_duration, market_weights, sample_covariance)
+                           empirical_duration, market_weights,
+                           regua_por_decisao, sample_covariance)
 from market_loader import load_etf_prices, load_fred  # noqa: E402
 from poly_loader import (bucket_value, daily_preopen, diagnostics_qualidade,  # noqa: E402
                          load_cpi_releases, load_fomc_pmf, load_payroll_releases,
@@ -953,6 +954,15 @@ def main():
                         default=list(FL_GAMMA_VARREDURA),
                         help="grade de γ do favorite-longshot para a coluna de "
                              "robustez (D1.1 fixa o v1 em γ = 1,0)")
+    parser.add_argument("--regua", default=None,
+                        help="CSV do `c` por decisão da Lia; o default segue o "
+                             "--raiz. `--regua \"\"` desliga a régua e volta ao "
+                             "Ω sem dosagem — o que a entrega rodava até 14/08")
+    parser.add_argument("--regua-nivel", type=float, default=1.0,
+                        help="expoente da régua (c = c_nivel1 ** nivel). **Não é "
+                             "escolha deste script:** nível 1 é a decisão 6q da "
+                             "Lia, fechada em 13/08. 0 zera a dosagem mas MANTÉM "
+                             "o veto de liquidez, que não é dosagem")
     parser.add_argument("--orcamento-premio", type=float, default=None)
     parser.add_argument("--orcamento-drift-acoes", type=float, default=None)
     parser.add_argument("--orcamento-drift-rf", type=float, default=None)
@@ -964,6 +974,14 @@ def main():
                   "drift_rf": args.orcamento_drift_rf}
     retornos, montador, datas, w_mkt = carregar(args.raiz, orcamentos)
 
+    # A régua do Ω da Lia (6q, nível 1). Mesmo default de caminho do
+    # `curva_c.py`: com o CSV num relativo fixo, rodar contra a cópia do Paulo
+    # (`--raiz /outro`) desligaria a régua CALADO. Só o "" explícito desliga.
+    if args.regua is None:
+        args.regua = str(Path(args.raiz) / "data" / "lia" / "c_por_decisao.csv")
+    regua = (regua_por_decisao(args.regua, nivel=args.regua_nivel)
+             if args.regua else None)
+
     # Duas varreduras: o teto cortando a carteira inteira e cortando só o tilt.
     # É a questão de desenho aberta na seção 10 do `Decisoes_pendentes.md` —
     # medir as duas dá número à reunião sem fechar a D12.
@@ -972,7 +990,8 @@ def main():
         for teto in args.tetos:
             resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                                      delta=DELTA, custo_bps=args.custo_bps,
-                                     teto_alavancagem=teto, teto_no_tilt=no_tilt)
+                                     teto_alavancagem=teto, teto_no_tilt=no_tilt,
+                                     regua=regua)
             # o `|` precisa vir escapado: é nome de coluna de tabela markdown
             colunas[rotulo_teto(teto, no_tilt)] = summary(resultado,
                                                           benchmark=retornos["SPY"])
@@ -1018,6 +1037,13 @@ def main():
               + (f"**LIGADA** (D28.13) — {sleeves_ligadas}. Os números desta "
                  "tabela **já incluem** o overlay das sleeves"
                  if sleeves_ligadas else "**desligada**"),
+              "- régua do Ω (Lia): "
+              + (f"**LIGADA**, nível **{args.regua_nivel:g}** (decisão 6q, "
+                 "13/08) — o `c` por view e por pregão dosa a confiança de cada "
+                 "view antes do teto, e o veto de liquidez dela desativa view "
+                 "sem negociação no slot"
+                 if regua else
+                 "**DESLIGADA** — Ω no fallback He-Litterman, sem dosagem"),
               "- camada tática antiga (orçamentos de drift, 12c): "
               + (", ".join(tatica_ligada) if tatica_ligada
                  else "**desligada** — os orçamentos são parâmetro de reunião") + "\n",
@@ -1069,8 +1095,8 @@ def main():
         f"fez {c['benchmark acumulado'] * 100:+.1f}%, reduzir exposição a ele custa caro por si "
         f"só. A seção seguinte mede o tamanho disso.\n")
     linhas.append(
-        f"**Giro desfeito em 1–2 pregões: {c['giro desfeito em 1–2 pregões'] * 100:.0f}%.** Um terço "
-        f"do que se negocia é desfeito em dois pregões. É material, mas com a folga de custo "
+        f"**Giro desfeito em 1–2 pregões: {c['giro desfeito em 1–2 pregões'] * 100:.0f}%.** "
+        f"Essa fração do que se negocia é desfeita em dois pregões. É material, mas com a folga de custo "
         f"acima não é o que está segurando o resultado — entra como insumo da revisão "
         f"condicional do D1 (banda de não-negociação), não como veredito sobre o H.\n")
 
@@ -1078,8 +1104,9 @@ def main():
     linhas.append(
         "Mesma varredura, dois escopos. `Σ|w| ≤ t` escala tudo; `tilt ≤ t` corta só "
         "`Σ|w − w_mkt|` e entrega a perna de mercado inteira. **Isto mede, não decide:** "
-        "a D12 (nível do teto) segue esperando o `c` da Lia, na ordem que ela propôs — "
-        "entra o `c`, mede-se Σ|w| de novo, aí se decide o teto.\n")
+        "a D12 (nível do teto) segue aberta. O `c` da Lia já entrou (6q, nível 1), que "
+        "era o passo 1 da ordem proposta por ela; esta tabela é o passo 2 — a Σ|w| "
+        "medida COM a régua —, e o passo 3, escolher o teto, é da reunião.\n")
     linhas.append(
         "> Os rótulos NÃO são comparáveis entre si. `tilt ≤ t` limita o desvio, não a "
         "carteira: com w_mkt = 100% SPY, Σ|w| pode chegar a 1 + t. Compare pela "
@@ -1144,7 +1171,8 @@ def main():
         montador.set_gamma(g)   # re-semeia: a semente depende de γ
         res = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                            delta=DELTA, custo_bps=args.custo_bps,
-                           teto_alavancagem=teto_ref, teto_no_tilt=True)
+                           teto_alavancagem=teto_ref, teto_no_tilt=True,
+                           regua=regua)
         gamma_linhas[g] = summary(res, benchmark=retornos["SPY"])
         montador.reset()
     montador.set_gamma(FL_GAMMA_V1)

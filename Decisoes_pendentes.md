@@ -2682,6 +2682,84 @@ re-gerados por quem retomar — a carteira de referência deles mudou:
 `View_C_backtest.md`, `Ortogonalidade.md`. O `Backtest_v1.md` já foi re-gerado
 nesta sessão.
 
+#### Errata da 28.13 — os números foram re-medidos com a régua (2026-08-14, sessão 30)
+
+**A decisão NÃO é reaberta.** Ela foi tomada por mecanismo (régua 28.0), não por
+este número; o que muda é o tamanho do custo, não o sinal dele. Medido com a
+régua da Lia ligada nas DUAS pontas (nível 1, 6q — a configuração da entrega
+desde hoje):
+
+| teto | excesso sem a camada | com | Δ (era) |
+|---|---|---|---|
+| **1** (referência) | +5,98 pp | **+3,04 pp** | **−2,94 pp** (era −2,16) |
+| 2 | +6,51 pp | −0,24 pp | −6,75 pp (era −5,22) |
+| 3 | +7,22 pp | −1,68 pp | −8,90 pp (era −8,16) |
+| 5 | +4,17 pp | +7,99 pp | +3,82 pp (era +0,82) |
+
+O custo cresce porque a régua encolhe o tilt das views e a camada disputa o
+mesmo orçamento de risco: cortar de um lado aumenta o peso relativo do outro.
+**O resto da leitura sobrevive inteiro** — o Δ continua não-monótono, o pior
+ponto continua no teto 3, e o G4 (**+42,6 pp**, acerto 54%) não muda um dígito,
+porque a régua dosa o Ω das views e não toca o `dw` da camada. O breakeven da
+entrega com a camada passa de 28,5 para **22,9 bps por lado** — 11× a premissa
+de 2 bps, ainda longe de o custo decidir o resultado.
+
+Chegou pela Lia (`PEDIDO_Felipe_acoplar_regua.md`, branch dela) e foi
+**reproduzido aqui** re-rodando o `camada_tatica_v2.py` com `--regua`.
+
+---
+
+## 29 (branch `Felipe`). A régua do Ω entrou na ENTREGA 🟢 (fechada pelo dono, 2026-08-14 — sessão 30)
+
+**O buraco.** O encanamento estava pronto dos dois lados desde 11/08 — a
+`market_inputs.regua_por_decisao` (D21a) e o parâmetro `regua` do `run_backtest`
+— mas o `main` do `scripts/backtest_v1.py` nunca passou o parâmetro. Resultado:
+a **entrega rodava sem a régua** enquanto o relatório final da Lia já saía com
+ela, e os dois documentos descreviam carteiras diferentes. Quem apontou foi a
+Lia, em `PEDIDO_Felipe_acoplar_regua.md`.
+
+**O que ficou.** `--regua` (caminho do CSV, default seguindo o `--raiz`, `""`
+desliga) e `--regua-nivel` (default **1**) em cinco scripts:
+`backtest_v1.py`, `camada_tatica_v2.py`, `curva_banda.py`, `curva_orcamento.py`
+e `view_C_backtest.py`. O default do caminho segue o `--raiz` pelo mesmo motivo
+do `curva_c.py`: com o CSV num relativo fixo, rodar contra a cópia do Paulo
+desligaria a régua **calado**.
+
+⚠️ **O nível 1 não é escolha deste branch** — é a **6q da Lia**, fechada por ela
+em 13/08. Aqui ele é default de flag, não decisão; mudou lá, muda aqui.
+
+**O que mudou no número da entrega** (teto no tilt = 1, camada ligada, γ = 1):
+
+| | sem régua | com régua nível 1 |
+|---|---|---|
+| excesso × SPY | +4,08 pp | **+3,04 pp** |
+| retorno líquido | +34,20% | **+33,16%** |
+| sharpe | 1,2136 | **1,1815** |
+| Σ\|w\| média | 1,9438 | **1,9146** |
+| giro diário | 0,3201 | **0,3963** |
+| breakeven | 28,47 bps | **22,87 bps** |
+| views/dia | 2,24 | **1,99** |
+
+Bateu **dígito a dígito** com o que a Lia mediu por fora, o que fecha a
+checagem cruzada: o mesmo `run_backtest` chamado de dois lugares dá o mesmo
+número.
+
+**A régua encolhe e agita ao mesmo tempo**, e as duas coisas puxam o breakeven
+em direções opostas: a Σ|w| cai (1,944 → 1,915) mas o giro **sobe** 24% (0,320 →
+0,396), porque o `c` muda de pregão para pregão e o tamanho do tilt muda junto.
+O que sobra é breakeven menor (28,5 → 22,9 bps), ainda 11× a premissa de 2 bps.
+As views/dia caindo de 2,24 para 1,99 são o **veto de liquidez** dela, que é
+canal separado do nível (D25f) e continua agindo mesmo em `--regua-nivel 0`.
+
+**Pendências que isto NÃO fecha:**
+
+- 🔴 **D12 (teto) segue aberta.** Pelo §9 do `RELATORIO_omega.md` a ordem é:
+  entra o `c` → mede-se a Σ|w| → decide-se o teto. O passo 1 e o 2 estão feitos;
+  o 3 é da reunião. **Se o teto se mover, a Lia reabre a 6q** e o nível se refaz.
+- 🟡 `Teste_sinal.md` e `Ortogonalidade.md` seguem desatualizados **pela 28.13**,
+  não pela régua: nenhum dos dois passa pelo `run_backtest`, então não têm onde
+  receber `regua=` — o que envelheceu neles foi a entrada da camada.
+
 ---
 
 **Próximo passo:** voltar para a Decisão 1.

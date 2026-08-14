@@ -35,18 +35,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from backtest import run_backtest, summary  # noqa: E402
 from backtest_v1 import carregar  # noqa: E402
 from config import CUSTO_BPS_POR_LADO, DELTA, TAU  # noqa: E402
+from market_inputs import regua_por_decisao  # noqa: E402
 
 EXCESSO = "excesso acumulado (líquido − benchmark)"
 REVERSAO = "giro desfeito em 1–2 pregões"
 BREAKEVEN = "custo de breakeven (bps por lado)"
 
 
-def rodada(retornos, montador, datas, w_mkt, banda, teto, custo_bps):
+def rodada(retornos, montador, datas, w_mkt, banda, teto, custo_bps, regua=None):
     """Um backtest com a banda dada, no escopo de teto do v1 (no tilt)."""
     resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                              delta=DELTA, custo_bps=custo_bps,
                              teto_alavancagem=teto, teto_no_tilt=True,
-                             banda=banda)
+                             banda=banda, regua=regua)
     montador.reset()   # médias expansivas voltam ao estado do 1º pregão
     s = summary(resultado, benchmark=retornos["SPY"])
     # fração dos pares (dia, ativo) em que a banda impediu a negociação
@@ -67,7 +68,18 @@ def main():
     parser.add_argument("--teto", type=float, default=1.0)
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
     parser.add_argument("--saida", default="Dump/analises/Curva_banda.md")
+    parser.add_argument("--regua", default=None,
+                        help="CSV do `c` por decisão da Lia; default segue o "
+                             "--raiz, `\"\"` desliga. A entrega roda com ela "
+                             "ligada no nível 1 (6q), e a banda tem de ser "
+                             "medida sobre o giro que a entrega realmente faz")
+    parser.add_argument("--regua-nivel", type=float, default=1.0)
     args = parser.parse_args()
+
+    if args.regua is None:
+        args.regua = str(Path(args.raiz) / "data" / "lia" / "c_por_decisao.csv")
+    regua = (regua_por_decisao(args.regua, nivel=args.regua_nivel)
+             if args.regua else None)
 
     if any(b <= 0 for b in args.bandas):
         raise SystemExit("banda é fração do patrimônio e tem de ser positiva "
@@ -76,7 +88,8 @@ def main():
     retornos, montador, datas, w_mkt = carregar(args.raiz)
     linhas = []
     for b in [None] + list(args.bandas):
-        s = rodada(retornos, montador, datas, w_mkt, b, args.teto, args.custo_bps)
+        s = rodada(retornos, montador, datas, w_mkt, b, args.teto, args.custo_bps,
+                   regua=regua)
         linhas.append({
             "banda": 0.0 if b is None else b,
             "giro diário": s["giro diário médio"],
@@ -99,8 +112,14 @@ def main():
         "é proposta.\n",
         f"- janela: **{datas[0].date()} a {datas[-1].date()}** ({len(datas)} pregões)",
         f"- configuração de referência: teto **no tilt = {args.teto:g}**, custo "
-        f"**{args.custo_bps:.1f} bps/lado**, views 2.2 e 2.3, camada tática "
-        "desligada (12c)",
+        f"**{args.custo_bps:.1f} bps/lado**, camada tática v2 "
+        + ("**ligada**" if montador.sleeves else "desligada")
+        + ", régua do Ω "
+        + (f"**ligada no nível {args.regua_nivel:g}** (6q)" if regua
+           else "**desligada**")
+        + ". As views são as do `backtest_v1.carregar` e **não são redeclaradas "
+          "aqui** — foi assim que este artefato ficou anunciando \"2.2 e 2.3\" "
+          "depois da D23 (mesmo erro da D25g)",
         "- banda **por ativo**: Δw abaixo dela não é executado, e o Δw grande vai "
         "inteiro — não é imposto sobre o trade, é filtro de ruído\n",
         "| banda | giro diário | desfeito em 1–2 pregões | pernas paradas | "

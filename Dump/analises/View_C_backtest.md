@@ -3,12 +3,13 @@
 > Gerado por `scripts/view_C_backtest.py`. **Mede; não decide.** O k da C não está escolhido: a curva de absorção não identifica patamar (`Absorcao_C.md`). Escopo: **teto no tilt = 1**, γ = 1,0, custo de 2.0 bps/lado.
 
 - janela: **2025-02-10 a 2026-08-06** (374 pregões)
-- a primeira linha é a **entrega de 4 views** (D23) e é o grupo de controle: se ela não reproduzir o +6,24 pp registrado, o errado é este script
+- régua do Ω: **desligada nas duas pontas** — a régua da Lia cobre as quatro views da entrega e **não tem `c` para a C**. Por isso este artefato NÃO reproduz o número da entrega (que roda com ela desde a 6q): as duas pontas daqui são comparáveis entre si, e não com o `Backtest_v1.md`
+- a primeira linha é a **entrega de 4 views** (D23) e é o grupo de controle do Δ desta tabela
 
 | configuração | dias com a C | excesso × SPY | Δ vs. entrega | líquido | sharpe | Σ\|w\| média | giro/dia |
 |---|---|---|---|---|---|---|---|
-| entrega (4 views) | — | +6.24 pp | — | +36.4% | 1.27 | 1.94 | 0.274 |
-| + C (k = 1) | 72 | -0.16 pp | -6.40 pp | +30.0% | 1.08 | 1.94 | 0.369 |
+| entrega (4 views) | — | +4.08 pp | — | +34.2% | 1.21 | 1.94 | 0.320 |
+| + C (k = 1) | 72 | -1.41 pp | -5.48 pp | +28.7% | 1.04 | 1.95 | 0.383 |
 | + C (k = 2) | — | 🛑 **bloqueado (D4.1)** | — | — | — | — | — |
 | + C (k = 3) | — | 🛑 **bloqueado (D4.1)** | — | — | — | — | — |
 | + C (k = 4) | — | 🛑 **bloqueado (D4.1)** | — | — | — | — | — |
@@ -33,9 +34,9 @@ Soma dos Δ DIÁRIOS contra a entrega de 4 views, e o que sobra dela tirando os 
 
 | configuração | Σ dos Δ diários | sem os 3 maiores | acerto de sinal nos dias da view |
 |---|---|---|---|
-| + C (k = 1) | -4.74 pp | +0.48 pp | 40% (29/72) |
+| + C (k = 1) | -4.11 pp | +0.37 pp | 40% (29/72) |
 
 ## Leitura (gerada)
 
 - **A varredura mede 1 de 5 pontos da grade** — o resto está bloqueado pela D4.1. Uma grade incompleta por decisão aberta não é insumo de escolha de parâmetro; é o registro de que o parâmetro não pode ser escolhido ainda.
-- **k = 1**: Δ de **-6.40 pp** contra a entrega de quatro views.
+- **k = 1**: Δ de **-5.48 pp** contra a entrega de quatro views.

@@ -12,7 +12,9 @@ O que ela responde é outra pergunta, e é a que o dono fez: **quanto a C mexe n
 resultado, e se ela mexe do mesmo jeito em toda a grade.**
 
 A primeira linha é a entrega de QUATRO views (D23) — grupo de controle: se ela
-não reproduzir o +6,24 pp registrado, o errado é este script.
+não reproduzir a linha `tilt ≤ 1` do `Backtest_v1.md`, o errado é este script.
+O número não vem escrito aqui de propósito: a versão anterior citava "+6,24 pp"
+e sobreviveu calada à entrada da camada (D28.13) e da régua (6q).
 
 Uso:
     python scripts/view_C_backtest.py [--raiz .]
@@ -30,6 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from backtest_v1 import VIEWS_V1, carregar  # noqa: E402
 from backtest import run_backtest, summary  # noqa: E402
 from config import ASSETS, CUSTO_BPS_POR_LADO, DELTA, TAU  # noqa: E402
+from market_inputs import regua_por_decisao  # noqa: E402
 from teste_sinal import K_GRID_C, series_C  # noqa: E402
 from views_novas import atribuicao, conta_views  # noqa: E402
 
@@ -42,7 +45,21 @@ def main():
     parser.add_argument("--raiz", default=".")
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
     parser.add_argument("--saida", default="Dump/analises/View_C_backtest.md")
+    # DESLIGADA por default, ao contrário dos outros scripts: a régua da Lia
+    # cobre as QUATRO views da entrega e **não tem `c` para a C**. Com ela
+    # ligada, todo k da grade morre no casamento de chaves do `aplicar_veto` —
+    # a C viva sem linha no CSV — e a varredura não mede nada. Ligar exigiria
+    # ou a Lia estender a régua à C, ou inventar `c = 1` para ela, que é
+    # exatamente a confiança-sem-medição que a régua existe para evitar.
+    parser.add_argument("--regua", default="",
+                        help="CSV do `c` por decisão da Lia. **Default vazio** "
+                             "— o CSV não cobre a C. Controle e grade usam a "
+                             "MESMA configuração, então o Δ mede a C")
+    parser.add_argument("--regua-nivel", type=float, default=1.0)
     args = parser.parse_args()
+
+    regua = (regua_por_decisao(args.regua, nivel=args.regua_nivel)
+             if args.regua else None)
 
     retornos, montador, datas, w_mkt = carregar(args.raiz)
     montador.series_C = series_C(args.raiz, montador._fl, retornos.index)
@@ -52,7 +69,8 @@ def main():
         montador.reset()
         res = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                            delta=DELTA, custo_bps=args.custo_bps,
-                           teto_alavancagem=TETO, teto_no_tilt=True)
+                           teto_alavancagem=TETO, teto_no_tilt=True,
+                           regua=regua)
         return res, summary(res, benchmark=retornos["SPY"])
 
     base_res, base_sum = rodar(VIEWS_V1, None)
@@ -64,9 +82,16 @@ def main():
          "(`Absorcao_C.md`). Escopo: **teto no tilt = 1**, γ = 1,0, custo de "
          f"{args.custo_bps:.1f} bps/lado.\n",
          f"- janela: **{datas[0].date()} a {datas[-1].date()}** ({len(datas)} pregões)",
+         "- régua do Ω: "
+         + (f"**ligada no nível {args.regua_nivel:g}** (6q), igual nas duas "
+            "pontas" if regua else
+            "**desligada nas duas pontas** — a régua da Lia cobre as quatro "
+            "views da entrega e **não tem `c` para a C**. Por isso este "
+            "artefato NÃO reproduz o número da entrega (que roda com ela "
+            "desde a 6q): as duas pontas daqui são comparáveis entre si, e "
+            "não com o `Backtest_v1.md`"),
          "- a primeira linha é a **entrega de 4 views** (D23) e é o grupo de "
-         "controle: se ela não reproduzir o +6,24 pp registrado, o errado é "
-         "este script\n",
+         "controle do Δ desta tabela\n",
          "| configuração | dias com a C | excesso × SPY | Δ vs. entrega | líquido "
          "| sharpe | Σ\\|w\\| média | giro/dia |",
          "|---|---|---|---|---|---|---|---|"]
@@ -78,6 +103,14 @@ def main():
         try:
             res, s = rodar(views, k)
         except ValueError as erro:
+            # A régua não cobre a C: o erro é de casamento de chaves e NÃO é a
+            # D4.1. Sem esta separação a linha saía rotulada como bloqueio de
+            # horizonte, que é falso — e falso justamente sobre o k = 1, o
+            # único que a D4.1 deixa passar.
+            if "não casa com as views ativas" in str(erro):
+                L.append(f"| {rotulo} | — | 🛑 **sem `c` na régua** | — | — | "
+                         "— | — | — |")
+                continue
             # DECISAO-4.1 — guarda deliberado do `stack_views`: o Q da C é
             # ACUMULADO EM k DIAS e o das outras views é de 1 dia. Somar os dois
             # é somar km/h com km. Não é bug deste script; é a reconciliação de

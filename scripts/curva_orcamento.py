@@ -29,6 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from backtest import run_backtest, summary  # noqa: E402
 from backtest_v1 import carregar  # noqa: E402
 from config import CUSTO_BPS_POR_LADO, DELTA, TAU  # noqa: E402
+from market_inputs import regua_por_decisao  # noqa: E402
 
 # Cada família liga um subconjunto dos overlays com o MESMO orçamento `o`, para a
 # grade ter um eixo só. Ligar os dois livros do drift com orçamentos diferentes é
@@ -40,7 +41,8 @@ FAMILIAS = {
 }
 
 
-def rodada(retornos, montador, datas, w_mkt, orcamentos, teto, custo_bps):
+def rodada(retornos, montador, datas, w_mkt, orcamentos, teto, custo_bps,
+           regua=None):
     """Um backtest com os orçamentos dados, no escopo de teto do v1 (no tilt).
 
     Muta `montador.orcamentos` em vez de recarregar: o montador lê o dict a cada
@@ -50,7 +52,8 @@ def rodada(retornos, montador, datas, w_mkt, orcamentos, teto, custo_bps):
     montador.orcamentos = orcamentos
     resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
                              delta=DELTA, custo_bps=custo_bps,
-                             teto_alavancagem=teto, teto_no_tilt=True)
+                             teto_alavancagem=teto, teto_no_tilt=True,
+                             regua=regua)
     montador.reset()   # médias expansivas voltam ao estado do 1º pregão
     s = summary(resultado, benchmark=retornos["SPY"])
     n_dias = sum(1 for d in resultado.diagnostics.values() if d["taticas"])
@@ -69,20 +72,31 @@ def main():
     parser.add_argument("--teto", type=float, default=1.0)
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
     parser.add_argument("--saida", default="Dump/analises/Curva_orcamento.md")
+    parser.add_argument("--regua", default=None,
+                        help="CSV do `c` por decisão da Lia; default segue o "
+                             "--raiz, `\"\"` desliga. A base e a grade usam a "
+                             "MESMA régua — o Δ mede o orçamento, não ela")
+    parser.add_argument("--regua-nivel", type=float, default=1.0)
     args = parser.parse_args()
 
     if any(o <= 0 for o in args.orcamentos):
         raise SystemExit("orçamento é fração do patrimônio e tem de ser positivo")
 
+    if args.regua is None:
+        args.regua = str(Path(args.raiz) / "data" / "lia" / "c_por_decisao.csv")
+    regua = (regua_por_decisao(args.regua, nivel=args.regua_nivel)
+             if args.regua else None)
+
     retornos, montador, datas, w_mkt = carregar(args.raiz)
-    base, _ = rodada(retornos, montador, datas, w_mkt, {}, args.teto, args.custo_bps)
+    base, _ = rodada(retornos, montador, datas, w_mkt, {}, args.teto, args.custo_bps,
+                     regua=regua)
     excesso = "excesso acumulado (líquido − benchmark)"
 
     linhas = []
     for nome, monta in FAMILIAS.items():
         for o in args.orcamentos:
             s, n_dias = rodada(retornos, montador, datas, w_mkt, monta(o),
-                               args.teto, args.custo_bps)
+                               args.teto, args.custo_bps, regua=regua)
             linhas.append({
                 "família": nome,
                 "orçamento": o,
