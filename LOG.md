@@ -1380,3 +1380,25 @@ de aviso) e sem conteúdo derivável que valesse cortar.
   anti-overfit obrigou a montar o raciocínio sem olhar a coluna de excesso — e a
   coincidência entre a escolha e o topo dessa coluna ficou declarada no registro,
   em vez de descoberta depois por um avaliador.
+
+**Adendo de fechamento — o que veio depois do bloco acima.**
+
+- **O `−2,16 pp` da camada tática entrou no relatório e foi pego antes do commit.**
+  A varredura por números da configuração antiga não o alcançava, porque ele não
+  vem do backtest da entrega e sim do `Camada_tatica_v2.md`. Medido nas duas
+  pontas com régua nível 1: **−2,94 pp**. Corrigido no PDF e registrado na 6q.
+  É a **terceira** vez nesta sessão que um número envelhece por vir de artefato
+  que ninguém re-gerou — o mesmo modo de falha que o `Conclusoes.md` do Felipe
+  já classificava como recorrente no projeto.
+- **Felipe avisado** em `PEDIDO_Felipe_acoplar_regua.md`: a decisão 6q, o trecho
+  exato para acoplar (`backtest_v1.py` linha 973), o antes/depois da entrega e os
+  dois artefatos dele que ficaram desatualizados. A docstring do
+  `regua_por_decisao` dele já previa esta reunião — o encanamento estava pronto,
+  faltava só o parâmetro.
+- **Tudo commitado e no `origin/Lia`** em cinco commits (`17736d8` insumos ·
+  `1933768` decisão 6q · `2c29b53` relatório · `987a000` LOG · `a2b4004` aviso).
+
+**Correção ao bloco "Uso de IA" acima:** as iterações do relatório foram **5**, não
+4 — a quinta foi a correção do custo da camada. E o total de erros da IA nesta
+sessão é **3**, contando o do adendo: os dois já listados mais ter dado o relatório
+por conferido quando ainda havia um número de artefato não re-gerado dentro dele.
