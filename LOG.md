@@ -1,5 +1,258 @@
 # LOG de sessões
 
+## 2026-08-14 (sessão 31) — Felipe
+
+**Contexto da sessão:** continuação do `Plano_relatorio_v2.txt`. A tarefa foi
+aprofundar a **página 5 (uso de IA)** — que gráficos os LOGs sustentam e como se
+calcularia o IET do NEXUS — e, no fim, começar a fechar a **página 4 (backtest)**.
+
+**Feito:**
+- Levantados os números do bloco "Uso de IA" dos **51 blocos** do `LOG.md` por
+  parser ad-hoc: **49** com contexto numérico (soma **5.239k tokens**, média
+  107k, mediana 85k, máx 368k), **47** com iterações numéricas (média **1,55**,
+  mediana 1, **30%** com mais de uma rodada), **40** com decisões numeradas,
+  **33** marcados `[PROMPT-CHAVE]`.
+- Identificado o **IET** do NEXUS (p. 10): *Índice de Engajamento Técnico*, 81%,
+  **sem método declarado no relatório deles**. Proposta uma fórmula nossa
+  (fração dos tokens em sessões técnicas, critério fechado antes da contagem) —
+  **o dono decidiu não usar o IET**. Fica registrado aqui só como leitura da
+  referência.
+- Propostos quatro visuais para a página 5, dos quais o dono manteve dois: linha
+  do tempo (tokens/sessão × decisões acumuladas) e erros da IA × mecanismo que os
+  pegou. Histograma de iterações virou número no dashboard; donut de tipo de
+  sessão marcado como cortável.
+- Revisada a estrutura da página 5 já reescrita pelo dono: apontadas a
+  duplicação entre "a regra que organizou" e "como trabalhamos", os gráficos
+  ilhados longe da afirmação que sustentam, e a sugestão de nomear casos
+  concretos no bloco de falhas em vez de taxonomia genérica.
+- Lidos `NEXUS.pdf` e `SOLARIS.pdf` na seção de backtest para alimentar a página
+  4. Levantamento entregue pela metade — **interrompido pelo dono**.
+
+**Quebrou / aprendido:**
+- O dashboard planejado da página 5 pedia **"média de prompts por sessão"**, dado
+  que **não existe** no `LOG.md` — o ritual registra só o prompt inicial verbatim.
+  Apontado antes de virar número estimado numa página cuja tese é que a IA foi
+  contida por registro. Substituído por decisões registradas (30) e análises
+  produzidas (39), que são contáveis.
+- O `Read` não abre PDF neste ambiente (sem poppler). Os exemplos foram extraídos
+  com `pypdf` — vale para quem for reler as referências.
+
+**Pendente:**
+- 🔴 **Fechar a estrutura da página 4** (backtest + análise de resultados) — é o
+  ponto de retomada da próxima sessão. O levantamento das referências já está
+  feito; o que ficou por escrever é a lista final do que entra na página.
+- 🟡 Candidatos levantados das referências, **nenhum decidido e nenhum medido**:
+  segundo benchmark ingênuo (a mesma máquina com o sinal do Polymarket embaralhado
+  no tempo, análogo ao equal-weighted do NEXUS), alpha/beta contra o SPY —
+  endereça a não-neutralidade já admitida no `Backtest_v1.md` —, quebra da janela
+  em sub-períodos, séries no tempo em vez de escalares (Σ|w| e views ativas por
+  pregão, no espírito do SOLARIS) e a premissa de custo contra o breakeven já
+  medido. Os dois primeiros exigem rodada nova de script.
+- 🟡 O parser dos números do `LOG.md` foi ad-hoc nesta sessão; se os gráficos da
+  página 5 forem feitos, ele precisa virar script.
+- 🔴 D12 (teto) segue aberta, sem mudança desde a sessão 30.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~60k tokens — `LOG.md` inteiro por parser, os dois PDFs
+  de exemplo extraídos, `Backtest_v1.md` e `Views_novas.md`.
+- **Prompt inicial (verbatim):** "Estou olhando mais a fundo em como vamos
+  reportar o uso de IA, ainda no arquivo do plano_relatório v2. Adicionei algumas
+  coisas que acho interessante mas queria colocar gráficos ou elementos visuais
+  como no relatório do NEXUS. Além do que já temos, que gráficos poderiamos
+  colocar com os dados que levantamos ao longo dos LOGs. E como calculariamos o
+  IET caso quisessemos colocar"
+- **Iterações até aceitar:** 1 — as três respostas foram aceitas sem rodada de
+  correção; o dono aplicou as mudanças na página 5 e redirecionou para a página 4.
+- **Erros da IA:** nenhum de conteúdo. Duas tentativas de reler um arquivo de
+  saída em caminho errado, sem efeito no resultado.
+- **Decisões escaladas:** — (nenhuma; o corte do IET é escopo do dono e foi
+  resolvido na conversa).
+- **Tags:** —
+
+## 2026-08-14 (sessão 30) — Felipe
+
+**Contexto da sessão:** a Lia avisou que fechou o nível da régua do Ω. A tarefa
+foi ler o branch dela, dizer o que isso muda no backtest e — na segunda
+instrução do dono — **acoplar a régua e re-gerar os artefatos**.
+
+**Feito:**
+- Lido o branch `origin/Lia` (até `86d78c2`) e o `PEDIDO_Felipe_acoplar_regua.md`,
+  endereçado a este branch. Conferido que o `data/lia/c_por_decisao.csv` local é
+  **idêntico** ao dela (hash `0f91a1b`) — nada a re-extrair.
+- **O buraco:** o `main` do `backtest_v1.py` nunca passou `regua=`, então a
+  entrega rodava sem a régua enquanto o relatório final dela já saía com ela.
+  Registrado como **seção 29** do `Decisoes_pendentes.md`.
+- Acoplada a régua em cinco scripts, com `--regua` (caminho, `""` desliga) e
+  `--regua-nivel` (default 1, que é a **6q da Lia**, não escolha daqui):
+  `backtest_v1.py`, `camada_tatica_v2.py`, `curva_banda.py`, `curva_orcamento.py`
+  e `view_C_backtest.py`.
+- Re-gerados **seis** artefatos: `Backtest_v1.md`, `Camada_tatica_v2.md`,
+  `Curva_c.md`, `Curva_banda.md`, `Curva_orcamento.md`, `View_C_backtest.md`.
+- **O número da entrega** (tilt ≤ 1, camada ligada, γ = 1): excesso **+4,08 →
+  +3,04 pp**, líquido +34,20% → **+33,16%**, sharpe 1,2136 → **1,1815**,
+  breakeven 28,47 → **22,87 bps**, views/dia 2,24 → **1,99**. Bateu **dígito a
+  dígito** com o que a Lia mediu por fora — checagem cruzada fechada.
+- Errata registrada na **28.13**: o custo da camada re-medido nas duas pontas com
+  régua é **−2,94 pp** (era −2,16). A decisão não é reaberta — ela saiu da régua
+  28.0, que não contém resultado.
+- Testes: `tests/test_market_inputs.py` e `tests/test_backtest.py`, 48 passando.
+
+**Quebrou / aprendido:**
+- 🛑 **O `view_C_backtest.py` rodou com a régua ligada e o artefato saiu
+  MENTINDO.** A régua da Lia cobre as quatro views da entrega e **não tem `c`
+  para a C**; com ela ligada, a C viva sem linha no CSV estoura no casamento de
+  chaves do `aplicar_veto`, e o `except ValueError` do script — escrito para o
+  guarda de horizonte da D4.1 — rotulou o erro como *"k = 1 bloqueado pela
+  D4.1"*. Falso, e falso justamente sobre o único k que a D4.1 deixa passar.
+  Pego no diff. O `except` agora separa as duas causas, e a régua entra
+  **desligada por default** neste script, com o motivo escrito no artefato.
+  Lição: `except` largo em volta de uma rodada inteira transforma erro novo em
+  conclusão velha.
+- Duas prosas escritas à mão que envelheceram e foram trocadas por texto
+  derivado: *"Um terço do que se negocia é desfeito em dois pregões"* (o número
+  ao lado já dizia 43%) e a linha de configuração do `Curva_banda.md`, que ainda
+  anunciava *"views 2.2 e 2.3, camada tática desligada"* — mesmo modo de falha da
+  D25g. O `View_C_backtest.md` também citava *"+6,24 pp registrado"* como
+  controle; agora aponta para o artefato em vez de repetir o número.
+- **Observação para a Lia (não é pedido):** a régua não cobre a
+  `C_geopolitica_energia`. Não faz falta hoje — a C está fora do v1 pela D23f —,
+  mas se ela entrar, ou a régua se estende à C ou a C fica fora da dosagem.
+
+**Pendente:**
+- 🔴 **D12 (teto) segue aberta, e agora é o passo que falta.** Entrou o `c`
+  (passo 1), a Σ|w| foi medida com ele (passo 2); escolher o teto é da reunião.
+  **Se o teto se mover, a Lia reabre a 6q.**
+- 🟡 `Teste_sinal.md` e `Ortogonalidade.md` continuam desatualizados **pela
+  28.13** — nenhum dos dois passa pelo `run_backtest`, então não há onde passar
+  `regua=`; o que envelheceu neles foi a camada.
+- 🟡 O `Curva_c.md` mostra que **o veto sozinho faz o corte pesado** (Σ|w| pedida
+  mediana 221,8 → 177,5 antes de qualquer dosagem) — insumo da reunião do teto.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** sessão média — leitura do branch da Lia, cinco edições
+  de script e quatro rodadas de backtest completas (duas em background).
+- **Prompt inicial (verbatim):** "A lia falou ue atualizou ou colocou a regua
+  dela. Veja a branch dela e me fale o que isso muda no Backtest, talvez teremos
+  que rerodar o backtest"
+- **Iterações até aceitar:** 1 — o diagnóstico foi aceito e o dono mandou rerodar
+  na mesma resposta.
+- **Erros da IA:** 1 — rodar o `view_C_backtest.py` com a régua ligada por
+  default e produzir um artefato que atribuía à D4.1 um bloqueio que era da
+  régua. Pego na conferência do diff, antes de qualquer commit.
+- **Decisões escaladas:** **29** (registro do acoplamento) + errata da **28.13**.
+  Nenhuma decisão de outro membro foi tocada; o nível 1 é a 6q da Lia.
+- **Tags:** —
+
+## 2026-08-13 (sessão 29) — Felipe
+
+**Contexto da sessão:** sessão sem código. O grupo quer fechar o desenho geral do
+relatório final; a tarefa foi ler as diretrizes, os dois exemplos de anos
+anteriores e o draft v1 (KAIRÓS), e produzir um **plano de estrutura** — só
+título de página, título de seção e uma frase por seção. Nenhuma decisão de
+metodologia, nenhum número novo.
+
+**Feito:**
+- Lidos: `Relatório/Diretrizes Relatório Final.pdf` (edital: 5 páginas, 16:9,
+  ~750 palavras, robô obrigatório, 7 critérios com peso), `Exemplos/NEXUS.pdf`,
+  `Exemplos/SOLARIS.pdf` (ambos de edições com mais espaço e regras diferentes) e
+  `Drafts/KAIROSv1.pdf`.
+- Estrutura recorrente extraída dos dois exemplos: capa com ficha técnica →
+  tese/ineficiência com narrativa econômica → dados → arquitetura com diagrama →
+  risco em bloco separado → backtest com premissas e vieses → resultados com
+  tabela contra benchmark → limitações e próximos passos → IA.
+- Criado `Relatório/Plano_relatorio_v2.txt` — 5 páginas, texto corrido, baixa
+  formatação, conforme pedido.
+- Três rodadas de ajuste do dono, todas incorporadas:
+  1. **Justificativa das decisões de modelagem.** Entrou na página 3. Proposta
+     inicial minha era tabela "escolha / alternativa / critério"; o dono preferiu
+     **inline, junto de cada bloco** ("mais natural"). Ficou: uma frase-régua no
+     topo da página com o critério comum (a forma sai de medição ou princípio
+     declarado antes, nunca do resultado do backtest) + uma linha
+     "por que assim, e não X" fechando 5 blocos.
+  2. **Rearranjo de páginas.** Backtest + resultados + autoavaliação juntos na
+     página 4 (7 blocos, metodologia e vieses fundidos, protocolo e placar
+     fundidos); página 5 inteira para IA + próximos passos.
+  3. **IA com no mínimo meia página.** A seção ganhou dois blocos que o v1 não
+     tinha: esquema "quem decide o quê" e **um caso ponta a ponta** narrado em
+     quatro passos (pergunta → o que o agente produziu → o que a medição
+     contradisse → o que entrou no modelo).
+- Plano exportado para Google Docs a pedido do dono, para circular no grupo:
+  "Plano de estrutura — Relatório final (v2)"
+  (`docs.google.com/document/d/159uFYHGS5e8pCrKcHjZ1xNopB90v8BYJ9779Ud8m2XQ`).
+  Subiu verbatim, sem acentos, igual ao .txt. Documento nasce privado — o
+  compartilhamento é do dono.
+
+**Quebrou / aprendido:**
+- Nada quebrou. Um deslize meu, pego e corrigido na mesma sessão: ao trocar a
+  tabela pela justificativa inline, ficou uma referência órfã ("contraparte da
+  tabela de desenho da página 3") na seção de Sensibilidades — mesmo padrão da
+  lição da sessão 28, **texto que aponta para algo que deixou de existir**.
+  Reescrito para "aqui se justifica o número, como a página 3 justificou a forma".
+- Achado de leitura dos exemplos, útil para a diagramação: NEXUS e SOLARIS tinham
+  **11 e 12 páginas**. A estrutura deles não cabe em 5 — o que se herda é a
+  ORDEM dos temas, não a quantidade de blocos por tema. Por isso o plano
+  concentra e funde em vez de copiar.
+- As três críticas do dono ao v1 (usa pouco espaço · não explica a estratégia e
+  omite a camada tática · não tem autoavaliação) viraram, respectivamente:
+  6–8 blocos por página em vez de 4; página 3 reescrita com a camada tática em
+  seção própria; autoavaliação em dois blocos na página 4.
+
+**Pendente:**
+- ⚠️ **O relatório é módulo da Lia** (regra 2 do `CLAUDE.md`). Este plano foi
+  feito por instrução direta do dono da sessão, mas **é insumo para ela**, não
+  substituição do trabalho dela — precisa ser comunicado antes de virar
+  diagramação. Registrado aqui em vez de aberto como decisão porque não fecha
+  nada: o desenho geral segue sendo do grupo, que era o motivo original da
+  tarefa.
+- Escolher **qual** caso ponta a ponta vai na página 5. Recomendação minha, já
+  dada na conversa: o da camada tática que quase entrou por medida errada
+  (crescimento lido como tendência × variance ratio dizendo passeio aleatório) —
+  mostra valor e limite da IA na mesma história.
+- Página 3 está com 7 blocos e é a mais cheia. Se apertar na diagramação, a
+  candidata a sair é "Como cada ingrediente foi julgado", que vira legenda do
+  gráfico da régua.
+- Números do plano são rótulos, não valores conferidos: quem escrever as páginas
+  puxa de `Dump/analises/Backtest_v1.md` e `Camada_tatica_v2.md` (regenerados na
+  sessão 28, já com a camada v2 ligada).
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~80k tokens (estimativa; o grosso são os 4 PDFs lidos
+  na íntegra — diretrizes, 2 exemplos e o draft).
+- **Prompt inicial (verbatim):** "Chegou a hora de escrever o relatório e o grupo
+  quer decidir o desenho geral dele. Se você olhar dentro da pasta Relatório
+  temos algums exemplos, as diretrizes e um draft inicial. Leia as diretrizes do
+  relatório e os exemplos de outros relatórios passados(considere que eles tinham
+  mais espaço de relatório e diretrizes diferentes). Depois leia o v1 - Ele foi
+  uma tentativa de oneshot para iniciar o trabalho com uma base para se melhorar
+  em cima. Algumas críticas que temos dele: usa pouco do espaço, queremos colocar
+  mais conteúdo, Não explica bem a estratégia e omite a camada tática, Não
+  apresenta sessões de autoavaliação do trabalho (faltou profundidade). /goal
+  Após ler os arquivos crie um plano de relatório. O plano deve apenas apresentar
+  em texto corrido (baixa formatação, preferidamente em .txt) APENAS O TITULO DAS
+  PÁGINAS E SEÇÕES acompanhadas de uma frase explicando o conteúdo que teria
+  nela. A ideia aqui é apenas montar a estrutura de quais temas gerais iriamos
+  colocar dentro do relatório e em que ordem eles entrariam. Para montar o plano
+  foque em trazer discussões mais profundas, mais parecido com os exemplos e as
+  estruturas recorrentes entre os relatórios analisados"
+- **Iterações até aceitar:** 4 (plano inicial + 3 rodadas de direcionamento do
+  dono: onde justificar as decisões de modelagem, forma da justificativa
+  inline × tabela, e o rearranjo das páginas 4 e 5).
+- **Erros da IA:** uma referência órfã criada e corrigida na mesma sessão (ver
+  "Quebrou"); nenhuma alucinação de número — o plano cita rótulos de métricas,
+  não valores. Uma preferência minha (tabela) foi substituída por outra do dono
+  (inline), o que é direção e não erro.
+- **Decisões escaladas:** — (nenhuma; sessão de estrutura de entrega, sem
+  metodologia).
+- **Tags:** [PROMPT-CHAVE] — o prompt acima é candidato ao teste de
+  reprodutibilidade: pede leitura de 4 documentos com pesos diferentes
+  (diretrizes vinculantes × exemplos de outro edital × draft a criticar) e
+  entrega em formato restrito.
+
 ## 2026-08-13 (sessão 28) — Felipe
 
 **Contexto da sessão:** sessão curta de verificação. Pergunta do dono sobre o
