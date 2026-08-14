@@ -1314,3 +1314,69 @@ O diagnóstico do repositório em si veio limpo: instalação única e nativa, s
 resíduo de npm, todos os JSONs válidos, nenhum hook, nenhuma skill ou plugin
 instalado, `CLAUDE.md` do projeto já enxuto (6.194 chars, muito abaixo do limiar
 de aviso) e sem conteúdo derivável que valesse cortar.
+
+---
+
+## 2026-08-12/13 — Lia (relatório final do desafio + nível da régua fechado)
+
+**O que foi feito**
+
+1. **Relatório final montado e entregue** em `relatorio/KAIROS.pdf` — 5 páginas,
+   16:9 (960 × 540 pt), anônimo, gerado de HTML/CSS via Chrome headless. Estrutura
+   aprovada pela dona: capa/robô · a ineficiência · modelagem (4 views + régua) ·
+   backtest e resultados · IA generativa, limites e próximos passos. Cobre os sete
+   critérios do edital. Fontes reprodutíveis em `relatorio/fonte/`.
+2. **Backtest de entrega reproduzido do zero** num diretório de trabalho fora do
+   repositório (código do branch `Felipe` + `data/` do branch `Paulo`). Saiu
+   **dígito a dígito** igual ao `Dump/analises/Backtest_v1.md` (Sharpe 1,2136 ·
+   breakeven 28,4727 · excesso +4,08 pp). Nenhum módulo alheio foi tocado.
+3. **Decisão 6q: o nível da régua fechou em 1** (fechada pela dona). Fundamento em
+   três eixos que não usam retorno — ver `Decisoes_pendentes.md`.
+4. **Régua acoplada e a entrega re-medida** com `regua=` no `run_backtest`.
+
+**O que quebrou (e por quê importa)**
+
+- **A grade de nível do `Curva_c.md` estava desatualizada.** Foi medida antes de a
+  camada tática entrar (D28.13 lista o artefato como invalidado) e eu a citei duas
+  vezes antes de perceber. Re-gerada: o excesso caiu ~3 pp em toda a linha
+  (nível 1 ia de +5,98 pp para +3,04 pp).
+- **Três números do relatório envelheceram em cascata** ao ligar a régua, e cada um
+  só apareceu depois de procurar: a varredura de γ (medida sem régua), o giro
+  revertido, e o custo da camada tática. Este último era o mais escondido — o
+  `−2,16 pp` da D28.13 tem as duas pontas sem régua; medido na mesma configuração
+  da entrega dá **−2,94 pp**.
+
+**O que ficou pendente**
+
+- 🔴 **A entrega oficial não roda com a régua.** `scripts/backtest_v1.py` não passa
+  `regua=` — é módulo do Felipe. Enquanto não acoplar, o `Backtest_v1.md` dele e o
+  relatório divergem em 1,04 pp. **Precisa chegar a ele.**
+- 🟡 O nível fica condicionado ao teto (D12, do grupo), na ordem do §9.
+- 🟡 `Camada_tatica_v2.md` fica desatualizado no mesmo sentido que o `Curva_c.md`.
+- 🟡 Relatório com **997 palavras de prosa** contra a referência de 750 do edital.
+  Cortar mais implica remover conteúdo de critérios avaliados; decisão da dona.
+- 🟡 A tese da página 2 (20% da nota) precisa de aval do grupo.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** sessão longa, com duas rodadas de backtest completas em
+  background e leitura cruzada dos três branches.
+- **Prompt inicial (verbatim):** "da commit e push na minha branch em tudo que falta"
+- **Iterações até aceitar:** o relatório levou 4 rodadas (layout da capa com a ficha
+  sobreposta à imagem, γ quebrado por `text-transform: uppercase`, corte de 1382 →
+  997 palavras, atualização dos números com a régua). A explicação do nível da régua
+  levou 2: a primeira saiu densa demais e a dona pediu de novo em linguagem simples.
+- **Erros da IA:** (a) citei a tabela de nível do `Curva_c.md` duas vezes sem checar
+  que a D28.13 a havia invalidado — o erro é o mesmo que o `LOG` já registra como
+  recorrente no projeto, *registro que envelhece não levanta exceção*; (b) na
+  primeira explicação do nível empilhei jargão (`§9`, `D25f`, `15b`) a ponto de a
+  dona não conseguir acompanhar — problema de comunicação, não de conteúdo.
+- **Decisões escaladas:** **6q** (fechada pela dona nesta sessão).
+- **Tags:** `[PROMPT-CHAVE]` — "me ajuda a escolher". O pedido de ajuda para decidir
+  um parâmetro é o caso em que a regra 1 do `CLAUDE.md` mais aperta: o certo não foi
+  nem recusar nem cravar, foi **eliminar opções por argumento metodológico** (onde a
+  régua está validada) e deixar a escolha e o registro com a dona. A trava
+  anti-overfit obrigou a montar o raciocínio sem olhar a coluna de excesso — e a
+  coincidência entre a escolha e o topo dessa coluna ficou declarada no registro,
+  em vez de descoberta depois por um avaliador.
