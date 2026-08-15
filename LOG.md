@@ -1,5 +1,88 @@
 # LOG de sessões
 
+## 2026-08-15 (sessão 32) — Felipe
+
+**Contexto da sessão:** ponto de retomada da 31 — fechar o conteúdo da **página
+4** (backtest e análise de resultados) e produzir os gráficos dela. Terminou com
+os três gráficos gerados a partir de dado real nesta máquina.
+
+**Feito:**
+- **Conteúdo da p.4 discutido e reescrito pelo dono** no `Plano_relatorio_v2.txt`
+  (arquivo do dono, não commitado nesta sessão). Levantadas ~14 ideias de visual
+  e análise a partir do NEXUS e do SOLARIS; o dono manteve quatro visuais e
+  acrescentou o parágrafo de leitura da curva e as colunas de alpha/beta. O
+  benchmark ingênuo (sinal do Polymarket embaralhado) **não entrou** — era a
+  única proposta que exigia rodada extra de script.
+- **Dump das séries** (a p.4 é toda gráfico no tempo, e o `summary()` só publica
+  escalares): `--csv-dir` novo em `backtest_v1.py` (série diária dos 8 cenários
+  com a coluna do SPY, tabela de métricas e varredura de γ), em `curva_c.py`
+  (eixo do nível) e em `curva_banda.py` (varredura de banda). Cinco CSVs em
+  `Dump/dados/`.
+- **`scripts/graficos_p4.py`** — gera `p4_curva`, `p4_atribuicao` e
+  `p4_sensibilidade` em SVG + PNG 300dpi, mais `Dump/analises/Metricas_p4.md`.
+  Tem `--demo` (auto-teste em dado sintético: confere β = 2, α conhecido e
+  drawdown de −10% num caso fechado). Paleta puxada da arte da capa do v1, fundo
+  transparente para o slide escuro; `--tema claro` inverte.
+- **Métricas que não existiam** — máximo drawdown, alpha e beta, calculados no
+  script de gráfico e **não** no `summary()` do backtest, para não obrigar a
+  re-gerar todos os artefatos por causa de três linhas. No cenário de referência
+  (`tilt ≤ 1`): **−19,6%** de drawdown contra −18,8% do SPY, **alpha +2,57% a.a.**
+  e **beta 0,95**.
+- **Os três scripts re-rodados nesta máquina**: `Backtest_v1.md`, `Curva_c.md` e
+  `Curva_banda.md` saíram **idênticos aos commitados** (`git diff` vazio) — a
+  reprodução entre as duas máquinas está confirmada.
+
+**Quebrou / aprendido:**
+- **`data/` não é versionado** (zero arquivos rastreados em `origin/Felipe`), e a
+  cópia local estava incompleta: faltavam `data/raw/fred_DGS1.csv` (view 15g) e a
+  régua da Lia. Achados em `origin/Paulo` e `origin/Lia` (lá o caminho é
+  `lia/c_por_decisao.csv`, sem o `data/`) e extraídos com `git show ... > arquivo`
+  para não entrarem no tracking do branch. **Quem montar a terceira máquina passa
+  por isso** — o `git pull` sozinho não traz dado.
+- O parser de tabela markdown quebrou no `Σ|w|` **não escapado** do
+  `Camada_tatica_v2.md` (o `to_markdown()` não escapa; o `Backtest_v1.md` escapa):
+  o `|` do nome da coluna contava como separador e o cabeçalho saía com duas
+  células a mais que o corpo. Corrigido com proteção do token e erro explícito
+  quando as larguras divergem.
+- **Erro com risco real:** o preview de estilo em dado sintético foi rodado
+  apontando para `Dump/analises/`, e gravou um `Metricas_p4.md` com números
+  **falsos** dentro da pasta de artefatos. Apagado no mesmo minuto, mas era um
+  artefato inventado a um commit de distância de virar número de relatório.
+- `curva_c.py` leva ~38 min: são **30 backtests completos** (8 valores de `c` × 2
+  escopos + 7 níveis × 2). Se um dia só o insumo do gráfico importar, `--cs 1.0`
+  corta 14 das 30 rodadas.
+
+**Pendente:**
+- 🔴 **Página 4 ainda não escrita** — a estrutura está fechada e os gráficos
+  existem, falta o texto dos blocos.
+- 🟡 Três achados dos números novos que a página ainda não usa: beta 0,95 (a
+  carteira não é SPY alavancado), o drawdown pior que o do benchmark **no mesmo
+  evento** de abril/2025, e o fato de o excesso **não cruzar zero em nenhuma das
+  quatro varreduras** — esse último é o argumento mais forte da página.
+- 🟡 Benchmark ingênuo (sinal embaralhado) e área empilhada de pesos seguem
+  fora: exigem, respectivamente, rodada nova e dump dos pesos por ativo.
+- 🔴 D12 (nível e escopo do teto) segue aberta, sem mudança. O default do
+  `graficos_p4.py` é `tilt ≤ 1` porque é o escopo de referência que o próprio
+  backtest declara — **não é escolha do script**.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~95k tokens — os dois PDFs de exemplo e o do v1
+  (extraídos com `pypdf`), a arte da capa lida como imagem, os artefatos do
+  `Dump/analises/` e os três scripts de medida.
+- **Prompt inicial (verbatim):** "PReciamos rerodar o Backtest nessa máquina
+  também? rerodamos no meu PC"
+- **Iterações até aceitar:** 2 — a primeira proposta de conteúdo da p.4 veio como
+  lista de gráficos, **sem texto de análise**, e o dono apontou que metade da nota
+  da página é justamente o julgamento escrito; a segunda, no formato dos itens do
+  plano, foi aceita.
+- **Erros da IA:** dois. O de conteúdo acima (página proposta sem prosa de
+  análise) e o `Metricas_p4.md` sintético gravado na pasta de artefatos — pego por
+  conferência do `git status`, não por teste.
+- **Decisões escaladas:** — (nenhuma nova).
+- **Tags:** `[PROMPT-CHAVE]`
+
 ## 2026-08-14 (sessão 31) — Felipe
 
 **Contexto da sessão:** continuação do `Plano_relatorio_v2.txt`. A tarefa foi
