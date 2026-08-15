@@ -967,6 +967,11 @@ def main():
     parser.add_argument("--orcamento-drift-acoes", type=float, default=None)
     parser.add_argument("--orcamento-drift-rf", type=float, default=None)
     parser.add_argument("--saida", default="Dump/analises/Backtest_v1.md")
+    parser.add_argument("--csv-dir", default="Dump/dados",
+                        help="pasta dos CSV de série diária e varreduras — o "
+                             "markdown reporta escalares, e todo gráfico da "
+                             "página 4 precisa do dia a dia. `--csv-dir \"\"` "
+                             "desliga")
     args = parser.parse_args()
 
     orcamentos = {"premio": args.orcamento_premio,
@@ -986,6 +991,7 @@ def main():
     # É a questão de desenho aberta na seção 10 do `Decisoes_pendentes.md` —
     # medir as duas dá número à reunião sem fechar a D12.
     colunas = {}
+    diarios = []
     for no_tilt in (False, True):
         for teto in args.tetos:
             resultado = run_backtest(retornos, montador, w_mkt, datas=datas, tau=TAU,
@@ -995,6 +1001,9 @@ def main():
             # o `|` precisa vir escapado: é nome de coluna de tabela markdown
             colunas[rotulo_teto(teto, no_tilt)] = summary(resultado,
                                                           benchmark=retornos["SPY"])
+            diarios.append(resultado.diario.assign(
+                cenario=rotulo_teto(teto, no_tilt),
+                r_benchmark=retornos["SPY"].reindex(resultado.diario.index)))
             montador.reset()  # as médias expansivas recomeçam a cada rodada
     tabela = pd.DataFrame(colunas)
 
@@ -1256,6 +1265,18 @@ def main():
         + ("v2 está **LIGADA** (D28.13) e o overlay das sleeves entra nos "
            "números acima" if sleeves_ligadas else "v2 está desligada")
         + ".\n")
+
+    # --- CSV das séries (insumo dos gráficos) --------------------------------
+    # O markdown acima reporta escalares; curva, drawdown e trades por dia são
+    # séries. Sem este dump elas morrem na memória e qualquer gráfico obriga a
+    # re-rodar a varredura inteira. Os pesos por ativo e os diagnostics por view
+    # ficam de fora: nenhum bloco da p.4 os consome hoje.
+    if args.csv_dir:
+        destino = Path(args.csv_dir)
+        destino.mkdir(parents=True, exist_ok=True)
+        pd.concat(diarios).to_csv(destino / "backtest_diario.csv")
+        tabela.to_csv(destino / "backtest_metricas.csv")
+        pd.DataFrame(gamma_linhas).to_csv(destino / "backtest_gamma.csv")
 
     Path(args.saida).write_text("\n".join(linhas) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")

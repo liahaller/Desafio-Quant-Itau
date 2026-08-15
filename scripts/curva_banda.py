@@ -68,6 +68,9 @@ def main():
     parser.add_argument("--teto", type=float, default=1.0)
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
     parser.add_argument("--saida", default="Dump/analises/Curva_banda.md")
+    parser.add_argument("--csv-dir", default="Dump/dados",
+                        help="pasta do CSV da varredura de banda (insumo do "
+                             "painel de sensibilidade). `--csv-dir \"\"` desliga")
     parser.add_argument("--regua", default=None,
                         help="CSV do `c` por decisão da Lia; default segue o "
                              "--raiz, `\"\"` desliga. A entrega roda com ela "
@@ -216,6 +219,10 @@ def main():
            "reversão parada, a oscilação do excesso não tem mecanismo por trás. ")
         + "Se a banda entrar, o nível se escolhe pela **reversão e pelo breakeven** "
           "— as duas primeiras colunas —, junto com o teto, e uma vez só.\n")
+
+    if args.csv_dir:   # varredura de banda do painel de sensibilidade da p.4
+        Path(args.csv_dir).mkdir(parents=True, exist_ok=True)
+        tabela.to_csv(Path(args.csv_dir) / "curva_banda.csv", index=False)
 
     Path(args.saida).write_text("\n".join(texto) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string(index=False) + f"\n\nescrito: {args.saida}\n")

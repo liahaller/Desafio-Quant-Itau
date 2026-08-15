@@ -105,6 +105,9 @@ def main():
                         help="teto usado só nas colunas de resultado líquido")
     parser.add_argument("--custo-bps", type=float, default=CUSTO_BPS_POR_LADO)
     parser.add_argument("--saida", default="Dump/analises/Curva_c.md")
+    parser.add_argument("--csv-dir", default="Dump/dados",
+                        help="pasta do CSV da varredura de nível (insumo do "
+                             "painel de sensibilidade). `--csv-dir \"\"` desliga")
     args = parser.parse_args()
 
     # O default segue o `--raiz`: com a régua num caminho relativo fixo, rodar
@@ -293,6 +296,7 @@ def main():
     # apaga por construção a diferenciação entre mercado bom e ruim — que é a
     # função da régua (D20b). Com a série por decisão o eixo certo é o NÍVEL, e
     # ele é reescalável fora da régua (`c = c_nivel1 ** nivel`, D25c).
+    nt = None
     if args.regua and Path(args.regua).exists():   # `--regua ""` desliga a tabela
         c1 = pd.read_csv(args.regua)
         c1 = c1[c1["selecionado"].astype(bool) & c1["ativa"].astype(bool)]["c_nivel1"]
@@ -369,6 +373,13 @@ def main():
         "13/08, no eixo da tabela acima), nem o nível do teto, nem o escopo dele "
         "(D12, do grupo). As duas tabelas medem; a escolha sai uma vez só, e não "
         "por iteração contra elas.\n")
+
+    # CSV do eixo do NÍVEL — é a varredura que entra no painel de sensibilidade
+    # da p.4. Copiar o número da tabela markdown à mão envelheceria calado na
+    # próxima rodada, que é um dos erros que o próprio relatório lista.
+    if args.csv_dir and nt is not None:
+        Path(args.csv_dir).mkdir(parents=True, exist_ok=True)
+        nt.to_csv(Path(args.csv_dir) / "curva_c_nivel.csv")
 
     Path(args.saida).write_text("\n".join(texto) + "\n", encoding="utf-8")
     sys.stdout.write(tabela.to_string() + f"\n\nescrito: {args.saida}\n")
