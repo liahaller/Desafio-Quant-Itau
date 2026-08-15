@@ -1,18 +1,17 @@
-"""Gráficos da página 4 do relatório — curva, atribuição e sensibilidade.
+"""Gráficos da página 4 do relatório — curva, composição e sensibilidade.
 
 O `backtest_v1.py` publica escalares em markdown; a página 4 pede três imagens
 que só existem em série. Este script **não mede nada novo**: lê os CSV gravados
-por `backtest_v1.py`, `curva_c.py` e `curva_banda.py`, lê as tabelas já
-publicadas em `Dump/analises/`, e desenha.
+por `backtest_v1.py`, `curva_c.py` e `curva_banda.py` e desenha.
 
 Três coisas que ele não faz, de propósito:
 
   - **não escolhe cenário** — o default é o escopo de referência que o próprio
     backtest declara (`tilt ≤ 1`, o mesmo da varredura de γ). A D12 (nível e
     escopo do teto) segue aberta; trocar `--cenario` troca a figura inteira.
-  - **não copia número** — a atribuição sai lida do markdown que a mede, não
-    transcrita. Número copiado à mão envelhece calado, que é um dos erros que a
-    própria página 4 lista.
+  - **não copia número** — a composição sai da própria série diária, e a cascata
+    fecha contra o `r_liquido` gravado. Número copiado à mão envelhece calado,
+    que é um dos erros que a própria página 4 lista.
   - **não inventa métrica** — drawdown, alpha e beta são calculados aqui porque
     não existem no `summary()` do backtest, e acrescentá-los lá obrigaria a
     regerar todos os artefatos por causa de três linhas.
@@ -71,41 +70,6 @@ def aplicar_estilo(p):
         "axes.spines.top": False, "axes.spines.right": False,
         "figure.autolayout": True,
     })
-
-
-def _celulas(linha):
-    """Células de uma linha markdown, com o `|` de `Σ|w|` protegido.
-
-    `Backtest_v1.md` escapa o nome como `Σ\\|w\\|`, o `Camada_tatica_v2.md` sai
-    do `to_markdown()` sem escapar — nos dois casos aquele `|` é nome de coluna,
-    não separador, e sem isto o cabeçalho conta duas células a mais que o corpo.
-    """
-    linha = re.sub(r"Σ\\?\|w\\?\|", "Σ‖w‖", linha.strip())
-    return [c.strip() for c in linha.strip("|").split("|")]
-
-
-def ler_tabela_md(caminho, chave):
-    """Primeira tabela markdown do arquivo cujo cabeçalho contém `chave`.
-
-    Lê o artefato em vez de transcrever o número: se a medida for re-gerada, o
-    gráfico acompanha em vez de mentir calado.
-    """
-    linhas = Path(caminho).read_text(encoding="utf-8").splitlines()
-    for i, linha in enumerate(linhas):
-        if linha.lstrip().startswith("|") and chave in linha:
-            cabecalho = _celulas(linha)
-            corpo = []
-            for seguinte in linhas[i + 2:]:      # +2 pula a linha de alinhamento
-                if not seguinte.lstrip().startswith("|"):
-                    break
-                celulas = _celulas(seguinte)
-                if len(celulas) != len(cabecalho):
-                    raise ValueError(
-                        f"{Path(caminho).name}: linha com {len(celulas)} células "
-                        f"sob cabeçalho de {len(cabecalho)} — {seguinte!r}")
-                corpo.append(celulas)
-            return pd.DataFrame(corpo, columns=cabecalho)
-    raise KeyError(f"tabela com '{chave}' não encontrada em {caminho}")
 
 
 def numero(texto):
@@ -179,53 +143,46 @@ def grafico_curva(diario, p, destino):
     return salvar(fig, destino, "p4_curva")
 
 
-def grafico_atribuicao(views_md, tatica_md, p, destino, teto_ref=1.0):
-    """De onde vem o excesso: Δ por view e o Δ da camada, com e sem os 3 maiores.
+def grafico_composicao(diario, p, destino):
+    """De onde vem o resultado: perna de mercado, perna das views e custo.
 
-    Os números não são digitados aqui: saem das tabelas de `Views_novas.md`
-    (atribuição por view) e `Camada_tatica_v2.md` (a camada na entrega).
+    Cascata da SOMA dos retornos diários do cenário entregue. As colunas saem do
+    que o backtest já grava por pregão — `r_liquido = r_mercado + r_tilt − custo
+    + carrego` —, então a cascata fecha por construção, não por transcrição.
     """
-    atrib = ler_tabela_md(views_md, "sem os 3 maiores").set_index("configuração")
-    # a linha da entrega está declarada no próprio artefato: entropia crua
-    rotulos = {"+ incerteza (entropia crua)": "15b · incerteza",
-               "+ B com β próprio (DGS1)": "15g · trajetória",
-               "+ as duas (entropia crua)": "as duas, empilhadas"}
-    itens = [(nome, numero(atrib.loc[chave, "Σ dos Δ diários"]),
-              numero(atrib.loc[chave, "sem os 3 maiores"]))
-             for chave, nome in rotulos.items() if chave in atrib.index]
-
-    camada = ler_tabela_md(tatica_md, "excesso × SPY (com)")
-    coluna_teto = camada.columns[0]
-    linha = camada[camada[coluna_teto].map(numero) == teto_ref]
-    if not linha.empty:
-        itens.append(("camada tática v2", numero(linha.iloc[0]["Δ"]), float("nan")))
+    soma = lambda coluna: float(diario[coluna].sum()) * PONTOS_PERCENTUAIS
+    total = soma("r_liquido")
+    partes = [("perna de\nmercado", soma("r_mercado"), p["bench"]),
+              ("perna das\nviews", soma("r_tilt"), p["apoio"]),
+              ("custo de\ntransação", -soma("custo"), p["negativo"])]
+    carrego = soma("carrego") if "carrego" in diario else 0.0
+    if abs(carrego) > 0.01:
+        partes.append(("carrego", carrego, p["suave"]))
+    assert abs(sum(v for _, v, _ in partes) - total) < 1e-6, "cascata não fecha"
 
     fig, ax = plt.subplots(figsize=(6.6, 3.4))
-    y = np.arange(len(itens))
-    largura = 0.38
-    total = [i[1] for i in itens]
-    sem3 = [i[2] for i in itens]
-    ax.barh(y + largura / 2, total, largura, color=p["kairos"], label="Δ no excesso")
-    ax.barh(y - largura / 2, sem3, largura, color=p["apoio"],
-            label="sem os 3 maiores dias")
-    ax.axvline(0, color=p["grade"], lw=0.9)
-    ax.set_yticks(y, [i[0] for i in itens])
-    ax.set_xlabel("pontos percentuais de excesso × SPY")
-    ax.invert_yaxis()
-    # legenda acima: dentro do painel ela cai em cima da barra da camada tática
-    ax.legend(frameon=False, ncol=2, loc="lower left",
-              bbox_to_anchor=(0, 1.0, 1, 0.1))
-    ax.margins(x=0.16)      # respiro para o rótulo das barras negativas
-    ax.grid(axis="x", lw=0.5, alpha=0.5)
-    for yi, (_, t, s) in zip(y, itens):
-        for valor, deslocamento in ((t, largura / 2), (s, -largura / 2)):
-            if not np.isnan(valor):
-                ax.annotate(f"{valor:+.2f}", (valor, yi + deslocamento),
-                            xytext=(4 if valor >= 0 else -4, 0),
-                            textcoords="offset points", fontsize=8,
-                            va="center", ha="left" if valor >= 0 else "right",
-                            color=p["texto"])
-    return salvar(fig, destino, "p4_atribuicao")
+    base = 0.0
+    for i, (nome, valor, cor) in enumerate(partes):
+        ax.bar(i, valor, 0.62, bottom=base, color=cor)
+        ax.annotate(f"{valor:+.1f}", (i, base + max(valor, 0.0)),
+                    xytext=(0, 4), textcoords="offset points", fontsize=8.5,
+                    ha="center", va="bottom", color=p["texto"])
+        base += valor
+        if i + 1 < len(partes):   # degrau ligando o topo de uma barra à próxima
+            ax.plot([i - 0.31, i + 1 + 0.31], [base, base], color=p["grade"],
+                    lw=0.8, ls=(0, (3, 3)))
+    ax.bar(len(partes), total, 0.62, color=p["kairos"])
+    ax.annotate(f"{total:+.1f}", (len(partes), total), xytext=(0, 4),
+                textcoords="offset points", fontsize=8.5, fontweight="bold",
+                ha="center", va="bottom", color=p["texto"])
+
+    ax.axhline(0, color=p["grade"], lw=0.9)
+    ax.set_xticks(range(len(partes) + 1),
+                  [nome for nome, _, _ in partes] + ["resultado\nentregue"])
+    ax.set_ylabel("soma dos retornos diários (pp)")
+    ax.margins(y=0.16)          # respiro para os rótulos acima das barras
+    ax.grid(axis="y", lw=0.5, alpha=0.5)
+    return salvar(fig, destino, "p4_composicao")
 
 
 def _painel(ax, x, y, p, titulo, eixo_x, decidido=None):
@@ -274,7 +231,7 @@ def grafico_sensibilidade(dados, p, destino):
             "Correção favorite-longshot", "γ", decidido=1.0)
 
     for ax in eixos[:, 0]:
-        ax.set_ylabel("excesso × SPY (pp)")
+        ax.set_ylabel("vantagem sobre o SPY (pp)")
     return salvar(fig, destino, "p4_sensibilidade")
 
 
@@ -319,9 +276,7 @@ def gerar(dados, analises, destino, cenario, tema):
                          + ", ".join(sorted(set(diario['cenario']))))
     recorte = diario[diario["cenario"] == cenario]
     saidas = grafico_curva(recorte, p, destino)
-    saidas += grafico_atribuicao(analises / "Views_novas.md",
-                                 analises / "Camada_tatica_v2.md", p, destino,
-                                 teto_ref=numero(cenario))
+    saidas += grafico_composicao(recorte, p, destino)
     saidas += grafico_sensibilidade(dados, p, destino)
     saidas.append(escrever_metricas(metricas(recorte),
                                     analises / "Metricas_p4.md", cenario))
@@ -335,8 +290,11 @@ def demo():
     b = pd.Series(np.tile([0.01, -0.005], 60),
                   index=pd.bdate_range("2025-01-01", periods=120))
     # carteira = 2× o benchmark + 10 bps/dia: beta 2 e alpha 0,10%·252 conhecidos
+    # a decomposição fecha por construção: r_mercado + r_tilt − custo = r_liquido
     diario = pd.DataFrame({"r_liquido": 2 * b + 0.001, "r_benchmark": b,
-                           "alavancagem": 2.0, "giro": 0.3}, index=b.index)
+                           "r_mercado": b, "r_tilt": b + 0.0012, "custo": 0.0002,
+                           "carrego": 0.0, "alavancagem": 2.0, "giro": 0.3},
+                          index=b.index)
     diario.index.name = "data"
     m = metricas(diario)
     assert abs(m.loc["Beta vs SPY", "Kairós"] - 2.0) < 1e-9, m
@@ -349,15 +307,6 @@ def demo():
 
     with tempfile.TemporaryDirectory() as tmp:
         tmp = Path(tmp)
-        (tmp / "Views_novas.md").write_text(
-            "| configuração | Σ dos Δ diários | sem os 3 maiores |\n|---|---|---|\n"
-            "| + incerteza (entropia crua) | +2.74 pp | -0.54 pp |\n"
-            "| + B com β próprio (DGS1) | -0.96 pp | +2.93 pp |\n", encoding="utf-8")
-        (tmp / "Camada_tatica_v2.md").write_text(
-            "| teto no tilt | excesso × SPY (com) | Δ |\n|---|---|---|\n"
-            "| 1 | +3.04 pp | -2.94 pp |\n", encoding="utf-8")
-        lido = ler_tabela_md(tmp / "Views_novas.md", "sem os 3 maiores")
-        assert list(lido["configuração"])[0] == "+ incerteza (entropia crua)", lido
         for cenario in ("tilt ≤ 1",):
             diario.assign(cenario=cenario).to_csv(tmp / "backtest_diario.csv")
         pd.DataFrame({"tilt ≤ 1": {"excesso acumulado (líquido − benchmark)": 0.03},

@@ -1,0 +1,80 @@
+2026-07-05|Felipe|codigo|esqueleto do otimizador BL em src/bl_optimizer.py mais 4 testes sinteticos
+2026-07-07|Felipe|pesquisa|sessao de discussao das decisoes 4 e 8, sem codigo novo
+2026-07-08|Felipe|pesquisa|discussao da decisao 4 e reescrita da secao 4 do Decisoes_pendentes
+2026-07-08 (sessao 2)|Felipe|pesquisa|discussao da decisao 4 e correcao de nomenclatura da Camada 2
+2026-07-08 (sessao 3)|Felipe|pesquisa|discussao da decisao 3, reframe e colapso 3 com 4
+2026-07-09 (sessao 1)|Felipe|pesquisa|fechamento do desenho das views 2.2 e 2.3 e criacao dos docs
+2026-07-09 (sessao 2)|Felipe|pesquisa|fechamento do desenho da view 2.4 eleitoral e criacao do doc
+2026-07-09 (sessao 3)|Felipe|pesquisa|limpeza de divergencias e reestruturacao dos md do repositorio
+2026-07-09 (sessao 4)|Felipe|pesquisa|execucao documental do adiamento da camada tatica (decisao 10)
+2026-07-10|Felipe|pesquisa|fechamento das views 1.2 e 3.1 e criacao da decisao 11
+2026-07-10 (sessao 2)|Felipe|pesquisa|expansao da estrategia com docs das candidatas 1.3, B e C
+2026-07-10 (sessao 3)|Felipe|pesquisa|geracao de 6 ideias, pesquisa de embasamento e avaliacao uma a uma
+2026-07-11|Felipe|codigo|decisao 9 fechada e src/poly_preprocessing.py criado com testes
+2026-07-11 (sessao 2)|Felipe|codigo|8 views, views_common e bl_integration implementados, 48 testes
+2026-07-11 (sessao 3)|Felipe|codigo|3 taticas candidatas implementadas mais tests/test_taticas.py
+2026-07-14|Felipe|pesquisa|briefing Para_Paulo_e_Lia e sincronizacao da decisao 6 da Lia
+2026-07-27|Felipe|pesquisa|analise do catalogo do Paulo e criacao do pedido e da pauta
+2026-07-28|Felipe|pesquisa|auditoria da resposta do Paulo e criacao do FOLLOWUP com F1 a F10
+2026-07-30|Felipe|analise|auditoria da segunda entrega e ajuste de poly_preprocessing ao midpoint
+2026-07-30 (sessao 2)|Felipe|analise|poly_loader criado mais scripts de sensibilidade e perfil de k
+2026-07-31|Felipe|codigo|organizacao do Dump em subpastas e atualizacao de paths nos scripts
+2026-08-04|Felipe|analise|market_loader criado, view 3.1 ligada ao FRED e premissa das taticas medida
+2026-08-04 (sessao 2)|Felipe|analise|maratona de 13 decisoes com 6 scripts de medicao e poly_preprocessing destravado
+2026-08-05 (sessao 3)|Felipe|analise|src/backtest.py e scripts/backtest_v1.py criados, primeiro backtest rodado
+2026-08-07|Felipe|analise|diagnostics do Omega implementado, backtest re-rodado e payrolls tratados
+2026-08-07 (sessao 2)|Felipe|analise|escopo do teto medido, curva do c e saida da view B do v1
+2026-08-07 (sessao 6)|Felipe|analise|aplicar_veto por nome e view 2.3 ligada com a PMF completa
+2026-08-07 (sessao 7)|Felipe|codigo|fechamento dos pedidos da Lia com remocao de VIEWS_ATIVAS e docstrings
+2026-08-07 (sessao 8)|Felipe|analise|semeadura da 2.3, robustez gama, conserto do fl_correction e curva do c remedida
+2026-08-07 (sessao 9)|Felipe|analise|banda de nao-negociacao implementada e varrida, README de reproducao
+--- ERROS ---
+2026-07-05|Felipe|codigo_quebrado|execucao_teste|teste de monotonicidade assumia tilt positivo
+2026-07-08 (sessao 2)|Felipe|premissa_herdada|confererencia_humana|inverteu qual camada estava congelada, disse mapeamento em vez de camada tatica
+2026-07-09 (sessao 1)|Felipe|alucinacao_numerica|confererencia_humana|descreveu os mercados de CPI do poly como thresholds quando sao buckets exatos
+2026-07-09 (sessao 1)|Felipe|alucinacao_numerica|confererencia_humana|introduziu um p_FF inexistente no fallback binario da 2.3
+2026-07-09 (sessao 1)|Felipe|texto_impreciso|confererencia_humana|duplicou a formula da surpresa em dois itens do documento
+2026-07-09 (sessao 1)|Felipe|texto_impreciso|confererencia_humana|notacao do Q imprecisa e sem interpretacao do portfolio long-short
+2026-07-09 (sessao 2)|Felipe|premissa_herdada|confererencia_humana|opcoes da Q4 partiam da premissa de benchmark externo, que nao existe na eleicao
+2026-07-09 (sessao 2)|Felipe|alucinacao_numerica|confererencia_humana|descreveu beta vezes delta p incorretamente como momentum
+2026-07-09 (sessao 2)|Felipe|texto_impreciso|confererencia_humana|Q6 ofereceu parametro desnecessario e fundiu ativacao, peso e estimacao
+2026-07-09 (sessao 2)|Felipe|texto_impreciso|confererencia_humana|Q7 nao listou a sub-decisao mais grave, qual preco da serie
+2026-07-09 (sessao 2)|Felipe|texto_impreciso|confererencia_humana|contradicao interna, soma de P igual a 2 rotulada como long 1 short 1
+2026-07-09 (sessao 2)|Felipe|texto_impreciso|confererencia_humana|Q sem declarar que e retorno acumulado de k dias e beta de absorcao plena sem definicao
+2026-07-09 (sessao 2)|Felipe|codigo_quebrado|confererencia_humana|colisao de janelas no item 3 reintroduzia lookahead
+2026-07-09 (sessao 2)|Felipe|texto_impreciso|confererencia_humana|k proximo de zero tratado como a mesma cascata do item 0, escondendo decisao nao tomada
+2026-07-09 (sessao 2)|Felipe|codigo_quebrado|confererencia_humana|unidade de p ambigua entre porcentagem e fracao
+2026-07-09 (sessao 2)|Felipe|texto_impreciso|confererencia_humana|consequencia do limiar de amostra ausente no documento
+2026-07-09 (sessao 2)|Felipe|generalizacao|confererencia_humana|status marcado como fechada apesar de pendencia declarada invalidante
+2026-07-10 (sessao 2)|Felipe|escopo_errado|confererencia_humana|erro de conducao, avancou a analise completa da 1.3 sem esperar o usuario
+2026-07-10 (sessao 3)|Felipe|alucinacao_numerica|autocorrecao|descreveu a surpresa do drift como a que a 2.3 ja calcula
+2026-07-11 (sessao 2)|Felipe|codigo_quebrado|autocorrecao|Edit inseriu texto de docstring fora das aspas em views_common.py
+2026-07-30 (sessao 2)|Felipe|codigo_quebrado|execucao_teste|tolerancia do slot larga demais, 1h em vez de 5 min
+2026-07-30 (sessao 2)|Felipe|codigo_quebrado|execucao_teste|primeira versao do perfil de k media so lags maiores ou iguais a zero
+2026-07-31|Felipe|escopo_errado|autocorrecao|staging incompleto no commit, edicoes de path dos md ficaram de fora
+2026-08-04|Felipe|premissa_herdada|autocorrecao|afirmou que os dois parquets estavam na mesma base de ajuste copiando a declaracao do Paulo
+2026-08-04 (sessao 2)|Felipe|generalizacao|confererencia_humana|classificou a view 3.1 como defasada e a cortou com base na medicao errada
+2026-08-04 (sessao 2)|Felipe|premissa_herdada|autocorrecao|recomendacao inicial de custo ignorava financiamento e aluguel dos shorts
+2026-08-05 (sessao 3)|Felipe|codigo_quebrado|execucao_teste|teste de breakeven com retornos aleatorios dava breakeven negativo
+2026-08-05 (sessao 3)|Felipe|codigo_quebrado|execucao_teste|crash de cp1252 no print do console
+2026-08-05 (sessao 3)|Felipe|codigo_quebrado|execucao_teste|barra vertical do rotulo quebrando a tabela markdown gerada
+2026-08-05 (sessao 3)|Felipe|alucinacao_numerica|autocorrecao|numero de commits herdado errado do leaveoff, 23 em vez de 24
+2026-08-07|Felipe|codigo_quebrado|execucao_teste|chamou _soma_faixas antes de a funcao existir
+2026-08-07|Felipe|codigo_quebrado|execucao_teste|pmfs.values desempacotado em 2 quando virou 3-tupla, so quebrou no dado real
+2026-08-07|Felipe|codigo_quebrado|execucao_teste|arquivo de teste escrito por heredoc com escapes colapsados, SyntaxError
+2026-08-07|Felipe|codigo_quebrado|execucao_teste|igualdade de float num teste
+2026-08-07|Felipe|codigo_quebrado|execucao_teste|nota do release combinado de 2025-12-16 nao era gravada
+2026-08-07|Felipe|alucinacao_numerica|autocorrecao|comecou a implementar janela_slots com valor cravado, que e parametro da Lia
+2026-08-07 (sessao 2)|Felipe|codigo_quebrado|execucao_teste|contagem de dias acima do teto poluida por erro de float
+2026-08-07 (sessao 2)|Felipe|codigo_quebrado|execucao_teste|barra vertical sem escape no cabecalho da tabela gerada
+2026-08-07 (sessao 2)|Felipe|generalizacao|autocorrecao|afirmou que a formula c sobre 1 mais c previa a queda da soma de w quando preve a do tilt
+2026-08-07 (sessao 2)|Felipe|alucinacao_numerica|autocorrecao|data e estatisticas da primeira ruina cravadas a mao no texto gerado
+2026-08-07 (sessao 6)|Felipe|alucinacao_numerica|execucao_teste|diagnostico da 2.3 baseado no arquivo errado, binario de um bucket em vez da PMF completa
+2026-08-07 (sessao 6)|Felipe|codigo_quebrado|execucao_teste|lookahead entre rodadas da varredura por limpar so metade do estado expansivo
+2026-08-07 (sessao 6)|Felipe|codigo_quebrado|so_depois|bloco __main__ no meio do test_bl_integration deixava 4 testes sem rodar
+2026-08-07 (sessao 6)|Felipe|codigo_quebrado|so_depois|dois arquivos de teste chamavam nome de funcao anterior a um rename, NameError
+2026-08-07 (sessao 7)|Felipe|codigo_quebrado|so_depois|constante VIEWS_ATIVAS morta e desatualizada em src/config.py
+2026-08-07 (sessao 8)|Felipe|codigo_quebrado|so_depois|fl_correction binaria passada como correcao da PMF nas views 2.2 e 2.3
+2026-08-07 (sessao 8)|Felipe|alucinacao_numerica|so_depois|numero dito de memoria, 27 dias degenerados fora da janela, errado em duas das tres partes
+2026-08-07 (sessao 8)|Felipe|generalizacao|so_depois|prosa fixa do curva_c afirmava que o c nao muda o resultado
+2026-08-07 (sessao 9)|Felipe|codigo_quebrado|execucao_teste|teste de monotonicidade da banda nasceu falso-verde com carteira que nao gira

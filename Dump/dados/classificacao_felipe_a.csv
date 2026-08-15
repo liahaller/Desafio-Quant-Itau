@@ -1,0 +1,80 @@
+2026-08-15|Felipe|analise|sessao 34 reescrita de textos da pagina 4 com troca do grafico de atribuicao em graficos_p4.py e relatorio_p4.py
+2026-08-15|Felipe|codigo|sessao 33 criou scripts/relatorio_p4.py gerador da pagina 4 em pptx
+2026-08-15|Felipe|analise|sessao 32 criou graficos_p4.py e o dump de CSV em backtest_v1 curva_c e curva_banda
+2026-08-14|Felipe|analise|sessao 31 parser ad-hoc dos blocos de uso de IA do LOG com contagens de tokens iteracoes e decisoes
+2026-08-14|Felipe|analise|sessao 30 acoplou a regua da Lia em cinco scripts e re-gerou seis artefatos
+2026-08-13|Felipe|pesquisa|sessao 29 leitura das diretrizes e exemplos e criacao do plano de estrutura do relatorio v2
+2026-08-13|Felipe|codigo|sessao 28 corrigiu o texto cravado da camada tatica no gerador do Backtest_v1
+2026-08-11|Felipe|analise|sessao 27 construiu e ligou a camada tatica em src/tatica_sleeves.py com 16 testes novos
+2026-08-11|Felipe|analise|sessao 26 maratona de seis scripts de gate e seis artefatos de candidatas taticas
+2026-08-11|Felipe|analise|sessao 25 tres medicoes de premissas e refactor de referencias_g3 no gate_sleeves.py
+2026-08-11|Felipe|analise|sessao 24 ligou a regua por decisao no run_backtest e re-gerou seis artefatos
+2026-08-10|Felipe|analise|sessao 23 mediu ortogonalidade e a view C e ligou 15b e 15g no default do carregar
+2026-08-10|Felipe|pesquisa|sessao 22 panorama de travas e reescrita da mensagem RESPOSTA6 sem nenhuma linha de codigo
+2026-08-10|Felipe|pesquisa|sessao 21 inventario de views por subagente e criacao dos arquivos de candidatos sem codigo
+2026-08-10|Felipe|analise|sessao 20 ligou o aplicar_veto no run_backtest completou o teste de sinal e organizou commits
+2026-08-10|Felipe|analise|sessao 19 corrigiu a convencao do c e criou scripts/cristalizacao_entropia.py
+2026-08-09|Felipe|analise|sessao 18 promoveu o teste de sinal a script e construiu a view 3.1 direcional
+2026-08-09|Felipe|pesquisa|sessao 17 duas buscas por views novas em subagentes e escolha de candidatas sem codigo
+2026-08-09|Felipe|analise|sessao 16 ligou as views novas no backtest_v1 e criou scripts/views_novas.py
+2026-08-09|Felipe|analise|sessao 15 corrigiu o calendario do CPI no poly_loader e re-rodou as cinco analises
+2026-08-08|Felipe|analise|sessao 14 criou scripts/gate_sleeves.py com grupo de controle e o inventario de cortes
+2026-08-08|Felipe|analise|sessao 13 reconstruiu duas sleeves taticas com ancora inv(deltaSigma) e mediu as duas
+2026-08-08|Felipe|analise|sessao 12 construiu quatro views novas em src com 24 testes
+2026-08-08|Felipe|pesquisa|sessao 11 escreveu o dossie de limitacoes do v1 sem tocar codigo
+2026-08-08|Felipe|analise|sessao 10 restaurou o ambiente re-gerou quatro artefatos e criou scripts/dias_801_lia.py
+--- ERROS ---
+2026-08-15|Felipe|alucinacao_numerica|confererencia_humana|inverteu o sentido do criterio de estabilidade ao reescrever de memoria (aprovava por reprovava)
+2026-08-15|Felipe|generalizacao|autocorrecao|afirmou que o valor entregue era o minimo nas quatro varreduras quando vale em duas
+2026-08-15|Felipe|escopo_errado|confererencia_humana|primeira proposta de conteudo da pagina 4 veio so como lista de graficos sem texto de analise
+2026-08-15|Felipe|codigo_quebrado|confererencia_humana|preview em dado sintetico gravou Metricas_p4.md com numeros falsos na pasta de artefatos
+2026-08-15|Felipe|codigo_quebrado|execucao_teste|parser de tabela markdown quebrou no simbolo de soma de pesos nao escapado
+2026-08-14|Felipe|codigo_quebrado|execucao_teste|duas tentativas de reler arquivo de saida em caminho errado
+2026-08-14|Felipe|codigo_quebrado|confererencia_humana|except largo rotulou erro da regua como bloqueio da D4.1 e o artefato da view C saiu falso
+2026-08-14|Felipe|codigo_quebrado|so_depois|linha de configuracao cravada no Curva_banda.md anunciava views e camada erradas
+2026-08-14|Felipe|alucinacao_numerica|so_depois|prosa afirmando um terco desfeito em dois pregoes contra os 43% medidos ao lado
+2026-08-13|Felipe|texto_impreciso|autocorrecao|referencia orfa a uma tabela que deixou de existir no plano do relatorio
+2026-08-13|Felipe|codigo_quebrado|autocorrecao|erro de digitacao sleeges no texto da correcao do gerador
+2026-08-13|Felipe|codigo_quebrado|autocorrecao|concatenacao sem espaco no texto da correcao do gerador
+2026-08-11|Felipe|codigo_quebrado|autocorrecao|criterio de estabilidade nao discriminante marcava 13 de 14 celulas
+2026-08-11|Felipe|premissa_herdada|autocorrecao|frase de mercado irmao colada no artefato da M9 negando o que a propria M9 tinha
+2026-08-11|Felipe|codigo_quebrado|execucao_teste|Sigma singular por coluna irrelevante reprovava o optimal_weights
+2026-08-11|Felipe|codigo_quebrado|autocorrecao|tres patches por heredoc corromperam escapes dentro de strings Python
+2026-08-11|Felipe|codigo_quebrado|autocorrecao|conversao de unidade 100x inflada no mu do gate de mercados irmaos
+2026-08-11|Felipe|alucinacao_numerica|autocorrecao|prosa gerada afirmava spreads quase neutros numa tabela cujo maior valor era +0,59
+2026-08-11|Felipe|texto_impreciso|autocorrecao|item duplicado no Candidatos_taticos.md ao editar a secao da 1.2
+2026-08-11|Felipe|alucinacao_numerica|confererencia_humana|disse que a camada tinha uma estrategia viva que nao era nenhuma das quatro
+2026-08-11|Felipe|texto_impreciso|confererencia_humana|rotulo o poly esta atrasado no Conclusoes.md lia-se como o oposto da tese
+2026-08-11|Felipe|codigo_quebrado|execucao_teste|Sigma da tabela estendida singular por construcao reprovou no guarda de condicionamento
+2026-08-11|Felipe|generalizacao|execucao_teste|leu crescimento da mediana como tendencia e comunicou antes de medir o variance ratio
+2026-08-11|Felipe|generalizacao|execucao_teste|paragrafo gerado afirmava reversao dominante com placar real de 4x3
+2026-08-11|Felipe|generalizacao|execucao_teste|prosa dava o estoque de candidatos por esgotado ignorando a 1.1 PEAD
+2026-08-11|Felipe|codigo_quebrado|execucao_teste|guarda de cobertura antes da checagem de views vivas quebrava nos 11 pregoes sem view
+2026-08-11|Felipe|codigo_quebrado|execucao_teste|cabecalho cravado do Curva_c.md descrevia carteira de duas views apos a D23
+2026-08-11|Felipe|codigo_quebrado|autocorrecao|caminho relativo do --regua nao seguia o --raiz e apagaria a tabela sem erro
+2026-08-10|Felipe|premissa_herdada|execucao_teste|registrou que o tilt deixa de ser neutro com a 15b repetindo a crenca de views neutras
+2026-08-10|Felipe|premissa_herdada|so_depois|item 4 da 15g registrado como ja medido em tres lugares quando so o angulo estava
+2026-08-10|Felipe|alucinacao_numerica|confererencia_humana|afirmou que a RESPOSTA6 nao trazia espec de formato quando ela ja trazia
+2026-08-10|Felipe|escopo_errado|confererencia_humana|escolheu artefato errado ao montar follow-up de mensagem ainda nao enviada
+2026-08-10|Felipe|escopo_errado|autocorrecao|pedido pedia uma serie no singular quando o uso declarado exigia uma coluna por nivel
+2026-08-10|Felipe|premissa_herdada|autocorrecao|propagou o bloqueio do etf_open_daily da D17e sem abrir o Premissa_taticas.md citado
+2026-08-10|Felipe|codigo_quebrado|autocorrecao|cinco commits com mensagem malformada por here-string do PowerShell dentro do Bash
+2026-08-10|Felipe|codigo_quebrado|so_depois|docs de tres funcoes descreviam a saida da regua como confianca e mandavam inverter
+2026-08-10|Felipe|generalizacao|so_depois|argumento do passo 3 sustentado num c que a regua nunca alcanca
+2026-08-09|Felipe|alucinacao_numerica|execucao_teste|atribuiu ao z expansivo uma troca de sinal que era do recorte de amostra
+2026-08-09|Felipe|escopo_errado|confererencia_humana|propos trio de views em que nenhuma le o Polymarket tratando a tese como desempate
+2026-08-09|Felipe|codigo_quebrado|execucao_teste|extracao do data para caminho longo estourou o limite do Windows e deixou JSON faltando
+2026-08-09|Felipe|codigo_quebrado|autocorrecao|leu o P das views do diagnostics do motor que nao guarda o P
+2026-08-09|Felipe|codigo_quebrado|execucao_teste|teste de sinal reconstruido com defasagem errada nao reproduzia o controle
+2026-08-09|Felipe|codigo_quebrado|so_depois|base da grade do M3 declarada errada invertia a view B registrada em 15g
+2026-08-09|Felipe|codigo_quebrado|autocorrecao|diff sem strip-trailing-cr contou CRLF e reportou 130 linhas de deriva inexistentes
+2026-08-09|Felipe|escopo_errado|autocorrecao|git stash pop preso em timeout deixou a arvore sem a correcao durante a medicao
+2026-08-09|Felipe|codigo_quebrado|so_depois|texto cravado no gate_sleeves afirmava mu invertido nos dois ativos
+2026-08-09|Felipe|codigo_quebrado|so_depois|texto cravado no premissa_taticas fixava contaminados TIP e TLT
+2026-08-08|Felipe|codigo_quebrado|execucao_teste|Sigma do encolhimento com a janela do backtest em vez da historia inteira
+2026-08-08|Felipe|alucinacao_numerica|autocorrecao|contagem errada de desenhos taticos 9 no lugar de 12 numa resposta ao dono
+2026-08-08|Felipe|codigo_quebrado|execucao_teste|mu sem linha de base media o bull market em vez do drift do anuncio
+2026-08-08|Felipe|codigo_quebrado|execucao_teste|mu de 17 eventos entrou no inv(deltaSigma) sem encolhimento
+2026-08-08|Felipe|generalizacao|execucao_teste|declarou que a transversal reprovou numa regua sem rodar o mesmo teste nas incumbentes
+2026-08-08|Felipe|generalizacao|execucao_teste|desenhou a view de incerteza linear na entropia supondo que a forma sobreviveria a troca
+2026-08-08|Felipe|generalizacao|execucao_teste|esperava a transversal comprada em TIP por analogia com a 2.2

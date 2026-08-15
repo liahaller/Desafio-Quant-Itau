@@ -1,0 +1,45 @@
+2026-08-10|Paulo|pesquisa|fecho do G10 - correcao de bloco em MD e resposta completa ao pedido, sem codigo
+2026-08-10|Paulo|analise|scripts de CPI realizado (gamma + fred) e JSONs de dados
+2026-08-10|Paulo|analise|g5b_fomc_conditionid.py + estagio fomc no g5_volume_no_tempo.py + pipeline
+2026-08-08|Paulo|analise|tres scripts novos G10a/G10b/G10c e CSVs em data/raw
+2026-08-08|Paulo|pesquisa|registro da decisao D9 (overlap FOMC), sem codigo nem dado
+2026-08-08|Paulo|analise|regra NaN-vs-0 aplicada em g5_volume_no_tempo.py e re-run
+2026-08-07|Paulo|analise|g8_fred_dff.py e g5_volume_no_tempo.py novos
+2026-08-06|Paulo|analise|g7_reajuste_etfs.py - unificacao da base de ajuste dos dois parquets
+2026-07-08|Paulo|codigo|separar_mercados_fed.py e log de separacao
+2026-07-08|Paulo|analise|download_polymarket_fed.py + parquet de probabilidades + testes
+2026-07-08|Paulo|analise|download_prices.py + parquet dos ETFs + testes
+2026-07-22|Paulo|codigo|explorar_mercados_polymarket.py e lista de 30 mercados candidatos
+2026-07-27|Paulo|analise|gerar_dashboard_reunioes.py + coluna volume no pipeline + testes
+2026-07-27|Paulo|pesquisa|GUIA_DE_USO.md - documentacao apenas
+2026-07-29|Paulo|analise|explorar_clob_bidask.py e levantar_mercados_pedido.py + dados crus
+2026-07-29|Paulo|analise|scripts followup F1-F10 (ids, trades, live price, calendarios, cpi sweep)
+2026-08-02|Paulo|analise|scripts g1 a g4 + parquet de Open + series FRED cruas
+2026-08-06|Paulo|analise|g9b_payrolls_polymarket.py e g9a_payrolls_calendar.py + CSVs
+--- ERROS ---
+2026-08-10|Paulo|escopo_errado|confererencia_humana|atrito de comunicacao - insistiu na cronologia do git em vez de responder o sim/nao direto do dono
+2026-08-10|Paulo|codigo_quebrado|execucao_teste|fomc_grid dividia datetime64[ms] por 10**9 e colapsava todos os slots em 1970
+2026-08-10|Paulo|alucinacao_numerica|autocorrecao|entregavel citou a ordem de colunas errada do parquet
+2026-08-08|Paulo|premissa_herdada|execucao_teste|seguiu a API observations sugerida no pedido sem conferir o formato - saida nao ficou identica aos fred_*.csv
+2026-08-08|Paulo|alucinacao_numerica|autocorrecao|entregavel citou hash de commit morto (0a0daea) depois do amend
+2026-08-07|Paulo|escopo_errado|confererencia_humana|leitura estreita do prompt entregou so o G8 e deixou o G5 de fora
+2026-08-07|Paulo|codigo_quebrado|execucao_teste|resolvedor de conditionId falhou em familias antigas e na serie M (regex de slug lowercase-only)
+2026-08-06|Paulo|codigo_quebrado|autocorrecao|if False residual (dead code) no comparador do G7
+2026-08-06|Paulo|texto_impreciso|autocorrecao|typo fechabelo no MD entregavel
+2026-07-08|Paulo|codigo_quebrado|autocorrecao|categorizacao descritiva do log jogou 11 mercados em sem categoria
+2026-07-08|Paulo|codigo_quebrado|execucao_teste|assumiu limit=500 na Gamma (teto real 100) - paginacao parou cedo e escolheu o tag errado
+2026-07-08|Paulo|codigo_quebrado|execucao_teste|assumiu que interval=max funcionaria no prices-history - volta vazio para mercados resolvidos
+2026-07-08|Paulo|codigo_quebrado|execucao_teste|script salvou parquet vazio quando XLK e XLE falharam - validacao passou em vacuo
+2026-07-22|Paulo|alucinacao_numerica|so_depois|volumes estimados da base de conhecimento entregues na lista dos 30 mercados como se fossem medidos
+2026-07-27|Paulo|alucinacao_numerica|autocorrecao|volume de March 2026 exibido como zero por usar first em vez da soma
+2026-07-29|Paulo|premissa_herdada|confererencia_humana|supos que nao havia rede e entregou a secao 1 documental em vez de medida ao vivo
+2026-07-29|Paulo|codigo_quebrado|autocorrecao|M9 mediu os mercados de 2026 em vez do mercado de 2022
+2026-07-29|Paulo|codigo_quebrado|execucao_teste|script nao passava closed=true e o Gamma devolvia vazio para mercado resolvido
+2026-07-29|Paulo|codigo_quebrado|autocorrecao|F2 escolheu mercados errados por busca-por-volume (M5 e M9)
+2026-07-29|Paulo|alucinacao_numerica|autocorrecao|leu o asterisco do calendario do FOMC como reuniao extraordinaria quando marca SEP
+2026-07-29|Paulo|codigo_quebrado|autocorrecao|incluiu o notation vote de 22/08/2025 como reuniao no calendario
+2026-08-02|Paulo|codigo_quebrado|autocorrecao|G4 casou mercados de ano errado (april-us-monthly 2026 e february-monthly 2025)
+2026-08-02|Paulo|codigo_quebrado|execucao_teste|G3 tentou resolver o M5 por /events sendo slug de mercado - corrigido para /markets
+2026-08-06|Paulo|codigo_quebrado|execucao_teste|head -120 matou o script por SIGPIPE e truncou a serie
+2026-08-06|Paulo|codigo_quebrado|autocorrecao|atribuicao de mes de referencia pelo texto da regra deu falso negativo em jan/2025
+2026-08-06|Paulo|codigo_quebrado|autocorrecao|mercados estrangeiros entraram na varredura por falta de filtro US-only

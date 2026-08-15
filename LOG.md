@@ -1,5 +1,370 @@
 # LOG de sessões
 
+## 2026-08-15 (sessão 36) — Felipe
+
+**Contexto da sessão:** com os quatro visuais da página 5 prontos na sessão 35,
+escrever a **página 5** (uso de IA generativa e próximos passos) no mesmo estilo
+da página 4, seguindo as seções do `Plano_relatorio_v2.txt` sem desvio.
+
+**Feito:**
+- **`scripts/relatorio_p5.py`** → `Relatório/Drafts/KAIROSv2_p5.pptx`. As
+  primitivas de layout, a paleta e a métrica tipográfica são **importadas de
+  `relatorio_p4.py`** — nada de estilo foi redefinido, para as duas páginas não
+  divergirem.
+- **Estrutura entregue,** na ordem do plano: a regra que organizou o trabalho com
+  IA (prosa + 4 chips: dono por módulo, ritual de sessão, second-brain por
+  branch, placeholder em vez de palpite) · dados gerais (os 4 KPIs) · linha do
+  tempo · tipo de sessão (donut) · erros × mecanismo · e a faixa de baixo com
+  separação do trabalho, onde a IA agregou, onde falhou, limitações declaradas e
+  próximos passos, fechando com a linha de fechamento e o rodapé de proveniência.
+- **Layout:** uso de IA ocupa a página inteira até a faixa de baixo; conclusão
+  (limitações + próximos passos) fica nas **duas colunas da direita**, como o
+  plano pede.
+- **Auto-teste que mede texto de verdade** (`--demo`): além do teste de moldura
+  herdado da p. 4, `altura_do_texto()` mede cada textbox com as métricas reais do
+  Segoe UI (PIL) e falha se o texto estourar a caixa. Sem LibreOffice nesta
+  máquina não há como renderizar, e esse é exatamente o defeito que o `.pptx` não
+  denuncia.
+
+**Quebrou / aprendido:**
+- **O primeiro layout estourava em 5 caixas** e ninguém veria: os chips pediam 3
+  linhas num slot de 2 e as três legendas da faixa de gráficos invadiam a régua
+  de 4,98. Pego pelo medidor recém-escrito, não por leitura. Correção: chips
+  cortados para 2 linhas e as legendas para 3–4, com o conteúdo que sobrou
+  realocado (a qualidade do dado de token foi para "Limitações declaradas", onde
+  já era o argumento certo).
+- **Contagem de artefato trocada:** o texto dizia "37 scripts, 38 testes"; é o
+  inverso (38 scripts, 37 testes, 40 análises). Pego conferindo contra o `ls`.
+- **Decisão de escopo do dono (categoria 2, resolvida na conversa):** o
+  `p5_dashboard.png` **não entrou**. No lugar, os quatro KPIs vão tipografados no
+  slide. Motivo: em largura de coluna o texto do matplotlib cairia para ~3 pt, e a
+  página 4 já tipografa números nativamente (a tabela de métricas). O PNG segue
+  no `Dump/graficos` como artefato.
+
+**Pendente:**
+- 🟡 **Conferência visual do dono** — a página nunca foi renderizada nesta
+  máquina; o que garante o encaixe é a medição, não o olho.
+- 🔴 Páginas 1, 2 e 3 do v2 seguem não escritas.
+- 🔴 D12 (nível e escopo do teto) segue aberta.
+- 🔴 Continua valendo: **não rodar `scripts/relatorio_p4.py`** sobre
+  `KAIROSv2_p4.pptx` — o `.pptx` é a fonte da verdade da p. 4 e o gerador está
+  atrás dele. O `relatorio_p5.py` importa dele só as primitivas, que não mudaram.
+- Nada commitado — `scripts/relatorio_p5.py` e o `.pptx` estão na árvore.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~60k na janela (~6% de 1M); ~130k de consumo acumulado
+  na sessão. Nenhum subagente.
+- **Prompt inicial (verbatim):** "NA ultima sessão montamos os elementos visual da
+  página 5. Agora vamos faze-la. Use o plano_relatório_v2 para fazer a página 5.
+  NÂO desvie das secções e analises apresentadas no plano. Use o mesmo estilo que
+  ná página 4 para gerar a página 5."
+- **Iterações até aceitar:** 1 rodada de geração (pendente da conferência visual
+  do dono).
+- **Erros da IA:** 2, os dois pegos dentro da sessão e nenhum chegou ao `.pptx`
+  entregue — (a) 5 caixas de texto estourando o slot, pegas pelo medidor de
+  altura; (b) contagem de scripts e testes invertida, pega na conferência contra
+  o `ls`.
+- **Decisões escaladas:** — (nenhuma para `Decisoes_pendentes.md`; uma decisão de
+  escopo do dono resolvida na conversa: KPIs tipografados em vez do
+  `p5_dashboard.png`).
+- **Tags:** —
+
+## 2026-08-15 (sessão 35) — Felipe
+
+**Contexto da sessão:** com a página 4 fechada, levantar o que a **página 5** (uso
+de IA) precisa e produzir os visuais. Terminou com os quatro gerados a partir dos
+**três** LOGs do projeto — é a primeira vez que uma entrega agrega dado dos três
+membros.
+
+**Feito:**
+- **`scripts/graficos_p5.py`** — o parser do `LOG.md` que a sessão 31 deixou como
+  pendência virou script. Lê os três LOGs (o do branch pela árvore, os da Lia e do
+  Paulo por `git show origin/<branch>:LOG.md`, **sem merge e sem copiar arquivo
+  alheio para dentro do branch**) e gera `p5_dashboard`, `p5_timeline`,
+  `p5_donut`, `p5_erros` em SVG+PNG, mais `Dump/dados/log_sessoes.csv` e
+  `Dump/analises/Metricas_p5.md`. Tem `--demo` sobre LOG sintético.
+- **Números do processo:** 91 sessões (Felipe 55 · Lia 18 · Paulo 18), 19,7M
+  tokens (232k por sessão), **81 decisões** com data de registro rastreável,
+  **taxa de recorreção 37%**.
+- **Classificação à mão dos 91 blocos** por 4 subagentes, com briefing único para
+  não divergirem entre si. Regras fechadas pelo dono ANTES da contagem: tipo de
+  sessão pelo artefato que ela deixou; erros lidos em `Erros da IA` **+**
+  `Quebrou / aprendido`, contados um a um, só os cometidos pela IA; quatro
+  mecanismos de contenção. Saída em `Dump/dados/classificacao_*.csv`, uma linha
+  por sessão e por erro — o total é conferível, não é número solto.
+- **Tipo de sessão:** análise e medição **54% das sessões e 71% dos tokens**;
+  pesquisa 31%/25%; código 15%/4%.
+- **Erros: 145.** código quebrado 72 · alucinação numérica 25 · generalização 13 ·
+  texto impreciso 13 · premissa herdada 12 · escopo errado 10. Por quem barrou:
+  execução/teste 50 · auto-correção 46 · conferência humana 32 · **só pego em
+  sessão posterior 17 (12%)**.
+- **O achado da página:** `texto impreciso` e `escopo errado` são as **únicas duas
+  categorias com ZERO erros pegos por teste** — 23 erros que nenhuma execução
+  detectaria, e a conferência humana pegou todos ainda na sessão (zero em "só
+  depois"). Teste cobre código, humano cobre sentido.
+
+**Quebrou / aprendido:**
+- **Lia e Paulo não registram tokens.** 13 dos 15 blocos da Lia e 14 dos 18 do
+  Paulo trazem só "% da janela", sem dizer o tamanho dela — e as âncoras se
+  contradizem (o Paulo tem 1M e ~200k no MESMO dia, com o mesmo modelo).
+  **Decisão do dono:** converter assumindo a janela da assinatura Pro, com a
+  virada que o LOG do Felipe documenta (200k até 2026-07-08, 1M depois),
+  declarada em `JANELA_POR_DATA`. Consequência que a página precisa admitir: só
+  **58 das 91** sessões têm token medido, e os KPIs de token são dominados pela
+  conversão — Felipe 5,6M em 53 sessões medidas contra Lia 7,2M com **1** medida
+  e Paulo 6,9M com 4. As barras convertidas saem **hachuradas** no gráfico.
+- **Número de decisão não se extrai de prosa.** "as **13** foram fechadas" e
+  "**3** e **4** fechadas" são a mesma frase para um regex. A primeira versão
+  contava "categoria 2", "opção 1" e "janela 5 × 10" como decisão. Regra final:
+  só citação inequívoca (sufixo de letra, prefixo `D`, negrito, depois da palavra
+  "Decisão", ou `16 (nova`). Preço declarado: **43 decisões ficam sem data** e
+  saem listadas no `Metricas_p5.md` em vez de sumir.
+- **O LOG do Paulo não é monotônico no tempo** — começa novo-primeiro e volta a
+  crescer no fim. Inverter pela comparação primeira-vs-última data não basta;
+  sem uma ordenação estável por data dos DOIS lados, o casamento entre sessão e
+  classificação sai trocado (a chave não pode ser a data: há 5 sessões do Felipe
+  em 2026-08-08). Ficou junção posicional por `idx`, protegida por `assert` de
+  data — que é o que pegou o defeito.
+- **O eixo secundário do plano v2 não entrou.** Tokens e decisões não dividem
+  escala; foram para dois painéis com o mesmo x, como o `p4_curva` já faz com a
+  curva e o drawdown.
+- **A primeira regra de desempate do donut matou a categoria.** Com "código ganha
+  de análise", `análise` ficou com 4 de 91 — neste projeto quase toda sessão de
+  medição também mexeu no script que mede. O dono inverteu depois de ver o
+  gráfico, e 45 sessões trocaram de classe.
+
+**Pendente:**
+- 🔴 **Texto da página 5 não escrito** — os quatro visuais e os números existem,
+  faltam os blocos de prosa.
+- 🟡 **O "esquema visual da divisão de trabalho"** do plano v2 segue sem existir:
+  não é dado, é diagrama, e não sai de parser.
+- 🟡 Os KPIs de token (232k/sessão, 19,7M) são **estimativa de estimativa** em 33
+  das 91 sessões. Se algum avaliador puxar esse fio, a resposta honesta é a regra
+  declarada — não fingir que os 91 números têm a mesma qualidade.
+- 🟡 43 decisões sem data de registro, listadas no `Metricas_p5.md`. Se a página
+  quiser citar o total de decisões do projeto (53 de nível 2, ou 130 com
+  sub-itens), esse número **não** é o mesmo 81 da curva acumulada.
+- 🔴 Páginas 1, 2 e 3 do v2 seguem não escritas.
+- 🔴 D12 (nível e escopo do teto) segue aberta, sem mudança.
+- 🔴 Continua valendo o aviso da sessão 34: **não rodar `scripts/relatorio_p4.py`**
+  sobre `Relatório/Drafts/KAIROSv2_p4.pptx` — o `.pptx` é a fonte da verdade da
+  página 4 e o gerador está atrás dele.
+- ⚠️ **Observação para a Lia (não é pedido):** o relatório é módulo dela pela regra
+  2 do `CLAUDE.md`, e esta sessão além de mexer na página 5 **leu o LOG e o
+  `Decisoes_pendentes.md` dos branches dela e do Paulo** para agregar os números.
+  Nada dos branches deles foi alterado nem copiado para cá — a leitura é por
+  `git show`, em memória. Segue sendo insumo, não substituição do trabalho dela.
+- Nada commitado — `scripts/graficos_p5.py`, os quatro `classificacao_*.csv`,
+  `log_sessoes.csv`, os PNG/SVG da p5 e `Metricas_p5.md` estão na árvore.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~215k tokens na sessão principal (~21% de janela de 1M;
+  o `/context` no meio da sessão marcava 157,9k). **~900k nos subagentes** —
+  4 agentes de classificação, cada um relido uma segunda vez para a regra
+  invertida do donut.
+- **Prompt inicial (verbatim):** "Na ultima sessão fechamos a página 4.. Agora
+  quero fazer a página 5. Quais gráficos precisamos gerar e como fazemos para
+  monta-los? Use o plano do v2 como referencia para saber que elementos precisamos
+  gerar"
+- **Iterações até aceitar:** 3 — (1) o levantamento inicial dos gráficos foi aceito
+  de primeira; (2) o donut saiu com `análise` em 4% e o dono inverteu o desempate
+  depois de ver a figura; (3) `outro` ficou com 16% dos erros e o dono mandou
+  separar em duas categorias nomeadas. Em duas escolhas o dono decidiu **contra** a
+  recomendação (converter o % em vez de trocar a métrica da barra) — registrado
+  como decisão dele, não como iteração de correção.
+- **Erros da IA:** 6, todos pegos dentro da sessão e nenhum chegou a artefato.
+  (a) `letterspacing` inexistente no `Text` do matplotlib, quebrou o `--demo`;
+  (b) atribuição a fatia de lista que iteraria o DataFrame por engano;
+  (c) linha de legenda do donut escrita como expressão sem sentido;
+  (d) primeira regra de citação de decisão contando contagem como ID
+  ("categoria 2", "opção 1", "as 13") — pego auditando a própria saída;
+  (e) a mesma regra deixando de casar `D22e`, porque o `D` colava no lookbehind;
+  (f) o `--demo` misturando o LOG sintético com os LOGs REAIS da Lia e do Paulo —
+  latente desde que o `gerar()` foi escrito, e só revelado pelo `assert` novo.
+  Os três primeiros por execução, os três últimos por conferência da saída.
+- **Decisões escaladas:** — (nenhuma para `Decisoes_pendentes.md`). Cinco decisões
+  de escopo do dono resolvidas na conversa, todas registradas acima: métrica da
+  barra, valor da janela, fonte da contagem de decisões, desempate do tipo de
+  sessão e o corte do `outro`.
+- **Tags:** `[PROMPT-CHAVE]`
+
+## 2026-08-15 (sessão 34) — Felipe
+
+**Contexto da sessão:** a página 4 existia desde a 33, mas o dono não aceitou os
+textos — técnicos demais, e sem deixar claro qual é o ponto de cada bloco. A
+sessão foi de **reescrita de texto bloco a bloco na conversa**, com o dono
+aprovando cada versão antes de qualquer edição de arquivo.
+
+**Feito:**
+- **Gráfico de atribuição substituído.** O antigo comparava a entrega contra a
+  versão anterior dela (Δ das views novas contra o v1), o que obrigava a página
+  a falar de duas versões da estratégia e não respondia "de onde vem o
+  resultado". Entrou `grafico_composicao` em `scripts/graficos_p4.py`: **cascata
+  perna de mercado (+28,7 pp) → perna das views (+5,2) → custo (−3,0) →
+  resultado (+30,9)**, lida direto de `Dump/dados/backtest_diario.csv` (cenário
+  `tilt ≤ 1`), com `assert` de que a cascata fecha contra o `r_liquido` gravado.
+  Achado que a página não contava: **o custo devolve 57% do que as views
+  produzem**.
+- **Saíram junto** `ler_tabela_md` e `_celulas` — só existiam para o gráfico
+  antigo. Rótulo do eixo do painel de sensibilidades: "excesso × SPY" →
+  **"vantagem sobre o SPY"** (a pedido do dono, que quer o termo "excesso" fora
+  da página).
+- **Blocos reescritos no gerador** (`scripts/relatorio_p4.py`): metodologia (o
+  parágrafo agora é a tese "os quatro vieses foram fechados por construção" e os
+  chips dizem como cada um foi fechado, em linguagem comum), legenda da curva,
+  legenda nova da cascata, e sensibilidades (mensagem explícita: "um resultado
+  bom pode ser só um parâmetro bem escolhido" + o valor entregue é o pior ponto
+  da grade em dois dos quatro eixos). A frase do escopo do teto migrou da
+  metodologia para as sensibilidades, como aposto do primeiro eixo.
+- **Blocos reescritos só na conversa** e **aplicados à mão pelo dono no .pptx**:
+  nota do beta, "o que o número não diz", as duas autoavaliações (com o título
+  "· o placar, não a curva" → **"· o que reprovamos"**) e a simulação de fundo.
+- Cada item de "onde erramos" passou a declarar **quem pegou o erro** — a
+  segunda medida, a releitura do critério, a conferência da entrega.
+- Conferência visual por exportação real (PPTX → PDF por COM → PNG por
+  `pymupdf`) em duas rodadas; a primeira pegou dois textos passando por cima da
+  régua da faixa 2.
+
+**Quebrou / aprendido:**
+- 🛑 **Erro meu, pego pelo dono:** ao reescrever "onde erramos" inverti o sentido
+  do achado — escrevi que o critério de estabilidade *aprovava* 13 de 14 casos
+  quando ele *reprovava*. Conferido contra `LOG.md:525-529` e corrigido antes de
+  entrar em qualquer arquivo. Origem: reescrever de memória do texto do slide em
+  vez de voltar ao artefato.
+- **O teste de layout do gerador não testa texto.** O `--demo` só verifica se a
+  *forma* cabe na moldura; texto que transborda a caixa continua invisível para
+  ele e só aparece na exportação. As duas colisões desta sessão passaram pelo
+  demo. Régua prática que ficou: **~55 caracteres por linha** na coluna de
+  2,15 in a 6,1 pt, e o orçamento de linhas sai da base da imagem até a régua.
+- O antigo gráfico de atribuição era honesto, mas o **título prometia atribuição
+  e ele entregava teste de robustez**. A informação de fragilidade ("sem os três
+  maiores dias") não se perdeu: virou uma frase na legenda da cascata — e com o
+  cenário entregue ela é **positiva** (sem os três maiores pregões a vantagem
+  seria +4,5 em vez de +2,3 pp em soma diária).
+
+**Pendente:**
+- 🔴 **O gerador está dessincronizado do `.pptx` entregue.** Os blocos [7]–[11]
+  foram aplicados **à mão** pelo dono; `scripts/relatorio_p4.py` ainda tem o
+  texto antigo deles. **Rodar o gerador de novo apaga essas edições.** É o mesmo
+  modo de falha que a própria página lista em "onde erramos" — só que agora na
+  direção contrária (o arquivo entregue é que está à frente do código).
+  **Decidido pelo dono no fim da sessão: não sincronizar.** Ele editou as
+  propostas ao aplicar, então o texto do `.pptx` não é o que está no gerador nem
+  o que está nesta conversa. A partir daqui **o `.pptx` é a fonte da verdade da
+  página 4** e o gerador serve só para o layout e para os quatro blocos que
+  ficaram nele. **Não rodar `scripts/relatorio_p4.py` sobre
+  `Relatório/Drafts/KAIROSv2_p4.pptx`** — a saída sobrescreve a página entregue.
+  Se a página precisar mudar, muda no PowerPoint.
+- 🟡 Estouro de rodapé no bloco da simulação de fundo (a última linha passava por
+  baixo da régua) — a reescrita encurta ~50 caracteres e deve resolver, mas a
+  versão do dono não foi conferida por exportação.
+- 🔴 Páginas 1, 2, 3 e 5 do v2 seguem não escritas.
+- 🔴 D12 (nível e escopo do teto) segue aberta, sem mudança. A página inteira
+  assume `tilt ≤ 1`.
+- ⚠️ **Observação para a Lia (não é pedido):** o relatório é módulo dela pela
+  regra 2 do `CLAUDE.md`. Esta sessão mexeu na página 4 por instrução direta do
+  dono, como a 33; segue sendo insumo, não substituição do trabalho dela.
+- Nada commitado — `graficos_p4.py`, `relatorio_p4.py`, os PNG/SVG de
+  `Dump/graficos/` e o `.pptx` estão na árvore de trabalho.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~55k tokens (janela de 1M; ~5%).
+- **Prompt inicial (verbatim):** "Na ultima sessão escrevemos a pagina 4 mas eu
+  não fiquei feliz com os textos dentro dela. tenho duas críticas, sinto que
+  estão muito técnicos e que uma pessoa que lê não consegue entender qual o
+  ponto que ele esstá fazendo. É o seguinte. Apenas leia a página como está.
+  Vamos passar os textos um por um e alterando eles aqui dentro do chat."
+- **Iterações até aceitar:** 3 (o bloco de atribuição foi descartado inteiro
+  depois de duas propostas de texto; o layout fechou em duas exportações; a
+  inversão do critério de estabilidade exigiu uma correção).
+- **Erros da IA:** 1 — sentido invertido do critério de estabilidade
+  ("aprovava" por "reprovava"), pego pelo dono e corrigido contra o `LOG.md`
+  antes de entrar em arquivo.
+- **Decisões escaladas:** — (nenhuma).
+- **Tags:** `[PROMPT-CHAVE]` — "leia a página como está e vamos passar os textos
+  um por um" produziu revisão bloco a bloco com aprovação por bloco; é o padrão
+  que evitou reescrita em massa sem conferência.
+
+## 2026-08-15 (sessão 33) — Felipe
+
+**Contexto da sessão:** ponto de retomada da 32 — a estrutura da página 4 estava
+fechada e os três gráficos existiam, faltava o texto. Esta sessão **escreveu e
+diagramou a página 4 inteira** em PPTX.
+
+**Feito:**
+- **`scripts/relatorio_p4.py`** — gerador da página 4 em `python-pptx`
+  (13,333 × 7,5 in). Paleta e métrica tipográfica **extraídas do próprio v1** com
+  `pymupdf` (fundo `#0A1621`, acento `#F5A623`, texto `#E8EDF2`, apagado
+  `#6B8299`, régua `#24374A`, Segoe UI) — **nenhum texto ou imagem do v1 foi
+  herdado**. Saída: `Relatório/Drafts/KAIROSv2_p4.pptx`.
+- **As nove seções do plano v2 entraram todas**, na ordem dele: metodologia e
+  vieses (faixa de topo, 4 chips), curva + drawdown com parágrafo de leitura,
+  atribuição, sensibilidades, tabela de métricas, "o que o número não diz", e as
+  três autoavaliações (placar / onde erramos / simulação de fundo).
+- **Os três achados 🟡 pendentes da sessão 32 foram usados**: beta 0,95 na
+  tabela (com a nota de que a carteira não é SPY alavancado e também não é
+  neutra), o drawdown pior que o do benchmark no mesmo evento de abril/2025 (no
+  parágrafo da curva, em vermelho), e o excesso que **não cruza zero em nenhuma
+  das quatro varreduras** (bloco de sensibilidades).
+- **Auto-teste de layout** (`--demo`): monta o slide, relê o arquivo e falha se
+  qualquer forma vazar a moldura de 13,333 × 7,5 in ou se o slide tiver menos de
+  40 formas. Pegou dois estouros de moldura antes da primeira exportação.
+- **Conferência visual por exportação real**: PPTX → PDF via COM do PowerPoint →
+  PNG via `pymupdf`. Três rodadas até o layout fechar (rótulos de duas linhas
+  colidindo com o corpo, chips da metodologia se sobrepondo, coluna da tabela
+  invadindo o rodapé).
+
+**Quebrou / aprendido:**
+- ⚠️ **O bloco "Simulação de Fundo" é o único da página sem artefato medido por
+  trás.** O plano pede perfis de cliente simulados por IA; não existe script nem
+  `Dump/analises/` para isso. O que está no slide é **leitura qualitativa gerada
+  a partir dos números reais** (drawdown −19,6%, Σ|w| 1,91, giro 0,40, beta 0,95,
+  alpha +2,6% a.a.) — **nenhum número novo foi inventado**, mas também nenhum foi
+  medido. **Resolvido pelo dono no fim da sessão: é leitura**, e o slide passa a
+  declarar isso — o bloco abre com "Leitura, não medição." em destaque e com a
+  frase "nenhum número novo: a simulação lê os medidos".
+- Correção de rumo antes de virar erro: a primeira redação do bloco de
+  sensibilidades afirmava que o valor entregue era o de menor excesso **nas
+  quatro** varreduras. Confere só em teto e γ — na banda ele fica 0,1 pp abaixo
+  do melhor ponto e no nível do Ω ele é o **segundo maior** da grade. O texto
+  final diz isso.
+- `Read` continua sem abrir PDF neste ambiente; `pymupdf` (instalado nesta
+  sessão) resolve tanto a extração de estilo quanto a conferência visual.
+
+**Pendente:**
+- 🔴 **Páginas 1, 2, 3 e 5 do v2 seguem não escritas.** A 4 é a primeira.
+- 🔴 **Rodar `python scripts/relatorio_p4.py` com o PPTX fechado.** A declaração
+  "Leitura, não medição." do bloco da simulação está no gerador mas **não** no
+  `.pptx` entregue: o PowerPoint estava com o arquivo aberto e a regravação
+  falhou com `PermissionError`. O `--demo` passou; falta só a regravação.
+- 🟡 A página assume a config de entrega `tilt ≤ 1`; se a **D12** fechar em outro
+  nível ou escopo, todos os números da página mudam e o gerador tem de rodar de
+  novo. Nada está cravado à mão — os textos citam os números, não os calculam.
+- 🔴 D12 (nível e escopo do teto) segue aberta, sem mudança.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~170k tokens — `Plano_relatorio_v2.txt`, `LOG.md`,
+  `Conclusoes.md`, cinco artefatos do `Dump/analises/`, os cinco CSVs do
+  `Dump/dados/`, os três PNGs da página e o `KAIROSv1.pdf` (texto + render).
+- **Prompt inicial (verbatim):** "Na ultima sessão criamos rerodamos o backtest e
+  criamos os gráficos do backtest do relatório. Agora quero gerar APENAS a página
+  4 do v2. Use o plano_relatório_v2 como guia para o conteúdo da página, não fuja
+  das secções e descrições dele. Faça a página em powerpoint. Use o estilo do v1
+  como referencia mas apenas o estilo, não herde nenhum texto ou imagem dele."
+- **Iterações até aceitar:** 3 rodadas de layout, todas pegas pela conferência
+  visual da própria IA antes de entregar; a página foi aceita sem rodada de
+  correção do dono. Fechou com um pedido de resumo de uma frase por seção, para
+  conferir se a mensagem de cada bloco estava clara.
+- **Erros da IA:** um, pego antes de sair: a afirmação de que o valor entregue era
+  o mínimo nas quatro varreduras (vale em duas). Corrigido contra o CSV.
+- **Decisões escaladas:** — (nenhuma nova).
+- **Tags:** `[PROMPT-CHAVE]`
+
 ## 2026-08-15 (sessão 32) — Felipe
 
 **Contexto da sessão:** ponto de retomada da 31 — fechar o conteúdo da **página

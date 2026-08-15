@@ -1,0 +1,35 @@
+2026-07-04|Lia|codigo|esqueleto de lia/omega.py e camada_tatica.py com testes minimos
+2026-07-04|Lia|codigo|Decisoes_pendentes oficial adotado e refs TODO(DECISAO-N) renumeradas nos modulos e testes
+2026-07-06|Lia|codigo|lia/matriz_relacao.py com distance correlation e testes sinteticos
+2026-07-08|Lia|codigo|harness lia/calibracao_omega.py com testes e primeira execucao da suite
+2026-07-20|Lia|analise|levantamento da API do Polymarket e demo da matriz de relacao com dado real em duas janelas
+2026-07-30|Lia|pesquisa|commit e merge da main na branch Lia sem mudanca de codigo
+2026-07-30|Lia|pesquisa|fechamento da sessao de 20/07 e revisao de estado
+2026-08-05|Lia|pesquisa|resposta as quatro perguntas do Felipe e especificacao de interface na Decisao 6
+2026-08-07|Lia|pesquisa|segunda rodada com o Felipe e subsecao 6a no Decisoes_pendentes
+2026-08-07|Lia|pesquisa|terceira rodada com o Felipe e subsecoes 6b 6c 6d
+2026-08-07|Lia|pesquisa|quarta rodada com o Felipe e subsecao 6e
+2026-08-09|Lia|analise|correcao de dois defeitos colapso PMF implementado e primeira calibracao com dado real
+2026-08-09|Lia|analise|calcular_omega implementado robustez relatorio do omega e segunda calibracao
+2026-08-10|Lia|analise|exportador lia/exportar_c.py com a serie de c por decisao e testes
+2026-08-10|Lia|analise|recalibracao da 2.3 agregar_volume_slot CSV regerado e relatorio atualizado
+2026-08-10|Lia|analise|regua estendida as quatro views CSV com 2795 linhas e dois testes novos
+2026-08-11|Lia|analise|correcao da frase do relatorio com medicao do ultimo slot e errata da decomposicao
+2026-08-12|Lia|analise|relatorio final em PDF backtest reproduzido e nivel da regua fechado em 1
+--- ERROS ---
+2026-07-08|Lia|codigo_quebrado|execucao_teste|supos que o Spearman do pandas nao dependia de scipy e tres testes quebraram
+2026-07-08|Lia|codigo_quebrado|execucao_teste|funcao nomeada com prefixo que o pytest coleta como teste
+2026-07-08|Lia|codigo_quebrado|execucao_teste|assercao com direcao invertida no teste da forma exponencial
+2026-07-08|Lia|escopo_errado|confererencia_humana|supos que a resolucao do merge devia fundir as duas versoes quando a intencao era manter so a main
+2026-08-09|Lia|codigo_quebrado|autocorrecao|sintaxe de here-string do PowerShell usada no Bash sujou a mensagem do commit corrigida por amend
+2026-08-09|Lia|codigo_quebrado|execucao_teste|substituicao em massa deixou parenteses desbalanceados em 11 testes
+2026-08-09|Lia|alucinacao_numerica|autocorrecao|soma do livro descrita como 1,725 quando 1,725 e o desvio propagado por quatro arquivos
+2026-08-09|Lia|alucinacao_numerica|autocorrecao|afirmou sem verificar que criar .gitignore geraria conflito com os outros branches
+2026-08-10|Lia|generalizacao|so_depois|par M1_cpi_monthly x CPI_july-inflation-monthly classificado como empate entre mercados quando era duplicata exata
+2026-08-10|Lia|codigo_quebrado|execucao_teste|load_pmf chamado sem ordenar=False quebra nos slugs de payrolls
+2026-08-10|Lia|codigo_quebrado|execucao_teste|uso de load_fomc_dates que nao existe no loader
+2026-08-11|Lia|alucinacao_numerica|so_depois|afirmou na RESPOSTA7 que o c estava no CSV nas linhas inativas sem abrir o arquivo e a mensagem foi enviada
+2026-08-11|Lia|alucinacao_numerica|autocorrecao|decomposicao errada na errata 158 sem par adjacente quando sao 153
+2026-08-12|Lia|premissa_herdada|autocorrecao|tabela de nivel do Curva_c.md citada duas vezes sem checar que a D28.13 a havia invalidado
+2026-08-12|Lia|texto_impreciso|confererencia_humana|primeira explicacao do nivel empilhou jargao a ponto de a dona nao conseguir acompanhar
+2026-08-12|Lia|premissa_herdada|autocorrecao|relatorio dado por conferido com o numero de artefato nao re-gerado da camada tatica ainda dentro

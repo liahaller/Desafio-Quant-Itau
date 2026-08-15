@@ -1,4 +1,4 @@
-PLANO DE ESTRUTURA — RELATORIO FINAL (v2)
+/PLANO DE ESTRUTURA — RELATORIO FINAL (v2)
 5 paginas, 16:9, ~750 palavras. Densidade vem de visual (diagrama, tabela, grafico), nao de texto corrido.
 Abaixo: titulo da pagina, titulo das secoes e uma frase do que cada uma carrega.
 
@@ -85,13 +85,14 @@ Funcao: backtest (15%) e analise de resultados (15%) numa leitura so — a curva
 do proprio trabalho. A metade de baixo da pagina e critica, nao resultado.
 
 Metodologia e vieses tratados
-  Janela, frequencia, preco de execucao e custo por lado sobre o giro; e a lista verificavel do que foi contido — informacao sempre anterior a decisao, media expansiva semeada fora da janela, universo fixo sem survivorship — mais o que NAO foi corrigido (multiplicidade das buscas).
+  Janela, frequencia, preco de execucao e custo por lado sobre o giro; e a lista verificavel do que foi contido — informacao sempre anterior a decisao, media expansiva semeada fora da janela,
 
 Curva acumulada e drawdown
-  Grafico principal contra o SPY, com o drawdown embaixo — e a legenda dizendo o que ele mostra, inclusive o drawdown pior que o do benchmark.
+  Grafico principal contra o SPY, com o drawdown embaixo — e um parágrafo dizendo o que ele mostra, inclusive o drawdown pior que o do benchmark.
 
 Tabela de metricas
-  Retorno liquido, volatilidade, Sharpe, drawdown maximo, alavancagem media e giro, sempre com a coluna do benchmark.
+  Retorno liquido, volatilidade, Sharpe, drawdown maximo, alavancagem media e giro, sempre com a coluna do benchmark -  — mais alpha e beta contra o SPY, que dao tamanho a nao-neutralidade que a
+  pagina 3 ja declarou.
 
 Atribuicao: de onde vem o excesso
   Decomposicao por view e por camada, incluindo a coluna "sem os tres maiores dias" e o acerto de sinal, para separar sinal de sorte concentrada.
