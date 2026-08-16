@@ -20,7 +20,7 @@ from matplotlib.ticker import FuncFormatter
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 # --- parâmetros de identidade -------------------------------------------------
-AMBAR = "#C9820C"        # Kairós — validado (OKLCH L 0.60, dark band)
+AMBAR = "#C9820C"        # Kairos — validado (OKLCH L 0.60, dark band)
 AZUL = "#3D8FC4"         # benchmark SPY — validado, ΔE 21.7 protan vs âmbar
 AMBAR_VIVO = "#F5A623"   # acento de identidade; nunca codifica série
 TINTA = "#E8EDF2"
@@ -81,7 +81,7 @@ limpar(ax)
 
 # Rótulos diretos no fim da linha — dispensam caixa de legenda (2 séries).
 fim = curva.index[-1]
-ax.annotate(f"KAIRÓS  +{curva['acum_estrategia'].iloc[-1] * 100:.1f}%",
+ax.annotate(f"KAIROS  +{curva['acum_estrategia'].iloc[-1] * 100:.1f}%",
             xy=(fim, curva["acum_estrategia"].iloc[-1]),
             xytext=(8, 4), textcoords="offset points",
             color=AMBAR, fontsize=10, fontweight="bold", va="center")
