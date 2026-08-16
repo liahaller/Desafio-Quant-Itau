@@ -21,17 +21,25 @@ equipe ou instituição.
 | `template.html` | as 5 páginas, com `{{PLACEHOLDERS}}` para imagem e gráficos |
 | `montar.py` | injeta, chama o Chrome headless (`--print-to-pdf`) e valida |
 | `pipeline.svg` | diagrama da página 2, desenhado à mão |
+| `arquitetura.svg` | diagrama das duas camadas (página 3), desenhado à mão |
 | `svg/*.svg` | os três gráficos, gerados por `graficos.py` |
-| `dados/curva_diaria.csv` | série diária da carteira de entrega |
+| `dados/curva_diaria_regua_nivel1.csv` | série diária da carteira de entrega |
 | `kairos_datauri.txt` | a arte do robô já em base64 |
+
+⚠️ **Dois dos três SVGs estão sem consumidor** desde a reestruturação da página 3
+(16/08/2026): `ingredientes.svg` e `regua.svg`. A página passou a desenhar o
+placar dos ingredientes em HTML — na coluna de 3,7 in o SVG do matplotlib cairia
+para ~4,5 pt de tipo, metade da menor fonte do relatório. Os dois seguem sendo
+gerados; reinserir qualquer um é devolver o `{{PLACEHOLDER}}` ao template.
 
 ## Dependência externa dos gráficos
 
 `extrair_serie.py` **não roda direto neste branch**: ele reexecuta o backtest de
 entrega importando `src/` e `scripts/backtest_v1.py` do branch `Felipe` com o
 `data/` do branch `Paulo`, ambos extraídos para um diretório de trabalho fora do
-repositório. A série resultante já está versionada em `dados/curva_diaria.csv`,
-então `graficos.py` e `montar.py` rodam sem essa etapa.
+repositório. A série resultante já está versionada em `dados/`, então
+`graficos.py` e `montar.py` rodam **direto do repositório** (caminhos derivados do
+próprio arquivo desde 16/08/2026 — antes apontavam para o drive de trabalho `X:`).
 
 A rodada de 12/08/2026 reproduziu os números do `Dump/analises/Backtest_v1.md`
 dígito a dígito (Sharpe 1,2136 · breakeven 28,4727 · excesso +4,08 pp).
