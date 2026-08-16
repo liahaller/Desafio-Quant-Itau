@@ -6,7 +6,10 @@ from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-BASE = Path("X:/relatorio")
+# Caminhos derivados do próprio arquivo — o script roda a partir do repositório,
+# sem depender do diretório de trabalho `X:` em que o backtest foi remontado.
+BASE = Path(__file__).resolve().parent
+SVG = BASE / "svg"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 
@@ -21,13 +24,14 @@ def inline_svg(caminho):
 html = (BASE / "template.html").read_text(encoding="utf-8")
 html = html.replace("{{KAIROS_IMG}}", (BASE / "kairos_datauri.txt").read_text(encoding="utf-8"))
 html = html.replace("{{SVG_PIPELINE}}", inline_svg(BASE / "pipeline.svg"))
-html = html.replace("{{SVG_CURVA}}", inline_svg("X:/svg/curva.svg"))
-html = html.replace("{{SVG_INGREDIENTES}}", inline_svg("X:/svg/ingredientes.svg"))
-html = html.replace("{{SVG_REGUA}}", inline_svg("X:/svg/regua.svg"))
+html = html.replace("{{SVG_ARQUITETURA}}", inline_svg(BASE / "arquitetura.svg"))
+html = html.replace("{{SVG_CURVA}}", inline_svg(SVG / "curva.svg"))
+html = html.replace("{{SVG_INGREDIENTES}}", inline_svg(SVG / "ingredientes.svg"))
+html = html.replace("{{SVG_REGUA}}", inline_svg(SVG / "regua.svg"))
 
 destino = BASE / "KAIROS.html"
 destino.write_text(html, encoding="utf-8")
-pdf = BASE / "KAIROS.pdf"
+pdf = BASE.parent / "KAIROS.pdf"
 
 subprocess.run([CHROME, "--headless", "--disable-gpu", "--no-pdf-header-footer",
                 f"--print-to-pdf={pdf}", str(destino)],

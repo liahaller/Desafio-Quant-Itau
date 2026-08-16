@@ -1,8 +1,11 @@
 """Gera os SVGs do relatório a partir das séries medidas.
 
-Nenhum número é digitado à mão: a curva vem de `X:/serie/curva_diaria.csv`
-(reprodução do backtest de entrega) e a dispersão do `c` vem do CSV da régua.
-Paleta validada em dark pelo validador do skill de dataviz.
+Nenhum número é digitado à mão: a curva vem de `dados/curva_diaria_regua_nivel1.csv`
+(reprodução do backtest de entrega, já versionada) e a dispersão do `c` vem do CSV
+da régua. Paleta validada em dark pelo validador do skill de dataviz.
+
+Caminhos derivados do próprio arquivo: roda a partir do repositório, sem depender
+do diretório de trabalho `X:` em que o backtest foi remontado.
 """
 import sys
 from pathlib import Path
@@ -25,7 +28,9 @@ TINTA2 = "#9BAEC0"
 GRID = "#24384B"
 VERMELHO = "#C2544D"     # status: reprovado
 
-SAIDA = Path("X:/svg")
+BASE = Path(__file__).resolve().parent
+DADOS = BASE / "dados"
+SAIDA = BASE / "svg"
 SAIDA.mkdir(exist_ok=True)
 
 plt.rcParams.update({
@@ -61,7 +66,8 @@ def limpar(ax, eixo_y=True):
 # 1. Curva acumulada + drawdown
 # =============================================================================
 # Entrega com a régua do Ω acoplada no nível 1 (decisão 6q, 13/08/2026).
-curva = pd.read_csv("X:/serie_regua/curva_diaria.csv", parse_dates=["data"]).set_index("data")
+curva = pd.read_csv(DADOS / "curva_diaria_regua_nivel1.csv",
+                    parse_dates=["data"]).set_index("data")
 
 fig, (ax, ax2) = plt.subplots(
     2, 1, figsize=(7.6, 4.0), sharex=True,
@@ -102,6 +108,12 @@ print("curva.svg  ok")
 # =============================================================================
 # 2. Os quatro ingredientes do Ω — faixa de Spearman por view
 # =============================================================================
+# ⚠️ SEM CONSUMIDOR desde a reestruturação da página 3 (2026-08-16), junto com o
+# `regua.svg` abaixo. A página passou a desenhar o placar em HTML: numa coluna de
+# 3,7 in este SVG cairia para ~4,5 pt de tipo, menos da metade da menor fonte do
+# relatório. Os dois seguem sendo gerados de propósito — as faixas e a dispersão
+# do `c` são as mesmas, e reinserir o gráfico é devolver o `{{PLACEHOLDER}}` ao
+# template.
 # Faixas medidas na §5 do RELATORIO_omega.md (todas as combinações testadas).
 ingredientes = [
     ("Estabilidade\nda distribuição", (-0.40, -0.40), (-0.47, -0.47), "entra"),
@@ -110,7 +122,10 @@ ingredientes = [
     ("Proximidade\ndo evento", (0.07, 0.22), (0.11, 0.37), "reprovado"),
 ]
 
-fig, ax = plt.subplots(figsize=(7.0, 2.9))
+# Achatado (2,9 -> 2,05 in) na reestruturação da página 3: o gráfico divide a
+# coluna com o bloco da régua, e o que ele precisa mostrar é a POSIÇÃO das
+# faixas em relação ao zero — altura sobrando só empurrava conteúdo para fora.
+fig, ax = plt.subplots(figsize=(7.0, 2.05))
 alturas = np.arange(len(ingredientes))[::-1]
 desloc = 0.17
 
@@ -129,7 +144,7 @@ for y, (nome, f23, f22, veredito) in zip(alturas, ingredientes):
 
 ax.axvline(0, color=TINTA2, linewidth=1.0, alpha=0.7)
 ax.set_yticks(alturas)
-ax.set_yticklabels([n for n, *_ in ingredientes], fontsize=9, color=TINTA)
+ax.set_yticklabels([n for n, *_ in ingredientes], fontsize=8.5, color=TINTA)
 ax.set_xlim(-0.55, 0.62)
 ax.set_xlabel("correlação de Spearman entre confiança e erro futuro da probabilidade",
               fontsize=8.5)
@@ -141,14 +156,14 @@ for y, (_, _, _, veredito) in zip(alturas, ingredientes):
     ax.text(0.60, y, veredito.upper(), fontsize=8, color=cor,
             fontweight="bold", va="center", ha="right")
 
-ax.text(-0.53, alturas[0] + 0.75, "← mais negativo = confiança prevê erro menor",
+ax.text(-0.53, alturas[0] + 0.80, "← mais negativo = confiança prevê erro menor",
         fontsize=8, color=TINTA2, style="italic")
 leg = ax.legend(loc="lower left", bbox_to_anchor=(0.60, 1.00), ncol=2,
                 frameon=False, fontsize=8.5, handlelength=1.2,
                 columnspacing=1.4, handletextpad=0.5)
 for t in leg.get_texts():
     t.set_color(TINTA2)
-fig.subplots_adjust(left=0.19, right=0.98, top=0.86, bottom=0.20)
+fig.subplots_adjust(left=0.22, right=0.98, top=0.83, bottom=0.26)
 fig.savefig(SAIDA / "ingredientes.svg", format="svg", transparent=True)
 plt.close(fig)
 print("ingredientes.svg  ok")
@@ -157,9 +172,7 @@ print("ingredientes.svg  ok")
 # =============================================================================
 # 3. Quanto a régua morde, por view
 # =============================================================================
-reg = pd.read_csv(
-    r"C:\Users\liaha\OneDrive\Área de Trabalho\Insper QF\Desafio Itau"
-    r"\Desafio-Quant-Itau\lia\c_por_decisao.csv")
+reg = pd.read_csv(BASE.parent.parent / "lia" / "c_por_decisao.csv")
 ativas = reg[reg["ativa"] & reg["c_nivel1"].notna()]
 
 rotulos = {"2.3_fed": "2.3  Fed", "2.2_inflacao": "2.2  CPI",
