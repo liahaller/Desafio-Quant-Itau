@@ -1826,3 +1826,65 @@ páginas 1, 2, 4 e 5 idênticas ao commit anterior.
 
 **Estado no `origin/Lia`:** seis commits (`499d4e4` caminhos · `fa5faa3` página 3
 · `e32a0d8` README · `af8d64f` LOG · `9d4069c` nome · `8b1f6f0` extrato).
+
+### Fechamento da sessão — 2026-08-16
+
+**Entregue:** página 3 do relatório reestruturada pelo plano v2, do zero, em sete
+blocos com a justificativa colada em cada escolha. Sete commits no `origin/Lia`.
+As outras quatro páginas foram tocadas em **uma coisa só**, o acento do nome.
+
+**Estado do entregável:** 5 páginas · 960 × 540 pt (16:9 exato) · anônimo ·
+página 3 com 426 palavras (eram 640 na abertura) e altura em 511,3 pt contra o
+limite útil de 511,2 · `KAIROS_pagina3.pdf` gerado junto, para revisão avulsa.
+
+**Pendências que atravessam a sessão** (nenhuma é da página 3):
+
+- 🔴 **A entrega oficial continua sem a régua acoplada** — `scripts/backtest_v1.py`
+  não passa `regua=`. Módulo do Felipe; `PEDIDO_Felipe_acoplar_regua.md` de pé
+  desde 13/08.
+- 🔴 **O par `+4,08 → +3,04 pp`** (o que ligar a régua custa) saiu da página 3
+  porque o plano v2 manda sensibilidade para a página 4, e **hoje não está em
+  lugar nenhum do relatório**. Quem cuida da página 4 precisa saber.
+- 🟡 **O nome sem acento vale para as cinco páginas.** É identidade do robô, que o
+  edital pontua em 5%. Decisão da dona, executada; o grupo precisa saber.
+- 🟡 **A divisão de páginas entre os membros segue sem registro no repositório** —
+  terceira sessão com esta anotação. Só existe no combinado verbal.
+- 🟢 **`Decisoes_pendentes.md` não foi alterado em nenhuma das rodadas.** Nada de
+  metodológico novo surgiu: a página descreve decisões já fechadas (D22, D28.13,
+  D10a, D8, 6q). O nome do robô é escolha do dono do módulo Relatório, categoria 2
+  do CLAUDE.md, resolvida na conversa.
+
+**Uso de IA — consolidado da sessão**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** sessão longa, seis rodadas de pedido. Leitura do branch
+  do Felipe por `git show` (otimizador, integração, motor de backtest, táticas,
+  views, config, gates), sem checkout; leitura integral do edital em PDF; ~20
+  ciclos de gerar-e-medir o PDF.
+- **Prompt inicial (verbatim):** "vou precisar reestruturar toda a pagina 3 do
+  relatorio (APENAS MEXER NA PAGINA 3) para que siga esse planejamento:" seguido
+  do plano v2 colado inteiro.
+- **Iterações até aceitar:** 6 rodadas de pedido da dona (reestruturar · revisar ·
+  revisar como jurado · simplificar e visualizar · revisar de novo · números
+  explícitos, organização e travessões), com ~20 ciclos internos de medição.
+- **Erros da IA: 12.** Por classe, que é o que serve ao relatório de IA:
+  - **número certo em contexto errado (3):** `185 de 2.795` colado a `4%/27%`
+    sendo populações e períodos diferentes; `+42,6 pp` sem dizer que é bruto de
+    custo e sem teto; β descrito como sempre de regressão, falso para a 2.2.
+  - **afirmação visual que induz leitura errada (2):** o diagrama dizendo "o mesmo
+    contrato" quando as camadas leem mercados diferentes; a coluna "Posição"
+    parecendo dar um livro a cada sleeve.
+  - **julgamento contra o critério de avaliação (3):** resolver falta de espaço
+    encolhendo tipo até 6,5 pt num edital que exige leitura sem zoom; deixar a
+    página com 44% do texto do relatório sem comparar com as outras quatro;
+    declarar a tipografia legível sem medir o SVG, onde o tipo encolhe 22% calado.
+  - **execução (4):** placar que sairia a 4,5 pt; primeira montagem estourando
+    1,5 in; resíduo de texto quebrado no primeiro `arquitetura.svg`; here-string
+    de PowerShell usada no Bash, que pôs um `@` no título do primeiro commit
+    (corrigido por `--amend` antes do push).
+- **Decisões escaladas:** — (nenhuma).
+- **Tags:** `[PROMPT-CHAVE]` — **"finge que voce é um dos jurados"**. É o prompt
+  mais produtivo da sessão inteira: mudou o alvo de "está correto?" para "como
+  isto é pontuado?", obrigou a reler o edital em vez de julgar por impressão, e
+  produziu três dos quatro achados mais caros. Nenhum deles seria pego relendo a
+  própria página, que era o que as revisões anteriores faziam.
