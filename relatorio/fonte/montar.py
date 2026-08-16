@@ -64,6 +64,15 @@ proibido = ["Lia", "Felipe", "Paulo", "Insper", "Haller", "liahaller", "github"]
 achados = [t for t in proibido if re.search(rf"\b{t}\b", texto, re.I)]
 print(f"anonimato          : {'OK — nenhum identificador' if not achados else 'FALHA: ' + str(achados)}")
 
+# Extrato de uma página só, para revisar a página da dona sem abrir as cinco.
+# Sai daqui e não à mão de propósito: solto, ele envelheceria calado a cada
+# regeração do entregável — que é o modo de falha já registrado no LOG.
+extrato = pdf.parent / "KAIROS_pagina3.pdf"
+uma = pymupdf.open()
+uma.insert_pdf(doc, from_page=2, to_page=2)
+uma.save(extrato)
+print(f"extrato da pág. 3  : {extrato.name}")
+
 for i, p in enumerate(doc, 1):
     p.get_pixmap(dpi=100).save(BASE / f"pag{i}.png")
 print(f"\nprévias: {BASE}/pag1..{doc.page_count}.png")
