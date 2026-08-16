@@ -1811,3 +1811,18 @@ ponto ou dois-pontos, sem perder nenhuma informação.
 **Estado:** 5 páginas · 960 × 540 pt · anônimo · página 3 com **426 palavras**
 (eram 640 no começo do dia) e altura em 511,3 pt contra o limite útil de 511,2 ·
 páginas 1, 2, 4 e 5 idênticas ao commit anterior.
+
+### Sexto adendo — nome sem acento e extrato de uma página
+
+- **`KAIRÓS` → `KAIROS`**, a pedido da dona. Foi aplicado nas **cinco páginas** e
+  no rótulo da curva da página 4, não só na página 3: meia marca acentuada e meia
+  sem seria pior que qualquer das duas escolhas. Nas páginas dos outros membros
+  mudou **o texto do nome e nada mais** — conferido comparando o texto extraído
+  antes e depois. ⚠️ Aviso ao grupo: quem estiver escrevendo as páginas 1, 2, 4 e
+  5 precisa saber, porque é identidade do robô e vale 5% da nota.
+- **`KAIROS_pagina3.pdf`**, extrato de uma página só para revisar sem abrir as
+  cinco. Sai do `montar.py`, não da mão: solto, ele envelheceria calado a cada
+  regeração do entregável, que é o modo de falha já registrado nesta sessão.
+
+**Estado no `origin/Lia`:** seis commits (`499d4e4` caminhos · `fa5faa3` página 3
+· `e32a0d8` README · `af8d64f` LOG · `9d4069c` nome · `8b1f6f0` extrato).
