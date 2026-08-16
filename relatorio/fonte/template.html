@@ -119,39 +119,138 @@
   .destaque { color: var(--ambar); }
 
   /* =================== PÁGINA 3 =================== */
-  /* Barra de cobertura: todas do MESMO comprimento — ela mede uma coisa só, a
-     fração da view que sobrevive ao veto (âmbar) contra a que ele tirou
-     (vermelho). O tamanho absoluto de cada view já está na coluna ao lado;
-     codificá-lo também no comprimento deixava a barra ilegível. */
-  /* `table.dados td` alinha à direita e tem especificidade maior — daí o
-     seletor completo aqui, senão a barra ancora pelo fim e a leitura inverte. */
-  table.dados td.barra {
-    text-align: left; white-space: nowrap; width: 140px; padding-left: 18px;
+  /* Convenção da página: a justificativa anda junto da escolha. Todo bloco
+     fecha com a MESMA marca visual — quem lê aprende o padrão no primeiro e
+     depois sabe onde a alternativa descartada está, sem tabela à parte. */
+  /* Dois tamanhos de corpo na página inteira, 8,1 e 8,6 — o edital exige leitura
+     em tela cheia sem zoom, e a versão de sete tamanhos entre 6,5 e 8 pt era
+     ilegível de longe. O que cabe menos texto resolve cortando texto. */
+  .porque {
+    font-size: 8.1pt; color: var(--tinta3); line-height: 1.32;
+    border-left: 2px solid var(--ambar-d); padding-left: 8px; margin-top: 6px;
   }
-  .trilho {
-    display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle;
-    background: rgba(194,84,77,.50);
+  .porque b { color: var(--tinta2); font-weight: 600; }
+
+  /* O critério comum às sete escolhas, declarado uma vez no topo em vez de
+     repetido em cada bloco — e ao LADO do título, não abaixo: a faixa que ele
+     ocuparia sozinho é a altura de que os blocos precisam. */
+  .cabeca { display: grid; grid-template-columns: 1fr 1.5fr; gap: 26px; align-items: center; margin-bottom: 4px; }
+  .criterio {
+    font-size: 9.5pt; color: var(--tinta2); line-height: 1.4;
+    border-left: 2px solid var(--ambar); padding-left: 11px; margin: 0;
   }
-  .trilho i { display: block; height: 100%; border-radius: 3px; background: var(--ambar); }
-  .perda { font-size: 7.5pt; color: var(--tinta3); margin-left: 6px; vertical-align: middle; }
-  .perda.forte { color: var(--vermelho); font-weight: 700; }
+
+  /* Seis blocos em UMA grade de 3 x 2, e não três colunas empilhando dois blocos
+     cada: assim a segunda fileira de títulos começa na mesma altura nas três
+     colunas. Larguras medidas, não estimadas — quem sobra altura cede largura. */
+  .p3 {
+    display: grid; grid-template-columns: .80fr 1.30fr 1.10fr;
+    column-gap: 20px; row-gap: 7px; align-items: start;
+  }
+  /* Filete entre colunas: em página de três colunas ele é o que separa a leitura
+     vertical da horizontal. */
+  .p3 > .bloco:not(:nth-child(3n+1)) { border-left: 1px solid var(--linha); padding-left: 20px; }
+  .p3 h2 { margin-bottom: 5px; }
+  .p3 h2 + .card, .p3 h2 + figure { margin-top: 0; }
+  .p3 table.dados th { font-size: 7.6pt; padding-bottom: 4px; }
+  .p3 table.dados td { font-size: 8.6pt; padding: 4px 0; }
+  .p3 .nota { font-size: 8.6pt; line-height: 1.38; }
 
   /* Fórmula anotada: cada fator ganha a legenda embaixo, no lugar do parágrafo
-     que antes repetia os dois em prosa corrida. */
-  .eq { font-size: 15pt; letter-spacing: .02em; text-align: center; padding: 2px 0 12px; }
-  .eq sup { font-size: 8.5pt; color: var(--tinta2); }
-  .pernas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+     que antes repetia os dois em prosa corrida. Serve ao Q e ao c — as duas
+     leem como o mesmo gesto porque são desenhadas na mesma caixa. */
+  .eq { font-size: 13pt; letter-spacing: .02em; text-align: center; padding: 1px 0 6px; }
+  .eq sup { font-size: 8pt; color: var(--tinta2); }
+  .eq sub { font-size: 8pt; color: var(--tinta2); }
+  .pernas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .pernas > div {
-    border-top: 1px solid var(--linha); padding-top: 7px;
-    font-size: 8.5pt; color: var(--tinta3); line-height: 1.35;
+    border-top: 1px solid var(--linha); padding-top: 5px;
+    font-size: 8.1pt; color: var(--tinta3); line-height: 1.32;
   }
-  .pernas b { display: block; color: var(--ambar); font-size: 9.5pt; margin-bottom: 2px; }
+  .pernas b { display: block; color: var(--ambar); font-size: 8.6pt; margin-bottom: 1px; }
 
-  .chip { white-space: nowrap; margin-right: 12px; }
-  .chip i {
-    display: inline-block; width: 7px; height: 7px; border-radius: 2px;
-    margin-right: 5px; vertical-align: baseline;
+  /* Régua de admissão da camada tática: quatro condições, nenhuma com valor
+     numérico — pill em vez de lista, porque é um conjunto e não uma sequência. */
+  .tag {
+    display: inline-block; font-size: 7.9pt; color: var(--tinta2);
+    border: 1px solid var(--linha); border-radius: 3px;
+    padding: 1.5px 6px; margin: 0 3px 3px 0;
   }
+
+  /* Cadeia de conversão do Q: o caminho da distribuição ao retorno em passos
+     desenhados, no lugar das duas legendas em prosa que diziam o mesmo. */
+  .cadeia { margin-top: 9px; }
+  .cadeia .no {
+    display: block; border: 1px solid var(--linha); border-radius: 4px;
+    padding: 3px 8px; font-size: 8.2pt; color: var(--tinta); background: var(--fundo2);
+  }
+  .cadeia .op { display: block; font-size: 7.8pt; color: var(--ambar-d); padding: 2px 0 2px 9px; }
+
+  /* Teto de risco: a carteira tem duas partes e só a segunda é cortada — a
+     proporção das faixas é a própria explicação. */
+  .teto { display: flex; gap: 3px; margin: 7px 0 5px; }
+  .teto div { padding: 6px 8px; border-radius: 3px; font-size: 8.1pt; line-height: 1.25; }
+  .teto .base { flex: 1.1; background: rgba(155,174,192,.14); color: var(--tinta2); }
+  .teto .desvio {
+    flex: 1; background: rgba(245,166,35,.16); color: var(--ambar);
+    border: 1px solid rgba(245,166,35,.45); font-weight: 600;
+  }
+
+  /* Cobertura da view: fração dos 374 pregões em que ela ficou ativa. Uma
+     variável por barra — o número absoluto já está na coluna ao lado. */
+  table.dados td.cob { width: 58px; padding-left: 12px; }
+  /* O total ao lado de cada número: explica a escala sem depender do cabeçalho. */
+  .de { color: var(--tinta3); font-weight: 400; font-size: 7.6pt; }
+  .cob-trilho {
+    display: block; height: 5px; border-radius: 3px; background: rgba(36,56,75,.95);
+  }
+  .cob-trilho i { display: block; height: 100%; border-radius: 3px; background: var(--ambar-d); }
+
+  /* Tiles compactos: o par de números que a prosa carregava em duas linhas. */
+  .minis { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 7px; }
+  .mini {
+    border: 1px solid var(--linha); border-radius: 4px; padding: 4px 7px;
+    background: var(--fundo2);
+  }
+  .mini .v { font-size: 11pt; font-weight: 700; line-height: 1.05; color: var(--ambar); }
+  .mini .v.no { color: var(--vermelho); }
+  .mini .k { font-size: 7.2pt; color: var(--tinta3); margin-top: 2px; line-height: 1.2; }
+
+  /* Placar dos ingredientes do Ω, desenhado em HTML e não pelo matplotlib: nesta
+     largura de coluna o SVG do gráfico cairia para ~4,5pt de tipo, menos da
+     metade da menor fonte da página. As faixas são as mesmas medidas; o que muda
+     é que o rótulo fica no corpo do texto e a barra carrega só a posição. */
+  .placar { margin-top: 2px; }
+  .pl-cab {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 7.6pt; color: var(--tinta3); margin-bottom: 5px;
+  }
+  .pl-cab i {
+    display: inline-block; width: 6px; height: 6px; border-radius: 2px; margin-right: 4px;
+  }
+  .pl-linha {
+    display: grid; grid-template-columns: 1.05fr 1.45fr .62fr; gap: 7px;
+    align-items: center; margin-bottom: 2px;
+  }
+  .pl-escala { position: relative; height: 8px; font-size: 7.2pt; color: var(--tinta3); }
+  .pl-escala span { position: absolute; transform: translateX(-50%); }
+  .pl-nome { font-size: 8.1pt; color: var(--tinta); line-height: 1.12; }
+  .pl-eixo { position: relative; height: 12px; }
+  /* O zero fica POR CIMA das barras: nos dois ingredientes cuja faixa o cruza,
+     de que lado ela cai é justamente o que a linha tem de responder. */
+  .pl-eixo u {
+    position: absolute; top: 0; bottom: 0; width: 1px; background: var(--tinta2);
+    z-index: 2; text-decoration: none;
+  }
+  .pl-eixo b { position: absolute; height: 4px; border-radius: 2px; min-width: 4px; z-index: 1; }
+  .pl-eixo b.f23 { top: 2px; background: var(--azul); }
+  .pl-eixo b.f22 { top: 8px; background: var(--ambar-d); }
+  .pl-ver {
+    font-size: 7.4pt; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; text-align: right; color: var(--tinta3);
+  }
+  .pl-ver.entra { color: var(--ambar); }
+  .pl-ver.no { color: var(--vermelho); }
 
   /* =================== PÁGINA 1 =================== */
   .capa { display: grid; grid-template-columns: 1.32fr 1fr; height: 100%; }
@@ -265,83 +364,200 @@
   <div class="topo"><div class="marca">KAIRÓS <span>Modelagem</span></div><div class="pag">03</div></div>
 
   <div class="corpo">
-    <div class="col2" style="gap:34px">
-      <div>
-        <h1 style="font-size:18pt">Quatro views, uma régua de confiança</h1>
-        <table class="dados" style="margin-top:12px">
-          <tr><th>View — o que lê</th><th>Dias disponíveis</th><th>Dias usados</th><th>Quanto ficou</th></tr>
-          <tr><td class="d">2.3 · decisão do FOMC</td><td>325</td><td class="d">312</td>
-            <td class="barra"><span class="trilho" style="width:88px"><i style="width:96%"></i></span><span class="perda">96%</span></td></tr>
-          <tr><td class="d">2.2 · inflação mensal</td><td>274</td><td class="d">253</td>
-            <td class="barra"><span class="trilho" style="width:88px"><i style="width:92%"></i></span><span class="perda">92%</span></td></tr>
-          <tr><td class="d">B · trajetória de juros do ano</td><td>210</td><td class="d">154</td>
-            <td class="barra"><span class="trilho" style="width:88px"><i style="width:73%"></i></span><span class="perda forte">73%</span></td></tr>
-          <tr><td class="d">15b · incerteza no dia do anúncio</td><td>27</td><td class="d">26</td>
-            <td class="barra"><span class="trilho" style="width:88px"><i style="width:96%"></i></span><span class="perda">96%</span></td></tr>
+    <div class="cabeca">
+      <h1 style="font-size:16.5pt; margin:0">Duas camadas, um orçamento de risco</h1>
+      <p class="criterio">
+        Cada escolha desta página saiu de <strong>medição</strong>, ou de <strong>princípio
+        declarado antes</strong> de calibrar. Nunca do resultado do backtest.
+      </p>
+    </div>
+
+    <figure style="margin-bottom:3px">{{SVG_ARQUITETURA}}</figure>
+    <div class="porque" style="margin-bottom:8px">
+      <b>Por que somar a tática, e não dar um orçamento a ela:</b> o tamanho sai da mesma conta
+      que dimensiona uma view, e um orçamento em % do patrimônio exigiria escolher um número.
+    </div>
+
+    <!-- Grade 3 x 2. Fileira de cima: como a view vira retorno, quais estão ligadas,
+         quanto se confia nelas. Fileira de baixo: o que limita, o que soma, o que
+         foi reprovado. -->
+    <div class="p3">
+
+      <!-- ======== fileira 1 ======== -->
+      <div class="bloco">
+        <h2>Da probabilidade ao vetor Q</h2>
+        <div class="eq" style="padding:0 0 2px">Q = ( E<sub>poly</sub> − âncora ) · Σ P<sub>i</sub> β<sub>i</sub></div>
+        <div class="cadeia">
+          <span class="no">o que o mercado espera</span>
+          <span class="op">↓ &nbsp;menos a âncora que o preço já embute</span>
+          <span class="no">a surpresa, em bps</span>
+          <span class="op">↓ &nbsp;vezes o β medido nos anúncios passados</span>
+          <span class="no">retorno esperado, por ativo</span>
+        </div>
+        <div class="porque">
+          <b>Por que β medido, e não magnitude declarada:</b> opinião trocada por medição,
+          agora do lado do retorno.
+        </div>
+      </div>
+
+      <div class="bloco">
+        <h2>As views estruturais</h2>
+        <table class="dados">
+          <tr><th>View: o que ela lê no mercado</th><th>Pregões ativa</th><th></th><th>Exposição</th></tr>
+          <tr><td class="d">2.3 · a decisão do Fed</td>
+            <td class="d">312 <span class="de">de 374</span></td>
+            <td class="cob"><span class="cob-trilho"><i style="width:83%"></i></span></td>
+            <td>neutra</td></tr>
+          <tr><td class="d">2.2 · a inflação do mês</td>
+            <td class="d">253 <span class="de">de 374</span></td>
+            <td class="cob"><span class="cob-trilho"><i style="width:68%"></i></span></td>
+            <td>neutra</td></tr>
+          <tr><td class="d">B · a taxa no fim do ano</td>
+            <td class="d">154 <span class="de">de 374</span></td>
+            <td class="cob"><span class="cob-trilho"><i style="width:41%"></i></span></td>
+            <td>neutra</td></tr>
+          <tr><td class="d">15b · a dúvida na véspera</td>
+            <td class="d">26 <span class="de">de 374</span></td>
+            <td class="cob"><span class="cob-trilho"><i style="width:7%"></i></span></td>
+            <td><span class="destaque">direcional</span></td></tr>
         </table>
-        <p class="nota" style="margin-top:7px">
-          Dos 374 pregões: 2,24 views por dia, <span class="destaque">1,99</span> depois do
-          veto — que morde onde o mercado é pior. Sem view ativa, a carteira é o prior.
+        <p class="nota" style="margin-top:6px">
+          Em <span class="destaque">28 dos 374</span> a carteira é só a de equilíbrio.
         </p>
+        <div class="porque">
+          <b>Por que neutras, com uma exceção:</b> sem exposição ao índice, a view de prêmio
+          se esvazia.
+        </div>
+      </div>
 
-        <h2 style="margin-top:18px">A régua do Ω
-          <span class="selo neu" style="margin-left:8px">c ≥ 1 · só tira confiança</span>
+      <div class="bloco">
+        <h2>A régua de confiança (Ω)
+          <span class="selo neu" style="margin-left:6px">c ≥ 1</span>
         </h2>
-        <div class="card" style="padding:14px 16px 13px">
-          <div class="eq">
-            c = ( (1 + <span class="destaque">v̄</span>) · (1 + |<span class="destaque">Σp − 1</span>| ) )<sup>nível 1</sup>
-          </div>
-          <div class="pernas">
-            <div><b>v̄</b>quanto a distribuição se moveu nas 5 últimas leituras</div>
-            <div><b>Σp − 1</b>o quanto o livro deixa de somar 1</div>
-          </div>
+        <div class="eq" style="padding:0 0 2px">
+          c = ( (1 + <span class="destaque">v̄</span>) · (1 + |<span class="destaque">Σp − 1</span>| ) )<sup>nível 1</sup>
         </div>
-        <p class="nota" style="margin-top:9px">
-          O expoente é o <strong>único botão</strong> da régua: fechado em 1, onde ela foi
-          calibrada — a escolha não consultou o retorno.
+        <div class="pernas">
+          <div><b>v̄</b>quanto a distribuição se moveu nas 5 últimas leituras</div>
+          <div><b>Σp − 1</b>o quanto o livro deixa de somar 1</div>
+        </div>
+        <p class="nota" style="margin-top:6px">
+          O BL clássico é o <strong>teto</strong> de confiança, nunca o piso.
         </p>
-        <p class="nota" style="margin-top:9px">
-          <span class="destaque">185 de 2.795</span> decisões vetadas:
-          <span class="chip"><i style="background:var(--tinta3)"></i>153 sem par de leituras</span>
-          <span class="chip"><i style="background:var(--vermelho)"></i>32 sem negociação</span>
-        </p>
-
-        <h2 style="margin-top:15px">O que ligar a régua muda</h2>
-        <div class="col2" style="gap:12px">
-          <div class="card tile">
-            <div class="v" style="font-size:16pt">+4,08<span style="font-size:11pt"> → </span>+3,04<span style="font-size:9.5pt"> pp</span></div>
-            <div class="k">vantagem sobre o SPY</div>
-          </div>
-          <div class="card tile">
-            <div class="v neutro" style="font-size:16pt">2,24<span style="font-size:11pt"> → </span>1,99</div>
-            <div class="k">views ativas por dia</div>
-          </div>
+        <div style="margin-top:5px">
+          <span class="tag"><span class="destaque">185</span> de 2.795 vetadas</span><span
+            class="tag">4% do Fed · <span class="destaque">27%</span> da trajetória</span><span
+            class="tag">expoente 1, fechado uma vez</span>
+        </div>
+        <div class="porque">
+          <b>Por que contra o erro da probabilidade, e não contra o retorno:</b> senão a régua
+          herda o resultado que deveria julgar.
         </div>
       </div>
 
-      <div>
+      <!-- ======== fileira 2 ======== -->
+      <div class="bloco">
+        <h2>Controle de risco</h2>
+        <div class="teto">
+          <div class="base">carteira de equilíbrio<br>o teto não corta</div>
+          <div class="desvio">desvio<br>Σ|w − w<sub>mkt</sub>| ≤ 1</div>
+        </div>
+        <div class="porque">
+          <b>Por que só no desvio:</b> cortar a carteira inteira misturava a aposta da view com
+          a perna de mercado.
+        </div>
+        <p class="nota" style="margin-top:8px">
+          Pesos pela <strong>covariância amostral</strong>, não pela posterior do modelo.
+        </p>
+        <div class="porque">
+          <b>Por que a amostral:</b> confiança zero devolve o equilíbrio exato, e a incerteza
+          mora num lugar só, o Ω.
+        </div>
+      </div>
+
+      <div class="bloco">
+        <h2>A camada tática</h2>
+        <table class="dados">
+          <tr><th>Mercado que ela lê</th><th>Janela</th><th>Livro, neutro ao índice</th></tr>
+          <tr><td class="d">recessão nos EUA</td><td class="d">3 · 5 · 10 pregões</td>
+            <td>XLP defensivo × XLK cíclico</td></tr>
+          <tr><td class="d">maioria na Câmara</td><td class="d">20 pregões</td>
+            <td>XLP defensivo × XLK cíclico</td></tr>
+        </table>
+        <div style="margin-top:7px">
+          <span class="tag">lê o Polymarket</span><span class="tag">atua na bolsa</span><span
+            class="tag">tese não desprovada</span><span class="tag">não repete o que entrou</span>
+        </div>
+        <div class="minis" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="mini"><div class="v">+42,6 pp</div>
+            <div class="k">sozinha, sem teto</div></div>
+          <div class="mini"><div class="v no">−2,94 pp</div>
+            <div class="k">dentro da carteira</div></div>
+          <div class="mini"><div class="v" style="color:var(--tinta)">8 de 10</div>
+            <div class="k">caíram no corte da amostra</div></div>
+        </div>
+        <div class="porque">
+          <b>Por que ligada assim mesmo:</b> a régua julga o mecanismo, não o resultado.
+        </div>
+      </div>
+
+      <div class="bloco">
         <h2>Como cada ingrediente foi julgado</h2>
-        <figure>
-          {{SVG_INGREDIENTES}}
-          <figcaption>
-            Critério declarado <strong>antes</strong> de calibrar. A proximidade reprovou
-            com o sinal invertido nas <em>duas</em> views — replicação, não acaso.
-          </figcaption>
-        </figure>
-
-        <h2 style="margin-top:16px">Quanto a régua morde</h2>
-        <figure>
-          {{SVG_REGUA}}
-        </figure>
+        <!-- Faixas de Spearman entre a confiança e o erro FUTURO da probabilidade,
+             em todas as combinações testadas. Escala do eixo: −0,55 a +0,62; a
+             posição de cada barra é (v + 0,55)/1,17. Zero em 47%. -->
+        <div class="placar">
+          <div class="pl-cab">
+            <span>← confiança maior prevê erro menor</span>
+            <span><i style="background:var(--azul)"></i>2.3 Fed
+              <i style="background:var(--ambar-d); margin-left:8px"></i>2.2 inflação</span>
+          </div>
+          <div class="pl-linha">
+            <div class="pl-nome">Estabilidade da distribuição</div>
+            <div class="pl-eixo"><u style="left:47%"></u>
+              <b class="f23" style="left:12.8%"></b><b class="f22" style="left:6.8%"></b></div>
+            <div class="pl-ver entra">entra</div>
+          </div>
+          <div class="pl-linha">
+            <div class="pl-nome">Coerência do livro</div>
+            <div class="pl-eixo"><u style="left:47%"></u>
+              <b class="f23" style="left:31.6%; width:2.6%"></b>
+              <b class="f22" style="left:19.7%; width:7.7%"></b></div>
+            <div class="pl-ver entra">entra</div>
+          </div>
+          <div class="pl-linha">
+            <div class="pl-nome">Volume negociado</div>
+            <div class="pl-eixo"><u style="left:47%"></u>
+              <b class="f23" style="left:38.5%; width:24.8%"></b>
+              <b class="f22" style="left:37.6%; width:21.4%"></b></div>
+            <div class="pl-ver">vira veto</div>
+          </div>
+          <div class="pl-linha">
+            <div class="pl-nome">Proximidade do evento</div>
+            <div class="pl-eixo"><u style="left:47%"></u>
+              <b class="f23" style="left:53.0%; width:12.8%"></b>
+              <b class="f22" style="left:56.4%; width:22.2%"></b></div>
+            <div class="pl-ver no">reprovado</div>
+          </div>
+          <div class="pl-linha" style="margin-bottom:0">
+            <div></div>
+            <div class="pl-escala"><span style="left:12.8%">−0,4</span><span
+              style="left:47%">0</span><span style="left:81.2%">+0,4</span></div>
+            <div></div>
+          </div>
+        </div>
+        <div class="porque">
+          <b>Por que dois, e não quatro:</b> critério declarado antes de calibrar; a proximidade
+          reprovou invertida nas duas.
+        </div>
       </div>
+
     </div>
   </div>
 
-  <div class="rodape">
-    Calibrado na história completa dos mercados — 3.905 slots de 12h no FOMC, 1.142 na
-    inflação — e não na janela do backtest: o erro da probabilidade existe mesmo nos dias
-    em que a view não seria negociada.
-  </div>
+  <!-- Sem faixa de rodapé nesta página: a nota que vivia nela é justificativa de
+       UMA escolha (a régua) e foi para o bloco dela, onde a convenção da página
+       manda. A faixa sobrando custava três linhas às colunas. -->
 </section>
 
 
