@@ -1402,3 +1402,111 @@ de aviso) e sem conteúdo derivável que valesse cortar.
 4 — a quinta foi a correção do custo da camada. E o total de erros da IA nesta
 sessão é **3**, contando o do adendo: os dois já listados mais ter dado o relatório
 por conferido quando ainda havia um número de artefato não re-gerado dentro dele.
+
+## 2026-08-15/16 — Lia (página 3 do relatório: a régua medida na entrega)
+
+**Contexto:** o grupo dividiu o relatório por página; a dona ficou com a **página 3
+(Modelagem)** e só ela foi tocada. As outras quatro não foram alteradas.
+
+**O que foi feito**
+
+1. **Dois erros da página 3 corrigidos.**
+   - **Atribuição dos vetos.** O texto dava os 185 vetos como "mercado sem
+     negociação". No `c_por_decisao.csv` são **32 `volume_zero`** e **153
+     `sem_par_adjacente`** — o motivo majoritário é falta de dado para medir v̄,
+     não iliquidez. A página agora separa os dois. A mesma imprecisão estava na
+     linha do 2,24 → 1,99 ("veto de liquidez").
+   - **O nível da régua não aparecia.** A fórmula mostrava o expoente sem valor;
+     a 6q fechou em 1 em 13/08. Agora o `nível 1` está na própria fórmula, com o
+     critério em uma linha (fechado onde a régua foi calibrada, sem consultar
+     retorno).
+2. **Cobertura por view re-medida COM a régua acoplada** — era o único número da
+   página ainda vindo da configuração sem régua. A série diária só guarda o total
+   de views do dia, então precisou de rodada nova: `relatorio/fonte/cobertura_por_view.py`
+   lê a quebra do `diagnostics` do `run_backtest`. Nenhum módulo alheio tocado.
+
+   | view | dias disponíveis | dias usados | ficou |
+   |---|---|---|---|
+   | 2.3 Fed | 325 | 312 | 96% |
+   | 2.2 CPI | 274 | 253 | 92% |
+   | B trajetória | 210 | **154** | **73%** |
+   | 15b incerteza | 27 | 26 | 96% |
+
+   **O veto morde desigual** — a B perde um quarto dos dias, a 2.3 perde 4%. É
+   argumento a favor da régua (corta onde o mercado é pior) e não aparecia antes.
+3. **Página convertida para leitura visual**, a pedido da dona: barras de retenção
+   na tabela, fórmula anotada com as legendas ancoradas em cada fator, selo
+   `c ≥ 1`, chips para os dois motivos de veto, e dois tiles **"o que ligar a régua
+   muda"** (`+4,08 → +3,04 pp` de vantagem sobre o SPY · `2,24 → 1,99` views/dia).
+   Prosa da página: 188 → 251 (com o conteúdo novo) → **191** depois do enxugamento.
+   Relatório em 1.000 palavras. O edital **não tem limite de palavras** (750 é
+   referência declarada); o que elimina é passar de 5 páginas.
+
+**O que quebrou (e por quê importa)**
+
+- 🔴 **Rodei dois backtests no mesmo processo reusando o `montador` — e o segundo
+  saiu errado.** O `MontadorV1` guarda estado **de propósito** (a média da
+  divergência da D9 é expansiva), então a segunda rodada começou com a janela
+  inteira já vista: excesso **−0,29 pp** no lugar de **+3,04 pp**. O número quase
+  entrou no relatório. Pego pelo controle da memória de reprodução: a rodada sem
+  régua bateu dígito a dígito com o `Backtest_v1.md` e a com régua não bateu com o
+  registro de 13/08 — a discordância entre as duas é que denunciou.
+  **O método certo já estava no módulo do Felipe:** o `curva_c.py` dele chama
+  `montador.reset()` ao fim de cada rodada da grade. Nada a corrigir do lado dele;
+  a armadilha ficou documentada no cabeçalho do `cobertura_por_view.py`.
+  Com o `reset()`, as duas rodadas do mesmo processo reproduzem: sem régua
+  1,2136 · +4,08 pp; com régua 1,1815 · +3,04 pp.
+- 🟡 **Três rótulos meus não foram entendidos pela dona** — e o avaliador lê a
+  página sem poder perguntar. (a) a barra codificava duas variáveis ao mesmo tempo
+  (tamanho da view *e* retenção) sem legenda; (b) o cabeçalho dizia "Quanto ficou"
+  e o número ao lado mostrava a perda (`−4%`) — copo cheio contra copo vazio;
+  (c) "Calendário" e "custo da régua no excesso" eram jargão interno. Resolvido
+  com "Dias disponíveis / Dias usados / Quanto ficou" e os dois tiles em formato
+  antes → depois.
+- 🟡 CSS: `table.dados td` vence `td.barra` por especificidade e ancorava as barras
+  à direita, invertendo a leitura.
+
+**O que ficou pendente**
+
+- 🔴 **A entrega oficial continua sem a régua** (`scripts/backtest_v1.py` não passa
+  `regua=`, módulo do Felipe) — `PEDIDO_Felipe_acoplar_regua.md` segue de pé.
+- 🟡 **O `montar.py` não roda a partir do repositório**: aponta para `X:/relatorio`,
+  o diretório de trabalho. Nesta sessão o PDF saiu de uma cópia com os caminhos do
+  repo. É módulo da Lia, mas fora do escopo "página 3" — corrigir na próxima.
+- 🟡 **A divisão de páginas entre os membros não está registrada em lugar nenhum**
+  do repositório; só existe no combinado verbal.
+- 🟡 Página 5 com **330 palavras**, o dobro das outras — não é da Lia.
+- 🟢 `Decisoes_pendentes.md` **não foi alterado**: nada de metodológico novo surgiu
+  nesta sessão, e a 6q já estava fechada.
+
+**Ambiente:** backtest remontado em `C:\bt_lia` (`git archive` de `origin/Felipe`
++ `data/` de `origin/Paulo` + `lia/c_por_decisao.csv`), com `subst X:` por causa do
+MAX_PATH. Três rodadas completas.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** sessão média-longa; três rodadas de backtest (duas em
+  background), leitura do branch do Felipe por `git show` (sem checkout) e seis
+  ciclos de gerar-e-olhar o PDF.
+- **Prompt inicial (verbatim):** "dividimos as partes do relatorio e eu fiquei
+  responsavel por ajustar APENAS a pagina 3, o que falta ajustar?"
+- **Iterações até aceitar:** 6 na página — (1) os dois erros de conteúdo, (2) a
+  coluna medida com régua, (3) conversão para visual, (4) barras iguais e coluna
+  nomeada, (5) cabeçalhos sem jargão e rótulo coerente com a barra, (6) o tile do
+  custo reescrito como antes → depois.
+- **Erros da IA:** **4.** (a) o `montador` reusado sem `reset()`, que produziu um
+  número errado e só não entrou no PDF por causa do controle; (b) barra com dupla
+  codificação e sem legenda; (c) cabeçalho contradizendo o número ao lado; (d)
+  jargão do repositório nos rótulos ("calendário", "excesso") — a mesma falha de
+  comunicação já registrada em 13/08, agora dentro do entregável e não na conversa.
+- **Decisões escaladas:** — (nenhuma; nada de metodológico novo).
+- **Tags:** `[PROMPT-CHAVE]` — "o que falta ajustar?". É o prompt de **auditoria**:
+  não pede mudança, pede diagnóstico contra as fontes. Foi ele que expôs os dois
+  erros de conteúdo da página, e o valor está em ter conferido cada número contra
+  o artefato que o gerou em vez de reler a prosa. Bom candidato ao teste de
+  reprodutibilidade: outra instância acharia os mesmos itens?
+
+**Nota para o grupo (não é problema de módulo alheio):** quem for rodar mais de um
+backtest no mesmo processo precisa de `montador.reset()` entre eles. O
+`curva_c.py` já faz; scripts novos, não necessariamente.
