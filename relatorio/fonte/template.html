@@ -118,6 +118,41 @@
   .nota { font-size: 8.5pt; color: var(--tinta3); line-height: 1.42; }
   .destaque { color: var(--ambar); }
 
+  /* =================== PÁGINA 3 =================== */
+  /* Barra de cobertura: todas do MESMO comprimento — ela mede uma coisa só, a
+     fração da view que sobrevive ao veto (âmbar) contra a que ele tirou
+     (vermelho). O tamanho absoluto de cada view já está na coluna ao lado;
+     codificá-lo também no comprimento deixava a barra ilegível. */
+  /* `table.dados td` alinha à direita e tem especificidade maior — daí o
+     seletor completo aqui, senão a barra ancora pelo fim e a leitura inverte. */
+  table.dados td.barra {
+    text-align: left; white-space: nowrap; width: 140px; padding-left: 18px;
+  }
+  .trilho {
+    display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle;
+    background: rgba(194,84,77,.50);
+  }
+  .trilho i { display: block; height: 100%; border-radius: 3px; background: var(--ambar); }
+  .perda { font-size: 7.5pt; color: var(--tinta3); margin-left: 6px; vertical-align: middle; }
+  .perda.forte { color: var(--vermelho); font-weight: 700; }
+
+  /* Fórmula anotada: cada fator ganha a legenda embaixo, no lugar do parágrafo
+     que antes repetia os dois em prosa corrida. */
+  .eq { font-size: 15pt; letter-spacing: .02em; text-align: center; padding: 2px 0 12px; }
+  .eq sup { font-size: 8.5pt; color: var(--tinta2); }
+  .pernas { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pernas > div {
+    border-top: 1px solid var(--linha); padding-top: 7px;
+    font-size: 8.5pt; color: var(--tinta3); line-height: 1.35;
+  }
+  .pernas b { display: block; color: var(--ambar); font-size: 9.5pt; margin-bottom: 2px; }
+
+  .chip { white-space: nowrap; margin-right: 12px; }
+  .chip i {
+    display: inline-block; width: 7px; height: 7px; border-radius: 2px;
+    margin-right: 5px; vertical-align: baseline;
+  }
+
   /* =================== PÁGINA 1 =================== */
   .capa { display: grid; grid-template-columns: 1.32fr 1fr; height: 100%; }
   .capa-txt { padding-right: 34px; display: flex; flex-direction: column; justify-content: center; }
@@ -234,34 +269,54 @@
       <div>
         <h1 style="font-size:18pt">Quatro views, uma régua de confiança</h1>
         <table class="dados" style="margin-top:12px">
-          <tr><th>View — o que lê</th><th>Cobertura</th></tr>
-          <tr><td class="d">2.3 · decisão do FOMC</td><td>325/374</td></tr>
-          <tr><td class="d">2.2 · inflação mensal</td><td>274/374</td></tr>
-          <tr><td class="d">B · trajetória de juros do ano</td><td>210/374</td></tr>
-          <tr><td class="d">15b · incerteza no dia do anúncio</td><td>27/374</td></tr>
+          <tr><th>View — o que lê</th><th>Dias disponíveis</th><th>Dias usados</th><th>Quanto ficou</th></tr>
+          <tr><td class="d">2.3 · decisão do FOMC</td><td>325</td><td class="d">312</td>
+            <td class="barra"><span class="trilho" style="width:88px"><i style="width:96%"></i></span><span class="perda">96%</span></td></tr>
+          <tr><td class="d">2.2 · inflação mensal</td><td>274</td><td class="d">253</td>
+            <td class="barra"><span class="trilho" style="width:88px"><i style="width:92%"></i></span><span class="perda">92%</span></td></tr>
+          <tr><td class="d">B · trajetória de juros do ano</td><td>210</td><td class="d">154</td>
+            <td class="barra"><span class="trilho" style="width:88px"><i style="width:73%"></i></span><span class="perda forte">73%</span></td></tr>
+          <tr><td class="d">15b · incerteza no dia do anúncio</td><td>27</td><td class="d">26</td>
+            <td class="barra"><span class="trilho" style="width:88px"><i style="width:96%"></i></span><span class="perda">96%</span></td></tr>
         </table>
-        <p class="nota" style="margin-top:6px">
-          O calendário entrega 2,24 views por pregão; o veto de liquidez derruba para
-          <span class="destaque">1,99</span>. Sem nenhuma view ativa, a carteira é
-          exatamente o prior de mercado.
+        <p class="nota" style="margin-top:7px">
+          Dos 374 pregões: 2,24 views por dia, <span class="destaque">1,99</span> depois do
+          veto — que morde onde o mercado é pior. Sem view ativa, a carteira é o prior.
         </p>
 
-        <h2 style="margin-top:20px">A régua do Ω</h2>
-        <div class="card" style="text-align:center; padding:14px 10px">
-          <div style="font-size:14pt; letter-spacing:.02em">
-            c = ( (1 + <span class="destaque">v̄</span>) · (1 + |<span class="destaque">Σp − 1</span>| ) )<sup style="font-size:9pt">nível</sup>
+        <h2 style="margin-top:18px">A régua do Ω
+          <span class="selo neu" style="margin-left:8px">c ≥ 1 · só tira confiança</span>
+        </h2>
+        <div class="card" style="padding:14px 16px 13px">
+          <div class="eq">
+            c = ( (1 + <span class="destaque">v̄</span>) · (1 + |<span class="destaque">Σp − 1</span>| ) )<sup>nível 1</sup>
           </div>
-          <div class="nota" style="margin-top:8px; text-align:left">
-            <strong>v̄</strong> — quanto a distribuição se moveu nas últimas 5 leituras.
-            <strong>Σp − 1</strong> — quanto o livro deixa de fechar como distribuição.
-            Cada defeito multiplica a incerteza; <strong>c ≥ 1 sempre</strong>, então o
-            BL clássico é o teto de confiança, nunca o piso.
+          <div class="pernas">
+            <div><b>v̄</b>quanto a distribuição se moveu nas 5 últimas leituras</div>
+            <div><b>Σp − 1</b>o quanto o livro deixa de somar 1</div>
           </div>
         </div>
-        <p class="nota" style="margin-top:8px">
-          Mercado sem negociação não recebe c grande: <strong>sai da carteira</strong>.
-          Foram <span class="destaque">185 de 2.795</span> decisões vetadas assim.
+        <p class="nota" style="margin-top:9px">
+          O expoente é o <strong>único botão</strong> da régua: fechado em 1, onde ela foi
+          calibrada — a escolha não consultou o retorno.
         </p>
+        <p class="nota" style="margin-top:9px">
+          <span class="destaque">185 de 2.795</span> decisões vetadas:
+          <span class="chip"><i style="background:var(--tinta3)"></i>153 sem par de leituras</span>
+          <span class="chip"><i style="background:var(--vermelho)"></i>32 sem negociação</span>
+        </p>
+
+        <h2 style="margin-top:15px">O que ligar a régua muda</h2>
+        <div class="col2" style="gap:12px">
+          <div class="card tile">
+            <div class="v" style="font-size:16pt">+4,08<span style="font-size:11pt"> → </span>+3,04<span style="font-size:9.5pt"> pp</span></div>
+            <div class="k">vantagem sobre o SPY</div>
+          </div>
+          <div class="card tile">
+            <div class="v neutro" style="font-size:16pt">2,24<span style="font-size:11pt"> → </span>1,99</div>
+            <div class="k">views ativas por dia</div>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -269,9 +324,8 @@
         <figure>
           {{SVG_INGREDIENTES}}
           <figcaption>
-            Critério declarado <strong>antes</strong> da calibração: confiança maior tem de
-            anteceder erro menor. A proximidade do evento foi reprovada com o sinal
-            invertido nas <em>duas</em> views — derrubada por replicação, não por acaso.
+            Critério declarado <strong>antes</strong> de calibrar. A proximidade reprovou
+            com o sinal invertido nas <em>duas</em> views — replicação, não acaso.
           </figcaption>
         </figure>
 
@@ -284,8 +338,8 @@
   </div>
 
   <div class="rodape">
-    Calibrado sobre a história completa dos mercados (3.905 slots de 12h no FOMC, 1.142 na
-    inflação), não sobre a janela do backtest: o erro da probabilidade existe mesmo nos dias
+    Calibrado na história completa dos mercados — 3.905 slots de 12h no FOMC, 1.142 na
+    inflação — e não na janela do backtest: o erro da probabilidade existe mesmo nos dias
     em que a view não seria negociada.
   </div>
 </section>
