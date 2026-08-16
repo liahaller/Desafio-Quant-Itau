@@ -1510,3 +1510,304 @@ MAX_PATH. Três rodadas completas.
 **Nota para o grupo (não é problema de módulo alheio):** quem for rodar mais de um
 backtest no mesmo processo precisa de `montador.reset()` entre eles. O
 `curva_c.py` já faz; scripts novos, não necessariamente.
+
+## 2026-08-16 — Lia (página 3 reestruturada segundo o plano v2)
+
+**Contexto:** a dona trouxe o **plano de estrutura v2** das 5 páginas e pediu a
+reestruturação **apenas da página 3** (Modelagem). As outras quatro não foram
+tocadas — conferido no PDF: o texto extraído das páginas 1, 2, 4 e 5 é
+**idêntico** ao do commit anterior.
+
+**O que a página passou a ter** — os sete blocos do plano, cada um fechando com a
+alternativa descartada (`.porque`), e uma frase no topo declarando o critério
+comum (forma sai de medição ou de princípio declarado antes, nunca do resultado
+do backtest):
+
+1. **Arquitetura em duas camadas** — `arquitetura.svg`, diagrama novo desenhado à
+   mão: as duas camadas em trilhas paralelas convergindo num teto só. O que ele
+   diz e o `pipeline.svg` da página 2 não dizia: **entrar não é somar, é dividir
+   um orçamento fixo**.
+2. **Da probabilidade ao vetor Q** — `Q = (E_poly − âncora) · ΣP·β`, com a linha P
+   saindo do próprio β.
+3. **As views estruturais** — tabela com pregões e o que cada uma expressa;
+   horizonte de 1 dia em todas; a exceção direcional da 15b.
+4. **A régua de confiança (Ω)** — fórmula, `c ≥ 1`, o veto e a mordida desigual.
+5. **Como cada ingrediente foi julgado** — placar das faixas de Spearman.
+6. **A camada tática** — as duas sleeves (M4 recessão `k = 3, 5, 10`; M9 Câmara
+   `k = 20`), a régua de admissão da D22 em quatro pills, e a decisão explícita de
+   ligá-la com o custo na mesa (`+42,6 pp` sozinha, `−2,94 pp` somada).
+7. **Controle de risco** — teto no tilt (`+2,68` contra `−7,91 pp` se cortasse a
+   carteira inteira, mesma alavancagem) e Σ amostral em vez da posterior.
+
+**Números conferidos contra a fonte, não contra a prosa anterior:** cobertura por
+view (LOG de 15/08), `185 de 2.795` vetos e a quebra 153/32 (`c_por_decisao.csv`),
+`−2,94 pp` da camada com régua (D6q), `+42,6 pp` do G4 (`Camada_tatica_v2.md`),
+`+2,68 / −7,91 pp` do teto (LOG de 09/08), sleeves e `k` (`backtest_v1.py` do
+Felipe, lido por `git show`). Nenhum módulo alheio tocado.
+
+**O que quebrou (e por quê importa)**
+
+- 🔴 **O placar dos ingredientes ia entrar ilegível.** Reduzi a coluna para 3,7 in
+  sem recalcular a escala do SVG: o `ingredientes.svg` é gerado a 7 in, então o
+  tipo de 8,5 pt do matplotlib cairia para **~4,5 pt** no PDF — metade da menor
+  fonte da página. Só apareceu ao olhar a prévia. Redesenhado **em HTML** (mesmas
+  faixas medidas, posição = `(v + 0,55)/1,17`), agora com tipo de 7,6 pt e escala
+  rotulada. Consequência: `ingredientes.svg` e `regua.svg` ficaram **sem
+  consumidor** — seguem gerados, com a nota no `graficos.py` e no README.
+- 🟡 **A primeira montagem estourou a página em ~1,5 in.** Sete blocos mais
+  diagrama não cabem na densidade da versão anterior; foram quatro rodadas de
+  compactação (título e critério lado a lado, diagrama de 152 → 110 de viewBox,
+  fontes, e o rodapé removido). Controle usado: `y` máximo do texto medido no PDF
+  contra o limite útil de 511 pt — **506 pt** na versão final, contra 534 na
+  primeira que "parecia caber" na prévia.
+- 🟡 **Descrevi o β como sempre vindo de regressão de evento** — falso para a 2.2,
+  onde ele é a **duration do breakeven** (a view é exceção à Família A). Corrigido
+  antes da versão final; o "por que assim" continua valendo porque duration
+  também é medida, não declarada.
+
+**O que ficou pendente**
+
+- 🔴 **A entrega oficial continua sem a régua** (`scripts/backtest_v1.py` não passa
+  `regua=`, módulo do Felipe) — `PEDIDO_Felipe_acoplar_regua.md` segue de pé.
+- 🔴 **Os tiles "o que ligar a régua muda" saíram da página 3** (`+4,08 → +3,04 pp`
+  e `2,24 → 1,99` views/dia), porque o plano v2 manda sensibilidade para a página
+  4. **Quem cuida da página 4 precisa saber** — hoje esse número não está em
+  lugar nenhum do relatório.
+- 🟡 **O diagrama da página 3 encosta no `pipeline.svg` da página 2**: os dois vão
+  do contrato ao peso. O da 3 foi desenhado para dizer o que o da 2 não diz (as
+  duas camadas e o teto compartilhado), mas quem for revisar a página 2 deveria
+  olhar os dois juntos. Página 2 não é da Lia.
+- 🟡 **A página 3 ficou sem faixa de rodapé** (as 2 e 4 têm). A nota de calibração
+  que vivia nela é justificativa de uma escolha e foi para o bloco da régua, onde
+  a convenção da página manda; a faixa sobrando custava três linhas às colunas.
+- 🟢 **Resolvida a pendência de 15/08:** `montar.py` e `graficos.py` agora rodam a
+  partir do repositório (caminhos derivados do próprio arquivo), sem o drive `X:`.
+  O PDF desta sessão saiu direto de `relatorio/fonte/`.
+- 🟢 `Decisoes_pendentes.md` **não foi alterado**: nada de metodológico novo surgiu
+  — a página descreve decisões já registradas (D22, D28.13, D10a, D8, 6q).
+- 🟡 A divisão de páginas entre os membros continua sem registro no repositório.
+
+**Validação:** 5 páginas · 960 × 540 pt (16:9 exato) · sem identificador de autor
+ou instituição · prosa em 1.378 palavras (o edital **não** tem limite; 750 é
+referência declarada, e o que elimina é passar de 5 páginas).
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** sessão média — leitura do branch do Felipe por
+  `git show` (otimizador, integração, motor de backtest, táticas, views, config),
+  sem checkout, mais sete ciclos de gerar-e-olhar o PDF.
+- **Prompt inicial (verbatim):** "vou precisar reestruturar toda a pagina 3 do
+  relatorio (APENAS MEXER NA PAGINA 3) para que siga esse planejamento:" —
+  seguido do **PLANO DE ESTRUTURA — RELATORIO FINAL (v2)** colado inteiro (as 5
+  páginas, com título de seção e uma frase do que cada uma carrega).
+- **Iterações até aceitar:** 7 no PDF, todas de **auto-correção** contra a prévia
+  e contra o `y` máximo medido — a aceitação da dona ainda não aconteceu.
+- **Erros da IA:** **4.** (a) o placar ia sair com tipo de 4,5 pt; (b) a primeira
+  montagem estourou a página em 1,5 in; (c) o β descrito como sempre de regressão,
+  falso para a 2.2; (d) resíduo de texto quebrado na primeira versão do
+  `arquitetura.svg` (uma linha duplicada com `font-size="0.1"`).
+- **Decisões escaladas:** — (nenhuma; nada de metodológico novo).
+- **Tags:** `[PROMPT-CHAVE]` — é o prompt de **execução a partir de especificação
+  humana**: o plano diz o que cada bloco carrega e o agente busca o número na
+  fonte. Bom candidato ao teste de reprodutibilidade justamente porque o critério
+  de acerto é verificável — outra instância chegaria aos mesmos sete blocos, e
+  aos mesmos números?
+
+### Adendo da mesma sessão — revisão da página 3 a pedido da dona
+
+Passada de revisão sobre o que a sessão tinha acabado de entregar. **Achou três
+erros de conteúdo**, todos na versão que eu já havia dado por pronta:
+
+- 🔴 **`185 de 2.795` estava colado a `4% / 27%` como se fossem a mesma
+  contagem.** Não são: o `c_por_decisao.csv` vai de **2024-04-04 a 2026-07-29** —
+  a série em que a régua foi calibrada, não a janela do backtest — e conta
+  (dia × view × **mercado**), com 2,6 leituras por pregão só na 2.3. Já os 4% e
+  27% são **pregões** perdidos dentro dos 374. Juntar as duas coisas na mesma
+  frase sugeria que 185 era o veto do backtest (dentro da janela são 174 de
+  2.187). Corrigido: o parágrafo nomeia cada período. **A mesma imprecisão já
+  estava na versão de 15/08** — foi herdada, não introduzida agora.
+- 🔴 **O diagrama dizia "o mesmo contrato, lido de dois jeitos" — falso.** As
+  views leem Fed e CPI; as sleeves leem recessão nos EUA e Câmara. São mercados
+  **diferentes** da mesma fonte. Corrigido para "a mesma fonte, duas leituras".
+- 🟡 **`+42,6 pp` sem qualificação.** O `Camada_tatica_v2.md` é explícito: o G4 é
+  **bruto de custo e sem teto**, mede o `dw` pedido e não uma carteira
+  executável. Omitir isso inflava o número contra o `−2,94 pp` ao lado. Agora
+  está "sem teto e bruta de custo".
+- 🟡 O cabeçalho da tabela prometia "o que ela lê" e entregava o nome da view.
+
+**Melhorias sem erro, na mesma passada:** nomes das views em linguagem comum ("o
+que se espera da reunião do Fed" no lugar de "decisão do FOMC"); `28 dos 374`
+pregões no lugar do genérico "sem view ativa, a carteira é o prior"; coluna
+`Exposição` uniformizada (três neutras, uma direcional, que é o próprio
+argumento do bloco); o **quinto critério não formalizado** da régua tática —
+estabilidade no corte da amostra, que derrubou **8 das 10** aprovadas — que o
+plano pedia como "sem overfit" e eu tinha deixado de fora; a linha do zero do
+placar passou a ficar **por cima** das barras que a cruzam; e o bloco do placar
+passou a fechar com `.porque` como os outros seis, cumprindo a promessa do topo.
+
+**Correção ao bloco "Uso de IA" acima:** os erros da IA nesta sessão são **7**,
+não 4 — os quatro já listados mais os três desta revisão. E as iterações no PDF
+são **9**. O padrão que os três novos têm em comum, e que vale registrar: todos
+são **número certo em contexto errado** — a contagem existe e está no artefato,
+o que faltou foi checar de qual população ela vem antes de colocá-la ao lado de
+outra. É a mesma classe do erro de 15/08 (`montador` sem `reset()`): o número
+não estava errado, estava fora do lugar.
+
+### Segundo adendo — a página 3 lida pelos critérios do edital
+
+Pedido da dona: revisar como se eu fosse um dos avaliadores. Reli o
+`Diretrizes Relatório Final.pdf` inteiro em vez de julgar por impressão, e a
+página reprovava em dois requisitos **de formato**, não de conteúdo:
+
+- 🔴 **"Deve ser facilmente legível em tela cheia, sem necessidade de zoom"** é
+  requisito obrigatório da seção 2, e o FAQ repete que fonte pequena "poderá
+  prejudicar a comunicação da proposta". A página usava **doze tamanhos de
+  fonte**, com quase todo o corpo entre **6,5 e 8 pt** — contra 9,5–10 pt das
+  outras quatro. Eu tinha resolvido o problema de caber apertando o tipo, que é
+  exatamente o que o edital penaliza.
+- 🔴 **640 palavras — 44% de todo o texto do relatório** (as outras: 102, 193,
+  183, 330), num edital que diz "muito mais de 750 no total provavelmente é
+  texto em excesso", "não haverá benefício por escrever mais" e "na dúvida,
+  simplifique".
+
+**O que mudou.** Corpo em **dois tamanhos só** (8,1 e 8,6 pt), tabela em 8,6, e
+a prosa cortada de **640 para 471 palavras** — os sete "por que assim" viraram
+de fato *uma linha*, como o plano pedia, e os números que estavam dentro deles
+migraram para as notas. Jargão trocado por português onde não custava precisão:
+`tilt` → **desvio** (o mesmo nome que o teto já usava), `overlay` → **peso
+somado por cima do BL**, `sleeves` → **pernas**, `hedgeado` → **sem exposição ao
+índice**, `prior` → **carteira de equilíbrio**, `ortogonal ao resto` → **não
+repete o que já entrou**.
+
+**Uma inconsistência que só aparece lendo como avaliador:** o `+2,68 → −7,91 pp`
+do teto é de uma configuração de 09/08, e a página 4 mostra `+3,0 pp`. Sem
+apresentação oral e sem acesso a material externo (seção 2 do edital), o
+avaliador não teria como reconciliar os dois. Os números saíram; ficou o fato
+medido — cortar a carteira inteira misturava a aposta da view com a perna de
+mercado.
+
+**Como as larguras foram decididas:** medindo, não estimando. Script que varre
+`grid-template-columns` e reporta o `y` máximo de cada coluna no PDF; com
+colunas iguais a primeira sobrava 26 pt e a terceira faltava 13. Entregue em
+`.80 / 1.30 / 1.10`, com as três colunas em 492, 511 e 510 pt contra o limite
+útil de 511.
+
+**Erros da IA — total da sessão: 9** (7 anteriores + 2). Os dois novos são de
+julgamento, não de fato: (h) resolver falta de espaço encolhendo tipo até 6,5 pt
+num relatório cujo edital exige leitura sem zoom; (i) deixar a página de
+modelagem com 44% do texto do relatório sem comparar com as outras quatro. Os
+dois só apareceram quando o critério de avaliação foi lido de novo — **nenhum
+seria pego relendo a própria página.**
+
+### Terceiro adendo — a prosa que sobrou virou elemento visual
+
+Pedido da dona: "simplificar os textos, é pra ser algo bem visual". O que ainda
+era parágrafo virou desenho, e a página caiu de **471 para 442 palavras**
+(eram 640 no começo do dia) **ganhando** conteúdo:
+
+| bloco | era | virou |
+|---|---|---|
+| Q | fórmula + duas legendas em prosa | **cadeia vertical** de 3 nós e 2 operadores: o que o mercado espera → a surpresa em bps → retorno por ativo |
+| Controle de risco | duas frases | **barra em duas partes**: a de equilíbrio que o teto não toca, e o desvio que ele corta |
+| Views | tabela + nota explicando cobertura | **barra de cobertura** por linha (fatia dos 374 pregões), com a explicação no cabeçalho da coluna |
+| Camada tática | um parágrafo descrevendo as duas pernas | **tabela** mercado × janela × livro, mais **dois tiles** (`+42,6 pp` sozinha · `−2,94 pp` na carteira) |
+| Régua | frase com três números embutidos | **três chips** com os números soltos |
+
+**Um erro de leitura corrigido no caminho:** a primeira versão da tabela tática
+tinha uma coluna "Posição" com "um setor contra outro," numa linha e "sem
+exposição ao índice" na outra — o que fazia parecer que cada perna tinha uma
+posição diferente. Fui ao `gate_transversal.py` do Felipe conferir o livro real:
+**as duas usam o MESMO**, `{XLP: +1, XLK: −1}`. A tabela agora diz "XLP defensivo
+× XLK cíclico" nas duas linhas, que é o que o artefato registra — e de quebra
+mostra ao avaliador que as duas pernas fazem a mesma aposta setorial com
+gatilhos diferentes.
+
+**As alturas continuam sendo medidas, não estimadas:** as três colunas fecham em
+500, 511 e 511 pt contra o limite útil de 511. Cada ajuste desta rodada foi
+seguido de `montar.py` + medição do `y` máximo por faixa de x.
+
+**Erros da IA — total da sessão: 10.** O novo (j) é o da coluna "Posição": criei
+um elemento visual que induzia leitura errada, e ele só não passou porque fui
+conferir o livro no módulo do Felipe antes de dar por pronto. Um elemento visual
+erra mais barato que uma frase — mas erra mais silenciosamente.
+
+### Quarto adendo — revisão de fechamento
+
+Passada final lendo o **texto extraído do PDF**, não o HTML — é assim que o
+avaliador recebe a página. Sete acertos, todos pequenos e todos de comunicação:
+
+1. **`Por quê:`** era o único dos sete que não nomeava a escolha; virou
+   `Por que a amostral:` e o padrão fecha nos sete.
+2. **`derrubou 8 das 10`** ficou sem antecedente quando a frase encurtou —
+   agora `das 10 que passaram por ela, um critério informal derrubou 8`.
+3. **`a régua admite por mecanismo`** era jargão do repositório; virou
+   **`a régua julga o mecanismo, não o resultado`**, que é a mesma frase sem
+   precisar do glossário.
+4. **`o teto não toca`** (verbo sem objeto) → `o teto não corta`, e o verbo
+   passa a ser o mesmo que o diagrama usa duas linhas acima.
+5. **`ela esvazia`** → `a view se esvazia`.
+6. A legenda do placar dizia **`2.2 CPI`** enquanto a tabela ao lado — e o resto
+   do relatório — diz **inflação**.
+7. **O expoente `nível 1` aparecia sem dizer o que é.** Ganhou chip próprio:
+   `expoente fechado em 1, uma vez só`. Era a pergunta mais provável de um
+   avaliador diante daquela fórmula, e a resposta estava só na página 5.
+
+**E um achado que só o perfil tipográfico do PDF entrega:** medindo o tamanho de
+fonte por caractere, os textos do **diagrama** saíam a **7,4 pt** — abaixo do
+corpo da própria página (8,1). O SVG é desenhado num viewBox de 1120 e
+renderizado a 870 pt, então todo tipo dele encolhe 22% sem que isso apareça no
+código. Corrigido no desenho (9,5 → 10,4 e 10,5 → 11,1), com a caixa mais
+estreita alargada para o texto maior não encostar na borda.
+
+**Estado final:** 5 páginas · 960 × 540 pt · anônimo · página 3 com **447
+palavras** (eram 640) e as três colunas em 500, 511 e 511 pt contra o limite útil
+de 511 · páginas 1, 2, 4 e 5 idênticas ao commit anterior, conferidas por
+comparação do texto extraído.
+
+**Erros da IA — total da sessão: 11.** O novo (k) é o do diagrama: eu tinha
+corrigido a tipografia do HTML e declarado a página legível **sem medir o SVG**,
+que é justamente onde o tipo encolhe sem avisar.
+
+### Quinto adendo — números explícitos, grade alinhada, travessões fora
+
+Três pedidos da dona, todos atendidos na página 3.
+
+**1. Os números da tabela de views agora dizem o que são.** Cada célula traz
+`312 de 374`, `253 de 374`, `154 de 374`, `26 de 374`, com o total em tom
+recessivo para o número principal continuar dominando. Antes o `de 374` vivia só
+no cabeçalho, longe da célula. Para pagar as duas linhas que isso custou, os
+rótulos das views encurtaram e o "o que ela lê" subiu para o cabeçalho:
+`View: o que ela lê no mercado` → `2.3 · a decisão do Fed`, `2.2 · a inflação do
+mês`, `B · a taxa no fim do ano`, `15b · a dúvida na véspera`.
+
+**2. Organização: seis blocos numa grade 3 × 2, não três colunas empilhando dois
+blocos cada.** A diferença é que agora a segunda fileira de títulos começa na
+**mesma altura** nas três colunas — antes cada coluna terminava o primeiro bloco
+onde desse e o segundo título entrava desalinhado (505, 517 e 551 pt). Entrou
+também um **filete vertical** entre colunas, que é o que separa a leitura
+vertical da horizontal numa página de três colunas.
+
+O custo da grade é que cada fileira passa a ter a altura do bloco mais alto, e
+isso estourou a página em 35 pt. Medi bloco a bloco em vez de chutar: o gargalo
+da fileira de cima era a **régua** (179 pt) e o da de baixo, a **tática**
+(131 pt). Resolvido:
+
+- **A fórmula do `c` perdeu a moldura** e ficou igual à do `Q`, que nunca teve
+  card. Além dos 13 pt, é a correção certa: as duas fórmulas da página faziam a
+  mesma coisa e eram desenhadas diferente.
+- **O `8 de 10` saiu da prosa e virou o terceiro tile** da camada tática, ao lado
+  do `+42,6 pp` e do `−2,94 pp`. Não custou altura nenhuma (a fileira de tiles já
+  existia) e o dado ficou mais visível do que estava.
+
+Emparelhamento conferido: com as alturas medidas (179, 164, 154 na fileira de
+cima; 131, 127, 112 na de baixo), a disposição atual já é a que minimiza o total
+— trocar a régua de fileira levaria a página de 319 para 342 pt.
+
+**3. Travessões removidos.** Zero `—` na página; o único hífen que sobrou é o de
+**Black-Litterman**, que é nome próprio. As frases foram reescritas com vírgula,
+ponto ou dois-pontos, sem perder nenhuma informação.
+
+**Estado:** 5 páginas · 960 × 540 pt · anônimo · página 3 com **426 palavras**
+(eram 640 no começo do dia) e altura em 511,3 pt contra o limite útil de 511,2 ·
+páginas 1, 2, 4 e 5 idênticas ao commit anterior.
