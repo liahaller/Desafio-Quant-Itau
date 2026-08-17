@@ -1,9 +1,12 @@
-"""Recorta os gráficos das páginas 4 e 5 entregues em PDF, para o template.
+"""Recorta os gráficos da página 5 e a arte da capa dos PDFs entregues.
 
-Os gráficos dessas páginas vieram embutidos num PDF pronto, sem os scripts que os
-desenharam. Em vez de redesenhá-los (o que mudaria o número), recorta-se a região
-do PDF original em 4x e troca-se o preto do fundo pelo fundo do relatório — o
-conteúdo do gráfico não é tocado, só a cor que o cerca.
+Esses gráficos vieram embutidos num PDF pronto. Em vez de redesenhá-los (o que
+mudaria o número), recorta-se a região do PDF original em 4x e troca-se o preto
+do fundo pelo fundo do relatório — o desenho não é tocado, só a cor que o cerca.
+
+Os três da página 4 NÃO saem daqui: como a legenda de um deles precisava perder
+o acento, eles são redesenhados pelo gerador do próprio autor — ver
+`regerar_graficos_p4.py`.
 """
 import base64
 import sys
@@ -22,9 +25,6 @@ ESCURO = 14            # até aqui é fundo, não desenho
 
 # (arquivo, página, retângulo no PDF de origem, nome de saída)
 RECORTES = [
-    ("KAIROSv2_p4_p5.pdf", 0, (62, 132, 371, 328), "p4_curva"),
-    ("KAIROSv2_p4_p5.pdf", 0, (379, 132, 623, 263), "p4_decomposicao"),
-    ("KAIROSv2_p4_p5.pdf", 0, (638, 133, 897, 298), "p4_sensibilidades"),
     ("KAIROSv2_p4_p5.pdf", 1, (60, 190, 370, 321), "p5_linha_do_tempo"),
     ("KAIROSv2_p4_p5.pdf", 1, (379, 190, 623, 323), "p5_tipo_de_sessao"),
     ("KAIROSv2_p4_p5.pdf", 1, (638, 190, 899, 315), "p5_erros"),
