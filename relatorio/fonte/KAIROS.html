@@ -161,7 +161,7 @@
   .p45 b { color: var(--tinta); font-weight: 600; }
   .p45.viesado { border-left: 2px solid var(--ambar-d); padding-left: 7px; }
   .p4-metodo { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 18px; margin-bottom: 10px; }
-  .p4-graf { display: grid; grid-template-columns: 1.24fr 1fr 1.05fr; gap: 18px; margin-bottom: 11px; }
+  .p4-graf { display: grid; grid-template-columns: 1.06fr 1.16fr 1.05fr; gap: 18px; margin-bottom: 11px; }
   .p4-graf img { width: 100%; height: 198px; object-fit: contain; object-position: center top; display: block; }
   .p5-graf img { width: 100%; height: 184px; object-fit: contain; object-position: center top; display: block; }
   .p4-fim { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
@@ -324,7 +324,8 @@
     padding: 9px 12px; font-size: 8.8pt; line-height: 1.45; color: var(--tinta2); margin: 0;
   }
   .foto { position: relative; }
-  .foto img { width: 100%; height: 3.42in; object-fit: cover; border-radius: 6px; display: block; }
+  /* A arte é quadrada: a caixa acompanha, em vez de recortar o robô. */
+  .foto img { width: 100%; height: auto; aspect-ratio: 1; border-radius: 6px; display: block; }
 
   /* Placar: o valor, o que ele mede e a mesma medida no benchmark, nesta ordem
      em todos os quatro — a comparação é o ponto da fileira. */

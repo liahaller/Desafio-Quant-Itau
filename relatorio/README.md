@@ -7,7 +7,8 @@ Renome-ar para `[chave de envio].pdf` na hora de enviar.
 
 ```
 cd fonte
-python importar_graficos.py  # recorta os gráficos das páginas 4 e 5 dos PDFs recebidos
+python regerar_graficos_p4.py  # redesenha os 3 gráficos da página 4 pelo gerador do autor
+python importar_graficos.py    # recorta os da página 5 e a arte, dos PDFs recebidos
 python montar.py             # injeta imagem e SVGs no template, gera o PDF e valida
 python montar_pptx.py        # reconstrói a página 3 como slide de PowerPoint editável
 ```
@@ -31,9 +32,16 @@ Duas alterações combinadas, e só elas: a numeração `01 / 05` virou `01`, e
 comparando os caracteres de cada página com os do PDF de origem — se alguém
 mexer no texto de uma página alheia, a checagem acusa.
 
-⚠️ **A legenda dentro do gráfico da curva (página 4) ainda diz `Kairós`.** Ela é
-pixel dentro da imagem, e corrigir exige o script que desenhou o gráfico, que
-está no branch de quem fez a página.
+Os **três gráficos da página 4** não são recorte: a legenda da curva dizia
+`Kairós` e trocar a letra dentro da imagem não dá. O `regerar_graficos_p4.py`
+extrai o `origin/Felipe` para um diretório fora do repositório, troca o rótulo na
+**cópia** do `scripts/graficos_p4.py` e roda o gerador ali — o módulo alheio não
+é tocado, e a saída vem melhor que o recorte: 300 dpi com fundo transparente,
+desenhada sobre os mesmos CSV do autor. As métricas que ele imprime de brinde
+conferem com a tabela da página, número a número.
+
+ℹ️ A palavra **`Kairós` com acento continua na página 1**, em "Kairós, no grego,
+é o instante oportuno": ali é a palavra grega sendo explicada, não a marca.
 
 As páginas 4 e 5 usam a variante `.slide.densa` do CSS: mesma identidade, margens
 menores. Sem isso, o conteúdo entregue nelas só caberia em corpo de 5,5 pt.

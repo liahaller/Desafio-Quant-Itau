@@ -2069,3 +2069,50 @@ palavras com `difflib` antes de fechar.
   título original para dentro da imagem.
 - **Decisões escaladas:** — (nenhuma; as duas escolhas foram resolvidas na
   conversa, categoria 2 do CLAUDE.md).
+
+### Adendo — a arte inteira na capa e o acento fora do gráfico
+
+**1. A arte da capa estava sendo cortada.** A imagem é quadrada (1100 × 1100) e a
+caixa tinha proporção 1,12:1 com `object-fit: cover`, o que comia 11% da altura:
+as antenas em cima e a base do robô embaixo. A caixa passou a ser quadrada
+(`aspect-ratio: 1`, 280 × 281 pt) e a arte aparece inteira. Coube sem empurrar
+nada: o corpo da página 1 fecha em 481 pt, com o rodapé em 494.
+
+**2. O `Kairós` dentro do gráfico da curva.** Era pixel dentro da imagem, e quem
+escreve o rótulo é o `scripts/graficos_p4.py`, **módulo do Felipe**. Em vez de
+editar o módulo dele (proibido pela regra 2) ou retocar a imagem, o novo
+`relatorio/fonte/regerar_graficos_p4.py`:
+
+1. extrai `origin/Felipe` (`src`, `scripts`, `Dump/dados`) para um diretório
+   temporário **fora do repositório**, via `git archive`;
+2. troca `label="Kairós (líquido)"` por `Kairos` **na cópia**;
+3. roda o gerador ali e traz os três PNG para `fonte/importado/`.
+
+O branch do Felipe não foi tocado — nada foi commitado nele, nada editado nele.
+Os três gráficos da página 4 deixaram de ser recorte do PDF e passaram a ser
+**300 dpi com fundo transparente**, desenhados sobre os mesmos CSV que o autor
+usou. Conferido contra a página entregue: mesma curva, mesmos rótulos
+(+33,2% · +30,1% · mín. −19,6%), mesma cascata (+28,7 · +5,2 · −3,0 · +30,9),
+mesmos quatro painéis de sensibilidade.
+
+**De brinde:** o gerador imprime `Metricas_p4.md`, e a tabela dele bate número a
+número com a tabela de métricas da página 4 (+33,2% · 17,6% · 1,18 · −19,6% ·
++2,57% · 0,95 · 1,91 · 0,40). É a primeira conferência independente daqueles
+números desde que a página chegou.
+
+ℹ️ **`Kairós` com acento continua na página 1**, em "Kairós, no grego, é o
+instante oportuno". Ali é a palavra grega sendo explicada, não a marca, e a marca
+no alto da página já é `KAIROS`.
+
+**Uso de IA — complemento**
+
+- **Prompt (verbatim):** "alguns ajustes que faltam: a foto na primeira pagina
+  esta cortada, e o kairós com acento voce pode alterar mexendo na branch do
+  felipe e pegando o grafico de novo?"
+- **Iterações até aceitar:** 1. Duas correções internas: o script quebrou porque
+  a pasta `analises` era criada depois da chamada do gerador, e a primeira
+  tentativa de deixar os gráficos preencherem a largura estourou a página em 9
+  linhas.
+- **Erros da IA: 2** — ordem de criação de diretório no script novo; e deixar a
+  imagem com `height: auto` sem medir antes.
+- **Decisões escaladas:** — (nenhuma).
