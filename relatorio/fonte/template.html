@@ -39,6 +39,11 @@
     flex-direction: column;
   }
   .slide:last-child { page-break-after: auto; }
+  /* Variante para as páginas densas (4 e 5): a moldura encolhe, a identidade
+     fica. Sem isto, o conteúdo entregue nessas duas só caberia em corpo 5,5 pt. */
+  .slide.densa { padding: 0.32in 0.62in 0.22in; }
+  .slide.densa .topo { padding-bottom: 6px; margin-bottom: 12px; }
+  .slide.densa .rodape { margin-top: 8px; padding-top: 6px; font-size: 6.4pt; }
 
   /* ---- cabeçalho corrente ---- */
   .topo {
@@ -117,6 +122,59 @@
 
   .nota { font-size: 8.5pt; color: var(--tinta3); line-height: 1.42; }
   .destaque { color: var(--ambar); }
+
+  /* =================== PÁGINA 2 =================== */
+  .p2-cabeca { display: grid; grid-template-columns: 1fr 1.4fr; gap: 26px; align-items: baseline; margin-bottom: 9px; }
+  .p2-lead { font-size: 9pt; color: var(--tinta2); text-align: right; line-height: 1.45; margin: 0; }
+  .p2-cima { display: grid; grid-template-columns: 1.52fr 1fr; gap: 24px; margin-bottom: 10px; }
+  .p2-sub { font-size: 9pt; color: var(--tinta); font-weight: 600; margin: 0 0 3px; }
+  .p2-txt { font-size: 8.2pt; line-height: 1.46; color: var(--tinta2); margin: 0 0 9px; }
+  .p2-sol {
+    background: var(--fundo2); border-left: 2px solid var(--azul); border-radius: 0 4px 4px 0;
+    padding: 10px 13px; font-size: 8.2pt; line-height: 1.5; color: var(--tinta2);
+  }
+  /* Da opinião à posição: a conta que a página inteira defende, desenhada em uma
+     linha — as duas entradas somam, viram view, e a confiança as escala. */
+  .p2-fluxo { display: flex; align-items: center; gap: 9px; }
+  .fx { flex: 1; border: 1px solid var(--linha); border-radius: 5px; background: var(--fundo2); padding: 4px 9px; text-align: center; }
+  .fx.azul { border-color: rgba(61,143,196,.55); }
+  .fx.amb  { border-color: rgba(245,166,35,.55); }
+  .fx b { display: block; font-size: 8.5pt; font-weight: 600; color: var(--azul); }
+  .fx.amb b { color: var(--ambar); }
+  .fx span { font-size: 7.3pt; color: var(--tinta3); }
+  .fx-op { color: var(--tinta3); font-size: 11pt; flex: 0 0 auto; }
+  .fx-pilha { flex: 1.05; display: grid; gap: 3px; justify-items: center; }
+  .fx-pilha .fx { width: 100%; }
+  .p2-baixo { display: grid; grid-template-columns: .88fr 1.3fr; gap: 16px; }
+  .p2-caixa { border: 1px solid var(--linha); border-radius: 5px; padding: 9px 12px; }
+  .p2-big { font-size: 13.5pt; font-weight: 700; color: var(--ambar); line-height: 1.1; }
+  .p2-nota { font-size: 7.6pt; line-height: 1.38; color: var(--tinta2); margin: 0; }
+  .p2-lista { font-size: 7.5pt; line-height: 1.28; color: var(--tinta2); margin: 0; padding-left: 11px; }
+  .p2-lista li { margin-bottom: 2px; }
+  h3 { font-size: 7.4pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--azul); margin: 0 0 4px; }
+
+  /* ============== PÁGINAS 4 E 5 (densas: seis colunas de texto) ============== */
+  /* Corpo de 6,8 pt: é o que faz o conteúdo entregue caber sem cortar nenhuma
+     frase. Os gráficos vieram prontos, recortados do PDF original — ver
+     `importar_graficos.py`. */
+  .p45 { font-size: 6.3pt; line-height: 1.38; color: var(--tinta3); margin: 0 0 5px; }
+  .p45 b { color: var(--tinta); font-weight: 600; }
+  .p45.viesado { border-left: 2px solid var(--ambar-d); padding-left: 7px; }
+  .p4-metodo { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 18px; margin-bottom: 10px; }
+  .p4-graf { display: grid; grid-template-columns: 1.24fr 1fr 1.05fr; gap: 18px; margin-bottom: 11px; }
+  .p4-graf img { width: 100%; height: 198px; object-fit: contain; object-position: center top; display: block; }
+  .p5-graf img { width: 100%; height: 184px; object-fit: contain; object-position: center top; display: block; }
+  .p4-fim { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+  .p4-fim h2, .p4-graf h2, .p5-graf h2 { font-size: 7.4pt; letter-spacing: .13em; margin-bottom: 6px; }
+  table.p4-tab { font-size: 6.3pt; }
+  table.p4-tab th { font-size: 6.2pt; padding-bottom: 4px; }
+  table.p4-tab td { padding: 2.4px 0; font-size: 6.3pt; }
+
+  .p5-numeros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 9px; }
+  .p5-numeros .k { font-size: 6.2pt; letter-spacing: .14em; text-transform: uppercase; color: var(--tinta3); }
+  .p5-numeros .v { font-size: 19pt; font-weight: 700; color: var(--ambar); line-height: 1.15; }
+  .p5-numeros .ref { font-size: 6.3pt; color: var(--tinta3); }
+  .p5-graf { display: grid; grid-template-columns: 1.14fr 1fr 1.06fr; gap: 18px; margin-bottom: 10px; }
 
   /* =================== PÁGINA 3 =================== */
   /* Convenção da página: a justificativa anda junto da escolha. Todo bloco
@@ -254,108 +312,241 @@
   .pl-ver.no { color: var(--vermelho); }
 
   /* =================== PÁGINA 1 =================== */
-  .capa { display: grid; grid-template-columns: 1.32fr 1fr; height: 100%; }
-  .capa-txt { padding-right: 34px; display: flex; flex-direction: column; justify-content: center; }
-  .logo { font-size: 52pt; font-weight: 200; letter-spacing: .17em; color: var(--tinta); margin: 0 0 2px; }
-  .tagline { font-size: 12.5pt; color: var(--ambar); font-weight: 500; margin-bottom: 22px; letter-spacing: .01em; }
-  .regua-h { width: 76px; height: 2px; background: var(--ambar); margin-bottom: 20px; }
-  .capa-dir { display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  /* Capa em três colunas: a narrativa, a ficha e a arte. O placar e a régua de
+     seções fecham a página, na largura inteira. */
+  .capa { display: grid; grid-template-columns: 1.16fr .92fr 1.06fr; gap: 26px; align-items: start; }
+  .logo { font-size: 50pt; font-weight: 200; letter-spacing: .16em; color: var(--ambar); margin: 0 0 7px; line-height: 1; }
+  .tagline { font-size: 12.5pt; color: var(--tinta); font-weight: 600; margin-bottom: 3px; letter-spacing: .01em; }
+  .p1-sub { font-size: 9.5pt; color: var(--tinta2); margin-bottom: 15px; }
+  .p1-txt { font-size: 9pt; line-height: 1.5; margin-bottom: 12px; }
+  .p1-cita {
+    background: var(--fundo2); border-left: 2px solid var(--ambar); border-radius: 0 4px 4px 0;
+    padding: 9px 12px; font-size: 8.8pt; line-height: 1.45; color: var(--tinta2); margin: 0;
+  }
   .foto { position: relative; }
-  .foto img {
-    width: 100%; height: 4.30in; object-fit: cover; object-position: center 18%;
-    border-radius: 6px; display: block;
+  .foto img { width: 100%; height: 3.42in; object-fit: cover; border-radius: 6px; display: block; }
+
+  /* Placar: o valor, o que ele mede e a mesma medida no benchmark, nesta ordem
+     em todos os quatro — a comparação é o ponto da fileira. */
+  .col4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .tile .v.neg { color: var(--vermelho); }
+  .tile .ref { font-size: 7.5pt; color: var(--tinta3); margin-top: 1px; }
+  .h2sub { color: var(--tinta3); font-weight: 400; letter-spacing: 0; text-transform: none; font-size: 8.5pt; margin-left: 8px; }
+
+  /* Régua das cinco seções: o sumário do relatório, com a atual acesa. */
+  .navse { display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px; }
+  .navse div {
+    border: 1px solid var(--linha); border-radius: 4px; padding: 5px 10px;
+    font-size: 8.6pt; color: var(--tinta2);
   }
-  .foto::after {
-    content: ""; position: absolute; inset: 0; border-radius: 6px;
-    background: linear-gradient(90deg, var(--fundo) 0%, rgba(11,22,34,.30) 24%, rgba(11,22,34,0) 52%);
-  }
+  .navse b { color: var(--tinta3); font-weight: 700; margin-right: 7px; }
+  .navse .aqui { border-color: rgba(245,166,35,.55); background: rgba(245,166,35,.08); color: var(--tinta); }
+  .navse .aqui b { color: var(--ambar); }
 </style>
 
 
 <!-- ============================== PÁGINA 1 ============================== -->
 <section class="slide">
-  <div class="capa">
-    <div class="capa-txt">
-      <div class="logo">KAIROS</div>
-      <div class="tagline">Black-Litterman movido a probabilidade negociada</div>
-      <div class="regua-h"></div>
+  <div class="topo"><div class="marca">KAIROS <span>Identidade do robô</span></div><div class="pag">01</div></div>
 
-      <h2>Por que Kairos</h2>
-      <p style="margin-bottom:18px">
-        <em>Kairos</em> é o grego para o <strong>instante oportuno</strong> — por oposição
-        a <em>chronos</em>, o tempo que apenas passa. A estratégia não tenta adivinhar o
-        mercado todo dia: ela se posiciona em torno de <strong>eventos com data
-        marcada</strong>, reuniões do Fed e divulgações de inflação. As três telas do robô
-        são o mesmo evento lido por ângulos diferentes; a ampulheta é o prazo correndo
-        até a decisão.
-      </p>
+  <div class="corpo">
+    <div class="capa">
+      <div>
+        <div class="logo">KAIROS</div>
+        <div class="tagline">Black-Litterman movido a probabilidade negociada</div>
+        <p class="p1-sub">Posiciona-se em torno de eventos com data marcada.</p>
 
-      <div class="col3" style="gap:14px">
-        <div class="card tile"><div class="v">+33,2%</div><div class="k">retorno líquido</div></div>
-        <div class="card tile"><div class="v">1,18</div><div class="k">sharpe</div></div>
-        <div class="card tile"><div class="v">+3,0 pp</div><div class="k">excesso vs SPY</div></div>
+        <h2>Por que Kairos</h2>
+        <p class="p1-txt">
+          <strong style="color:var(--ambar)">Kairós</strong>, no grego, é o
+          <strong>instante oportuno</strong>, o momento certo de agir, em oposição a
+          <em>Chronos</em>, o tempo que apenas passa. A estratégia herda a distinção: não
+          fica exposta o tempo todo; <strong>concentra risco nos poucos instantes</strong>
+          em que informação nova chega ao preço (decisão do FOMC, inflação). Fora deles, a
+          carteira volta ao <strong>prior</strong> de mercado.
+        </p>
+        <p class="p1-cita">
+          A <strong>view</strong> do Black-Litterman deixa de ser palpite: vem do
+          <strong>preço de um mercado de previsão</strong>, uma probabilidade com dinheiro
+          em risco, aplicável a qualquer evento com data marcada.
+        </p>
       </div>
+
+      <div>
+        <h2>Ficha técnica</h2>
+        <table class="ficha">
+          <tr><td>Classe de ativos</td><td>ETFs (EUA)</td></tr>
+          <tr><td>Universo</td><td>9 ETFs · setores, RF e índice</td></tr>
+          <tr><td>Sinal</td><td>Polymarket → <span class="destaque">view</span> de BL</td></tr>
+          <tr><td>Benchmark</td><td>SPY (buy &amp; hold)</td></tr>
+          <tr><td>Rebalanceamento</td><td>Diário</td></tr>
+          <tr><td>Janela testada</td><td>374 pregões · fev/25 a ago/26</td></tr>
+          <tr><td>Horizonte de carteira</td><td>Dias a semanas (no evento)</td></tr>
+          <tr><td>Plataforma</td><td>Python</td></tr>
+        </table>
+      </div>
+
+      <div class="foto"><img src="{{KAIROS_IMG}}" alt=""></div>
     </div>
 
-    <div class="capa-dir">
-      <div class="foto"><img src="{{KAIROS_IMG}}" alt=""></div>
-      <table class="ficha">
-        <tr><td>Classe de ativos</td><td>ETFs — ações e renda fixa</td></tr>
-        <tr><td>Universo</td><td>9 ETFs (EUA)</td></tr>
-        <tr><td>Sinal</td><td>Polymarket</td></tr>
-        <tr><td>Benchmark</td><td>SPY comprar-e-segurar</td></tr>
-        <tr><td>Rebalanceamento</td><td>Diário</td></tr>
-        <tr><td>Janela testada</td><td>374 pregões</td></tr>
-      </table>
+    <h2 style="margin:24px 0 8px">Placar de entrega
+      <span class="h2sub">Kairos vs. SPY, líquido de custos (374 pregões)</span></h2>
+    <div class="col4">
+      <div class="card tile"><div class="v">+33,2%</div>
+        <div class="k">retorno líquido</div><div class="ref">SPY +30,1%</div></div>
+      <div class="card tile"><div class="v">1,18</div>
+        <div class="k">sharpe</div><div class="ref">SPY 1,08</div></div>
+      <div class="card tile"><div class="v">+3,1 pp</div>
+        <div class="k">excesso vs SPY</div><div class="ref">a mesmo risco · vol 17,6% × 17,9%</div></div>
+      <div class="card tile"><div class="v neg">−19,6%</div>
+        <div class="k">máx. drawdown</div><div class="ref">SPY −18,8%</div></div>
     </div>
+
+    <div class="navse" style="margin-top:16px">
+      <div class="aqui"><b>01</b>Identidade</div>
+      <div><b>02</b>A ideia</div>
+      <div><b>03</b>Modelagem</div>
+      <div><b>04</b>Backtest &amp; autoavaliação</div>
+      <div><b>05</b>Uso de IA</div>
+    </div>
+  </div>
+
+  <div class="rodape">
+    Kairos · Desafio Quant AI 2025 · Itaú Asset · classe: ETFs (EUA) ·
+    sinal: mercado de previsão (Polymarket) · benchmark: SPY
   </div>
 </section>
 
 
 <!-- ============================== PÁGINA 2 ============================== -->
 <section class="slide">
-  <div class="topo"><div class="marca">KAIROS <span>A ineficiência</span></div><div class="pag">02</div></div>
+  <div class="topo"><div class="marca">KAIROS <span>A ideia</span></div><div class="pag">02</div></div>
 
   <div class="corpo">
-    <div class="col2b">
-      <div>
-        <h1>O elo mais frágil do Black-Litterman é uma opinião</h1>
-        <p>
-          Duas peças decidem o resultado: <strong>Q</strong>, o retorno que a visão afirma,
-          e <strong>Ω</strong>, a incerteza atribuída a ela. Ambas costumam ser
-          declaradas — <em>"estou 60% confiante"</em>. A subjetividade fica escondida atrás
-          de uma matriz: dá para produzir qualquer resultado escolhendo os números depois
-          de ver o backtest.
-        </p>
-        <p>
-          <strong>Kairos substitui as duas por dado observável.</strong> Q vem do preço de
-          contratos com dinheiro em risco sobre o desfecho de um evento macro. Ω vem de uma
-          régua cuja forma foi escolhida por teste contra o <strong>erro realizado da
-          probabilidade</strong> — nunca contra o retorno da carteira.
-        </p>
+    <div class="p2-cabeca">
+      <h1 style="font-size:16.5pt; margin:0">A estratégia e os dados</h1>
+      <p class="p2-lead">
+        Por que <strong style="color:var(--ambar)">Black-Litterman</strong>, onde ele é frágil,
+        e por que o <strong style="color:var(--ambar)">preço do Polymarket</strong> — com
+        dinheiro em risco — entra no lugar da opinião.
+      </p>
+    </div>
 
-        <div class="card" style="margin-top:12px; border-left:2px solid var(--ambar)">
-          <p style="margin:0; font-size:10pt">
-            <strong>A tese não é que o mercado de previsão erre</strong> — medimos que ele
-            acerta: surpresa mediana de <span class="num">0,52 bps</span> em 17 reuniões do
-            Fed. Ele oferece uma <strong>distribuição de cenários com preço</strong>, todo
-            dia, melhor que a opinião que o BL costuma consumir. O ganho está em convertê-la
-            em posição com disciplina — e em recuar quando a leitura piora.
-          </p>
-        </div>
+    <div class="p2-cima">
+      <div>
+        <h2>Por que Black-Litterman</h2>
+        <p class="p2-sub">Parte do equilíbrio, não do palpite</p>
+        <p class="p2-txt">
+          A otimização de média-variância (Markowitz) é frágil: uma mudança minúscula nos
+          retornos esperados joga a carteira para um canto, e ainda exige opinar sobre
+          <strong>todos</strong> os ativos. Black-Litterman inverte o ponto de partida, ancora
+          no <strong>retorno de equilíbrio já embutido nos preços</strong> (o prior) e só se
+          afasta dele quando recebe uma view, com um grau de confiança. Onde não há opinião,
+          fica o mercado.
+        </p>
+        <p class="p2-sub">O elo mais frágil</p>
+        <p class="p2-txt" style="margin-bottom:0">
+          A view é o par <strong>(Q, Ω)</strong>: direção e magnitude do retorno, e a confiança
+          nela. Ambos são <strong>declarados pelo gestor</strong>, sem disciplina externa.
+          Depois de ver o backtest, dá para ajustar a view até produzir
+          <strong>quase qualquer resultado</strong>. A força do BL, incorporar opinião, é
+          também sua fragilidade.
+        </p>
       </div>
 
       <div>
-        <h2>Do contrato ao peso</h2>
-        {{SVG_PIPELINE}}
+        <h2>A nossa solução</h2>
+        <div class="p2-sol">
+          E se a view não fosse a nossa opinião, mas um <strong>preço público</strong>, formado
+          por gente com dinheiro em risco? No Polymarket, um contrato paga US$ 1 se o evento
+          ocorre e US$ 0 se não: o <strong style="color:var(--azul)">preço é a
+          probabilidade</strong>, reprecificada a cada negociação. O Kairos usa esse preço
+          <strong>como view</strong> — Q e Ω passam a ser derivados da distribuição do
+          Polymarket, e não declarados.
+        </div>
+      </div>
+    </div>
+
+    <h2>Da opinião à posição</h2>
+    <div class="p2-fluxo" style="margin-bottom:11px">
+      <div class="fx-pilha">
+        <div class="fx azul"><b>Opinião do Polymarket</b><span>probabilidade com dinheiro em risco</span></div>
+        <div class="fx-op">+</div>
+        <div class="fx azul"><b>Nosso método matemático</b><span>traduz a probabilidade em Q, Ω</span></div>
+      </div>
+      <div class="fx-op">→</div>
+      <div class="fx amb"><b>View</b><span>(Q, Ω) derivada, não declarada</span></div>
+      <div class="fx-op">×</div>
+      <div class="fx amb"><b>Confiança</b><span>c, calibrada pela qualidade do sinal</span></div>
+      <div class="fx-op">=</div>
+      <div class="fx amb"><b>Previsão</b><span>o desvio da carteira vs. mercado</span></div>
+    </div>
+
+    <div class="p2-baixo">
+      <div class="p2-caixa">
+        <h3>Por que confiamos no Polymarket</h3>
+        <div class="col2" style="gap:14px; margin-bottom:11px">
+          <div><div class="p2-big">90,1% de acerto</div>
+            <div class="nota" style="margin-top:2px">A 1 mês da resolução</div></div>
+          <div><div class="p2-big">US$ 26,2 bilhões</div>
+            <div class="nota" style="margin-top:2px">Negociados no 1º trimestre de 2026</div></div>
+        </div>
+        <div class="col2" style="gap:14px">
+          <div>
+            <h3 style="color:var(--ambar)">Dinheiro em risco</h3>
+            <p class="p2-nota">Pesquisa, analista de banco ou economista não pagam por errar;
+              um <strong>trader de mercado de previsão paga</strong>. Preço com capital em
+              risco agrega informação melhor do que opinião.</p>
+          </div>
+          <div>
+            <h3 style="color:var(--ambar)">Se corrige sozinho</h3>
+            <p class="p2-nota">Se o preço destoa muito da realidade, alguém lucra ao corrigi-lo.
+              Esse é o incentivo que puxa de volta. Nenhuma opinião tem um mecanismo que a
+              conserta em tempo real, o mercado tem.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="p2-caixa">
+        <h3>Como pegamos os dados</h3>
+        <div class="col2" style="gap:18px">
+          <div>
+            <h3 style="font-size:7.2pt">Fontes</h3>
+            <ul class="p2-lista" style="margin-bottom:7px">
+              <li><strong>Polymarket</strong>: Gamma API (catálogo, metadados, volume) + CLOB
+                <em style="color:var(--ambar)">/prices-history</em> (série de preço = probabilidade)</li>
+              <li><strong>Preços</strong>: 9 ETFs, <em style="color:var(--ambar)">yfinance</em> (close e open ajustados)</li>
+              <li><strong>Macro</strong>: séries do <strong>FRED</strong> (calendário e realizado)</li>
+            </ul>
+            <h3 style="font-size:7.2pt">Janela &amp; passo</h3>
+            <ul class="p2-lista">
+              <li>Backtest: <strong>374 pregões</strong> · 10/02/2025 a 06/08/2026</li>
+              <li>Passo nativo de <strong>12h</strong>, o mais fino da API gratuita</li>
+              <li><strong>18 reuniões</strong> do FOMC · 76 mercados</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="font-size:7.2pt">Junção &amp; tratamento</h3>
+            <ul class="p2-lista" style="margin-bottom:7px">
+              <li>Última probabilidade até o <strong>fechamento</strong> do pregão (sem look-ahead)</li>
+              <li>Efeito do evento se concentra no <strong>gap de abertura</strong> — a frequência diária o captura</li>
+              <li>Volume reconstruído do Gamma (lifetime por mercado)</li>
+              <li>Faixas faltantes preenchidas por regra explícita</li>
+            </ul>
+            <h3 style="font-size:7.2pt">Filtro de qualidade do livro</h3>
+            <ul class="p2-lista">
+              <li>View <strong>desativada</strong> quando o livro degenera (sem par de leituras ou sem trade)</li>
+              <li><strong>Auditado, não assumido</strong>: os dias em que morde estão na Modelagem (p.3)</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="rodape">
-    Fontes: Polymarket (Gamma + CLOB, passo nativo de 12h) · preços diários ajustados de
-    9 ETFs · séries macro do FRED. Volume reconstruído negócio a negócio — não há endpoint
-    de volume histórico pronto.
+    Fontes: Polymarket (Gamma + CLOB), Yahoo Finance (yfinance), FRED. Datasets e scripts de
+    validação versionados no repositório. Nenhum número desta página foi digitado à mão.
   </div>
 </section>
 
@@ -559,139 +750,289 @@
 
 
 <!-- ============================== PÁGINA 4 ============================== -->
-<section class="slide">
-  <div class="topo"><div class="marca">KAIROS <span>Backtest e resultados</span></div><div class="pag">04</div></div>
+<section class="slide densa">
+  <div class="topo"><div class="marca">KAIROS <span>Backtest, resultados e autoavaliação</span></div><div class="pag">04</div></div>
 
   <div class="corpo">
-    <div class="col2b" style="gap:28px">
-      <figure>
-        {{SVG_CURVA}}
-        <figcaption>
-          374 pregões (10/02/2025 a 06/08/2026), com a régua de confiança acoplada.
-          Custo de 2 bps por lado sobre o giro contra o peso derivado. Teto de risco
-          aplicado ao desvio em relação ao prior.
-        </figcaption>
-      </figure>
+    <h2>Metodologia e vieses tratados</h2>
+    <div class="p4-metodo">
+      <p class="p45" style="margin:0">
+        <b>O backtest</b> foi rodado ao longo de: 374 pregões (10/02/2025 a 06/08/2026),
+        9 ETFs a preços ajustados, rebalanceamento diário, <b>2,0 bps por lado</b> sobre o
+        giro. Todo número desta página teve de passar por uma pergunta: o backtest podia
+        saber isso na hora da decisão? As quatro formas de inflar um backtest
+        (<b>olhar o futuro, calibrar dentro da própria janela, assumir número de manual e
+        ajustar parâmetro ao resultado</b>) foram fechadas por construção, antes de rodar.
+      </p>
+      <div>
+        <p class="p45 viesado"><b>O modelo nunca viu o futuro.</b> Nenhuma view usa o desfecho
+          do evento que ela mesma precifica.</p>
+        <p class="p45 viesado"><b>Nada foi assumido de cabeça.</b> A sensibilidade a juros que
+          o manual arredonda para &ldquo;8&rdquo; foi medida: 8,31 a 8,38.</p>
+      </div>
+      <div>
+        <p class="p45 viesado"><b>A régua foi calibrada fora do teste.</b> As médias de
+          referência vêm de 206 pregões anteriores ao início da janela medida.</p>
+        <p class="p45 viesado"><b>Os parâmetros não foram ajustados ao resultado.</b> Teto de
+          risco, confiança nas views e aversão a risco saem de decisão registrada.</p>
+      </div>
+    </div>
+
+    <div class="p4-graf">
+      <div>
+        <h2>Curva acumulada e drawdown</h2>
+        <img src="importado/p4_curva.png" alt="">
+        <p class="p45" style="margin:7px 0 0">
+          <b>+33,2% contra +30,1% do SPY</b>, ao mesmo risco (vol. 17,6% contra 17,9%). Mas a
+          vantagem não veio das quedas: nos dois tombos a carteira caiu junto, e em
+          abril/2025 caiu <b style="color:var(--vermelho)">mais fundo que o benchmark</b>
+          (−19,6% contra −18,8%). O ganho vem da subida, não da defesa.
+        </p>
+      </div>
+      <div>
+        <h2>De onde vem o resultado</h2>
+        <img src="importado/p4_decomposicao.png" alt="">
+        <p class="p45" style="margin:7px 0 0">
+          O retorno de cada pregão se separa em três pedaços: a carteira de equilíbrio (o que
+          se teria sem view nenhuma), o desvio que as views impõem sobre ela e o custo de
+          manter esse desvio. Em 374 pregões as views produziram <b>+5,2 pp</b> e o custo
+          devolveu <b style="color:var(--vermelho)">−3,0 pp</b>. O que chega ao investidor é o
+          que sobra. E a vantagem <b>não depende de dias de sorte</b> sem os três pregões de
+          maior impacto ela teria retorno maior, não menor (+4,5 em vez de +2,3 pp).
+        </p>
+      </div>
+      <div>
+        <h2>Sensibilidades: aqui se justifica o número</h2>
+        <img src="importado/p4_sensibilidades.png" alt="">
+        <p class="p45" style="margin:7px 0 0">
+          Um resultado bom pode ser só um parâmetro bem escolhido, mas esse não é o caso.
+          Giramos os quatro botões da estratégia: quanto risco tomar, quanta confiança dar às
+          views, quanto o preço precisa andar para negociar e a correção das probabilidades, e
+          medimos cada posição. <b>Em nenhuma a vantagem sobre o SPY vira negativa</b>
+          (+0,5 a +15,8 pp).
+        </p>
+      </div>
+    </div>
+
+    <div class="p4-fim">
+      <div>
+        <h2>Tabela de métricas</h2>
+        <table class="dados p4-tab">
+          <tr><th>Métrica</th><th>Kairos</th><th>SPY</th></tr>
+          <tr><td>Retorno líquido</td><td class="d">+33,2%</td><td>+30,1%</td></tr>
+          <tr><td>Vol. anualizada</td><td class="d">17,6%</td><td>17,9%</td></tr>
+          <tr><td>Sharpe</td><td class="d">1,18</td><td>1,08</td></tr>
+          <tr><td>Máx. drawdown</td><td class="d">−19,6%</td><td>−18,8%</td></tr>
+          <tr><td>Alpha anual.</td><td class="d">+2,57%</td><td>—</td></tr>
+          <tr><td>Beta vs SPY</td><td class="d">0,95</td><td>1,00</td></tr>
+          <tr><td>Σ|w| média</td><td class="d">1,91</td><td>1,00</td></tr>
+          <tr><td>Giro diário</td><td class="d">0,40</td><td>—</td></tr>
+        </table>
+        <p class="p45" style="margin:7px 0 0"><b>Beta 0,95:</b> a carteira anda junto com o
+          mercado. Não é SPY alavancado — nem neutra: as views ficam líquidas compradas
+          (ΣP de +0,96 a +2,00)</p>
+      </div>
 
       <div>
-        <table class="dados">
-          <tr><th>Métrica</th><th>Kairos</th><th>SPY</th></tr>
-          <tr><td class="d">Retorno líquido</td><td class="d">+33,2%</td><td>+30,1%</td></tr>
-          <tr><td class="d">Vol. anualizada</td><td class="d">17,6%</td><td>—</td></tr>
-          <tr><td class="d">Sharpe</td><td class="d">1,18</td><td>—</td></tr>
-          <tr><td class="d">Máx. drawdown</td><td class="d">−19,6%</td><td>−18,8%</td></tr>
-          <tr><td class="d">Σ|w| média</td><td class="d">1,91</td><td>1,00</td></tr>
-          <tr><td class="d">Giro diário</td><td class="d">0,40</td><td>—</td></tr>
-        </table>
+        <h2>O que o número não diz</h2>
+        <p class="p45"><b>Ganha sozinha, perde somada.</b> A camada tática faz +42,6 pp
+          isolada e −2,94 pp na entrega. Sob teto de risco fixo, somar não acrescenta: divide
+          o mesmo orçamento. E o Δ não é monótono no teto (−2,9 / −6,8 / −8,9 / +3,8).</p>
+        <p class="p45"><b>Quase metade do giro volta atrás.</b> 42% do que a carteira compra
+          num dia é desfeito nos dois pregões seguintes. Ainda assim a vantagem só
+          desapareceria com um custo de 22,9 bps por lado — 11× os 2 bps que pagamos.</p>
+        <p class="p45" style="margin-bottom:0"><b>Uma janela, um regime.</b> 374 pregões de
+          alta do S&amp;P, sem correção para as ~200 comparações da busca tática.</p>
+      </div>
 
-        <div class="col2" style="gap:12px; margin-top:14px">
-          <div class="card tile">
-            <div class="v">22,9<span style="font-size:10pt"> bps</span></div>
-            <div class="k">custo de breakeven</div>
-            <div class="nota" style="margin-top:5px">11× a premissa de 2 bps — o custo não
-              decide o resultado.</div>
-          </div>
-          <div class="card tile">
-            <div class="v neutro">+3,0<span style="font-size:10pt"> a </span>+3,9<span style="font-size:10pt"> pp</span></div>
-            <div class="k" style="text-transform:none; letter-spacing:.04em">excesso sob varredura de γ</div>
-            <div class="nota" style="margin-top:5px">O resultado não depende da correção
-              <em>favorite-longshot</em>.</div>
-          </div>
-        </div>
+      <div>
+        <h2>Autoavaliação · nossa conduta</h2>
+        <p class="p45"><b>Como julgamos a estratégia:</b> Uma ideia entra por acertar a
+          probabilidade, nunca por render mais; teto e confiança foram escolhidos uma vez só,
+          em reunião; a hipótese foi escrita antes de medir.</p>
+        <p class="p45"><b>13 ideias de sinal medidas, 1 entrou:</b> Momentum e velocidade de
+          ajuste viraram passeio aleatório quando medidos — o dado contrariou a tese.</p>
+        <p class="p45" style="margin-bottom:0"><b>2 views entregues acertando a direção em
+          49% dos dias:</b> Nossa régua de entrada é ter um mecanismo que explique o efeito,
+          não um histórico bonito. A tese se sustenta pelo que foi reprovado.</p>
+      </div>
 
-        <h2 style="margin-top:16px">O que o número <em>não</em> diz</h2>
-        <ul class="nota" style="font-size:9pt">
-          <li><strong>O excesso não é mérito das views novas.</strong> A de incerteza
-            entrega quase tudo em três pregões; a de trajetória mede negativo. Ambas
-            acertam o sinal em ~49% — cara ou coroa.</li>
-          <li><strong>A camada tática ganha sozinha e perde somada:</strong> +42,6 pp
-            isolada, <span class="selo no">−2,9 pp</span> na entrega. Sob teto de risco,
-            entrar não é somar — é dividir um orçamento fixo.</li>
-          <li><strong>42% do giro é desfeito em dois pregões.</strong> Material, mas
-            dominado pela folga de custo acima.</li>
-        </ul>
+      <div>
+        <h2>Autoavaliação · onde erramos</h2>
+        <p class="p45"><b>Lemos uma medida errada e quase decidimos por ela:</b> Um número
+          parecia crescer e chamamos isso de tendência — era artefato do jeito de medir. Quem
+          pegou: a segunda medida, feita antes de qualquer decisão, que mostrou passeio
+          aleatório.</p>
+        <p class="p45"><b>Nosso primeiro filtro reprovava quase tudo:</b> A régua de
+          estabilidade acusava 13 dos 14 casos; a correta acusa 3. Quem pegou: a releitura do
+          critério antes de olhar o resultado — aceitá-lo teria dado a conclusão oposta da
+          certa.</p>
+        <p class="p45" style="margin-bottom:0"><b>Texto cravado em gerador envelhece
+          calado.</b> A legenda do backtest afirmou &ldquo;camada desligada&rdquo; por dois
+          commits depois de ela ser ligada — os números já a incluíam. Encontramos o erro
+          depois em uma conferencia de código .</p>
+      </div>
+
+      <div>
+        <h2>Autoavaliação · simulação de fundo</h2>
+        <p class="p45"><b style="color:var(--ambar)">Perfis de cliente simulados por IA sobre
+          a série diária:</b> 18 meses, drawdown de −19,6%, Σ|w| médio de 1,91 e 0,40 de giro
+          por pregão.</p>
+        <p class="p45"><b>Conservador — não adere.</b> Drawdown pior que o do índice, 1,9× de
+          alavancagem, nenhuma proteção na queda.</p>
+        <p class="p45"><b>Institucional — adere ao alpha, não ao produto.</b> Beta 0,95 é
+          exposição que ele já compra barato; pagaria pelos +2,6% a.a. de alpha.</p>
+        <p class="p45"><b>Orientado a evento — adere.</b> É o único para quem +3,0 pp ao mesmo
+          risco do índice é o produto.</p>
+        <p class="p45" style="margin-bottom:0">A objeção não foi ao retorno, foi ao
+          empacotamento: isto é um overlay de alpha, e a taxa teria de sair do excesso.</p>
       </div>
     </div>
   </div>
 
   <div class="rodape">
-    Uma única janela, um único regime de alta do S&amp;P. O drawdown do Kairos é
-    <strong>pior</strong> que o do benchmark: o excesso vem de retorno, não de proteção.
+    Backtest reproduzido em duas máquinas com saída idêntica dígito a dígito. Todo número
+    desta página sai de <span style="color:var(--tinta2)">backtest_v1.py · curva_c.py ·
+    curva_banda.py · graficos_p4.py</span>, e nenhum foi digitado à mão.
   </div>
 </section>
 
 
 <!-- ============================== PÁGINA 5 ============================== -->
-<section class="slide">
-  <div class="topo"><div class="marca">KAIROS <span>IA generativa · limites · próximos passos</span></div><div class="pag">05</div></div>
+<section class="slide densa">
+  <div class="topo"><div class="marca">KAIROS <span>Uso de IA generativa e próximos passos</span></div><div class="pag">05</div></div>
 
   <div class="corpo">
-    <div class="col2b" style="gap:30px">
+    <h2>A regra que organizou o trabalho com IA</h2>
+    <div class="p4-metodo">
+      <p class="p45" style="margin:0">
+        Três frentes em paralelo, cada uma dona dos seus módulos e do seu branch, com as
+        regras versionadas no próprio repositório. CLAUDE.md compartilhado e sistema de
+        registro de decisões e trabalho por sessão. A regra central é uma só:
+        <b>a IA nunca fecha decisão metodológica</b>. Fonte, universo, forma funcional e
+        valor de parâmetro saem de decisão humana registrada; até ela existir, o agente
+        escreve TODO(DECISAO-N) e toca o resto da tarefa.
+      </p>
       <div>
-        <h1 style="font-size:18pt">A IA escreveu o código; o protocolo decidiu o modelo</h1>
-        <p style="font-size:10pt">
-          Três frentes paralelas, cada uma dona dos seus módulos, com as regras versionadas
-          no repositório. A regra central: <strong>a IA nunca fecha decisão
-          metodológica</strong> — fonte, universo, forma funcional e parâmetro saem de
-          decisão humana registrada, e o agente segue com <em>placeholder</em> até ela existir.
+        <p class="p45 viesado"><b>Um dono por módulo.</b> Código de outro dono não se edita:
+          o defeito vira observação no LOG dele.</p>
+        <p class="p45 viesado"><b>Second-brain por branch.</b> Qualquer pesquisa, decisão ou
+          duvida ficou registrada em forma de markdown em um sistema organizado pela própria.
+          Conhecimento que foi se construindo nunca foi perdido.</p>
+      </div>
+      <div>
+        <p class="p45 viesado"><b>Ritual de sessão obrigatório.</b> Toda sessão fecha com
+          entrada no LOG e um bloco &ldquo;Uso de IA&rdquo;. Esta página sai dele.</p>
+        <p class="p45 viesado"><b>CLAUDE.md para o Projeto.</b> Arquivo lido ao começo de cada
+          sessão, com as regras de conduta, guia de como fechar a sessão e separação de
+          funções por membro</p>
+      </div>
+    </div>
+
+    <h2>Dados gerais · o processo medido, não estimado</h2>
+    <div class="p5-numeros">
+      <div><div class="k">Sessões de IA</div><div class="v">91</div></div>
+      <div><div class="k">Tokens por sessão</div><div class="v">232k</div>
+        <div class="ref">média · 19,7M no total</div></div>
+      <div><div class="k">Decisões registradas</div><div class="v">81</div>
+        <div class="ref">escaladas para decisão humana</div></div>
+      <div><div class="k">Taxa de recorreção</div><div class="v">37%</div>
+        <div class="ref">das sessões pediram 2ª rodada (87 medidas)</div></div>
+    </div>
+
+    <div class="p5-graf">
+      <div>
+        <h2>Linha do tempo do projeto</h2>
+        <img src="importado/p5_linha_do_tempo.png" alt="">
+        <p class="p45" style="margin:7px 0 0">
+          Barras: contexto por dia, empilhado por frente; linha: decisões acumuladas.
+          <b>Oito dias de agosto concentram o grosso do contexto</b> e a subida de 13 para 81
+          decisões. Hachurado: as 33 sessões cujo token foi convertido de &ldquo;% da
+          janela&rdquo;.
         </p>
+      </div>
+      <div>
+        <h2>Tipo de sessão · por sessão e por token</h2>
+        <img src="importado/p5_tipo_de_sessao.png" alt="">
+        <p class="p45" style="margin:7px 0 0">
+          Os 91 blocos do LOG classificados à mão, por regra fechada antes da contagem.
+          Análise e medição leva <b>54% das sessões e 71% dos tokens</b>; código, 15% e 4%.
+          O caro não foi escrever código — foi medir.
+        </p>
+      </div>
+      <div>
+        <h2>Erros da IA × mecanismo que pegou</h2>
+        <img src="importado/p5_erros.png" alt="">
+        <p class="p45" style="margin:7px 0 0">
+          145 erros contados um a um nos três LOGs. Código quebrado é a maior categoria (72)
+          e a mais barata: 40 morrem na execução. Na outra ponta, <b>texto impreciso (13) e
+          escopo errado (10) não têm um único erro pego por teste</b> — a conferência humana
+          pegou os 23 ainda na sessão.
+        </p>
+      </div>
+    </div>
 
-        <div class="col3" style="gap:12px; margin:14px 0">
-          <div class="card tile"><div class="v">28</div><div class="k">decisões registradas</div></div>
-          <div class="card tile"><div class="v">27</div><div class="k">sessões em log</div></div>
-          <div class="card tile"><div class="v">~200</div><div class="k">células testadas</div></div>
-        </div>
-
-        <h2>Onde a IA agregou</h2>
-        <ul style="font-size:9.5pt">
-          <li><strong>Varredura exaustiva barata:</strong> cada ingrediente do Ω testado em
-            2 grades × 2 horizontes × 3 janelas, nas duas views.</li>
-          <li><strong>Prosa gerada dos números,</strong> não escrita à mão — registro que
-            envelhece não levanta exceção.</li>
-          <li><strong>Revisão cruzada entre agentes:</strong> dois defeitos do módulo de
-            confiança saíram de um agente lendo o artefato de outro.</li>
-        </ul>
-
-        <h2 style="margin-top:14px">Onde ela falhou</h2>
-        <ul style="font-size:9.5pt">
-          <li><strong>Conclusão certa por medida errada:</strong> um crescimento lido como
-            tendência era artefato da mediana — o <em>variance ratio</em> dizia passeio
-            aleatório. A camada tática quase entrou por isso.</li>
-          <li><strong>Herdou premissa sem reescrever</strong> ao mudar de contexto, e
-            <strong>generalizou veredito</strong> além do que o teste mediu.</li>
-        </ul>
+    <div class="p4-fim">
+      <div>
+        <h2>A separação do trabalho</h2>
+        <p class="p45"><b><span style="color:var(--ambar)">■</span> A IA sozinha.</b> Código,
+          varredura, medição repetida e prosa gerada a partir dos números: 38 scripts,
+          37 arquivos de teste e 40 análises só neste branch.</p>
+        <p class="p45"><b><span style="color:var(--azul)">■</span> Só o humano.</b> Fonte,
+          universo, forma funcional, parâmetro e o que entra na entrega — e o veredito de cada
+          régua, escrito antes de medir.</p>
+        <p class="p45" style="margin-bottom:0"><b><span style="color:var(--tinta)">■</span>
+          Nenhum dos dois sozinho.</b> O critério que julga um ingrediente é humano e declarado
+          antes; a varredura que o aplica é da IA. Trocar a ordem produz overfit com cara de
+          método.</p>
       </div>
 
       <div>
-        <h2>Limitações declaradas</h2>
-        <ul style="font-size:9.5pt">
-          <li><strong>Ω é diagonal:</strong> não desconta redundância — um par de views com
-            ρ <span class="num">+0,67</span> entra como informação independente.</li>
-          <li><strong>Calibrado em 2 views, aplicado a 4.</strong> A régua mede propriedades
-            do <em>mercado</em>, não da view; ainda assim é extensão, não resultado.</li>
-          <li><strong>Amostra curta, um só regime:</strong> 374 pregões de alta, sem correção
-            para as ~200 comparações da busca tática.</li>
-          <li><strong>O nível da régua custa retorno:</strong> acoplá-la tira 1,04 pp do
-            excesso. Foi fechada em 1 por onde a régua está validada, não por
-            resultado — o eixo inteiro está medido e registrado.</li>
-        </ul>
+        <h2>Onde a IA agregou</h2>
+        <p class="p45"><b>Varredura exaustiva ficou barata.</b> 13 candidatas táticas medidas
+          antes de uma entrar, cada ingrediente do Ω testado em várias grades, horizontes e
+          janelas — ~200 comparações só na busca tática. À mão, nada disso teria sido
+          testado.</p>
+        <p class="p45"><b>Prosa gerada do número.</b> As páginas saem de gerador alimentado por
+          artefato medido; a legenda muda quando o número muda.</p>
+        <p class="p45" style="margin-bottom:0"><b>Revisão cruzada entre agentes.</b> A
+          classificação dos 91 blocos saiu de 4 agentes com briefing único, e a conferência da
+          própria saída pegou 3 dos 6 erros da sessão.</p>
+      </div>
 
-        <h2 style="margin-top:16px">Próximos passos</h2>
-        <ul style="font-size:9.5pt">
-          <li>Ω com termos fora da diagonal, descontando views correlacionadas.</li>
-          <li>Banda de não-negociação contra os 42% de giro revertido.</li>
-          <li>Ampliar o universo: o corte que separa sinal de ruído não é "Fed × não-Fed",
-            é <strong>haver notícia a que o preço responda</strong>.</li>
-          <li>Validar fora da amostra em regime de queda.</li>
-        </ul>
+      <div>
+        <h2>Onde a IA falhou, e o que conteve</h2>
+        <p class="p45"><b>Premissa herdada, pega pelo humano.</b> A IA afirmou que o
+          mapeamento cenário→ativo estava congelado; o congelado era a camada tática. Duas
+          rodadas de correção do dono — e o registro errado já tinha entrado em duas entradas
+          do LOG.</p>
+        <p class="p45" style="margin-bottom:0"><b>Defeito latente que só um assert novo
+          revelou.</b> O auto-teste do gerador desta página misturava LOG sintético com os LOGs
+          reais — invisível desde que a função foi escrita.</p>
+      </div>
 
-        <div class="card" style="margin-top:16px; border-left:2px solid var(--ambar)">
-          <p style="margin:0; font-size:9.5pt">
-            O que sustenta a tese não é a régua final: é o <strong>placar</strong>. Quatro
-            ingredientes testados, dois aprovados, um rebaixado a veto, um reprovado —
-            inclusive o que a intuição dava como certo.
-          </p>
-        </div>
+      <div>
+        <h2>Próximos passos</h2>
+        <p class="p45"><b>Termos fora da diagonal no Ω.</b> É a limitação com endereço mais
+          claro: a correlação entre views já está medida.</p>
+        <p class="p45"><b>Banda de não-negociação.</b> Contra os 42% de giro desfeito em dois
+          pregões — o breakeven de 22,9 bps por lado diz que há espaço para não negociar.</p>
+        <p class="p45"><b>Ampliar o universo pelo critério certo.</b> Não por classe de ativo,
+          e sim por haver notícia a que o preço responda.</p>
+        <p class="p45" style="margin-bottom:0"><b>Validar em regime de queda.</b> O que a
+          página 4 admite é o que falta testar: a vantagem veio da subida.</p>
+      </div>
+
+      <div>
+        <h2>Fechamento</h2>
+        <p class="p45" style="color:var(--tinta2); margin-bottom:0">
+          Kairos não tenta prever o mercado, troca a opinião do gestor pelo preço de quem tem
+          dinheiro em risco no desfecho. É o que torna a view auditável: Q e Ω deixam de ser
+          declarados e passam a ser medidos, e o resultado passa a depender de acertar a
+          probabilidade, não de escolher bem o parâmetro. Os +3,0 pp sobre o SPY ao mesmo
+          risco saem daí. O que sustenta a tese não é a curva; é o que foi reprovado antes
+          dela: 13 ideias medidas, uma entrou.
+        </p>
       </div>
     </div>
   </div>
