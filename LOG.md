@@ -2160,3 +2160,27 @@ identidade do robô completa na página 1 · fontes embutidas.
 - **Tags:** `[PROMPT-CHAVE]` — "da uma ultima revisada. vou enviar". O pedido de
   revisão final, com o edital em mãos e cruzando número entre páginas, foi o que
   achou a única divergência factual do relatório inteiro.
+
+### Adendo — o arquivo de envio sai do pipeline
+
+Chave da equipe: **AACA**. O `montar.py` passou a gravar `relatorio/AACA.pdf`,
+cópia byte a byte do `KAIROS.pdf`, **e só quando todas as checagens do edital
+passam** — páginas ≤ 5, 16:9, anonimato e as quatro conferências de conteúdo. Se
+alguma falha, o arquivo não é escrito e um antigo que exista é apagado.
+
+O motivo é o modo de falha que este LOG já registrou duas vezes: artefato
+derivado que alguém produz à mão envelhece calado. Renomear o PDF na hora do
+envio é exatamente isso — o jeito mais fácil de mandar uma versão anterior sem
+perceber.
+
+**Testado nos dois caminhos:** com uma expectativa de conteúdo adulterada de
+propósito, a checagem da página 1 acusou `DIVERGE` e o `AACA.pdf` não foi escrito;
+restaurada, o arquivo voltou (1.549 KB). O `AACA.pdf` fica fora do git, por ser
+cópia idêntica do `KAIROS.pdf`, que é versionado.
+
+**Uso de IA**
+
+- **Prompt (verbatim):** "mosso código é AACA"
+- **Iterações até aceitar:** 1.
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** —

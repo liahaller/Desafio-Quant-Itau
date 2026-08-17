@@ -11,6 +11,10 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 BASE = Path(__file__).resolve().parent
 SVG = BASE / "svg"
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+# Chave de envio da equipe: o desafio pede o PDF com este nome. O arquivo sai
+# daqui, e só se todas as checagens passarem — renomear à mão na hora do envio é
+# como se manda uma versão velha sem perceber.
+CHAVE = "AACA"
 
 
 def inline_svg(caminho):
@@ -45,10 +49,14 @@ r = doc[0].rect
 texto = "\n".join(p.get_text() for p in doc)
 palavras = len(re.findall(r"[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ'’-]*", texto))
 
+conforme = []   # tudo o que o edital exige; o arquivo de envio depende disto
+
+conforme.append(doc.page_count <= 5)
+conforme.append(abs(r.width / r.height - 16 / 9) < 0.001)
 print(f"tamanho do arquivo : {pdf.stat().st_size / 1024:.0f} KB")
-print(f"páginas            : {doc.page_count}   {'OK' if doc.page_count <= 5 else 'FALHA — 6+ elimina'}")
+print(f"páginas            : {doc.page_count}   {'OK' if conforme[0] else 'FALHA — 6+ elimina'}")
 print(f"dimensão           : {r.width:.0f} x {r.height:.0f} pt  (ratio {r.width / r.height:.4f})"
-      f"   {'OK 16:9' if abs(r.width / r.height - 16 / 9) < 0.001 else 'FALHA'}")
+      f"   {'OK 16:9' if conforme[1] else 'FALHA'}")
 
 # A contagem do PDF inclui rótulos de eixo dos gráficos. A referência de 750 do
 # edital é sobre texto do relatório, então mede-se também só a prosa: o HTML sem
@@ -92,6 +100,7 @@ for arquivo, origem, destino, falta_ok, sobra_ok in ORIGENS:
     b = caracteres(doc[destino].get_text())
     falta, sobra = dict(a - b), dict(b - a)
     igual = falta == falta_ok and sobra == sobra_ok
+    conforme.append(igual)
     print(f"conteúdo pág. {destino + 1}   : "
           + ("OK — nada mudou além do combinado" if igual
              else f"DIVERGE  falta {falta}  sobra {sobra}"))
@@ -104,6 +113,18 @@ uma = pymupdf.open()
 uma.insert_pdf(doc, from_page=2, to_page=2)
 uma.save(extrato)
 print(f"extrato da pág. 3  : {extrato.name}")
+
+# O arquivo que vai ser enviado, com a chave da equipe no nome. Só é escrito se
+# nenhuma checagem falhou: assim não existe versão pronta para envio que não
+# tenha passado pelo edital.
+envio = pdf.parent / f"{CHAVE}.pdf"
+if all(conforme):
+    envio.write_bytes(pdf.read_bytes())
+    print(f"pronto para envio  : {envio.name}")
+else:
+    envio.unlink(missing_ok=True)
+    print(f"pronto para envio  : NÃO — {sum(1 for c in conforme if not c)} checagem(ns) falhou/falharam; "
+          f"{envio.name} não foi escrito")
 
 for i, p in enumerate(doc, 1):
     p.get_pixmap(dpi=100).save(BASE / f"pag{i}.png")

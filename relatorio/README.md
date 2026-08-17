@@ -1,7 +1,16 @@
 # Relatório final — KAIROS
 
-`KAIROS.pdf` é o entregável: 5 páginas, 16:9 (960 × 540 pt), anônimo.
-Renome-ar para `[chave de envio].pdf` na hora de enviar.
+`AACA.pdf` é o **arquivo de envio** — a chave da equipe no nome, como o desafio
+pede. Ele é cópia byte a byte do `KAIROS.pdf` e sai do próprio `montar.py`, e
+**só quando todas as checagens do edital passam**: número de páginas, proporção
+16:9, anonimato e a conferência de conteúdo das quatro páginas remontadas. Se
+alguma falhar, o arquivo não é escrito (e o antigo é apagado), para não existir
+versão pronta para envio que não tenha passado pelo edital. Renomear à mão é como
+se envia uma versão velha sem perceber; por isso não se faz.
+
+`KAIROS.pdf` é o mesmo documento com o nome de trabalho: 5 páginas, 16:9
+(960 × 540 pt), anônimo. Só ele é versionado — o `AACA.pdf` fica fora do git
+porque é cópia idêntica.
 
 ## Como regerar
 
