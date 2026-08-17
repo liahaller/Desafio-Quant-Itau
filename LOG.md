@@ -1888,3 +1888,184 @@ limite útil de 511,2 · `KAIROS_pagina3.pdf` gerado junto, para revisão avulsa
   isto é pontuado?", obrigou a reler o edital em vez de julgar por impressão, e
   produziu três dos quatro achados mais caros. Nenhum deles seria pego relendo a
   própria página, que era o que as revisões anteriores faziam.
+
+---
+
+## 2026-08-16 (2ª sessão) — Lia (página 3 do relatório em PowerPoint)
+
+**Pedido:** passar a página 3 do relatório para um PowerPoint.
+
+**Entregue:** `relatorio/KAIROS_pagina3.pptx` — um slide de 960 × 540 pt (16:9
+exato, a mesma caixa do PDF), gerado por `relatorio/fonte/montar_pptx.py`.
+
+**Como foi feito, e por quê assim**
+
+- **Reconstruído em formas nativas, não colado como imagem.** Um print da página
+  dentro de um slide seria fiel e inútil: ninguém edita, ninguém reaproveita um
+  bloco na apresentação. Texto, filetes, cartões, tabelas, pills, tiles e as
+  barras do placar são objetos do PowerPoint, com os runs de destaque preservados
+  (o âmbar de `28 dos 374`, o vermelho de `−2,94 pp`, os subscritos de `w_mkt`).
+- **As posições saíram do próprio PDF, medidas, não estimadas.** `pymupdf` deu o
+  bbox de cada linha de texto e de cada retângulo desenhado; o script usa esses
+  números. Reestimar pelo CSS não daria: a grade da página é `1fr` de coluna com
+  altura de fluxo, que só existe depois de o Chrome compor.
+- **Exceção única: o diagrama das duas camadas**, que entra como PNG de 3.360 px
+  gerado do `arquitetura.svg` pelo mesmo Chrome do relatório. Em vetor o
+  PowerPoint reimportaria cada letra como caixa solta; é a única parte da página
+  que ninguém edita à mão.
+- **Fundos translúcidos do CSS foram achatados** sobre a cor da página (o cinza
+  do teto e o âmbar do desvio). A cor composta é idêntica na tela e sobrevive a
+  qualquer reordenação de camadas na hora de editar.
+- **Validação automática, na convenção do `montar.py`:** o script confere a
+  proporção 16:9 e compara os **caracteres** do slide com os da página 3 do PDF,
+  sem espaços e em caixa alta — assim o tracking dos títulos, que no PDF separa
+  cada letra, e o `text-transform` do CSS deixam de contar. Passou sem
+  divergência. A faixa do diagrama fica de fora da conta, porque lá o texto é
+  imagem.
+- **Conferência visual:** o slide foi exportado em PNG pelo PowerPoint via COM e
+  comparado com a página 3 renderizada do PDF. Uma rodada de correção: o placar
+  dos ingredientes tinha sido posicionado por fórmula (`y + 5,8`), e as faixas
+  saíram até 3 pt fora; foram trocadas pelas coordenadas absolutas medidas, e o
+  nome do primeiro ingrediente voltou a quebrar em duas linhas com a coluna em
+  87 pt, a mesma do relatório.
+
+**Escopo:** só a página 3 e só arquivos do módulo Relatório. `template.html`,
+`montar.py` e o `KAIROS.pdf` não foram tocados — o `.pptx` é derivado, não fonte.
+`Decisoes_pendentes.md` não mudou: nada de metodológico novo apareceu, o slide
+não afirma nada que a página já não afirmasse.
+
+**Pendências:** as mesmas da sessão anterior, nenhuma criada aqui. Vale o aviso
+de que o `.pptx` é **cópia derivada**: mudou a página 3 no `template.html`, roda
+`montar.py` e depois `montar_pptx.py`, senão a checagem de caracteres acusa a
+divergência na próxima geração.
+
+**Uso de IA**
+
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** sessão curta. Leitura do `template.html` (CSS + a seção
+  da página 3), do `montar.py` e do `README.md` do relatório; extração do layout
+  da página 3 do PDF via `pymupdf`; 3 ciclos de gerar-exportar-comparar.
+- **Prompt inicial (verbatim):** "passe a pagina 3 do relatorio para um power
+  point"
+- **Iterações até aceitar:** 1 rodada de correção interna (o placar mal
+  posicionado), pega na comparação visual antes de entregar.
+- **Erros da IA: 2.** (1) posicionar as faixas do placar por fórmula em vez das
+  coordenadas medidas, com desvio de até 3 pt; (2) usar `\v` dentro de um run do
+  `python-pptx` esperando quebra de linha — lá o caractere é escapado, não
+  vira `<a:br/>`; virou duas caixas de texto, como no PDF.
+- **Decisões escaladas:** — (nenhuma).
+- **Tags:** —
+
+### Adendo — o critério sai da página 3 e as fórmulas ganham tipo de fórmula
+
+Pedido da dona, **no PDF** (o `.pptx` ficou de fora por instrução explícita).
+
+**1. Removido o parágrafo do critério** do topo da página 3 ("Cada escolha desta
+página saiu de medição, ou de princípio declarado antes de calibrar. Nunca do
+resultado do backtest."). O `<h1>` passou a ocupar sozinho a faixa do topo; a
+regra `.criterio` e a grade de duas colunas do `.cabeca` saíram do CSS junto,
+para não ficar estilo órfão. A página perdeu 31 palavras e ~3 pt de altura, que
+foram para a margem inferior. ⚠️ O argumento de que nenhuma escolha veio do
+resultado do backtest **não está mais escrito em lugar nenhum do relatório** —
+os blocos `Por que…` continuam explicando cada escolha, mas o princípio geral,
+que é o que responde à suspeita de overfitting, deixou de aparecer.
+
+**2. Fórmulas em tipo de fórmula.** `.eq` e a nova classe `.math` usam **Cambria
+Math**, e as variáveis passaram a ser escritas com os caracteres matemáticos do
+Unicode (`𝑄`, `𝐸`, `𝑃`, `𝑐`, `𝑣̄`, `𝑝`, `𝑤`, `𝛽`, `𝛿`, `𝛴`, `𝜇`). O itálico vem
+desenhado na fonte, não obliquado do tipo da página. Convenção aplicada:
+variáveis em itálico; somatório `Σ`, funções (`inv`), números e rótulos de índice
+(`poly`, `mkt`) em romano. Alcançou as duas `.eq` da página, o teto no bloco de
+risco e as três fórmulas do `arquitetura.svg`, onde `w_mkt` virou subscrito de
+verdade em vez de sublinhado.
+
+**Testado:** Cambria Math está instalada e o Chrome a embute no PDF (as outras
+famílias math testadas caíam em Times). Páginas 1, 2, 4 e 5 conferidas
+**idênticas** ao commit anterior, comparando o texto extraído página a página.
+5 páginas · 960 × 540 pt · anônimo. O aviso de contagem de palavras do
+`montar.py` **já existia antes** desta rodada (1.241 → 1.210 palavras no
+template): a página 3 só diminuiu.
+
+⚠️ **O `KAIROS_pagina3.pptx` ficou na versão anterior da página**, por decisão da
+dona. Quem rodar `montar_pptx.py` vai ver a checagem de caracteres acusar a
+divergência — é o alarme funcionando, não um bug.
+
+**Uso de IA — complemento**
+
+- **Prompt (verbatim):** "tira esse texto do pdf "Cada escolha desta página saiu
+  de medição, ou de princípio declarado antes de calibrar. Nunca do resultado do
+  backtest." e quando for screver equação coloca naquelas letras específicas de
+  equação. Faça essas alterações no pdf"
+- **Iterações até aceitar:** 1, com uma correção de rumo da dona: a IA começou a
+  reescrever o `montar_pptx.py` para reancorar o slide no PDF novo, o que não
+  tinha sido pedido. Trabalho interrompido e descartado.
+- **Erros da IA: 1** — ampliar o escopo para o PowerPoint sem perguntar, quando o
+  pedido dizia "no PDF" duas vezes.
+
+### Adendo — as cinco páginas num PDF só, no mesmo estilo
+
+Chegaram as páginas 1, 2, 4 e 5 como PDFs prontos (`kairos_p1.pdf`,
+`kairos_p2_final.pdf`, `KAIROSv2_p4_p5.pdf`), cada uma com o estilo de quem a
+fez. Pedido: juntar tudo num PDF só, **sem mudar o conteúdo de nenhuma**, com o
+estilo da página 3.
+
+**Escolha apresentada à dona** (três níveis de padronização: remontar no
+template · só uniformizar a moldura por cima do PDF · só concatenar). Ela
+escolheu **remontar**, e **KAIROS sem acento em todas**.
+
+**O que foi feito**
+
+- **As quatro páginas foram transcritas para o `template.html`**, com o CSS da
+  página 3: mesma paleta, Segoe UI, mesmo cabeçalho (marca · seção · número),
+  mesmos padrões de título, bloco, tabela e nota. O texto é o do autor, palavra
+  por palavra.
+- **Duas alterações combinadas, e só elas:** `01 / 05` → `01` na numeração, e
+  `KAIRÓS` → `KAIROS` nas páginas 4 e 5.
+- **Os seis gráficos das páginas 4 e 5 vieram como imagem**, recortados do PDF
+  original a 4x por `importar_graficos.py`, com o preto do fundo trocado pelo
+  fundo do relatório. Redesenhá-los exigiria os scripts do autor, que estão no
+  branch dele; recortar preserva o número exato. A **arte do robô** foi trocada
+  pela que veio na página 1 entregue.
+- **O diagrama da página 2** (opinião + método → view × confiança = previsão) foi
+  redesenhado em HTML no estilo da página, porque no PDF de origem era vetor solto
+  e não imagem.
+- **Variante `.slide.densa`** para as páginas 4 e 5: mesma identidade, margens
+  menores. A moldura padrão do relatório gasta 62 pt em respiro; as páginas
+  entregues gastavam 37. Sem a variante, o conteúdo delas só caberia em corpo de
+  5,5 pt.
+
+**Validação, agora dentro do `montar.py`:** para cada página remontada ele
+compara o **conjunto de caracteres** com o do PDF de origem (sem espaço, em caixa
+alta, porque o tracking dos títulos separa letra por letra na extração). As
+únicas diferenças aceitas estão declaradas no código, uma a uma. Todas as quatro
+passaram: `OK — nada mudou além do combinado`. Confirmado também por diff de
+palavras com `difflib` antes de fechar.
+
+**Estado:** 5 páginas · 960 × 540 pt · anônimo · 1,2 MB.
+
+**Pendências desta rodada**
+
+- 🔴 **A legenda dentro do gráfico da curva (página 4) ainda diz `Kairós`** — é
+  pixel dentro da imagem; corrigir exige o script do autor.
+- 🟡 **A contagem de palavras do relatório inteiro está em 2.681**, contra a
+  referência de ~750 do edital. Não é regressão desta sessão (o conteúdo é o que
+  os autores entregaram), mas agora está tudo num arquivo só e dá para ver o
+  tamanho do problema. Decisão do grupo.
+- 🟡 **O `KAIROS_pagina3.pptx` continua na versão anterior da página 3**, por
+  instrução da dona na rodada passada.
+
+**Uso de IA — complemento**
+
+- **Prompt (verbatim):** "agora coloquei os documentos das paginas 1, 2, 4 e 5.
+  junte todas as paginas em um pdf so SEM MUDAR O CONTEUDO DE NENHUMA. so deixe
+  um estilo padronizado, pode ser com o mesmo estilo na minha árte, da pagina 3"
+- **Iterações até aceitar:** 1, com quatro rodadas internas de medir-e-ajustar
+  altura (páginas 2, 4 e 5 estouraram na primeira montagem).
+- **Erros da IA: 3.** (1) reusar o nome de classe `.mini`, que já existia na
+  página 3, e herdar cartão com borda em todo parágrafo das páginas 4 e 5;
+  (2) medir estouro de página pelo maior `y` abaixo de 505 pt, o que escondia
+  exatamente o texto que vazava — a página 4 passou por "OK" com 34 linhas fora;
+  (3) recortar os gráficos da página 5 com o clip alto demais, trazendo metade do
+  título original para dentro da imagem.
+- **Decisões escaladas:** — (nenhuma; as duas escolhas foram resolvidas na
+  conversa, categoria 2 do CLAUDE.md).

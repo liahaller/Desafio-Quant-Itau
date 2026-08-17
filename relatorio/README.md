@@ -1,4 +1,4 @@
-# Relatório final — KAIRÓS
+# Relatório final — KAIROS
 
 `KAIROS.pdf` é o entregável: 5 páginas, 16:9 (960 × 540 pt), anônimo.
 Renome-ar para `[chave de envio].pdf` na hora de enviar.
@@ -7,12 +7,44 @@ Renome-ar para `[chave de envio].pdf` na hora de enviar.
 
 ```
 cd fonte
-python montar.py       # injeta imagem e SVGs no template, gera o PDF e valida
+python importar_graficos.py  # recorta os gráficos das páginas 4 e 5 dos PDFs recebidos
+python montar.py             # injeta imagem e SVGs no template, gera o PDF e valida
+python montar_pptx.py        # reconstrói a página 3 como slide de PowerPoint editável
 ```
 
 O `montar.py` valida sozinho contra o edital: número de páginas (≤ 5), proporção
 16:9 exata, contagem de palavras e ausência de qualquer identificador de autor,
 equipe ou instituição.
+
+## As cinco páginas num fonte só (16/08/2026)
+
+As páginas 1, 2, 4 e 5 chegaram como **PDFs prontos**, cada uma com o estilo de
+quem a fez: `kairos_p1.pdf` e `kairos_p2_final.pdf` em Calibri sobre fundo em
+degradê, `KAIROSv2_p4_p5.pdf` em Segoe UI sobre preto. Elas foram **remontadas no
+`template.html`** com o CSS da página 3 — mesma paleta, mesma família, mesmo
+cabeçalho, mesmos padrões de título, bloco e nota. O texto é o que o autor
+escreveu, palavra por palavra; o que mudou foi a moldura.
+
+Duas alterações combinadas, e só elas: a numeração `01 / 05` virou `01`, e
+`KAIRÓS` virou **`KAIROS`** nas páginas 4 e 5 (o nome sem acento é decisão de
+16/08 e já valia nas outras três). O `montar.py` confere isso a cada geração,
+comparando os caracteres de cada página com os do PDF de origem — se alguém
+mexer no texto de uma página alheia, a checagem acusa.
+
+⚠️ **A legenda dentro do gráfico da curva (página 4) ainda diz `Kairós`.** Ela é
+pixel dentro da imagem, e corrigir exige o script que desenhou o gráfico, que
+está no branch de quem fez a página.
+
+As páginas 4 e 5 usam a variante `.slide.densa` do CSS: mesma identidade, margens
+menores. Sem isso, o conteúdo entregue nelas só caberia em corpo de 5,5 pt.
+
+O `montar_pptx.py` refaz a **página 3 em PowerPoint** (`KAIROS_pagina3.pptx`):
+um slide de 960 × 540 pt em que texto, filetes, cartões, tabelas e barras são
+formas nativas e editáveis — só o diagrama das duas camadas entra como imagem,
+gerada do `arquitetura.svg` pelo mesmo Chrome. As posições são as medidas no
+`KAIROS.pdf`, e ao final ele compara os caracteres do slide com os da página 3 do
+PDF: se alguém mudar o texto do relatório e não o slide, a checagem acusa.
+⚠️ Roda **depois** do `montar.py`, que é quem produz o PDF de referência.
 
 ## O que gera o quê
 
@@ -20,11 +52,14 @@ equipe ou instituição.
 |---|---|
 | `template.html` | as 5 páginas, com `{{PLACEHOLDERS}}` para imagem e gráficos |
 | `montar.py` | injeta, chama o Chrome headless (`--print-to-pdf`) e valida |
+| `montar_pptx.py` | a página 3 em `KAIROS_pagina3.pptx`, para apresentar |
+| `importar_graficos.py` | recorta os 6 gráficos das páginas 4 e 5 do PDF recebido |
+| `importado/*.png` | esses recortes, já com o fundo do relatório |
 | `pipeline.svg` | diagrama da página 2, desenhado à mão |
 | `arquitetura.svg` | diagrama das duas camadas (página 3), desenhado à mão |
 | `svg/*.svg` | os três gráficos, gerados por `graficos.py` |
 | `dados/curva_diaria_regua_nivel1.csv` | série diária da carteira de entrega |
-| `kairos_datauri.txt` | a arte do robô já em base64 |
+| `kairos_datauri.txt` | a arte do robô já em base64 (a que veio na página 1) |
 
 ⚠️ **Dois dos três SVGs estão sem consumidor** desde a reestruturação da página 3
 (16/08/2026): `ingredientes.svg` e `regua.svg`. A página passou a desenhar o
