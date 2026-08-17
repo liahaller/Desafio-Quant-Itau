@@ -64,6 +64,35 @@ proibido = ["Lia", "Felipe", "Paulo", "Insper", "Haller", "liahaller", "github"]
 achados = [t for t in proibido if re.search(rf"\b{t}\b", texto, re.I)]
 print(f"anonimato          : {'OK — nenhum identificador' if not achados else 'FALHA: ' + str(achados)}")
 
+# Fidelidade ao que cada autor entregou. As páginas 1, 2, 4 e 5 foram remontadas
+# no template a partir dos PDFs recebidos, e o texto delas tem de continuar sendo
+# o mesmo. Compara-se o conjunto de caracteres, sem espaço e em caixa alta: o
+# tracking dos títulos separa letra por letra na extração, e a caixa muda com o
+# `text-transform` do CSS — nada disso é conteúdo. As únicas diferenças aceitas
+# são as combinadas, declaradas aqui uma a uma; qualquer outra é reportada.
+from collections import Counter  # noqa: E402
+
+ORIGENS = [
+    # (pdf entregue, página nele, página no relatório, falta, sobra)
+    ("kairos_p1.pdf",      0, 0, {"0": 1, "/": 1, "5": 1}, {}),           # "01 / 05" virou "01"
+    ("kairos_p2_final.pdf", 0, 1, {"0": 1, "/": 1, "5": 1}, {"→": 1}),    # idem; a seta do fluxo virou texto
+    ("KAIROSv2_p4_p5.pdf", 0, 3, {"Ó": 2, "·": 4}, {"O": 2}),             # KAIRÓS→KAIROS; marcador "·" virou filete
+    ("KAIROSv2_p4_p5.pdf", 1, 4, {"Ó": 2, "·": 4}, {"O": 2}),
+]
+caracteres = lambda t: Counter(re.sub(r"\s+", "", t).upper())  # noqa: E731
+for arquivo, origem, destino, falta_ok, sobra_ok in ORIGENS:
+    caminho = pdf.parent / arquivo
+    if not caminho.exists():
+        print(f"conteúdo pág. {destino + 1}   : sem {arquivo} para conferir")
+        continue
+    a = caracteres(pymupdf.open(caminho)[origem].get_text())
+    b = caracteres(doc[destino].get_text())
+    falta, sobra = dict(a - b), dict(b - a)
+    igual = falta == falta_ok and sobra == sobra_ok
+    print(f"conteúdo pág. {destino + 1}   : "
+          + ("OK — nada mudou além do combinado" if igual
+             else f"DIVERGE  falta {falta}  sobra {sobra}"))
+
 # Extrato de uma página só, para revisar a página da dona sem abrir as cinco.
 # Sai daqui e não à mão de propósito: solto, ele envelheceria calado a cada
 # regeração do entregável — que é o modo de falha já registrado no LOG.
