@@ -19,14 +19,14 @@
   <rect x="160" y="2" width="230" height="48" rx="5" fill="#101F2E" stroke="#C9820C"/>
   <text x="174" y="19" fill="#F5A623" font-size="10.4" font-weight="700" letter-spacing="1.4">CAMADA ESTRUTURAL</text>
   <text x="174" y="34" fill="#E8EDF2" font-size="11.1" font-weight="600">o nível da distribuição vira view</text>
-  <text x="174" y="46" fill="#9BAEC0" font-size="10.4">P, Q e Ω de cada view ativa do dia</text>
+  <text x="174" y="46" fill="#9BAEC0" font-size="10.4"><tspan font-family="Cambria Math, serif">𝑃, 𝑄</tspan> e <tspan font-family="Cambria Math, serif">𝛺</tspan> de cada view ativa do dia</text>
 
   <path d="M390,26 L414,26" stroke="#6B8299" stroke-width="1.3" fill="none" marker-end="url(#seta2)"/>
 
   <rect x="420" y="2" width="230" height="48" rx="5" fill="#101F2E" stroke="#C9820C"/>
   <text x="434" y="19" fill="#F5A623" font-size="10.4" font-weight="700" letter-spacing="1.4">BLACK-LITTERMAN</text>
   <text x="434" y="34" fill="#9BAEC0" font-size="10.4">parte do equilíbrio e se afasta dele</text>
-  <text x="434" y="46" fill="#E8EDF2" font-size="11.1" font-weight="600">→ desvio = w − w_mkt</text>
+  <text x="434" y="46" fill="#E8EDF2" font-size="11.1" font-weight="600">→ <tspan font-family="Cambria Math, serif">desvio = 𝑤 − 𝑤<tspan font-size="8" dy="2">mkt</tspan></tspan></text>
 
   <!-- ===== camada tática ===== -->
   <rect x="160" y="60" width="230" height="48" rx="5" fill="#101F2E" stroke="#3D8FC4"/>
@@ -39,7 +39,7 @@
   <rect x="420" y="60" width="230" height="48" rx="5" fill="#101F2E" stroke="#3D8FC4"/>
   <text x="434" y="77" fill="#3D8FC4" font-size="10.4" font-weight="700" letter-spacing="1.4">SPREAD SETORIAL</text>
   <text x="434" y="92" fill="#9BAEC0" font-size="10.4">sem exposição ao índice</text>
-  <text x="434" y="104" fill="#E8EDF2" font-size="11.1" font-weight="600">→ dw = inv(δΣ)·μ</text>
+  <text x="434" y="104" fill="#E8EDF2" font-size="11.1" font-weight="600">→ <tspan font-family="Cambria Math, serif">d𝑤 = inv(𝛿𝛴)·𝜇</tspan></text>
 
   <!-- convergência: os dois tilts caem no mesmo teto -->
   <path d="M650,26 L684,44" stroke="#6B8299" stroke-width="1.3" fill="none" marker-end="url(#seta2)"/>
@@ -47,7 +47,7 @@
 
   <rect x="694" y="8" width="228" height="94" rx="5" fill="#16283A" stroke="#F5A623" stroke-width="1.4"/>
   <text x="710" y="28" fill="#F5A623" font-size="10.4" font-weight="700" letter-spacing="1.4">UM TETO PARA OS DOIS</text>
-  <text x="710" y="52" fill="#E8EDF2" font-size="13.5" font-weight="700">Σ|w − w_mkt| ≤ 1</text>
+  <text x="710" y="52" fill="#E8EDF2" font-size="13.5" font-weight="700" font-family="Cambria Math, serif">Σ|𝑤 − 𝑤<tspan font-size="9.5" dy="2.5">mkt</tspan><tspan dy="-2.5">| ≤ 1</tspan></text>
   <text x="710" y="74" fill="#9BAEC0" font-size="10.4">corta as duas camadas juntas:</text>
   <text x="710" y="90" fill="#9BAEC0" font-size="10.4">entrar não é somar, é dividir.</text>
 

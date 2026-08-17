@@ -131,14 +131,9 @@
   }
   .porque b { color: var(--tinta2); font-weight: 600; }
 
-  /* O critério comum às sete escolhas, declarado uma vez no topo em vez de
-     repetido em cada bloco — e ao LADO do título, não abaixo: a faixa que ele
-     ocuparia sozinho é a altura de que os blocos precisam. */
-  .cabeca { display: grid; grid-template-columns: 1fr 1.5fr; gap: 26px; align-items: center; margin-bottom: 4px; }
-  .criterio {
-    font-size: 9.5pt; color: var(--tinta2); line-height: 1.4;
-    border-left: 2px solid var(--ambar); padding-left: 11px; margin: 0;
-  }
+  /* O título anda sozinho na faixa do topo: o critério que ficava ao lado dele
+     saiu da página (16/08/2026), e cada bloco já carrega a sua justificativa. */
+  .cabeca { margin-bottom: 4px; }
 
   /* Seis blocos em UMA grade de 3 x 2, e não três colunas empilhando dois blocos
      cada: assim a segunda fileira de títulos começa na mesma altura nas três
@@ -159,7 +154,13 @@
   /* Fórmula anotada: cada fator ganha a legenda embaixo, no lugar do parágrafo
      que antes repetia os dois em prosa corrida. Serve ao Q e ao c — as duas
      leem como o mesmo gesto porque são desenhadas na mesma caixa. */
-  .eq { font-size: 13pt; letter-spacing: .02em; text-align: center; padding: 1px 0 6px; }
+  /* Fórmula no tipo de fórmula: Cambria Math, e as variáveis escritas com os
+     caracteres matemáticos do Unicode (𝑄, 𝑐, 𝑤…). O itálico vem desenhado na
+     fonte, não obliquado a partir do tipo da página, e é ele que faz a equação
+     ler como equação. Rótulos de índice (poly, mkt) ficam em romano, porque são
+     nome e não variável. */
+  .math { font-family: "Cambria Math", serif; }
+  .eq { font-family: "Cambria Math", serif; font-size: 13pt; letter-spacing: .02em; text-align: center; padding: 1px 0 6px; }
   .eq sup { font-size: 8pt; color: var(--tinta2); }
   .eq sub { font-size: 8pt; color: var(--tinta2); }
   .pernas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -366,10 +367,6 @@
   <div class="corpo">
     <div class="cabeca">
       <h1 style="font-size:16.5pt; margin:0">Duas camadas, um orçamento de risco</h1>
-      <p class="criterio">
-        Cada escolha desta página saiu de <strong>medição</strong>, ou de <strong>princípio
-        declarado antes</strong> de calibrar. Nunca do resultado do backtest.
-      </p>
     </div>
 
     <figure style="margin-bottom:3px">{{SVG_ARQUITETURA}}</figure>
@@ -386,7 +383,7 @@
       <!-- ======== fileira 1 ======== -->
       <div class="bloco">
         <h2>Da probabilidade ao vetor Q</h2>
-        <div class="eq" style="padding:0 0 2px">Q = ( E<sub>poly</sub> − âncora ) · Σ P<sub>i</sub> β<sub>i</sub></div>
+        <div class="eq" style="padding:0 0 2px">𝑄 = ( 𝐸<sub>poly</sub> − âncora ) · Σ 𝑃<sub>𝑖</sub> 𝛽<sub>𝑖</sub></div>
         <div class="cadeia">
           <span class="no">o que o mercado espera</span>
           <span class="op">↓ &nbsp;menos a âncora que o preço já embute</span>
@@ -435,11 +432,11 @@
           <span class="selo neu" style="margin-left:6px">c ≥ 1</span>
         </h2>
         <div class="eq" style="padding:0 0 2px">
-          c = ( (1 + <span class="destaque">v̄</span>) · (1 + |<span class="destaque">Σp − 1</span>| ) )<sup>nível 1</sup>
+          𝑐 = ( (1 + <span class="destaque">𝑣̄</span>) · (1 + |<span class="destaque">Σ𝑝 − 1</span>| ) )<sup>nível 1</sup>
         </div>
         <div class="pernas">
-          <div><b>v̄</b>quanto a distribuição se moveu nas 5 últimas leituras</div>
-          <div><b>Σp − 1</b>o quanto o livro deixa de somar 1</div>
+          <div><b class="math">𝑣̄</b>quanto a distribuição se moveu nas 5 últimas leituras</div>
+          <div><b class="math">Σ𝑝 − 1</b>o quanto o livro deixa de somar 1</div>
         </div>
         <p class="nota" style="margin-top:6px">
           O BL clássico é o <strong>teto</strong> de confiança, nunca o piso.
@@ -460,7 +457,7 @@
         <h2>Controle de risco</h2>
         <div class="teto">
           <div class="base">carteira de equilíbrio<br>o teto não corta</div>
-          <div class="desvio">desvio<br>Σ|w − w<sub>mkt</sub>| ≤ 1</div>
+          <div class="desvio">desvio<br><span class="math">Σ|𝑤 − 𝑤<sub>mkt</sub>| ≤ 1</span></div>
         </div>
         <div class="porque">
           <b>Por que só no desvio:</b> cortar a carteira inteira misturava a aposta da view com
