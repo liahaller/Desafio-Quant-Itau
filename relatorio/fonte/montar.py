@@ -74,7 +74,10 @@ from collections import Counter  # noqa: E402
 
 ORIGENS = [
     # (pdf entregue, página nele, página no relatório, falta, sobra)
-    ("kairos_p1.pdf",      0, 0, {"0": 1, "/": 1, "5": 1}, {}),           # "01 / 05" virou "01"
+    # "01 / 05" virou "01"; e o excesso sobre o SPY, que a p1 trazia como +3,1 pp
+    # (a subtração dos números já arredondados, 33,2 − 30,1), passou a +3,0 pp, que
+    # é o medido: 3,045 pp no `backtest_diario.csv`, e o que as páginas 4 e 5 dizem.
+    ("kairos_p1.pdf",      0, 0, {"1": 1, "/": 1, "5": 1}, {}),
     ("kairos_p2_final.pdf", 0, 1, {"0": 1, "/": 1, "5": 1}, {"→": 1}),    # idem; a seta do fluxo virou texto
     ("KAIROSv2_p4_p5.pdf", 0, 3, {"Ó": 2, "·": 4}, {"O": 2}),             # KAIRÓS→KAIROS; marcador "·" virou filete
     ("KAIROSv2_p4_p5.pdf", 1, 4, {"Ó": 2, "·": 4}, {"O": 2}),

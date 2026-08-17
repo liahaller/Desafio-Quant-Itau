@@ -2116,3 +2116,47 @@ no alto da página já é `KAIROS`.
 - **Erros da IA: 2** — ordem de criação de diretório no script novo; e deixar a
   imagem com `height: auto` sem medir antes.
 - **Decisões escaladas:** — (nenhuma).
+
+### Adendo — revisão final antes do envio
+
+Revisão do entregável contra o edital (`Diretrizes Relatório Final.pdf`, relido
+para esta conferência) e cruzamento dos números entre as cinco páginas.
+
+**Um erro factual encontrado e corrigido.** O excesso sobre o SPY aparecia como
+`+3,1 pp` na página 1 e `+3,0 pp` nas páginas 4 e 5. Medido no
+`backtest_diario.csv` do branch do Felipe (cenário `tilt ≤ 1`, 374 pregões):
+líquido 33,164% contra 30,119% do SPY, **excesso 3,045 pp**. Ou seja, `+3,0` é o
+medido e a página 1 tinha subtraído os números já arredondados (33,2 − 30,1).
+Corrigido na página 1, com a dona decidindo. A checagem de conteúdo do
+`montar.py` acusou a mudança na hora — a diferença foi então declarada no código,
+com a justificativa.
+
+**Conforme o edital:** PDF · 5 páginas (6+ elimina) · 960 × 540 pt, 16:9 exato ·
+anonimato, inclusive nos metadados (sem autor; creator é o Chrome headless) ·
+identidade do robô completa na página 1 · fontes embutidas.
+
+**Riscos que ficam, e são de conteúdo, não de montagem**
+
+- 🟡 **2.681 palavras de prosa.** O edital não impõe limite, mas diz: "se o
+  relatório tiver muito mais de 750 palavras, provavelmente há texto demais".
+  Estamos em 3,6× a referência. É o risco de nota mais concreto do documento.
+- 🟡 **Corpo de 6,2 a 6,4 pt nas páginas 4 e 5**, contra a exigência de ser
+  "facilmente legível em tela cheia, sem necessidade de zoom". É consequência
+  direta do volume de texto.
+- 🟢 Dois deslizes de digitação no texto entregue, apontados e **não corrigidos**
+  por decisão da dona: "uma conferencia de código ." (p4, sem acento e com espaço
+  antes do ponto) e "ou duvida ficou registrada" (p5). Mais "a mesmo risco" na
+  p1, onde a p4 escreve "ao mesmo risco".
+- ℹ️ "Itaú Asset" no rodapé da página 1: é o promotor do desafio, não identifica
+  a equipe. Fica.
+
+**Uso de IA**
+
+- **Prompt (verbatim):** "da uma ultima revisada. vou enviar"
+- **Iterações até aceitar:** 1.
+- **Erros da IA:** nenhum nesta rodada.
+- **Decisões escaladas:** — (a correção do número foi decidida pela dona na
+  conversa).
+- **Tags:** `[PROMPT-CHAVE]` — "da uma ultima revisada. vou enviar". O pedido de
+  revisão final, com o edital em mãos e cruzando número entre páginas, foi o que
+  achou a única divergência factual do relatório inteiro.
