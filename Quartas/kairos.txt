@@ -1,0 +1,388 @@
+PAGES 5
+==================== PAGE 1
+KAIROS Identidade do robô 01
+KAIROS
+Black-Litterman movido a probabilidade negociada
+Posiciona-se em torno de eventos com data marcada.
+POR QUE KAIROS
+Kairós, no grego, é o instante oportuno, o momento certo de agir, em
+oposição a Chronos, o tempo que apenas passa. A estratégia herda a
+distinção: não fica exposta o tempo todo; concentra risco nos poucos
+instantes em que informação nova chega ao preço (decisão do FOMC,
+inflação). Fora deles, a carteira volta ao prior de mercado.
+A view do Black-Litterman deixa de ser palpite: vem do preço de um
+mercado de previsão, uma probabilidade com dinheiro em risco,
+aplicável a qualquer evento com data marcada.
+FICHA TÉCNICA
+Classe de ativos ETFs (EUA)
+Universo 9 ETFs · setores, RF e índice
+Sinal Polymarket → view de BL
+Benchmark SPY (buy & hold)
+Rebalanceamento Diário
+Janela testada 374 pregões · fev/25 a ago/26
+Horizonte de carteira Dias a semanas (no evento)
+Plataforma Python
+PLACAR DE ENTREGA Kairos vs. SPY, líquido de custos (374 pregões)
++33,2%
+RETORNO LÍQUIDO
+SPY +30,1%
+1,18
+SHARPE
+SPY 1,08
++3,0 pp
+EXCESSO VS SPY
+a mesmo risco · vol 17,6% × 17,9%
+−19,6%
+MÁX. DRAWDOWN
+SPY −18,8%
+01 Identidade 02 A ideia 03 Modelagem 04 Backtest & autoavaliação 05 Uso de IA
+Kairos · Desafio Quant AI 2025 · Itaú Asset · classe: ETFs (EUA) · sinal: mercado de previsão (Polymarket) · benchmark: SPY
+
+==================== PAGE 2
+KAIROS A ideia 02
+A estratégia e os dados Por que Black-Litterman, onde ele é frágil, e por que o preço do Polymarket — com dinheiro em risco — entra no lugar da
+opinião.
+POR QUE BLACK-LITTERMAN
+Parte do equilíbrio, não do palpite
+A otimização de média-variância (Markowitz) é frágil: uma mudança minúscula nos retornos esperados joga a carteira para um canto, e ainda
+exige opinar sobre todos os ativos. Black-Litterman inverte o ponto de partida, ancora no retorno de equilíbrio já embutido nos preços (o
+prior) e só se afasta dele quando recebe uma view, com um grau de confiança. Onde não há opinião, fica o mercado.
+O elo mais frágil
+A view é o par (Q, Ω): direção e magnitude do retorno, e a confiança nela. Ambos são declarados pelo gestor, sem disciplina externa. Depois
+de ver o backtest, dá para ajustar a view até produzir quase qualquer resultado. A força do BL, incorporar opinião, é também sua fragilidade.
+A NOSSA SOLUÇÃO
+E se a view não fosse a nossa opinião, mas um preço público, formado por gente com
+dinheiro em risco? No Polymarket, um contrato paga US$ 1 se o evento ocorre e US$ 0
+se não: o preço é a probabilidade, reprecificada a cada negociação. O Kairos usa esse
+preço como view — Q e Ω passam a ser derivados da distribuição do Polymarket, e não
+declarados.
+DA OPINIÃO À POSIÇÃO
+Opinião do Polymarket
+probabilidade com dinheiro em risco
++
+Nosso método matemático
+traduz a probabilidade em Q, Ω
+→
+ View
+(Q, Ω) derivada, não declarada ×
+ Confiança
+c, calibrada pela qualidade do sinal =
+ Previsão
+o desvio da carteira vs. mercado
+POR QUE CONFIAMOS NO POLYMARKET
+90,1% de acerto
+A 1 mês da resolução
+US$ 26,2 bilhões
+Negociados no 1º trimestre de 2026
+DINHEIRO EM RISCO
+Pesquisa, analista de banco ou economista não
+pagam por errar; um trader de mercado de
+previsão paga. Preço com capital em risco
+agrega informação melhor do que opinião.
+SE CORRIGE SOZINHO
+Se o preço destoa muito da realidade, alguém
+lucra ao corrigi-lo. Esse é o incentivo que puxa
+de volta. Nenhuma opinião tem um
+mecanismo que a conserta em tempo real, o
+mercado tem.
+COMO PEGAMOS OS DADOS
+FONTES
+Polymarket: Gamma API (catálogo, metadados, volume) + CLOB
+/prices-history (série de preço = probabilidade)
+Preços: 9 ETFs, yfinance (close e open ajustados)
+Macro: séries do FRED (calendário e realizado)
+JANELA & PASSO
+Backtest: 374 pregões · 10/02/2025 a 06/08/2026
+Passo nativo de 12h, o mais fino da API gratuita
+18 reuniões do FOMC · 76 mercados
+JUNÇÃO & TRATAMENTO
+Última probabilidade até o fechamento do pregão (sem look-ahead)
+Efeito do evento se concentra no gap de abertura — a frequência
+diária o captura
+Volume reconstruído do Gamma (lifetime por mercado)
+Faixas faltantes preenchidas por regra explícita
+FILTRO DE QUALIDADE DO LIVRO
+View desativada quando o livro degenera (sem par de leituras ou
+sem trade)
+Auditado, não assumido: os dias em que morde estão na
+Modelagem (p.3)
+Fontes: Polymarket (Gamma + CLOB), Yahoo Finance (yfinance), FRED. Datasets e scripts de validação versionados no repositório. Nenhum número desta página foi digitado à mão.
+==================== PAGE 3
+KAIROS Modelagem 03
+Duas camadas, um orçamento de risco
+MERCADO DE
+PREVISÃO
+a mesma fonte,
+duas leituras
+CAMADA ESTRUTURAL
+o nível da distribuição vira view
+𝑃, 𝑄 e 𝛺 de cada view ativa do dia
+BLACK-LITTERMAN
+parte do equilíbrio e se afasta dele
+→ desvio = 𝑤 − 𝑤mkt
+CAMADA TÁTICA
+o movimento do preço em k pregões
+peso somado por cima do BL
+SPREAD SETORIAL
+sem exposição ao índice
+→ d𝑤 = inv(𝛿𝛴)·𝜇
+UM TETO PARA OS DOIS
+Σ|𝑤 − 𝑤mkt| ≤ 1
+corta as duas camadas juntas:
+entrar não é somar, é dividir.
+CARTEIRA DO DIA
+9 ETFs, peso irrestrito
+sem view ativa: só o equilíbrio
+Por que somar a tática, e não dar um orçamento a ela: o tamanho sai da mesma conta que dimensiona uma view, e um orçamento em % do patrimônio exigiria escolher um número.
+DA PROBABILIDADE AO VETOR Q
+𝑄 = ( 𝐸poly − âncora ) · Σ 𝑃𝑖 𝛽𝑖
+o que o mercado espera
+↓  menos a âncora que o preço já embute
+a surpresa, em bps
+↓  vezes o β medido nos anúncios passados
+retorno esperado, por ativo
+Por que β medido, e não magnitude declarada: opinião
+trocada por medição, agora do lado do retorno.
+AS VIEWS ESTRUTURAIS
+VIEW: O QUE ELA LÊ NO MERCADO PREGÕES ATIVA EXPOSIÇÃO
+2.3 · a decisão do Fed 312 de 374 neutra
+2.2 · a inflação do mês 253 de 374 neutra
+B · a taxa no fim do ano 154 de 374 neutra
+15b · a dúvida na véspera 26 de 374 direcional
+Em 28 dos 374 a carteira é só a de equilíbrio.
+Por que neutras, com uma exceção: sem exposição ao índice, a view de prêmio se
+esvazia.
+A RÉGUA DE CONFIANÇA (Ω) C ≥ 1
+𝑐 = ( (1 + 𝑣̄) · (1 + |Σ𝑝 − 1| ) )nível 1
+𝑣̄
+quanto a distribuição se moveu nas
+5 últimas leituras
+Σ𝑝 − 1
+o quanto o livro deixa de somar 1
+O BL clássico é o teto de confiança, nunca o piso.
+185 de 2.795 vetadas 4% do Fed · 27% da trajetória
+expoente 1, fechado uma vez
+Por que contra o erro da probabilidade, e não contra o retorno: senão a
+régua herda o resultado que deveria julgar.
+CONTROLE DE RISCO
+carteira de equilíbrio
+o teto não corta
+desvioΣ|𝑤 − 𝑤mkt| ≤ 1
+Por que só no desvio: cortar a carteira inteira misturava
+a aposta da view com a perna de mercado.
+Pesos pela covariância amostral, não pela posterior do
+modelo.
+Por que a amostral: confiança zero devolve o equilíbrio
+exato, e a incerteza mora num lugar só, o Ω.
+A CAMADA TÁTICA
+MERCADO QUE ELA LÊ JANELA LIVRO, NEUTRO AO ÍNDICE
+recessão nos EUA 3 · 5 · 10 pregões XLP defensivo × XLK cíclico
+maioria na Câmara 20 pregões XLP defensivo × XLK cíclico
+lê o Polymarket atua na bolsa tese não desprovada não repete o que entrou
++42,6 pp
+sozinha, sem teto
+−2,94 pp
+dentro da carteira
+8 de 10
+caíram no corte da amostra
+Por que ligada assim mesmo: a régua julga o mecanismo, não o resultado.
+COMO CADA INGREDIENTE FOI JULGADO
+← confiança maior prevê erro menor 2.3 Fed 2.2 inflação
+Estabilidade da
+distribuição ENTRA
+Coerência do livro ENTRA
+Volume negociado VIRA VETO
+Proximidade do evento REPROVADO
+Por que dois, e não quatro: critério declarado antes de calibrar; a
+proximidade reprovou invertida nas duas.
+−0,4 0 +0,4
+==================== PAGE 4
+KAIROS Backtest, resultados e autoavaliação 04
+METODOLOGIA E VIESES TRATADOS
+O backtest foi rodado ao longo de: 374 pregões (10/02/2025 a 06/08/2026), 9 ETFs a preços ajustados, rebalanceamento diário,
+2,0 bps por lado sobre o giro. Todo número desta página teve de passar por uma pergunta: o backtest podia saber isso na hora
+da decisão? As quatro formas de inflar um backtest (olhar o futuro, calibrar dentro da própria janela, assumir número de manual
+e ajustar parâmetro ao resultado) foram fechadas por construção, antes de rodar.
+O modelo nunca viu o futuro. Nenhuma view usa o desfecho do evento que ela
+mesma precifica.
+Nada foi assumido de cabeça. A sensibilidade a juros que o manual arredonda para
+“8” foi medida: 8,31 a 8,38.
+A régua foi calibrada fora do teste. As médias de referência vêm de 206 pregões
+anteriores ao início da janela medida.
+Os parâmetros não foram ajustados ao resultado. Teto de risco, confiança nas
+views e aversão a risco saem de decisão registrada.
+CURVA ACUMULADA E DRAWDOWN
++33,2% contra +30,1% do SPY, ao mesmo risco (vol. 17,6% contra 17,9%). Mas a vantagem não
+veio das quedas: nos dois tombos a carteira caiu junto, e em abril/2025 caiu mais fundo que o
+benchmark (−19,6% contra −18,8%). O ganho vem da subida, não da defesa.
+DE ONDE VEM O RESULTADO
+O retorno de cada pregão se separa em três pedaços: a carteira de equilíbrio (o que se teria sem view
+nenhuma), o desvio que as views impõem sobre ela e o custo de manter esse desvio. Em 374 pregões as
+views produziram +5,2 pp e o custo devolveu −3,0 pp. O que chega ao investidor é o que sobra. E a
+vantagem não depende de dias de sorte sem os três pregões de maior impacto ela teria retorno maior,
+não menor (+4,5 em vez de +2,3 pp).
+SENSIBILIDADES: AQUI SE JUSTIFICA O NÚMERO
+Um resultado bom pode ser só um parâmetro bem escolhido, mas esse não é o caso. Giramos os
+quatro botões da estratégia: quanto risco tomar, quanta confiança dar às views, quanto o preço
+precisa andar para negociar e a correção das probabilidades, e medimos cada posição. Em
+nenhuma a vantagem sobre o SPY vira negativa (+0,5 a +15,8 pp).
+TABELA DE MÉTRICAS
+MÉTRICA KAIROS SPY
+Retorno líquido +33,2% +30,1%
+Vol. anualizada 17,6% 17,9%
+Sharpe 1,18 1,08
+Máx. drawdown −19,6% −18,8%
+Alpha anual. +2,57% —
+Beta vs SPY 0,95 1,00
+Σ|w| média 1,91 1,00
+Giro diário 0,40 —
+Beta 0,95: a carteira anda junto com o mercado. Não é SPY
+alavancado — nem neutra: as views ficam líquidas
+compradas (ΣP de +0,96 a +2,00)
+O QUE O NÚMERO NÃO DIZ
+Ganha sozinha, perde somada. A camada tática faz +42,6
+pp isolada e −2,94 pp na entrega. Sob teto de risco fixo,
+somar não acrescenta: divide o mesmo orçamento. E o Δ
+não é monótono no teto (−2,9 / −6,8 / −8,9 / +3,8).
+Quase metade do giro volta atrás. 42% do que a carteira
+compra num dia é desfeito nos dois pregões seguintes.
+Ainda assim a vantagem só desapareceria com um custo
+de 22,9 bps por lado — 11× os 2 bps que pagamos.
+Uma janela, um regime. 374 pregões de alta do S&P, sem
+correção para as ~200 comparações da busca tática.
+AUTOAVALIAÇÃO · NOSSA CONDUTA
+Como julgamos a estratégia: Uma ideia entra por acertar a
+probabilidade, nunca por render mais; teto e confiança
+foram escolhidos uma vez só, em reunião; a hipótese foi
+escrita antes de medir.
+13 ideias de sinal medidas, 1 entrou: Momentum e
+velocidade de ajuste viraram passeio aleatório quando
+medidos — o dado contrariou a tese.
+2 views entregues acertando a direção em 49% dos dias:
+Nossa régua de entrada é ter um mecanismo que explique
+o efeito, não um histórico bonito. A tese se sustenta pelo
+que foi reprovado.
+AUTOAVALIAÇÃO · ONDE ERRAMOS
+Lemos uma medida errada e quase decidimos por ela: Um
+número parecia crescer e chamamos isso de tendência —
+era artefato do jeito de medir. Quem pegou: a segunda
+medida, feita antes de qualquer decisão, que mostrou
+passeio aleatório.
+Nosso primeiro filtro reprovava quase tudo: A régua de
+estabilidade acusava 13 dos 14 casos; a correta acusa 3.
+Quem pegou: a releitura do critério antes de olhar o
+resultado — aceitá-lo teria dado a conclusão oposta da
+certa.
+Texto cravado em gerador envelhece calado. A legenda
+do backtest afirmou “camada desligada” por dois commits
+depois de ela ser ligada — os números já a incluíam.
+Encontramos o erro depois em uma conferencia de código
+.
+AUTOAVALIAÇÃO · SIMULAÇÃO DE
+FUNDO
+Perfis de cliente simulados por IA sobre a série diária: 18
+meses, drawdown de −19,6%, Σ|w| médio de 1,91 e 0,40 de
+giro por pregão.
+Conservador — não adere. Drawdown pior que o do
+índice, 1,9× de alavancagem, nenhuma proteção na queda.
+Institucional — adere ao alpha, não ao produto. Beta 0,95
+é exposição que ele já compra barato; pagaria pelos +2,6%
+a.a. de alpha.
+Orientado a evento — adere. É o único para quem +3,0 pp
+ao mesmo risco do índice é o produto.
+A objeção não foi ao retorno, foi ao empacotamento: isto é
+um overlay de alpha, e a taxa teria de sair do excesso.
+Backtest reproduzido em duas máquinas com saída idêntica dígito a dígito. Todo número desta página sai de backtest_v1.py · curva_c.py · curva_banda.py · graficos_p4.py, e nenhum foi digitado à mão.
+==================== PAGE 5
+KAIROS Uso de IA generativa e próximos passos 05
+A REGRA QUE ORGANIZOU O TRABALHO COM IA
+Três frentes em paralelo, cada uma dona dos seus módulos e do seu branch, com as regras versionadas no próprio repositório.
+CLAUDE.md compartilhado e sistema de registro de decisões e trabalho por sessão. A regra central é uma só: a IA nunca fecha
+decisão metodológica. Fonte, universo, forma funcional e valor de parâmetro saem de decisão humana registrada; até ela existir,
+o agente escreve TODO(DECISAO-N) e toca o resto da tarefa.
+Um dono por módulo. Código de outro dono não se edita: o defeito vira
+observação no LOG dele.
+Second-brain por branch. Qualquer pesquisa, decisão ou duvida ficou registrada
+em forma de markdown em um sistema organizado pela própria. Conhecimento
+que foi se construindo nunca foi perdido.
+Ritual de sessão obrigatório. Toda sessão fecha com entrada no LOG e um bloco
+“Uso de IA”. Esta página sai dele.
+CLAUDE.md para o Projeto. Arquivo lido ao começo de cada sessão, com as regras
+de conduta, guia de como fechar a sessão e separação de funções por membro
+DADOS GERAIS · O PROCESSO MEDIDO, NÃO ESTIMADO
+SESSÕES DE IA
+91
+TOKENS POR SESSÃO
+232k
+média · 19,7M no total
+DECISÕES REGISTRADAS
+81
+escaladas para decisão humana
+TAXA DE RECORREÇÃO
+37%
+das sessões pediram 2ª rodada (87 medidas)
+LINHA DO TEMPO DO PROJETO
+Barras: contexto por dia, empilhado por frente; linha: decisões acumuladas. Oito dias de agosto concentram
+o grosso do contexto e a subida de 13 para 81 decisões. Hachurado: as 33 sessões cujo token foi
+convertido de “% da janela”.
+TIPO DE SESSÃO · POR SESSÃO E POR TOKEN
+Os 91 blocos do LOG classificados à mão, por regra fechada antes da contagem. Análise e
+medição leva 54% das sessões e 71% dos tokens; código, 15% e 4%. O caro não foi escrever
+código — foi medir.
+ERROS DA IA × MECANISMO QUE PEGOU
+145 erros contados um a um nos três LOGs. Código quebrado é a maior categoria (72) e a mais
+barata: 40 morrem na execução. Na outra ponta, texto impreciso (13) e escopo errado (10) não têm
+um único erro pego por teste — a conferência humana pegou os 23 ainda na sessão.
+A SEPARAÇÃO DO TRABALHO
+■ A IA sozinha. Código, varredura, medição repetida e
+prosa gerada a partir dos números: 38 scripts, 37 arquivos
+de teste e 40 análises só neste branch.
+■ Só o humano. Fonte, universo, forma funcional,
+parâmetro e o que entra na entrega — e o veredito de
+cada régua, escrito antes de medir.
+■ Nenhum dos dois sozinho. O critério que julga um
+ingrediente é humano e declarado antes; a varredura que o
+aplica é da IA. Trocar a ordem produz overfit com cara de
+método.
+ONDE A IA AGREGOU
+Varredura exaustiva ficou barata. 13 candidatas táticas
+medidas antes de uma entrar, cada ingrediente do Ω
+testado em várias grades, horizontes e janelas — ~200
+comparações só na busca tática. À mão, nada disso teria
+sido testado.
+Prosa gerada do número. As páginas saem de gerador
+alimentado por artefato medido; a legenda muda quando
+o número muda.
+Revisão cruzada entre agentes. A classificação dos 91
+blocos saiu de 4 agentes com briefing único, e a
+conferência da própria saída pegou 3 dos 6 erros da
+sessão.
+ONDE A IA FALHOU, E O QUE
+CONTEVE
+Premissa herdada, pega pelo humano. A IA afirmou que o
+mapeamento cenário→ativo estava congelado; o
+congelado era a camada tática. Duas rodadas de correção
+do dono — e o registro errado já tinha entrado em duas
+entradas do LOG.
+Defeito latente que só um assert novo revelou. O auto-
+teste do gerador desta página misturava LOG sintético com
+os LOGs reais — invisível desde que a função foi escrita.
+PRÓXIMOS PASSOS
+Termos fora da diagonal no Ω. É a limitação com endereço
+mais claro: a correlação entre views já está medida.
+Banda de não-negociação. Contra os 42% de giro desfeito
+em dois pregões — o breakeven de 22,9 bps por lado diz
+que há espaço para não negociar.
+Ampliar o universo pelo critério certo. Não por classe de
+ativo, e sim por haver notícia a que o preço responda.
+Validar em regime de queda. O que a página 4 admite é o
+que falta testar: a vantagem veio da subida.
+FECHAMENTO
+Kairos não tenta prever o mercado, troca a opinião do
+gestor pelo preço de quem tem dinheiro em risco no
+desfecho. É o que torna a view auditável: Q e Ω deixam de
+ser declarados e passam a ser medidos, e o resultado passa
+a depender de acertar a probabilidade, não de escolher
+bem o parâmetro. Os +3,0 pp sobre o SPY ao mesmo risco
+saem daí. O que sustenta a tese não é a curva; é o que foi
+reprovado antes dela: 13 ideias medidas, uma entrou.

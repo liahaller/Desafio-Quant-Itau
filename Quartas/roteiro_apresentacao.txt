@@ -1,0 +1,114 @@
+KAIROS - ROTEIRO DA APRESENTACAO (Quartas de Final - Desafio Quant AI 2026)
+Formato: PITCH. Nao e um resumo do relatorio - e o argumento de por que ele
+merece ser lido com atencao.
+Alvo: 4'30" | Limite duro: 5'00" | Sem Q&A | Suporte visual: o relatorio (5 pgs)
+Ritmo de referencia: ~140 palavras/min
+
+--------------------------------------------------------------------------
+A TESE DO PITCH (o que o avaliador tem que sair sabendo)
+
+  1. Todo Black-Litterman tem o mesmo ponto cego: a view e opiniao do gestor.
+  2. Kairos troca essa opiniao por um preco com dinheiro em risco - a view vira
+     auditavel (Q e Omega medidos, nao declarados).
+  3. Isso entrega +3,0 pp sobre o SPY ao mesmo risco, e o relatorio mostra
+     tambem o que NAO funcionou.
+  4. Metodo reaproveitavel: serve para qualquer evento com data marcada.
+
+DIVISAO DE TEMPO
+  P.1 Hook: problema + solucao + placar .......... 0:00 - 0:45
+  P.2 Diferencial 1: preco no lugar da opiniao ... 0:45 - 1:45
+  P.3 Diferencial 2: Q e Omega medidos ........... 1:45 - 2:40
+  P.4 Resultado + credibilidade .................. 2:40 - 3:42
+  P.5 Diferencial 3: IA medida + fechamento ...... 3:42 - 4:30
+
+--------------------------------------------------------------------------
+[0:00] PAGINA 1 - HOOK
+
+Todo Black-Litterman tem o mesmo ponto cego: a view e a opiniao do gestor.
+Depois de ver o backtest, da para ajustar essa opiniao ate ela produzir quase
+qualquer resultado - e ninguem consegue auditar isso.
+O Kairos tira a opiniao da conta. No lugar dela entra um preco publico, formado
+por gente com dinheiro em risco no desfecho do evento.
+Em 374 pregoes, liquido de custos: +33,2% contra +30,1% do SPY, Sharpe 1,18
+contra 1,08 - tres pontos percentuais de excesso ao mesmo risco. Em quatro
+minutos eu mostro de onde vem esse numero e o que ele nao e.
+
+>>> "Proxima pagina, por favor."
+
+--------------------------------------------------------------------------
+[0:45] PAGINA 2 - DIFERENCIAL 1: PRECO NO LUGAR DA OPINIAO
+
+No Polymarket, um contrato paga um dolar se o evento ocorre e zero se nao. O
+preco e a probabilidade, reprecificada a cada negociacao: 90% de acerto a um mes
+da resolucao, 26 bilhoes de dolares negociados no trimestre.
+Por que isso e melhor que uma opiniao: analista nao paga por errar, trader paga.
+E se o preco destoa da realidade, alguem lucra corrigindo. Nenhuma opiniao tem um
+mecanismo que a conserta em tempo real.
+Kairos, em grego, e o instante oportuno. A estrategia herda isso: nao fica
+exposta o tempo todo - concentra risco nos dias em que informacao nova chega ao
+preco, decisao do Fed, inflacao. Fora deles, volta ao mercado. E vale para
+qualquer evento com data marcada: e isso que torna o metodo reaproveitavel.
+
+>>> "Proxima pagina, por favor."
+
+--------------------------------------------------------------------------
+[1:45] PAGINA 3 - DIFERENCIAL 2: Q E OMEGA MEDIDOS
+
+O elo que fecha a tese esta aqui: como uma probabilidade vira uma view.
+Q e a surpresa - o que o mercado espera menos a ancora que o preco ja embute -
+vezes o beta medido nos anuncios passados. Beta medido, nao magnitude declarada.
+E a confianca, o Omega, cai quando a distribuicao se move demais e quando o livro
+nao soma um. Reparem no que ela julga: o erro da probabilidade, nunca o retorno.
+Se julgasse o retorno, a regua herdaria o resultado que deveria estar julgando -
+e ai que quase todo modelo se engana sozinho.
+O diferencial em uma frase: Q e Omega deixam de ser declarados e passam a ser
+medidos. A view virou auditavel.
+
+>>> "Proxima pagina, por favor."
+
+--------------------------------------------------------------------------
+[2:40] PAGINA 4 - RESULTADO + CREDIBILIDADE
+
+O resultado se decompoe: as views somaram +5,2 pontos e o custo devolveu -3,0.
+Sem os tres melhores pregoes a vantagem aumenta - nao e sorte. Giramos os quatro
+parametros da estrategia e em nenhuma posicao a vantagem sobre o SPY vira
+negativa. E ela so desapareceria com um custo de 22,9 bps por lado, onze vezes o
+que pagamos.
+Agora, o que eu quero que voces vejam nesta pagina e o que ela admite. O ganho
+veio da subida, nao da defesa. A camada tatica rende +42,6 pontos sozinha e
+-2,94 dentro da carteira - sob teto de risco fixo, somar e dividir; publicamos
+isso. E e uma janela so, de alta.
+Esta no relatorio porque a nossa regua de entrada e ter um mecanismo que explique
+o efeito, nao um historico bonito.
+
+>>> "Proxima pagina, por favor."
+
+--------------------------------------------------------------------------
+[3:42] PAGINA 5 - DIFERENCIAL 3: IA MEDIDA + FECHAMENTO
+
+Ultimo diferencial: o processo com IA foi medido, nao estimado. 91 sessoes, 81
+decisoes escaladas para humano, 145 erros da IA contados um a um nos logs, com o
+mecanismo que pegou cada um. A regra e uma so: a IA nunca fecha decisao
+metodologica.
+Fechando: Kairos nao tenta prever o mercado. Troca a opiniao do gestor pelo preco
+de quem tem dinheiro em risco - e com isso o resultado passa a depender de
+acertar a probabilidade, nao de escolher bem o parametro.
+O que sustenta a tese nao e a curva: sao as treze ideias que medimos para uma
+entrar.
+
+[4:30] FIM
+
+--------------------------------------------------------------------------
+EXECUCAO
+
+1. Peca a pagina ANTES de comecar a falar dela; o mediador demora para virar.
+2. Front-load: o placar sai aos 40 segundos. Se o tempo estourar no meio, o
+   avaliador ja ouviu a tese inteira.
+3. Sem Q&A: a pagina 4 responde as objecoes antes que virem duvida. Admitir o
+   limite EM VOZ ALTA e o que compra credibilidade - nao corte essa parte.
+4. Se atrasar, corte pelo paragrafo do "Kairos, em grego" (p.2). Nunca corte o
+   hook (p.1) nem o "o que ela admite" (p.4).
+
+FICOU DE FORA DE PROPOSITO (esta no relatorio, o avaliador le depois):
+  fontes de dados (Gamma/CLOB, yfinance, FRED), tabela das quatro views, lista
+  dos vieses tratados, teto de risco unico, decomposicao das sensibilidades.

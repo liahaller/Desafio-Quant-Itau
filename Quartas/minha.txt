@@ -1,0 +1,30 @@
+
+
+Pagina 1 - A ideia aqui é explicar em poucos segundos o que vai ser nossa estratégia
+ - Apresentar o nome: Como vem da ideia de ficar exposto em momentos
+ - Justificar a partir do polymarket
+ - Dados gerais
+
+Pagina 2 - Justificar a escolha
+ - Porque BL: Visão do polymarket tem que entrar, mas o markovitz obriga opinar sobre tudo e da retornos inesperados/menos controle
+ - Como funciona a view no BL: explicar que montamos views separadas olhando para diferentes mercados
+ - Porque Polymarket
+ - Como pegamos os dados
+
+Pagina 3 - Estatégia na prática
+ - As duas camadas
+    - As views
+    - A camada tática
+ - O controle de Risco
+ - A Confiança
+
+Pagina 4 - Resultados
+ - Metodologia
+ - Analise numérica
+ - Analise de resultado
+
+Pagina 5 - O diferencial
+ - Nossa estrutura de IA - second-brain
+ - Dados gerais
+ - Erros e takeaways sobre o uso de IA
+ - Próximos passos + Fechamento
