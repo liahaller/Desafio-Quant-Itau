@@ -1,114 +1,169 @@
-KAIROS - ROTEIRO DA APRESENTACAO (Quartas de Final - Desafio Quant AI 2026)
-Formato: PITCH. Nao e um resumo do relatorio - e o argumento de por que ele
-merece ser lido com atencao.
-Alvo: 4'30" | Limite duro: 5'00" | Sem Q&A | Suporte visual: o relatorio (5 pgs)
-Ritmo de referencia: ~140 palavras/min
+ROTEIRO DE FALA — KAIROS · Quartas de Final · Desafio Quant AI 2026
+Alvo: 4min30s (teto duro 5min). ~640 palavras a ~2,4 palavras/s.
+Banca majoritariamente NAO-quant. Nao ha Q&A: tudo que importa tem que ser dito.
+O mediador NAO da zoom nem aponta com o mouse -> toda referencia visual precisa
+nomear o BLOCO ("o grafico da esquerda", "a faixa de baixo") antes do numero.
 
---------------------------------------------------------------------------
-A TESE DO PITCH (o que o avaliador tem que sair sabendo)
+REGRA DE OURO DA FALA: nunca leia o slide. Aponte o bloco, diga o numero, diga o
+que ele significa. Um numero por frase.
 
-  1. Todo Black-Litterman tem o mesmo ponto cego: a view e opiniao do gestor.
-  2. Kairos troca essa opiniao por um preco com dinheiro em risco - a view vira
-     auditavel (Q e Omega medidos, nao declarados).
-  3. Isso entrega +3,0 pp sobre o SPY ao mesmo risco, e o relatorio mostra
-     tambem o que NAO funcionou.
-  4. Metodo reaproveitavel: serve para qualquer evento com data marcada.
+ORCAMENTO DE TEMPO (alvo)          TEXTO ATUAL (palavras / ~2,4 pal/s)
+  p1 identidade ....... 25s           58  -> 24s   ok
+  p2 A IDEIA .......... 68s          262  -> 109s  <- ponto forte
+  p3 modelagem ........ 42s          140  -> 58s   <- a menor parte, de proposito
+  p4 RESULTADOS ....... 100s         368  -> 153s  <- o que a banca quer
+  p5 IA + fechamento .. 43s          130  -> 54s
+                                     ---------------
+                       TOTAL 4:38    958  -> ~6:40   ATENCAO: sobra ~2min
 
-DIVISAO DE TEMPO
-  P.1 Hook: problema + solucao + placar .......... 0:00 - 0:45
-  P.2 Diferencial 1: preco no lugar da opiniao ... 0:45 - 1:45
-  P.3 Diferencial 2: Q e Omega medidos ........... 1:45 - 2:40
-  P.4 Resultado + credibilidade .................. 2:40 - 3:42
-  P.5 Diferencial 3: IA medida + fechamento ...... 3:42 - 4:30
+O texto abaixo esta escrito na versao COMPLETA, para ensaio. Para caber em 4:30
+e preciso cortar ~300 palavras - a lista de cortes esta em NOTAS DE ENSAIO, no
+fim do arquivo, na ordem em que doem menos.
 
---------------------------------------------------------------------------
-[0:00] PAGINA 1 - HOOK
 
-Todo Black-Litterman tem o mesmo ponto cego: a view e a opiniao do gestor.
-Depois de ver o backtest, da para ajustar essa opiniao ate ela produzir quase
-qualquer resultado - e ninguem consegue auditar isso.
-O Kairos tira a opiniao da conta. No lugar dela entra um preco publico, formado
-por gente com dinheiro em risco no desfecho do evento.
-Em 374 pregoes, liquido de custos: +33,2% contra +30,1% do SPY, Sharpe 1,18
-contra 1,08 - tres pontos percentuais de excesso ao mesmo risco. Em quatro
-minutos eu mostro de onde vem esse numero e o que ele nao e.
+==================================================================
+PAGINA 1 - IDENTIDADE                                    0:00 - 0:25
+==================================================================
+[abre ja com o slide 1 na tela]
 
->>> "Proxima pagina, por favor."
+"Boa tarde. Nosso robo se chama Kairos - em grego, o instante certo de agir.
+A gente deu esse nome porque a estrategia nao fica exposta o tempo todo: ela concentra risco
+nos poucos dias em que informacao nova chega ao preco.
 
---------------------------------------------------------------------------
-[0:45] PAGINA 2 - DIFERENCIAL 1: PRECO NO LUGAR DA OPINIAO
+Usamos um universo de 9 ETFs, nosso benchmark foi O S&P 500
 
-No Polymarket, um contrato paga um dolar se o evento ocorre e zero se nao. O
-preco e a probabilidade, reprecificada a cada negociacao: 90% de acerto a um mes
-da resolucao, 26 bilhoes de dolares negociados no trimestre.
-Por que isso e melhor que uma opiniao: analista nao paga por errar, trader paga.
-E se o preco destoa da realidade, alguem lucra corrigindo. Nenhuma opiniao tem um
-mecanismo que a conserta em tempo real.
-Kairos, em grego, e o instante oportuno. A estrategia herda isso: nao fica
-exposta o tempo todo - concentra risco nos dias em que informacao nova chega ao
-preco, decisao do Fed, inflacao. Fora deles, volta ao mercado. E vale para
-qualquer evento com data marcada: e isso que torna o metodo reaproveitavel.
+[nao se demore. O placar volta na p4.]
 
->>> "Proxima pagina, por favor."
+"Proxima pagina, por favor."
+==================================================================
+PAGINA 2 - A IDEIA  (SLIDE MAIS IMPORTANTE)              0:25 - 1:33
+==================================================================
 
---------------------------------------------------------------------------
-[1:45] PAGINA 3 - DIFERENCIAL 2: Q E OMEGA MEDIDOS
+"Partimos da ideia de que o polymarket, por ser um mercado de previsao
+com grande volumes de trades diarios, se adaptaria mais rápidamente a noticias. 
+Usar as infornmações do mercado rápido para ganhar edge no mais lento.
 
-O elo que fecha a tese esta aqui: como uma probabilidade vira uma view.
-Q e a surpresa - o que o mercado espera menos a ancora que o preco ja embute -
-vezes o beta medido nos anuncios passados. Beta medido, nao magnitude declarada.
-E a confianca, o Omega, cai quando a distribuicao se move demais e quando o livro
-nao soma um. Reparem no que ela julga: o erro da probabilidade, nunca o retorno.
-Se julgasse o retorno, a regua herdaria o resultado que deveria estar julgando -
-e ai que quase todo modelo se engana sozinho.
-O diferencial em uma frase: Q e Omega deixam de ser declarados e passam a ser
-medidos. A view virou auditavel.
+O problema que teriamos que abordar então seria como transformar uma probabilidade do 
+polymarket em carteira.
+Markowitz nao serve - exige opinar sobre TODOS os ativos, e uma mudanca minuscula
+no retorno esperado joga a carteira para um canto. Nos temos opiniao sobre um
+evento, nao sobre nove ETFs. Decidimos então pelo BL: ele se ancora na carteira
+do proprio mercado e so se afasta dela onde existe view. Regulado pelo nosso indice de confiança
+No sinal
 
->>> "Proxima pagina, por favor."
+______
+Mas da pra confiar no Polymarket? - os dois numeros no meio da pagina: 90% de acerto a um mes
+da resolucao, 26 bilhoes negociados no trimestre. Nao e enquete, e capital em
+risco - e quando o preco erra feio, alguem lucra corrigindo.
+________
+Montamos da seguinte forma então - o esquema no centro: entra a probabilidade, o nosso
+metodo traduz para previsão. Passamos isso por um cálculo móvel de confiança no sinal, 
+o que forma a view final do BL
 
---------------------------------------------------------------------------
-[2:40] PAGINA 4 - RESULTADO + CREDIBILIDADE
+Na faixa de baixo esta a procedencia do dado: Polymarket, yfinance e FRED - sempre
+a ultima probabilidade antes do fechamento, sem olhar o futuro."
 
-O resultado se decompoe: as views somaram +5,2 pontos e o custo devolveu -3,0.
-Sem os tres melhores pregoes a vantagem aumenta - nao e sorte. Giramos os quatro
-parametros da estrategia e em nenhuma posicao a vantagem sobre o SPY vira
-negativa. E ela so desapareceria com um custo de 22,9 bps por lado, onze vezes o
-que pagamos.
-Agora, o que eu quero que voces vejam nesta pagina e o que ela admite. O ganho
-veio da subida, nao da defesa. A camada tatica rende +42,6 pontos sozinha e
--2,94 dentro da carteira - sob teto de risco fixo, somar e dividir; publicamos
-isso. E e uma janela so, de alta.
-Esta no relatorio porque a nossa regua de entrada e ter um mecanismo que explique
-o efeito, nao um historico bonito.
 
->>> "Proxima pagina, por favor."
+==================================================================
+PAGINA 3 - MODELAGEM  (rapida, sem matematica)           1:33 - 2:15
+==================================================================
+"Proxima pagina."
 
---------------------------------------------------------------------------
-[3:42] PAGINA 5 - DIFERENCIAL 3: IA MEDIDA + FECHAMENTO
+" Agora como calculamos tudo isso
 
-Ultimo diferencial: o processo com IA foi medido, nao estimado. 91 sessoes, 81
-decisoes escaladas para humano, 145 erros da IA contados um a um nos logs, com o
-mecanismo que pegou cada um. A regra e uma so: a IA nunca fecha decisao
-metodologica.
-Fechando: Kairos nao tenta prever o mercado. Troca a opiniao do gestor pelo preco
-de quem tem dinheiro em risco - e com isso o resultado passa a depender de
-acertar a probabilidade, nao de escolher bem o parametro.
-O que sustenta a tese nao e a curva: sao as treze ideias que medimos para uma
-entrar.
+O NIVEL da probabilidade vira view dentro do Black-Litterman. A tabela do meio
+lista as quatro que entraram: a decisao do Fed, a inflacao do mes, a trajetoria
+de juros e a duvida na vespera.
 
-[4:30] FIM
+O MOVIMENTO da probabilidade vira a camada tatica - um spread entre setor
+defensivo e ciclico, sem exposicao ao indice.
 
---------------------------------------------------------------------------
-EXECUCAO
+As duas dividem um unico teto de risco, no bloco de baixo: a soma dos desvios
+em relacao a carteira de mercado nunca passa de 1. Entrar nao e somar, e dividir.
 
-1. Peca a pagina ANTES de comecar a falar dela; o mediador demora para virar.
-2. Front-load: o placar sai aos 40 segundos. Se o tempo estourar no meio, o
-   avaliador ja ouviu a tese inteira.
-3. Sem Q&A: a pagina 4 responde as objecoes antes que virem duvida. Admitir o
-   limite EM VOZ ALTA e o que compra credibilidade - nao corte essa parte.
-4. Se atrasar, corte pelo paragrafo do "Kairos, em grego" (p.2). Nunca corte o
-   hook (p.1) nem o "o que ela admite" (p.4).
+E a confianca tambem nao e escolhida por nos: sai de uma regua que mede se o
+livro do Polymarket esta estavel e coerente. Se ele degenera, a view e desligada
+naquele dia - aconteceu 185 vezes em 2.795."
 
-FICOU DE FORA DE PROPOSITO (esta no relatorio, o avaliador le depois):
-  fontes de dados (Gamma/CLOB, yfinance, FRED), tabela das quatro views, lista
-  dos vieses tratados, teto de risco unico, decomposicao das sensibilidades.
+[se estiver atrasado, corte o paragrafo do MOVIMENTO: ele volta na p4.]
+
+
+==================================================================
+PAGINA 4 - RESULTADOS  (a pagina dos avaliadores)        2:15 - 3:55
+==================================================================
+"Proxima pagina, por favor - essa e a pagina dos resultados."
+
+[FAIXA DE CIMA - metodologia, 20s]
+"Comeco pela faixa de cima, porque ela vale mais que o retorno. As quatro formas
+de inflar um backtest foram fechadas antes de rodar: nenhuma view usa o desfecho
+do evento que ela mesma precifica; a sensibilidade a juros que o manual arredonda
+para 8 nos medimos - deu 8,31; a regua de confianca foi calibrada em 206 pregoes
+ANTERIORES a janela testada; e os parametros saem de decisao registrada em ata,
+nao de ajuste ao resultado.
+
+[TRES GRAFICOS DO MEIO, da esquerda para a direita, 40s]
+O grafico da esquerda e a curva: 33,2 contra 30,1, com a mesma volatilidade. E
+aqui vem a primeira critica que nos mesmos fazemos - a vantagem NAO veio da
+defesa. Nos dois tombos a carteira caiu junto, e em abril de 2025 caiu mais fundo
+que o indice. O ganho vem da subida.
+
+O do meio decompoe o retorno em tres pedacos: as views somaram 5,2 pontos, o
+custo devolveu 3,0. O que chega ao cliente e o que sobra. E nao e sorte: tirando
+os tres melhores dias, o excesso aumenta em vez de cair.
+
+O da direita: giramos os quatro parametros da estrategia, e em nenhuma posicao a
+vantagem sobre o SPY fica negativa - varia de mais 0,5 a mais 15,8 pontos.
+
+[FAIXA DE BAIXO - a parte critica, 40s]
+Na faixa de baixo esta o que o numero nao diz, e e o que eu levaria para um comite.
+A camada tatica rende 42 pontos sozinha e tira 3 dentro da carteira - sob teto
+fixo, somar e dividir. 42% do giro e desfeito em dois pregoes. E e uma janela so,
+de mercado em alta.
+
+E a ultima caixa: simulamos tres perfis de cliente sobre a serie diaria.
+Conservador nao adere - drawdown pior que o do indice e 1,9 vezes de alavancagem.
+Institucional compra o alpha, nao o produto: beta 0,95 e exposicao que ele ja tem
+barato, mas pagaria pelos 2,6% ao ano de alpha. O fundo orientado a evento adere -
+para ele, 3 pontos ao mesmo risco do indice E o produto.
+A objecao nao foi ao retorno, foi ao empacotamento: isso e um overlay de alpha,
+e a taxa teria que sair do excesso, nao do patrimonio."
+
+
+==================================================================
+PAGINA 5 - USO DE IA E FECHAMENTO                        3:55 - 4:38
+==================================================================
+"Ultima pagina."
+
+"Nada disso teria sido testado a mao: 91 sessoes de IA, 19,7 milhoes de tokens,
+81 decisoes escaladas para humano - os numeros estao na faixa do meio.
+
+A regra central e uma so, e esta versionada no repositorio: a IA nunca fecha
+decisao metodologica. Fonte, formula e valor de parametro sao humanos e ficam
+escritos ANTES de medir. Ate isso existir, o agente deixa um TODO e toca o resto.
+E nos contamos os erros da IA um a um - 145 - e qual mecanismo pegou cada um.
+
+Fechando: o Kairos nao tenta prever o mercado. Ele troca a opiniao do gestor pelo
+preco de quem tem dinheiro em risco no desfecho. O que sustenta a tese nao e a
+curva - sao as 13 ideias que medimos e reprovamos antes de uma entrar.
+Obrigado."
+
+
+==================================================================
+NOTAS DE ENSAIO
+==================================================================
+- Cronometre a p2 e a p4 isoladas: sao 2/3 da fala. Se as duas couberem, cabe.
+- Peca a pagina ANTES de terminar a frase anterior (o mediador demora ~2s).
+- Se aos 3:40 voce ainda estiver na p4: pule direto para o paragrafo "Fechando"
+  da p5 pedindo a pagina - o fechamento nunca se corta.
+- CORTES, na ordem em que doem menos (~300 palavras para caber em 4:30):
+   1. p3 paragrafo do MOVIMENTO (~30) - a camada tatica volta na p4.
+   2. p3 paragrafo da regua de confianca (~40) - ou reduzir a "a confianca sai de
+      uma regua que le o livro do Polymarket; 185 views vetadas em 2.795".
+   3. p4 grafico da direita, sensibilidades (~35).
+   4. p5 paragrafo dos erros da IA (~55) - fica so a regra + o fechamento.
+   5. p2 paragrafo da procedencia do dado (~30) - esta escrito na faixa de baixo.
+   6. p4 caixa dos perfis de cliente: manter so institucional e evento (~45).
+  NAO cortar: a virada Polymarket->Markowitz->BL na p2, a critica "o ganho vem da
+  subida" na p4, e o paragrafo "Fechando" da p5.
+- Nao leia numero com casa decimal em sequencia. Um numero por frase, e diga
+  sempre o que ele significa logo depois.
