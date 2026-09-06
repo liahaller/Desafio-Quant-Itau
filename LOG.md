@@ -1,5 +1,611 @@
 # LOG de sessões
 
+## 2026-09-06 (sessão 44) — Felipe
+
+**Feito:** overhaul de ESTILO do `Semis/KAIROS_semifinal.pptx` — fontes, cores e
+decoração. Estrutura dos 8 slides, textos, animação (slide 3) e transições Morph
+(slides 4–6) ficaram como estavam.
+
+- **Fontes (todas nativas do Windows 10+):** Bahnschrift SemiBold Condensed
+  (título KAIROS e KPIs), Bahnschrift SemiBold (títulos, negritos de abertura),
+  Bahnschrift SemiLight (corpo), Consolas (marca do cabeçalho, kickers, número
+  do slide, cabeçalhos e valores de tabela) e Georgia itálico (subtítulo do
+  slide 1 e a pergunta "E agora: onde o Polymarket entra nisso?"). Cambria Math
+  das fórmulas não mudou.
+- **Cores:** fundo passou de chapado `#0B1622` para holofote radial
+  `#10203A → #04070E`; cards com degradê vertical e borda mais clara no topo;
+  laranja `#F5A623 → #FFB531`, azul `#4074A8 → #4F8EF7`, verde `#409986 → #2FD3B0`,
+  texto de corpo `#9BAEC0 → #BAC6DA`. Barras de acento dos cards com degradê
+  para 35 % de alfa; anéis dos operadores + e × em dourado.
+- **Decoração nova (só cosmética):** régua do cabeçalho em degradê dourado,
+  tique dourado antes de "KAIROS", número fantasma grande no canto superior
+  direito (usa o número que o slide já exibe — o slide 8 mostra "09"), halos de
+  canto (azul no topo-esquerdo, dourado embaixo-direito), rodapé em Consolas
+  ("ITAÚ QUANT AI CHALLENGE · SEMIFINAL 2026" / "BLACK-LITTERMAN × POLYMARKET").
+  Slide 1: halo dourado atrás do robô e risca sob o título; título sobe 0,13 in
+  para a fonte maior (120 pt) não encostar na tagline.
+
+**Como foi feito:** `restyle.py` (scratchpad, uso único) reescreve só
+`ppt/slides/slideN.xml` com lxml e copia o resto do pacote byte a byte. Shapes
+existentes mantêm id e nome (Morph continua casando); decoração entra no fundo
+da árvore com ids novos. Conferência automática: sequência de `a:t` idêntica ao
+original (fora os 3 textos cosméticos), bloco `p:timing` byte-idêntico,
+transições idênticas a menos de cor/ordem de atributo. Conferência visual por
+render do PowerPoint (COM) em 1920×1080, duas rodadas.
+
+**Quebrou / aprendido:**
+- 1ª rodada: números soltos no corpo ("3, 5 ou 10 pregões", "5%") caíram em
+  Consolas pela regra "run só numérico → mono"; restringida a runs ≤ 9 pt (tabelas).
+- Número fantasma inicialmente usava o índice do slide e divergia do "09" que o
+  slide 8 exibe; passou a ler o texto do número existente.
+- Halos radiais com 2 paradas mostravam borda; resolvido com 4–5 paradas.
+- Bahnschrift é fonte variável: PowerPoint pode não embutir. Se a apresentação
+  for em máquina sem Windows 10+ (Mac), cai em fallback — exportar PDF de
+  segurança antes do dia.
+
+**Slide de fechamento (2º pedido da sessão):** o `Semis.txt` previa um slide 10
+("frase final que retoma a lógica + agradecimento") que faltava no deck. Entrou
+como 9º slide do arquivo, numerado "10" como os demais seguem o roteiro. É um
+clone do slide 1 restilizado (bookend): cabeçalho "KAIROS · Fechamento", título
+KAIROS, frase **"A opinião vem de quem tem dinheiro em risco. A medida vem do
+Black-Litterman."**, linha em Georgia itálico **"Kairós: a carteira só se move
+quando a probabilidade se move. Obrigado pela oportunidade."** e o robô a 32 %
+de opacidade. Redação da frase é proposta minha — trocar é só editar o texto.
+Pacote: `slide9.xml` + rels (reusa `image1.png`), `[Content_Types]`,
+`presentation.xml` (sldId 267 / rId16) e `app.xml`. Script `fechamento.py`
+no scratchpad.
+
+**Pendente:** nada abriu. Se o time quiser transição de entrada nos slides sem
+Morph (1–3, 7–8), é adição simples, mas não foi feita por não estar no pedido.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Fable 5.1.
+- **Contexto consumido:** ~200k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "Meu time fez o ppt para as semis com todo o conteúdo e estrutura que deve ter, mas a apresentação esta muito xoxa e sem sal. Preciso que você faça um overhaul completo do estilo do powerpoint, mudando fonte, cores etc. Tente manter a mesma estrutura dos slides, mas se for necessario pode mudar. Não mude os textos ou as animações que ja tem. pode adicionar textos novos mas apenas cosméticos, nada de conteúdo. Essa sessão não deve se importar com conteúdo da apresentação, apenas estilo"
+- **Iterações até aceitar:** 1 no overhaul (três correções internas pegas no render) + 1 pedido adicional (slide de fechamento, uma correção interna: risca dourada reposicionada).
+- **Erros da IA:** nenhum no entregável; os três defeitos acima foram pegos e corrigidos antes de gravar.
+- **Decisões escaladas:** —.
+- **Tags:** —
+
+## 2026-09-06 (sessão 43) — Felipe
+
+**Feito:** quatro ajustes pontuais no `Semis/KAIROS_semifinal.pptx`, a pedido do
+dono, sem tocar em mais nada do deck.
+
+- **Slide 7 (IA):** linha do tempo refeita com a legenda anonimizada — Felipe →
+  **Membro 1**, Lia → **Membro 2**, Paulo → **Membro 3**. Os dados NÃO foram
+  reparseados dos LOGs (o `LOG.md` mudou desde a figura do deck): saíram do
+  `Uteis/dados/log_sessoes.csv`, e a figura reproduz a mesma (3.790k no pico, 81
+  decisões). Mesmo figsize de antes, então o recorte no slide continua valendo.
+- **Slide 9 (resultados) — curva de retorno:** estava **esticada** (imagem
+  2582×1263, proporção 2,04, dentro de uma caixa de proporção 1,79). Refeita com
+  o figsize na proporção da caixa: mesma posição e mesmo tamanho no slide, sem
+  deformação.
+- **Slide 9 — cascata:** rótulo `perna das views` → **`perna da estratégia`**. A
+  palavra é mais larga e os rótulos do eixo passaram a encostar, então a figura
+  subiu 12% de escala (a caixa no slide não mudou; o efeito é texto um pouco
+  menor). O gerador confere a folga entre rótulos antes de gravar.
+- **Slide 5 (confiança):** a tabela "quatro testados, dois ficaram" (15 caixas de
+  texto + 5 réguas) saiu e entrou a **fórmula do Ω do relatório da 1ª fase** —
+  `c = ( (1 + v̄) · (1 + |Σp − 1|) )^nível` — com a legenda dos três termos. O
+  rótulo da seção virou **A RÉGUA DO Ω** (o antigo descrevia a tabela que saiu).
+  O rodapé das 185 views vetadas ficou onde estava.
+
+**Como foi feito:** cirurgia no .pptx como zip — só `ppt/media/image5-6-7.png` e
+`ppt/slides/slide5.xml` mudam, o resto do pacote é copiado byte a byte (a
+webextension inclusive). Nenhum script do repositório foi editado: os geradores
+são de uso único e ficaram no scratchpad da sessão (`gera_timeline.py`,
+`gera_p4.py`, `aplica_deck.py`), com o .pptx original guardado ao lado.
+
+**Quebrou / aprendido:**
+- Conferência visual por render do PowerPoint (COM) pegou dois defeitos que a
+  geometria não mostrava: os rótulos do eixo colidindo depois do texto maior e o
+  **macron de `v̄` encostando no `)` seguinte** no Segoe UI negrito — resolvido
+  com um espaço fino (U+2009) depois da letra.
+- A figura da linha do tempo no slide 7 continua **levemente espremida** (imagem
+  2,39 numa caixa 2,24). É defeito anterior a esta sessão e não estava no pedido,
+  então ficou como está — anotado para quem for mexer no slide.
+
+**Pendente:** nada abriu. Os três scripts de geração não estão versionados (uso
+único, fora de módulo do dono); se o deck for regerado, refazer a partir do
+`Uteis/dados`.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~140k tokens (janela de 1M).
+- **Prompt inicial (verbatim):** "Depois de me reunir e trabalhar com o mer grupo chegamos no KAIROS_semifinal. Mas preciso que você faça 4 mudanças pontuais no slide. APENAS essas mudanças sem perguntar porque ou mexer em qualquer outro coisa. 1. Refazer o grafico de linha de tempo na pagina de IA, tirando os nomes Felipe, Lia e Paulo da legenda e colocando Membro 1, 2 e 3. 2. Refazer o grafico de retorno para que ele fique do tamanho que esta agora, mas sem ficar deformado.3. trocar no grafico de pernas de retorno a legenda de \"perna das views\" para \"perna da estratégia\". 4. no slide de Confiança trocar a tabela pela formula de calculo da confiança, com algo similar a formula que tem no relatório da primeira fase"
+- **Iterações até aceitar:** 1 (sem rodada de correção do dono; duas correções internas pegas no próprio render).
+- **Erros da IA:** nenhum de conteúdo. Dois acertos de composição feitos pela própria conferência (colisão de rótulos e o macron de `v̄`).
+- **Decisões escaladas:** — (nenhuma; nenhum parâmetro ou fórmula novo — a fórmula é a que já estava publicada no relatório da 1ª fase).
+- **Tags:** —
+
+## 2026-09-06 (sessão 42) — Felipe
+
+**Feito:**
+- **Slide 8 (pesquisa) em deck próprio:** `scripts/slide8_pesquisa_pptx.py` →
+  `Semis/Slide_8.pptx`, a pedido do dono ("faça em outro pptx"). Fora do
+  `Slides_3a6.pptx` porque o 8 não tem diagrama nem Morph — juntá-los só
+  obrigaria o auto-teste do outro a abrir exceção para ele.
+- **Duas versões; a 2ª é a que ficou.** A 1ª desenhava o funil como tabela de
+  células ("1 de 13", "2 de 4"…) e foi recusada: *"as caixinhas ficaram
+  interessantes mas queríamos algo mais visual… as informações vão ser
+  faladas"*. Conceito pedido: **para entrar no modelo (BL), a ideia tinha que
+  estar estatisticamente comprovada**.
+- **A versão aceita é uma figura, não uma lista — a peneira:** fileira de cima
+  com **31 pontos** (um por coisa medida, em 4 grupos rotulados); embaixo dela a
+  **barra da peneira, furada exatamente sob quem passou**; fios de queda
+  atravessando os furos; fileira de baixo com os **7 que passaram**; uma chave
+  os despeja no nó **ENTRA NO MODELO**. Quem não passou fica cinza lá em cima:
+  a perda é visível sem número escrito. Texto do slide: manchete, uma linha de
+  insumos, três legendas curtas e o fecho — o resto é fala (notas do slide).
+- **Detalhe que importa:** a barra é desenhada como os **pedaços entre os
+  furos**, não como barra inteira tapada por retângulos da cor do fundo — a
+  segunda mentiria em qualquer outro fundo. E os que passam ficam no **meio** do
+  grupo, para haver barra dos dois lados de cada furo.
+- **Números, todos com fonte** (no cabeçalho do script): 13 ideias de sinal → 1
+  (p. 4 do relatório, D28); 4 critérios do Ω → 2 (mesma faixa); 6 janelas → 3
+  (`premissa_g1.py::HORIZONTES` é a grade `(1, 2, 3, 5, 10, 20)`; o bloco k = 3,
+  5, 10 é a D28.3); 8 tetos → 1 (grade {1, 2, 3, 5} em dois escopos, nível
+  escolhido pela regra). Insumos: 9 ETFs, 9 mercados do Polymarket, FRED, 374
+  pregões (10/02/2025 a 06/08/2026).
+- **Auto-teste (`--demo`)**: moldura, `effectLst` duplicado, contagem de pontos
+  = soma dos grupos, a fileira não invadir a coluna de legendas e — o que pega o
+  defeito real desta página — **colisão texto × texto medida no Segoe UI**
+  (`altura_do_texto` da p. 5), cruzando todos os blocos contra todos. Foi ele
+  que pegou os rótulos de grupo se sobrepondo quando os pontos cresceram.
+- **Conferência visual:** renderizado em PNG via COM do PowerPoint e olhado a
+  cada rodada (4 renders no total).
+- **Duas divergências do `Semis.txt` achadas ao conferir os números**, registradas
+  na **30.a** sem fechar nada: o "39 mercados coletados" não tem fonte no
+  repositório, e o "tilt ≤ 1 escolhido pelo Sharpe" contradiz a 10a — o nível foi
+  escolhido pela regra, antes do resultado, que é justamente a tese do slide 8.
+
+**Quebrou / aprendido:**
+- Aprendido (do dono): "caixinhas" com número dentro ainda são uma tabela. Num
+  slide falado, o desenho tem de carregar o argumento — a atrição precisa ser
+  **vista**, não lida.
+- Aprendido: a checagem de colisão texto × texto vale mais que teto de altura
+  por caixa — pega o mesmo defeito sem declarar limite por elemento. O cabeçalho
+  fica de fora porque a caixa dele é bem mais larga que o texto (falso positivo).
+- Um `cat > arquivo <<'FIM'` com o script inteiro morreu no shell ("unexpected
+  EOF"); o caminho que funciona nesta máquina é apagar e reescrever pelo Write.
+
+**Pendente:**
+- Aceite do dono sobre a versão da peneira.
+- **D30 segue 🔴**, agora com a 30.a: enquanto a reunião não alinha 8 e 9 ao 6, o
+  slide conta o funil pelo que está medido. Se a contagem mudar, muda a tupla
+  `GRUPOS` (marcada com `# TODO(DECISAO-30)`) e só ela.
+- Nada foi commitado.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~95k tokens (~48% de janela de 200k).
+- **Prompt inicial (verbatim):** "fizemos os slides de ecplicação, de Ia e agora
+  quero fazer o de pesquisa, use o Semis.txt como base" (o "faça em outro pptx"
+  veio no 2º prompt, antes de qualquer código).
+- **Iterações até aceitar:** 2 versões do slide (1 rodada de correção do dono,
+  sobre o conceito visual) + 4 rodadas próprias de ajuste pelo PNG.
+- **Erros da IA:** nenhum de código. Erro de leitura do pedido na 1ª versão:
+  entreguei um slide para **ler** quando o pedido era um slide para ser
+  **falado** — o `Semis.txt` diz isso na estrutura, não no texto. As duas
+  divergências da 30.a são do `Semis.txt`, não desta sessão.
+- **Decisões escaladas:** 30.a (registro dentro da D30, que segue aberta).
+- **Tags:** —
+
+## 2026-09-06 (sessão 41) — Felipe
+
+**Contexto da sessão:** as duas tentativas dos slides 3–6 (o PPTX da sessão 39 e
+o HTML da 40) foram recusadas pelo dono — "as duas ficaram feias e estranhas de
+se olhar", "o ppt tá muito quadrado e as cores muito estáticas". Pedido: revisar
+o **PPTX**, mantendo o diagrama móvel.
+
+**Feito:**
+- **Duas skills apagadas** de `~/.claude/skills/`: `dashi-ppt` (60 MB) e
+  `guizang-ppt-skill` (12 MB), as duas em chinês. `frontend-slides` ficou. O HTML
+  da sessão 40 tinha saído com a paleta suíça clara da guizang, que briga com a
+  identidade escura do KAIRÓS — é parte do motivo de ele ter ficado estranho.
+- **Camada visual de `scripts/slides_3a6_pptx.py` reescrita.** Conteúdo, textos,
+  números e a mecânica do Morph estão intactos; mudou só como o slide se parece:
+  - fundo em gradiente diagonal, nós com canto arredondado, gradiente vertical e
+    sombra — no lugar dos retângulos chapados de mesmo peso;
+  - **cor com papel:** azul = o que vem do mercado (equilíbrio), laranja = o que
+    vem do Polymarket (Q e Ω), verde-água = o resultado (carteira). O nó aceso
+    ganha borda e brilho na PRÓPRIA cor, em vez de tudo virar laranja;
+  - **halo persistente** (`!!halo`): mancha de luz de borda suave atrás do nó em
+    foco. Como é `!!`, o Morph a faz DESLIZAR de nó em nó — a luz anda junto com
+    o diagrama;
+  - o colchete reto que cruzava as caixas virou uma **chave** que abraça os três
+    nós e desagua na carteira (passou por três setas convergentes no meio do
+    caminho — o dono pediu a chave, que é a notação do quadro-negro e não
+    atropela três pontas na mesma boca);
+  - operadores `+` e `×` viraram discos; a barra de acento virou pílula;
+  - métrica de projeção: corpo com entrelinha 1,26, cabeçalho de tabela de 5,8 →
+    8 pt (era ilegível projetado) e cor de corpo `#93A9BC` no lugar do `#6B8299`
+    do relatório, que some no projetor;
+  - **slide 6 refeito:** o bloco recolhido e a camada tática agora alinham pela
+    direita e as duas entram no teto pela mesma boca — antes os conectores eram
+    posicionados na mão e cruzavam as caixas no vazio;
+  - o fecho do slide 3 ("E agora: onde o Polymarket entra nisso?") saiu do pé do
+    slide e ocupa o vazio à esquerda da carteira.
+- **`relatorio_p4.py` não foi tocado**: `bloco`, `chamada` e `tabela` do slide
+  são cópias locais em métrica de projeção, para a página impressa continuar com
+  as dela.
+- **Auto-teste ampliado** (`--demo`): além de moldura e Morph, agora falha se um
+  `spPr` tiver dois `<a:effectLst>` — o python-pptx salva sem reclamar e o
+  arquivo abre corrompido no PowerPoint.
+- **Conferência visual:** os 5 slides foram renderizados em PNG via COM do
+  PowerPoint (`SaveCopyAs(..., 18)`) e olhados a cada rodada — foi assim que os
+  estouros de caixa e as quebras de linha apareceram.
+- **Slide 7 (IA) repensado** a pedido do dono, em duas colunas sem a régua do
+  meio: à esquerda o repositório desenhado como **grafo**, à direita as regras,
+  a **linha do tempo** do relatório (`Uteis/graficos/p5_timeline.png`, a mesma
+  figura da página 5) e o fecho. A árvore de branches saiu.
+- **`scripts/grafo_repo.py` (novo)** desenha o grafo: nó = arquivo `.md`/`.py`
+  do branch, aresta = um arquivo citando o NOME de outro, tamanho = grau, cor =
+  família (contrato / análise / código / entrega). Medido, não estilizado: **200
+  arquivos e 664 ligações**, e o miolo que aparece é `LOG.md` +
+  `Decisoes_pendentes.md` + `CLAUDE.md` — o "second brain" tem a forma que o
+  ritual do `CLAUDE.md` produziu, sem ninguém ter escrito link para isso.
+  Layout Fruchterman-Reingold em numpy (30 linhas) em vez de puxar `networkx`
+  para o projeto; semente fixa, senão o grafo troca de forma entre um ensaio e
+  outro. As contagens do slide vêm do mesmo `levantar()` que desenha o PNG —
+  nenhum número de grafo digitado no script de slides.
+
+**Quebrou / aprendido:**
+- **Erro meu:** supus que `RGBColor` fosse subclasse de `int` (é de `tuple`) — a
+  função de mistura de cores quebrou na primeira execução.
+- **Erro meu:** `shadow.inherit = False` já escreve um `<a:effectLst/>` vazio;
+  anexar outro corrompe o `.pptx` sem erro no python-pptx. Achado num arquivo de
+  sondagem, antes de encostar no script — virou asserção do `--demo`.
+- Aprendido: renderizar o deck em PNG e olhar é o único jeito de revisar slide;
+  o `.pptx` não denuncia texto espremido nem linha cruzando caixa.
+- **Erro meu:** a primeira versão do layout do grafo usava a gravidade do
+  algoritmo de manual (0,05) — os 7 arquivos sem nenhuma ligação foram expulsos
+  numa diagonal para fora do quadro e o resto virou um caroço. Com 8,0 eles
+  pousam no aro externo, que é onde o Obsidian também os deixa. Virou asserção
+  do `--demo`.
+- Aprendido: forma girada guarda no arquivo a caixa NÃO girada — a chave é uma
+  `{` em pé com 90° de rotação, e o `.top` dela cai fora do slide. O `--demo`
+  agora calcula a caixa efetiva antes de conferir a moldura.
+- Aprendido: figura de matplotlib entra no slide com ~2/3 do tamanho em que é
+  desenhada. Fio de 0,45 pt e texto de 8 pt somem na redução — o grafo teve de
+  ser desenhado com 0,95 pt e 13 pt para sobreviver.
+
+**Pendente:**
+- Aceite do dono sobre o visual (esta sessão não teve rodada de correção dele).
+- O `Semis/Slides_3a6.pptx` ficou aberto no PowerPoint durante a última rodada:
+  a versão com o slide 7 novo está conferida mas só grava quando o arquivo for
+  fechado (`python scripts/slides_3a6_pptx.py --demo`).
+- A linha do tempo entra como imagem no tamanho em que a página 5 a gera: o
+  texto interno dela fica pequeno projetado. Se incomodar, é regerar a figura
+  numa proporção mais larga — mexe em `graficos_p5.py`, que é do relatório.
+- O conflito de conteúdo da **decisão 30** (o que o slide 6 e o 8 contam × o que
+  o backtest rodou) segue aberto — nada do texto dos slides foi alterado aqui.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~95k tokens (~48% de janela de 200k).
+- **Prompt inicial (verbatim):** "baixei umas skills em chines, apaga elas ai"
+  (o pedido dos slides veio no 2º prompt: "fiz duas tentativas de montar os
+  slides 3 a 6, uma em ppt e outra em html. as duas ficaram feias e estranhas de
+  se olhar. Queria fazer um diagrama móvel que em um slide que ficasse bonito de
+  ver, acho que o ppt ta muito quadrado e as cores muito státicas. revise o ppt,
+  procure por skills de design e use seu julgamente para deixar os slides
+  bonitos, mantenha o diagrama móvel").
+- **Iterações até aceitar:** 4 rodadas nos slides 3–6 + 4 no slide 7, todas de
+  render→conferência→correção; aceite do dono ainda pendente.
+- **Erros da IA:** 3 (o `RGBColor` como `int`, o `effectLst` duplicado e a
+  gravidade do grafo), os três pegos por execução/conferência própria, nenhum
+  chegou ao arquivo entregue.
+- **Decisões escaladas:** —
+- **Tags:** —
+
+## 2026-09-06 (sessão 40) — Felipe
+
+**Contexto da sessão:** instalação de três skills de apresentação e refação dos
+slides 3–6 da semifinal em HTML. O dono achou o PPTX "quadradão e feio" e exigiu
+que o diagrama fosse **móvel** entre as páginas — que é literalmente o que o
+`Semis/Semis.txt` pede ("nós que se revelam à medida que a explicação progride").
+
+**Feito:**
+- **Três skills instaladas** em `~/.claude/skills/`: `frontend-slides` (80
+  arquivos), `guizang-ppt-skill` (41, clonado com `.git` porque o Step 0 dela faz
+  `git fetch` para checar upstream) e `dashi-ppt` (416). Nenhuma toca o repo.
+- **`Semis/slides_3a6/index.html`** — slides 3 a 6 em HTML de arquivo único,
+  estilo suíço (guizang, tema IKB), com `assets/motion.min.js` local para rodar
+  offline. Notas de palestrante preenchidas (2,8 min planejados).
+- **O diagrama persistente** é a peça central: vive numa camada `position:fixed`
+  ACIMA do `#deck` e lê `window.__currentSlideIndex`. Os painéis de texto deslizam
+  por baixo enquanto o diagrama permanece e se transforma — π/Q/Ω acendem um por
+  vez e, no slide 6, o bloco BL encolhe para 42% no canto e a camada tática entra.
+- Diagnóstico do PPTX antigo, para registro: o reveal progressivo que o
+  `Semis.txt` pede **nunca existiu** (os 4 nós já nasciam prontos; só mudava uma
+  barra de 3 pt), a faixa de baixo tinha 6 parágrafos para ~90 s de fala, e os nós
+  eram 4 retângulos chapados de mesmo peso.
+
+**Quebrou / aprendido:**
+- **Erro meu:** ao limpar lixo de uma edição anterior no script de montagem,
+  apaguei a linha `<script>` de abertura do sincronizador — o JS saiu como texto
+  solto no HTML e nada sincronizava. Só apareceu na conferência visual.
+- **Erro meu:** a primeira versão do sincronizador varria
+  `window.__currentSlideIndex` com `requestAnimationFrame`. Não atualizou nada nos
+  testes; rAF sofre throttling fora de foco — e o iframe de preview do modo
+  apresentador é exatamente esse caso. Trocado por `MutationObserver` no `#deck`,
+  que dispara junto com a navegação.
+- O `motion.min.js` precisa ser copiado junto do template: sem ele o deck cai no
+  CDN e, offline, fica sem animação de entrada.
+- `text-transform:uppercase` transformava o **β** da cadeia da view em "B".
+
+**Pendente:**
+- **Decisão 31 registrada** (formato da apresentação) — afeta Paulo e Lia, não
+  fecho sozinho.
+- **Conflito de conteúdo a conferir no meu slide 6:** ele cita só a sleeve de
+  recessão (janelas 3/5/10, +XLP −XLK). A D28 admitiu **duas** sleeves — M4
+  recessão e M9 Câmara. O PPTX antigo citava as duas. Decidir se a M9 volta ao
+  slide 6 ou se fica só na fala; isso conversa com o conflito do slide 8 já
+  aberto na D30.
+- Slides 1, 2 e 7–10 seguem em PPTX (`draft_semis_pptx.py`). Deck híbrido.
+- A interface do modo apresentador do guizang está em chinês; só o rodapé visível
+  para a banca foi traduzido.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~200k tokens de uma janela de 15M (~1,3%).
+- **Prompt inicial (verbatim):** "aprenda essa skill https://github.com/zarazhangrui/frontend-slides.git"
+- **Iterações até aceitar:** 5 rodadas internas de correção visual (render headless
+  → leitura da imagem → correção) antes de mostrar ao dono; aceite do dono pendente.
+- **Erros da IA:** dois, ambos meus e ambos pegos na conferência visual — o
+  `<script>` apagado por uma limpeza malfeita e o sincronizador por rAF que não
+  funciona fora de foco. Nenhuma alucinação de número: todos os dados dos slides
+  saíram do PPTX existente.
+- **Decisões escaladas:** 31.
+- **Tags:** —
+
+## 2026-09-06 (sessão 39) — Felipe
+
+**Contexto da sessão:** o dono desconfiou de uma resposta anterior ("a camada
+tática não entrou no backtest") e mandou verificar no CÓDIGO, não no registro.
+A verificação confirmou a desconfiança dele — e a segunda metade da sessão foi o
+overhaul do `Decisoes_pendentes.md` para o regime de código congelado.
+
+**Feito:**
+- **Auditoria da camada tática (leitura de código + dado, não de registro).** A
+  camada **v2 ENTROU** e roda na entrega: `carregar(..., sleeves=True)` é o
+  default (`scripts/backtest_v1.py:867`), o `main` não desliga, o `__call__` do
+  `MontadorV1` devolve `self._sleeves(data)` em `overlays`, e o
+  `Dump/dados/backtest_diario.csv` tem `n_taticas = 1` em **327 dos 374
+  pregões**, nos 8 cenários. O que está desligado é a camada **antiga**
+  (`tatica=()`, prêmio 1.3 · drift · gap de fds).
+- **Achado que motivou o resto:** os **+33,2% × +30,1%** do slide 9 são a coluna
+  `tilt ≤ 1` do `Backtest_v1.md`, ou seja **+3,04 pp COM a camada** — exatamente
+  a linha "com" da errata da 28.13. O registro da D30 (sessão 38) dizia o
+  contrário, por citar D12c/D16 como se descrevessem o estado atual.
+- **Overhaul do `Decisoes_pendentes.md`** (2.797 → 2.471 linhas), por instrução
+  do dono: sai tudo que não pode mais ser feito com o código congelado.
+  - **Cabeçalho novo** com a tabela **"Estado congelado da entrega"** — views,
+    camada, régua, teto, banda, custo, γ e o número, cada linha apontando para
+    onde está no código. É a fonte da verdade contra a qual as seções
+    históricas devem ser lidas.
+  - **Seções removidas** (pendência de código, pedido a terceiro, handoff): D3,
+    D4, D6/6a, D7, D14/14a, 15d, 15e, 17e, 18d, 20a, 21d, **D24** (fechada na
+    28.2), 25b, 25c, 25e. Mais o "próximo passo", as condições de reabertura da
+    D11, o critério "para quem retomar" da 12b e as re-gerações pendentes.
+  - **Banners de supersessão** em D11, 12c, D16, D17, D26 e D27 — as seis
+    seções que dizem "a camada tática não entra" e que já foram superadas pela
+    D28/28.13. Era o que fazia um leitor (humano ou IA) descrever a carteira
+    errada.
+  - **Desfechos escritos onde havia "nada fecha aqui"**: a B entrou (D23), as
+    três candidatas da D18/D19 não entraram, a 1.3 virou view, a 18a virou o
+    item 1 da D22, os três portões da D27 foram resolvidos na D28.
+  - **D30 reescrita** com os fatos corrigidos: o slide 6 está **certo**; quem
+    está errado é o slide 8 ("nenhum entrou" — entraram duas) e o rótulo do
+    slide 9 ("sem camada" — é com). A decisão que sobra é de narrativa.
+- **Outros arquivos que podiam causar o mesmo erro:** banner de desatualização
+  em `Curva_orcamento.md` (dizia "a camada não entra no v1"),
+  `Retomada_tatica.md`, `DOSSIE_limitacoes_v1.md`, `Teste_sinal.md` e
+  `Ortogonalidade.md`. **Removido** o `Dump/analises/leaveoff.md` — handoff para
+  uma "próxima sessão" que não existe mais, com as três candidatas já
+  resolvidas.
+
+**Quebrou / aprendido:**
+- **Nenhum código foi tocado** — a sessão inteira é de registro.
+- O overhaul foi feito por script com troca exata e contagem de ocorrência
+  (falha alto em vez de trocar errado); três âncoras não bateram na primeira
+  rodada (travessão e seção já removida) e foram corrigidas antes de gravar.
+- A lição da D25g apareceu de novo, agora fora do código: **registro que
+  envelhece não levanta exceção.** Quatro sessões depois da D28.13, seis seções
+  ainda diziam que a camada estava fora, e foi isso — não o código — que
+  produziu a descrição errada da carteira na sessão 38.
+
+**Pendente:**
+- **D30 é a única decisão aberta do arquivo, e é de narrativa:** alinhar os
+  slides 8 e 9 ao 6 (a camada entrou) e decidir como contar abril/2025 sem
+  contradizer o roteiro das quartas. Depende do grupo.
+- Os artefatos com banner **não foram re-gerados** — re-rodar exige o `data/` do
+  branch do Paulo e mexeria em número às vésperas da semi.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~160k tokens de 15M (~1%).
+- **Prompt inicial (verbatim):** "Em uma conversa com o claude ele me falou que
+  a camada tática não entrou para o backtest. Mas acho que ele pegou do decisões
+  e não do código em si. Leia TODO o repositório e me fale se entrou ou não"
+- **Iterações até aceitar:** 2 (auditoria aceita de primeira; o overhaul saiu
+  numa rodada, com 3 correções internas do script antes de gravar).
+- **Erros da IA:** nenhum de conteúdo nesta sessão. O erro corrigido aqui é de
+  **outra** sessão (a 38): a D30 afirmava que o backtest rodou sem a camada
+  tática, por ler o registro em vez do código — exatamente o modo de falha que
+  o dono desconfiou.
+- **Decisões escaladas:** nenhuma nova; a **D30** foi reescrita com os fatos
+  corrigidos e segue 🔴, dependendo do grupo.
+- **Tags:** `[PROMPT-CHAVE]` — "leia o código, não o registro" é o prompt que
+  pegou o erro; reproduzível.
+
+## 2026-09-06 (sessão 38) — Felipe
+
+**Contexto da sessão:** o dono ficou responsável apenas pelos **slides 3 a 6** da
+semifinal e quis o diagrama de estratégia se movendo entre eles, seguindo a
+estrutura fechada em reunião no `Semis/Semis.txt`.
+
+**Feito:**
+- **Pesquisa:** dá para mover um diagrama entre slides com a transição **Morph**
+  (PowerPoint 2016+/365). O casamento entre formas é feito por nome com prefixo
+  `!!`. O `python-pptx` não tem API de transição (issue #942, fora do roadmap),
+  mas preserva XML que não entende — então o elemento vai injetado direto no
+  `<p:sld>`, depois do `<p:clrMapOvr>`, com `<mc:Fallback>` de fade para Google
+  Slides / LibreOffice.
+- **`scripts/slides_3a6_pptx.py`** → `Semis/Slides_3a6.pptx` (deck separado, só a
+  parte do dono; paleta e primitivas **importadas** de `draft_semis_pptx.py`,
+  nada de estilo redefinido).
+- **Geometria normalizada:** o diagrama é desenhado uma vez em coordenadas
+  (escala 1, origem 0,0) e cada slide aplica `(ox, oy, escala)`. Slides 3–5 usam
+  `GRANDE` (centralizado); o 6 usa `CANTO` (0,58× no canto superior esquerdo). É
+  a diferença desses três números que o Morph anima.
+- **Os quatro estados:** 3 — nenhum nó aceso, rótulo "digitado pelo gestor" sob Q
+  e Ω; 4 — Q aceso, o rótulo vira "POLYMARKET" (o Morph faz a troca no lugar);
+  5 — Ω aceso; 6 — o bloco inteiro apaga e encolhe, entram `!!tat`, `!!teto` e
+  `!!final`.
+- **`sela()`:** tudo que não é persistente ganha nome único do slide, para o
+  PowerPoint não casar por heurística de id duas caixas da seção de baixo que não
+  têm relação.
+- **Restilo para o do relatório final** (2ª metade da sessão, a pedido do dono):
+  o deck deixou de herdar de `draft_semis_pptx.py` e passou a importar
+  `relatorio_p4.py` — a mesma paleta, primitivas (`caixa`, `escreve`, `rotulo`,
+  `regua`, `tabela`, `bloco`) e o idioma visual do `Quartas/KAIROS FINAL.pdf`:
+  rótulo de seção em caixa-alta laranja com tracking, chamada com barra laranja
+  à esquerda, lead-in em negrito claro seguido de continuação apagada, réguas no
+  lugar de molduras. Os nós viraram painéis `#101E2C` sem contorno.
+  **A única coisa não herdada é a métrica de corpo:** o relatório roda em 6–7 pt
+  porque é lido de perto; o corpo foi escalado ~1,8× (11,5 pt) para projeção,
+  mantendo a proporção entre os níveis.
+- **Render de verdade:** instalado `pywin32` e os slides foram exportados em PNG
+  pelo **próprio PowerPoint** via COM. Isso resolveu a limitação da sessão
+  anterior (sem LibreOffice) e, de quebra, **provou o Morph**: o PowerPoint
+  reporta `EntryEffect = 3954` (`ppEffectMorphByObject`) nos slides 4, 5 e 6 e
+  `0` no 3 — a injeção de XML é aceita pelo produto, não só pelo schema.
+- **Correções que só o render mostrou:** "direcional" estourava a coluna de
+  0,62" da tabela e quebrava para a linha de baixo; a cadeia
+  probabilidade → retorno estava em caixas de largura fixa e abria buracos
+  irregulares (virou uma linha só, com as setas como glifo); no slide 6 a seta
+  para o teto saía da altura de Ω, como se só ela alimentasse o teto (virou um
+  colchete rente à pilha inteira); a carteira do BL ganhou sobrenome
+  ("CARTEIRA BL") para não se confundir com a "CARTEIRA DO DIA".
+- **3ª rodada — o slide 6 volta a ENCOLHER, não a mudar de forma.** A versão do
+  reestilo empilhava os quatro nós na vertical (o texto ficava legível, mas o
+  diagrama virava outro objeto). O dono preferiu o comportamento original: a
+  MESMA linha, a 0,52×, recolhida no canto superior esquerdo. `PILHA` virou
+  `CANTO` e o ramo de layout empilhado saiu de `diagrama()` — a forma agora é uma
+  só nos quatro slides, e o Morph só desenha o deslocamento.
+  **O que não escala junto é o corpo:** 13 pt × 0,52 daria 6,8 pt, ilegível
+  projetado; o rótulo desce para 9 pt e o subtítulo sai de cena.
+  A camada tática entra logo abaixo do diagrama recolhido, e os pés do colchete
+  passaram a sair de onde cada camada TERMINA (a `CARTEIRA BL` e o nó da tática)
+  — antes saíam da altura média do bloco, que caía no vazio.
+- **Correção de leitura do diagrama:** a seta para a `CARTEIRA BL` saía do nó
+  `OPINIÃO · Q`, o que dava a impressão de que a opinião produz a carteira
+  sozinha — quando quem produz são os três nós juntos. Virou um coletor: `!!colet`
+  (régua horizontal do centro do EQUILÍBRIO ao centro da CONFIANÇA), `!!stub_eq`
+  e `!!stub_om` descendo até ela, e a seta única saindo do meio. A geometria do
+  coletor é derivada da tabela de nós do estado, então ele acompanha o
+  recolhimento do slide 6 sem número novo. Formas persistentes: 11 → 14.
+- **Slide 07 (infraestrutura de IA) entrou no mesmo deck.** Em vez do print da
+  árvore de arquivos que o `Semis.txt` previa, a árvore é **desenhada**: `main`
+  como raiz (só o contrato — `CLAUDE.md`, `Decisoes_pendentes.md`, `README.md`),
+  tronco descendo e três ramos, um por dono, cada um com o que guarda e quanto.
+  **As contagens são medidas, não estimadas** (`git ls-tree -r --name-only
+  <branch>`, 2026-09-06): Felipe `src/` 26 · `tests/` 37 · `scripts/` 38 ·
+  `Dump/analises/` 40; Lia `relatorio/` 37 · `lia/` 16 · `PEDIDO_*` 3 ·
+  `RESPOSTA_*` 8; Paulo `data/` 388 · `scripts/` 24 · `docs/` 14 · `config/` 1.
+  Ficam registradas na constante `RAMOS` — se o repo mudar, remedir antes de
+  reapresentar. O achado que virou argumento do slide: os 3 `PEDIDO_*.md` e 8
+  `RESPOSTA_*.md` mostram que a conversa entre membros ficou no repositório.
+  KPIs reaproveitados do relatório (91 sessões · 232k tokens/sessão · 81
+  decisões · 37% de 2ª rodada). O slide 7 **não** tem diagrama nem Morph — o
+  `--demo` agora exige isso explicitamente.
+- **Marcadores de tempo saíram do cabeçalho** (a pedido do dono): o parâmetro
+  `tempo` foi removido de `moldura()` em vez de virar argumento ignorado.
+- **Auto-teste (`--demo`):** moldura + o teste que importa — as 9 formas `!!` do
+  diagrama existem em **todos** os quatro slides (se uma sumir, vira corte), e a
+  transição está no XML dos slides 4, 5 e 6 e ausente no 3. Passa.
+
+**Quebrou / aprendido:**
+- O `assert` da contagem de formas persistentes nasceu com 11 (contando os nós
+  que só existem no slide 6). Corrigido para 9 — o núcleo que viaja.
+- Heredoc de arquivo grande pelo shell falhou; o arquivo foi escrito direto.
+
+**Pendente:**
+- **Decisão 30 registrada** (🔴, depende do grupo): o slide 6 apresenta a camada
+  tática como **ativa**, com o exemplo de abril/2025, por instrução explícita do
+  dono. Isso conflita com a D12c/D16 (`tatica=()`), com o slide 8 do `Semis.txt`
+  ("nenhum entrou"), com o roteiro das quartas (abril/2025 caiu **mais fundo**
+  que o índice) e com os números do slide 9. A reunião precisa alinhar 6, 8 e 9
+  na mesma história.
+- O render passou a ser feito pelo próprio PowerPoint (COM), então o layout
+  **foi** conferido visualmente. O que ainda não foi visto é a ANIMAÇÃO rodando:
+  falta assistir à apresentação do 3 ao 6 e ajustar `dur_ms` (hoje 900 ms) se o
+  movimento ficar lento demais para a fala.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~70k tokens de 15M.
+- **Prompt inicial (verbatim):** "Quero que você pesquise uma coisa para mim, é
+  possível fazer diagramas que se movem de um slide para outro em powerpoint? e
+  se sim, você consegue fazer?"
+- **Iterações até aceitar:** 4 (pesquisa aceita de primeira; o deck exigiu 1
+  correção do `assert` de contagem; e uma rodada inteira de reestilo, porque
+  a 1ª versão herdou o estilo do draft e não o do relatório final).
+- **Erros da IA:** nenhum de conteúdo. O `assert` errado foi pego pelo próprio
+  auto-teste antes de a entrega ser apresentada.
+- **Decisões escaladas:** 30.
+- **Tags:** `[PROMPT-CHAVE]` — a injeção do Morph via XML é reprodutível a partir
+  do prompt de pesquisa.
+
+
+## 2026-08-30 (sessão 37) — Felipe
+
+**Contexto da sessão:** o dono notou que a página 4 do relatório entregue mostra
+**+33,2%** na curva acumulada e **+30,9** no total da cascata "de onde vem o
+resultado", e queria saber se era erro de dado antes da apresentação das quartas.
+
+**Feito:**
+- **Diagnóstico:** não é divergência de dado. As duas figuras leem o mesmo
+  `r_liquido` do mesmo cenário (`tilt ≤ 1`, 374 pregões) em
+  `Dump/dados/backtest_diario.csv`. `grafico_curva`
+  (`scripts/graficos_p4.py:114`) **compõe** — `(1 + r).cumprod() - 1` = **33,16** —
+  e `grafico_composicao` (`scripts/graficos_p4.py:155`) **soma** —
+  `diario[coluna].sum()` = **30,93**. Os 2,23 pp são composição (juros sobre
+  juros). Pernas conferidas: mercado 28,68 + views 5,22 − custo 2,96 = 30,93.
+- **Nada foi alterado no material.** O relatório já tinha sido enviado; decisão do
+  dono de não mexer.
+- **Resposta para as quartas:** apresentar **+33,2**. O roteiro nunca diz 30,9 em
+  voz alta — só cita as pernas (+5,2 e −3,0), que são exatamente os rótulos das
+  barras, então a fala está internamente consistente. Registrado o bloco **"SE
+  PERGUNTAREM (guardado para a semi)"** no fim de
+  `Quartas/roteiro_apresentacao.txt`, com a resposta de uma frase e os números
+  conferidos.
+
+**Pendente (para a semi, se passar):**
+- Incluir na cascata uma quarta barra **"efeito de composição +2,2"** antes do
+  total, para a figura fechar em +33,2 e bater com a curva. O `assert` da linha
+  163 de `scripts/graficos_p4.py` depende da soma aritmética das três pernas —
+  a barra nova entra depois dele, não no lugar dele.
+
+**Uso de IA**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** baixo — sessão curta de diagnóstico (3 turnos, ~50k
+  tokens de 15M).
+- **Prompt inicial (verbatim):** "olhando para o relatório final a curva de
+  retornos acumulados está dando 33,2 mas a análise de onde vem o retorno está
+  dando 30,9, porque"
+- **Iterações até aceitar:** 1 — o diagnóstico foi aceito de primeira; as duas
+  rodadas seguintes foram perguntas do dono (o que falar nas quartas, onde
+  registrar), não correção.
+- **Erros da IA:** nenhum. O diagnóstico foi verificado rodando as duas contas
+  sobre o CSV antes de ser apresentado, não inferido da leitura do código.
+- **Decisões escaladas:** — (nenhuma). A decisão de não mexer no material
+  entregue foi do dono, na conversa.
+- **Tags:** —
+
 ## 2026-08-15 (sessão 36) — Felipe
 
 **Contexto da sessão:** com os quatro visuais da página 5 prontos na sessão 35,
