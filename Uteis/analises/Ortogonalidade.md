@@ -1,5 +1,10 @@
 # Ortogonalidade — item 4 da D22 e obrigação 5a
 
+> ⚠️ **Anterior à entrada da camada tática v2 (D28.13) — banner de 2026-09-06.** O
+> ângulo e o ρ entre os P das views continuam válidos (a página não passa pelo
+> `run_backtest`); a **view C** aparece aqui como candidata e **ficou fora**
+> (D23f). A carteira da entrega é a do `Backtest_v1.md`.
+
 > Gerado por `scripts/ortogonalidade.py`. **Mede; não decide.** Escala da 15b = **entropia crua** (D15c, fechada em 2026-08-10).
 
 - janela: **2025-02-10 a 2026-08-06** (374 pregões)

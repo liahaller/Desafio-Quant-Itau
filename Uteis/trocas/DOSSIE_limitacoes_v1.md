@@ -1,5 +1,12 @@
 # Dossiê de limitações do v1 — insumo para o relatório
 
+> 🛑 **DESATUALIZADO (banner de 2026-09-06) — não usar como fonte de número.** O
+> estado descrito no cabeçalho é o de 08/08/2026. A entrega final tem **quatro
+> views** (D23), a **camada tática v2 LIGADA** (D28.13) e a **régua do Ω no nível
+> 1** (D29): **+33,2% líquido × +30,1% do SPY**. As limitações qualitativas
+> continuam valendo; os números, não. Fonte da verdade: a tabela do topo do
+> `Decisoes_pendentes.md` e o `Dump/analises/Backtest_v1.md`.
+
 > **O que é:** consolidação, num lugar só, de tudo que ficou **fora** do v1 e de
 > tudo que entrou **com ressalva**. Cada linha traz o número da decisão que a
 > fechou e o ponteiro para o artefato que a mede — o relatório não deve repetir

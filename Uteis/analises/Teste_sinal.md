@@ -1,5 +1,10 @@
 # Teste de sinal das views — VETO, não certificado
 
+> ⚠️ **Anterior à entrada da camada tática v2 (D28.13) — banner de 2026-09-06.** O
+> que esta página mede (sinal das views) continua válido: ela não passa pelo
+> `run_backtest`. Mas a carteira da entrega não é a descrita aqui — ver o
+> `Backtest_v1.md`.
+
 > Gerado por `scripts/teste_sinal.py`. **Mede; não decide.** Regressão de `r_P(D→D+h)` contra o `Q(D)` da própria view. As views 2.2 e 2.3 são **controle embutido**: se elas não reproduzirem o registrado na 15f, o errado é o script.
 
 **`h = 0` é o próprio pregão de D** — o que o backtest de fato ganha (a montagem de D só olha dado anterior à abertura de D) e o ÚNICO horizonte da 15b, cujo Q é o close-to-close do dia do anúncio. O controle reproduz no `h = 1`, que é a convenção em que 15f e 15g registraram os números.

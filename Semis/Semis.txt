@@ -1,0 +1,86 @@
+﻿SLIDE 1 
+* Apresentar identidade visual (nome e origem)
+
+
+SLIDE 2
+* Nossa ideia:
+   * Hipóteses
+      *  O Polymarket reage mais rápido a eventos
+      * É bom porque é quantificável: podemos pegar a probabilidade de qualquer evento a qualquer hora) 
+   * - Deixar claro que o polymarket é a fonte do sinal. 
+   * Explicar brevemente o que é polymarket (Só na fala)
+   * Universo (9 ETFs americanas, período de tempo, etc)
+   * FALA: Explicar brevemente o que é o polymarket e falar qual é o universo
+   * Racional que precisa ser universo americano pq os mercados do polymarket sao de la.
+
+
+
+
+SLIDE 3 - 6 - Diagrama de estratégia com nós que se revelam, à medida que a explicação progride, embaixo do slide, uma seção de explicação (dados extras) que vai mudando dependendo da parte analisada da estratégia
+        
+* SLIDE 3
+   * Slide onde explicamos como funciona o BL. Começamos apenas com o diagrama de Equilíbrio, opinião e confiança, nenhum nó esta colorido. 
+   * Fala: Explicamos bem diretamente como funciona o BL, a carteira de equilíbrio, vc coloca sua previsão e a confiança nela e o modelo produz a carteira. Também brevemente explicamos porque do polymarket -  opiniões de sinais independentes/ não precisa ter opinião sobre tudo sempre
+* Agora como colocamos o polymarket nisso?
+
+
+* SLIDE 4
+   * Highlight no nó de opinião (Q). Explicamos como se forma uma view e como usamos as probabilidades.
+   * Deixar todas as views pequenas no canto
+   * FALA: 
+      * Essa mesma mecânica roda em quatro views: a decisão do fed, a inflação do mês, a taxa de juros no fim do ano e a dúvida na véspera
+      * em quase todo pregão pelo menos uma está ativa (explicar melhor no slide de pesquisas)
+
+
+* SLIDE 5
+   * Slide de explicação da confiança. Highlight no nó de Confiança (Ω)
+   * Mercado ilíquido ou incoerente, a view não entra; e o critério de entrada foi declarado antes de medir. 
+   * Colocar quais critérios: Estabilidade da distribuição Coerência do mercado de previsões negociado
+   * (Testamos os possíveis critérios com os dados do polymarket para ver qual realmente tinha algum efeito) explicar melhor no slide de pesquisa
+   * FALA:
+      * Testamos 4 critérios e por uma análise estatística escolhemos apenas 2: a estabilidade da distribuição e a coerência do mercado de previsões
+
+
+* SLIDE 6 
+   * Diagrama do BL sobe para o canto superior esquerdo, aparecem os nós da camada tática e do teto de risco highlighted. 
+   * Explicamos como funciona a camada tática e o teto de risco que controla as duas camadas. Dados abaixo mostram as estratégias que entram dentro da camada tática. E o cálculo do teto de risco
+   * FALA:
+      * ela olha se a chance de um evento subiu ou caiu nos últimos dias no Polymarket e, com isso, decide comprar um setor da bolsa e vender outro, com
+      * Em abril de 2025, a chance de recessão nos EUA no Polymarket pulou de 37% para 65% numa semana. Nossa camada tática reagiu comprando o setor de comida e limpeza (mais estável) e vendendo o de tecnologia (menos estável). No dia 3 de abril a bolsa caiu 5% e a gente ganhou. 
+      * Por ser uma estratégia volátil, existe um teto de risco. O teto de risco é a divisão de pesos que damos para cada camada, montando a carteira final
+
+
+* Transição para IA e Pesquisa* 
+SLIDE 7 
+* Novo Slide sem diagrama. Imagem com a árvore de arquivos dos branchs dos membros, ao lado, itens com as regras que demos a IA. Abaixo dados pontuais de registro de uso. Talvez colocar a linha do tempo de uso de token
+* FALA: 
+   * Explicar que premeditamos uma infraestrutura com o CLAUDE CODE que iria permitir o acúmulo de conhecimento sem a necessidade de reexplicar a estratégia - Second Brain - Mostrar o print
+   * Explicar que ele guardava as informações sobre cada sessão
+   * Falar rapidamente dos números e da linha de tempo
+
+
+SLIDE 8
+
+
+* Do que foi feito e ainda não está no slide:
+* * Ω (confiança) — 4 critérios testados com dados do Polymarket, 2 ficaram. Já mencionado no slide 5, mas poderia aparecer aqui como "decisão de modelagem com dado".
+* * Camada tática — 5 candidatos passaram pelo gate, nenhum entrou. É pesquisa real: mostra que o processo de corte funcionou.
+* * Mercados do Polymarket — 39 mercados coletados, 9 usados. A curadoria tem critério (liquidez, cobertura).
+* * Teto de risco — 8 configurações testadas, tilt ≤ 1 escolhido pelo Sharpe. Já aparece no slide 6, mas a decisão do parâmetro foi por dado.
+* * FALA:
+* A gente trabalhou com as probabilidades do Polymarket, preços de 9 ETFs americanos e as taxas de juros do FRED, num período de 18 meses. Testamos 13 ideias de sinal, e só uma entrou. A janela de 3, 5 e 10 dias veio de uma grade de seis janelas que a gente testou, e foram essas três que passaram. A ideia entra por acertar a probabilidade, não por ter rendido mais. 
+
+
+
+SLIDE 9 
+* Slide de análise dos resultados. Grande, o gráfico de retorno acumulado do backtest, abaixo, o gráfico de alocação de retorno (com apêndice de ser sem juros). À esquerda os números importantes, retorno, Sharpe, Max. drawdown, Alpha annual. Beta
+* Fala
+   * Apontar os numeros
+   * Falar da atribuição
+   * Falar de ter mexido os parametros
+   * Critica
+      * Exposição a queda
+      * Apenas um regime de backtest
+      * Teto de Risco
+SLIDE 10
+* Slide de fechamento, apenas uma frase final que retoma a logica da estrategia e um agradecimento pela oportunidade

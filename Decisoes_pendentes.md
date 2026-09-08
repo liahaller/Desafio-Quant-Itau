@@ -1,6 +1,39 @@
-# Decisões pendentes — mock do projeto
+# Decisões do projeto — dossiê da entrega (código CONGELADO)
 
-Decisões de implementação que faltam fechar antes/durante o mock. À medida que resolvemos, registramos a decisão na própria seção (status: 🔴 aberta · 🟡 em discussão · 🟢 fechada).
+**Estado: semifinal. O código não muda mais.** Este arquivo deixou de ser fila de
+trabalho e passou a ser o registro do que a estratégia **é** e do porquê de cada
+escolha — o material de defesa na arguição.
+
+**Overhaul de 2026-09-06 (sessão 39):** saiu tudo que não pode mais ser feito —
+pendência de código, pedido a outro membro, condição de reabertura, "próxima
+sessão", re-geração de artefato e pergunta para reunião que não acontece mais.
+O motivo não é limpeza: ler como pendência o que já está entregue **já produziu
+descrição errada da carteira** (ver D30). Nada foi reaberto e nenhuma decisão
+mudou de estado — o histórico integral está no git.
+
+Status: 🟢 fechada (é o que está no código) · 🟡 medida sem fechar (limitação
+declarada) · 🔴 aberta — e o que resta aberto é **narrativa**, não modelagem.
+
+## Estado congelado da entrega — a fonte da verdade
+
+Vale esta tabela, e não o texto de nenhuma seção histórica abaixo. Verificável
+em `scripts/backtest_v1.py` e no cabeçalho do `Dump/analises/Backtest_v1.md`.
+
+| o que | valor entregue | onde está no código | decisão |
+|---|---|---|---|
+| views ativas | **quatro** — 2.2 inflação · 2.3 Fed · 15b incerteza · 15g B própria | `VIEWS_V1 = ("incerteza", "B")` | D23 |
+| **camada tática** | **LIGADA** — sleeves **M4 recessão** (bloco k = 3, 5, 10) e **M9 Câmara** (k = 20), livro `+XLP −XLK` hedgeado | `carregar(..., sleeves=True)` | **D28.13** |
+| camada tática ANTIGA (prêmio 1.3, drift pós-FOMC, gap de fds) | **desligada** | `tatica=()`, orçamentos `None` | D12c |
+| régua do Ω (Lia) | **ligada**, nível 1 | `--regua` · `--regua-nivel 1` | D29 (o nível é a 6q dela) |
+| teto de alavancagem | varredura {1, 2, 3, 5}; **referência = 1, no tilt** | `--tetos`, `teto_no_tilt` | D10a |
+| banda de não-negociação | **sem banda** (`banda=None`) | — | D13 |
+| custo | 2 bps por lado sobre o giro contra o peso derivado | `CUSTO_BPS_POR_LADO` | D8 · D9 |
+| γ favorite-longshot | 1,0 (robustez em {1; 1,1; 1,25}) | `FL_GAMMA_V1` | D9 |
+| **número da entrega** | **+33,2% líquido × +30,1% do SPY** (+3,04 pp), 374 pregões, breakeven 22,9 bps/lado | `Backtest_v1.md`, coluna `tilt ≤ 1` | D29 |
+
+⚠️ **As seções abaixo descrevem o estado da data delas.** Onde uma delas disser
+que a camada tática não entra (D12c, D16, D17, D26, D27), leia o banner de
+supersessão: **a D28 reabriu a camada e a D28.13 a ligou na entrega.**
 
 ---
 
@@ -25,10 +58,6 @@ três numerações paralelas:**
 "D11" e "D12" são os **dois itens da seção 10** (duration medida e teto de
 alavancagem), não as seções 11 e 12. E o `LOG.md` de 31/07 chama de "Decisão 12"
 o critério de escolha do `k` — que não existe como seção em nenhum branch.
-
-**Opções para a reunião (não escolhidas):** (a) prefixo por dono (`F8`, `P8`,
-`L8`); (b) um dono único do arquivo e renumeração no merge; (c) faixas
-reservadas por dono; (d) manter e sempre citar branch junto do número.
 
 **Enquanto não fecha:** ao citar decisão, diga o branch — "D12 do `Paulo`", não
 "D12".
@@ -69,16 +98,6 @@ De onde vêm os dados do poly no mock: API real · snapshot histórico · dados 
 
 **Decisão:** API CLOB oficial do Polymarket (endpoint `/prices-history`).
 
-## 3. Mapeamento cenário → ativos (Camada 2) 🔴
-Como estimar a matriz de retornos condicionais. Regredir retorno do ativo contra o quê (mudança de probabilidade? dummy de resolução?).
-
-**Decisão:** _(a registrar)_
-
-## 4. Tradução probabilidade → vetor Q 🔴
-Como converter probabilidade do poly em retorno esperado (unidade que o BL exige). Ponte entre "65% de corte" e um número de retorno por ativo.
-
-**Decisão:** _(a registrar)_
-
 ## 5. Definição operacional de "surpresa" (PEAD, 1.1) 🟢 (fechada pelo dono, 2026-08-11 — sessão 27)
 Fórmula da surpresa. `1 − prob_atribuída`? Contínua ou por threshold?
 
@@ -96,65 +115,9 @@ Fórmula da surpresa. `1 − prob_atribuída`? Contínua ou por threshold?
   status — deixa de ser placeholder e passa a ser a definição do projeto, o que
   torna a medição do `Gate_PEAD.md` válida em vez de provisória.
 
-**Consequência imediata:** destrava a **1.1 PEAD**, que estava parada aqui desde
-2026-07-09. O que continua faltando para ela é dado (valor realizado), não
-definição — ver o item 8 da D28.
-
-## 6. Forma funcional do Ω reativo 🔴
-Como volume, estabilidade, convergência e proximidade de evento viram um número de confiança. Versão mínima para o mock vs. versão completa.
-
-**Decisão:** _(a registrar)_
-
-### 6a. Como colapsar uma PMF multi-bucket no `p` que alimenta o `score_estabilidade` 🟢
-Surgiu na implementação do `diagnostics` (sessão de 2026-08-07), depois da resposta da Lia.
-
-**Contexto:** a Lia definiu `dp_variacao_janela` como "desvio-padrão das diferenças `p_t − p_{t−1}`". Em view binária o `p` é inequívoco. **Em mercado multi-bucket não existe um `p`** — a leitura de um slot é um vetor de 5 a 9 faixas. Hoje o campo sai `NaN` nesses mercados (`src/poly_loader.py::diagnostics_qualidade`), e a série crua completa vai em `serie_janela`.
-
-**Por que é decisão dela e não minha:** escolher o colapso (norma L1 entre PMFs consecutivas, probabilidade do bucket modal, entropia, desvio do valor esperado…) é fixar a forma funcional de um ingrediente da régua dela dentro do meu módulo — o mesmo argumento com que ela pediu `soma_faixas` cru em vez de `|soma − 1|`.
-
-**Por que não pode ficar só como conversa:** as **três views ativas do v1 (2.2, 2.3, B) são todas multi-bucket**. Se cada lado assumir que o outro preenche, o `score_estabilidade` — 1 dos 4 ingredientes do `c` — fica sem insumo em todas as views do v1.
-
-**Opções, sem fechar:**
-1. Ela calcula do lado dela a partir de `serie_janela` (não custa dado novo nem ida e volta; o campo `dp_variacao_janela` fica `NaN` de propósito e ela ignora).
-2. Ela declara a regra de colapso e eu preencho o campo no `diagnostics` (mantém o contrato dela de "escalar pronto", mas fixa a forma funcional no meu módulo).
-
-**Não bloqueia o backtest:** o fallback `c = 1` segue valendo (`omega_fallback` com `incerteza=None`).
-
-**Fato de interface a comunicar junto (não é decisão):** entre a série crua e o que a view consome roda o `carry_missing` (D4/6.1). Ou seja, **a view nunca vê o buraco** que o `diagnostics` reporta — o modelo já o tapou carregando a última leitura. Isso muda como ela lê `n_slots_esperados − n_pontos`.
-
-**Decisão (declarada pela DONA da decisão em 2026-08-07, `RESPOSTA3`):
-opção 1 — ela colapsa do lado dela, a partir da `serie_janela`.** O
-`dp_variacao_janela` continua saindo `NaN` de propósito em mercado multi-bucket
-e **nada muda no meu módulo**. A forma do colapso segue dela (duas candidatas em
-teste); o que fechou aqui é **quem calcula**, que era a pergunta de interface.
-
-⚠️ **Ressalva de reprodução, levantada por mim no retorno (não é decisão):** ela
-pretende colapsar sobre a `serie_janela` **renormalizada**, e a `serie_janela` é
-CRUA — renormalizar a linha crua **não** reproduz o `p` que a view consome. Entre
-uma e outra rodam o `carry_missing` (D6.1: faixa sem preço herda a última
-leitura, em vez de a massa dela ser espalhada nas presentes) e, na 2.3, o piso de
-soma 0,9 (a linha degenerada mata o dia em vez de virar PMF renormalizada).
-
-**Encerramento da ressalva (`RESPOSTA4` dela, 2026-08-07):** a divergência é
-**de propósito e ela está certa** — o score dela não deve reproduzir o `p` da
-view. O `p` tratado é o que o modelo consome; o que ela mede é se o mercado que
-gerou aquele insumo estava funcionando, e medir sobre a série tratada mediria a
-suavidade do tratamento. Retirei a preocupação e a oferta do
-`serie_janela_tratada`. Ela também **recusa o `ffill`** pelo mesmo argumento do
-midpoint (leitura repetida entra como variação zero: erro num sentido só = viés,
-não ruído) e trata buraco descartando o slot, penalizando-o pelo canal próprio
-(`n_slots_esperados − n_pontos`).
-
-**Delimitação que ela pediu para constar na ata (e é justa):** o que fechou na 6a
-foi o **lugar** (ela colapsa, do lado dela, a partir da `serie_janela`). A
-**forma continua aberta** e sai do teste de monotonicidade, agora com **quatro
-candidatas** — 2 formas de colapso × 2 grades de tempo (12 h entre leituras × 24 h
-entre decisões). Não registrar a 6a como "fechada" sem esta metade.
-
-## 7. Convergência entre fontes (polls, casas de aposta) 🟡
-Se entra no Ω já no v1 ou fica como stub (adiciona dependências de dados).
-
-**Decisão:** fora do v1 — fica como stub. Reavaliar depois se entra em versão futura (em aberto).
+**O que ela destravou, e o desfecho:** a **1.1 PEAD** fora do Fed foi medida com
+o `CPIAUCSL` (item 8 da D28) e **REPROVOU** (D28.c). A definição deixou de ser
+gargalo e virou resultado.
 
 ## 8. Passo final do otimizador: qual Σ e quais restrições 🟢
 Surgiu na implementação do esqueleto BL (`src/bl_optimizer.py`).
@@ -182,9 +145,7 @@ Também estava em aberto: restrições nos pesos (long-only? soma 1? limite de a
 > removeu a cópia com o texto e manteve a vazia. O conteúdo acima vem da ata do
 > `LOG.md` de 2026-07-07 e bate com o que o código faz desde então
 > (`src/bl_optimizer.py`, docstring de `optimal_weights`: "DECISAO-8 (fechada)").
-> **Nada foi decidido agora — só recolocado.** As alternativas B2/B3/B4 que a ata
-> menciona como "mantidas no arquivo" foram perdidas na mesma limpeza; vale
-> reconferir na reunião se alguém as quiser de volta.
+> **Nada foi decidido agora — só recolocado.**
 
 ---
 
@@ -200,7 +161,7 @@ módulo da Lia. Justificativa e números de cada uma no `LOG.md` (sessão 2 de
 | Prazo da carteira (H) | 1 dia |
 | Views ativas | 2.2 · 2.3 · ~~B~~ (a B saiu do v1 em 2026-08-07 — ver seção 11) |
 | Views fora | 2.4, 3.1, C, E, G |
-| Camada tática | entra: prêmio de anúncio condicionado à incerteza + drift pós-FOMC |
+| Camada tática | ~~entra: prêmio de anúncio + drift pós-FOMC~~ — **SUPERADO**: desligada na D12c, e o que entrou na entrega é a **v2** (sleeves M4/M9, D28.13) |
 | Tática fora | gap de fim de semana |
 | Balde aberto | ponto médio extrapolado (meia largura da grade) |
 | Faixa faltante na PMF | carrega a última leitura, depois renormaliza |
@@ -317,6 +278,11 @@ número do escopo (teto no tilt +2,68 pp × teto de carteira −7,91 pp na mesma
 alavancagem de 1,90) responde a "questão de desenho aberta" acima com medição,
 não com opinião — mas **a escolha continua do grupo**.
 
+**Como isto terminou, e é o que a entrega mostra:** o grupo **nunca escolheu um
+teto**. A entrega reporta a **grade inteira** {1, 2, 3, 5} nos dois escopos e cita
+**1 no tilt** como referência (10a). Reportar a varredura em vez de cravar a
+linha de melhor número é a saída registrada — não é pendência esquecida.
+
 ### 10a. Data de corte da régua do `c` e plano B pré-registrado 🟢 (fechada pelo dono, 2026-08-07 — sessão 9)
 
 **O que fecha:** se a régua do `c` da Lia não chegar até **13/08** (entrega em
@@ -338,13 +304,18 @@ o `Backtest_v1.md`. Deixar para o dia 15 significaria escolher o teto com a
 tabela de excesso na tela, que é exatamente o overfit em dois passos do
 protocolo anti-overfit desta seção.
 
-**Cadeia que isto destrava:** `G5 do Paulo` → `régua do c da Lia` → `nível e
-escopo do teto`. Dois dos três elos estão fora deste branch; o plano B existe
-para que o atraso de um elo alheio não vire decisão apressada no último dia.
+**O que sobrou disto na entrega:** o corte de 13/08 não precisou ser acionado —
+a régua da Lia chegou e entrou (D29). O que ficou desta seção é o **teto de
+referência 1, no tilt**: é o escopo de todas as varreduras do projeto e a coluna
+que o relatório e a apresentação citam.
 
 ---
 
 ## 11. Sessão de 2026-08-07 (sessão 5) — view B fora do v1 🟢 (provisória)
+
+> ⚠️ **SUPERADA em 2026-08-10 (D23).** A B **voltou e está na entrega**, como
+> **15g**, com β próprio contra o ΔDGS1. O que esta seção barrou foi o *desenho*
+> que reusava os β da 2.3 (P literalmente idêntico), não a view.
 
 Fechada pelo Felipe no mesmo regime das seções 9 e 10 (**provisória, o grupo
 revisa**). Espec da view preservada em
@@ -377,19 +348,9 @@ duas pernas:
    CSV de uma coluna já cobrado no FOLLOWUP4. Comprar dado para a B enquanto a
    2.3 espera um arquivo grátis inverte a prioridade.
 
-**Condições de reabertura (qualquer uma):** aparecer fonte gratuita do ZQ de
-dezembro, **ou** o grupo aprovar um benchmark substituto.
-
-**Substituto mapeado, NÃO decidido — é decisão metodológica, do grupo:** extrair
-o forward do mês de dezembro da curva de bills do FRED (dois pontos
-interpolados). **Tem precedente direto:** a seção 9 já aceitou trocar o ZQ por
-`ΔDTB3` na surpresa de juros, e a 2.3 vai rodar com `DTB3 − DFF`. Fica registrado
-como opção, com a ressalva de que um forward de 1 mês tirado de dois vértices
-interpolados é ruidoso e ninguém mediu esse ruído.
-
-**Consequência operacional imediata:** **o Paulo pode parar de procurar o ZQ.** A
-caça aparece em três pedidos diferentes (F6, FOLLOWUP2, FOLLOWUP3) e agora não
-tem consumidor no v1.
+**Como terminou:** a B voltou por um terceiro caminho, que não estava nesta
+lista — β próprio contra o ΔDGS1, medido na 15g e ligado na D23. O ZQ nunca
+apareceu de graça e deixou de ter consumidor.
 
 ---
 
@@ -521,14 +482,14 @@ com **25 a 35 eventos** todos os dias (`n_eventos_beta`). Qualquer piso abaixo d
 25 **não desativa um único pregão** — escolher 10 ou 20 seria inventar um
 threshold sem medição e sem consequência, contra a regra 6 do `CLAUDE.md`.
 
-**O critério, para quem retomar:** o piso só passa a morder com dado novo que
-comece com poucas reuniões, ou ao reaproveitar o template de event-study em view
-ou ativo de histórico curto. Aí ele se decide medindo a **curva de estabilidade**
-— β estimado com os primeiros *n* eventos contra o β final — e o piso é onde a
-diferença deixa de virar o sinal de `P`. Fica registrado como limitação do
-relatório, não como pendência.
+Fica registrado como limitação do relatório.
 
 ### 12c. Camada tática fora do v1 🟢 (fechada pelo dono, 2026-08-07 — sessão 8)
+
+> ⚠️ **SUPERADA pela D28 (2026-08-11).** A camada tática foi **reaberta** e a
+> **v2 está LIGADA na entrega** (D28.13 — sleeves M4/M9). O que continua
+> desligado é exatamente o que esta seção desligou: os três overlays antigos
+> (prêmio 1.3, drift pós-FOMC, gap de fim de semana), com `orcamento = None`.
 
 **Decisão: o v1 entrega com a camada tática DESLIGADA.** Os três overlays
 (prêmio de anúncios 1.3, drift pós-FOMC, gap de fim de semana) ficam no
@@ -615,95 +576,7 @@ banda por ela seria o overfit em dois passos do protocolo da seção 10, agora s
 rodada seguinte para desmentir.
 
 **Consequência de registro:** com isto some a última pendência de código do
-`Felipe` para a entrega. O que resta no caminho crítico é de terceiros (`G5 do
-Paulo` → régua do `c` da Lia → teto do grupo, com o corte de 13/08 da seção 10a)
-e o merge dos três branches, que não é feito daqui.
-
----
-
-## 14 (branch `Felipe`). Reabertura de escopo — views novas e retorno da camada tática 🟡
-
-> ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D14 do
-> `Felipe`".
-
-**Registro, não decisão.** Direção dada pelo dono em **2026-08-08**, ao revisar o
-dossiê de limitações:
-
-> "Duas views para uma estratégia inteira não é nem perto do suficiente. Na
-> próxima sessão iremos criar novas views que fazem sentido para a estratégia e
-> depois tentar REATIVAR a camada tática com novas estratégias."
-
-**O fato que motivou:** das oito views desenhadas, **duas estão ativas** (2.2
-inflação e 2.3 Fed) — verificável em `scripts/backtest_v1.py:395`. As outras seis
-saíram por medição (seção 9/D2–D2c e seção 11), e a camada tática saiu pela 12c.
-
-**O que esta direção toca — nada aqui está fechado nem reaberto ainda:**
-
-| Decisão | Status hoje | O que a direção de 08/08 propõe |
-|---|---|---|
-| seção 9 (views fora: 2.4, 3.1, C, E, G) | 🟢 provisória | não desfazer os cortes — **desenhar views novas** |
-| seção 11 (view B fora) | 🟢 provisória | reabre só sob as condições já registradas lá (fonte grátis do ZQ ou benchmark substituto aprovado) |
-| seção 12c (camada tática desligada) | 🟢 | **tentar reativar** com estratégias novas |
-
-**Trade-offs a levar para a próxima sessão, medidos e já registrados neste
-arquivo — não são objeção, são o que a sessão vai ter de responder:**
-
-1. **Calendário.** Entrega em **17/08**; a régua do `c` corta em **13/08** (10a).
-   View nova precisa de mercado no Polymarket, benchmark de mercado e β estimado —
-   as três coisas que travaram a B, a C, a E e a G.
-2. **Dependência do Paulo.** Mercado que não está no `data/` é pedido novo
-   (categoria 3). O histórico: a E morreu com 13 dias de cobertura e a G com 3.
-3. **A barreira que derrubou quatro views é do dado, não do desenho.** A
-   informação do Polymarket **aterrissa no gap de abertura**, que não é
-   negociável — mesmo padrão na eleição 2024, na recessão 2025, no Irã 2026 e na
-   tática de fim de semana. Uma view nova sobre mercado de evento provavelmente
-   encontra a mesma parede; convém desenhar **medindo isso primeiro**.
-4. **A tática não saiu por efeito fraco, saiu por não ter como escolher o
-   tamanho** (12c): o Δ é monótono no orçamento, sem ótimo interior. Reativar
-   exige uma **âncora para o `orcamento` que não venha do resultado do backtest**
-   — caso contrário reabre exatamente o overfit em dois passos do protocolo da
-   seção 10 (5.5 do dossiê), agora sem rodada seguinte para desmentir.
-
-**Insumo pronto:** `Dump/trocas/DOSSIE_limitacoes_v1.md` (seções 1 e 2) traz o
-motivo medido de cada corte, para a sessão nova não repetir desenho já reprovado.
-
-**Nada fecha aqui.** Se as views novas entrarem, elas são decisão metodológica e
-seguem o regime das seções 9/10 (provisórias, revisão do grupo).
-
-### 14a. Direção da sessão seguinte, dada pelo dono em 2026-08-09 (fim da sessão 16)
-
-> "O desafio não precisa de um resultado positivo, mas uma apresentação e
-> estratégias que fazem sentido." · "Na próxima sessão vamos tentar adicionar
-> mais umas views."
-
-**Continua a seção 14, não a substitui.** A metade "views novas" segue aberta; o
-que muda é o critério declarado — **fazer sentido vale mais que medir positivo**.
-Isso é consistente com o que já está registrado (nenhuma view foi cortada por
-excesso negativo no backtest — 17e) e deve orientar o desenho das próximas.
-
-**Três insumos desta sessão para a próxima não repetir desenho já reprovado:**
-
-1. **A pergunta "a view prevê?" tem teste, e ele é VETO.** Rodá-lo ANTES de
-   construir custa minutos e teria matado a transversal antes das 400 linhas — é
-   a mesma lição de ordem que o gate da D17 aplicou à camada tática. Depende de
-   promover o script (pendência no fim da 15g).
-2. **Número acumulado não é resultado sem a conta de atribuição.** A 15h mostrou
-   uma view "de +3,89 pp" que era **um pregão**. A coluna "sem os 3 maiores" e o
-   acerto de sinal passam a ser obrigatórias em qualquer view nova.
-3. **As três inversões da família de inflação têm UMA causa medida, e ela é
-   achado de apresentação.** A transversal (15f), a sleeve de CPI (16b) e o
-   candidato C2a (17b) saíram invertidos pelo mesmo motivo, corroborado por outro
-   caminho no `Convergencia_2_2.md`: **o TIP é dominado por DURAÇÃO, não por
-   inflação** (β +1,6 ao juro de 10 anos contra +10,7 do SPY no canal risk-on).
-   Três desenhos independentes reproduzindo o mesmo achado sobre o instrumento
-   vale mais no relatório do que qualquer um deles teria valido funcionando.
-
-**Ressalva de prior, levantada pelo dono e registrada:** de quatro desenhos que
-saíram invertidos, **um tinha causa banal e nossa** (a base do M3, ver 15g). Isso
-justifica **auditar o encanamento** dos outros antes de tratá-los como tese
-morta — mas os outros três têm mecanismo medido e corroborado, o que a B não
-tinha. Auditoria de encanamento **não é** reabrir decisão, e o precedente da D2b
-segue: achar bug é uma coisa, inverter sinal porque o dado pediu é outra.
+`Felipe` para a entrega do v1 de duas views.
 
 ---
 
@@ -883,16 +756,6 @@ sobrevive melhor à retirada dos extremos (−0,09 pp contra −0,54 pp), ou sej
 escala escolhida é a de número maior e sobrevivência pior. Registrado aqui de
 propósito: quem ler o +3,89 pp precisa achar esta linha.
 
-### 15d. O que a view de incerteza resolve da 12c
-
-A 12c desligou a tática do prêmio de anúncios porque ligar exigia um `orcamento`
-sem âncora, e o Δ era **monótono no orçamento** (sem ótimo interior: a grade
-devolvia a pergunta em vez de selecionar parâmetro). Como **view**, quem
-dimensiona é o BL (τ, Ω, Σ) — o parâmetro sem âncora deixa de existir. A
-premissa, que a 12c registrou como APROVADA, é reaproveitada inteira.
-**Isto não reabre a 12c**: a tática segue desligada e os overlays seguem com
-`orcamento = None`. É outro caminho para a mesma premissa.
-
 ### 15f. A transversal REPROVOU no teste de sinal 🟢 (medido 2026-08-08)
 
 Medido depois de construída, a pedido do dono, em 276 pregões (fev/2025 a
@@ -939,7 +802,7 @@ backtest vem da interação com Σ, w_mkt e o teto — não de o Q estar certo. 
 observação para o relatório; não mexo na 2.2 nem na 2.3, que são decisões
 registradas.
 
-### 15g. Candidata a 4ª view — a B com β PRÓPRIO 🟡 (medida, não decidida)
+### 15g. A 4ª view — a B com β PRÓPRIO 🟢 (medida em 08/08, ENTROU na entrega pela D23)
 
 O dono pediu uma **quarta** view (2.2 + 2.3 + incerteza + 1). Levantadas todas as
 candidatas, a única viável no calendário é a **view B (trajetória do Fed)
@@ -1033,38 +896,11 @@ esta view é *não sair invertida*, não *passar*"), a B **passa o veto** e sai 
 lista de reprovadas. Não entra na de aprovadas: o teste é veto e não
 certificado (15f), a B fica indistinguível de zero como as incumbentes
 (2.2 +0,57 · 2.3 +0,26 · B +0,33), e **no backtest ela mede −1,38 pp** (15h).
-**A entrada continua sendo decisão do grupo.**
+**Desfecho: a B ENTROU na entrega em 2026-08-10** (D23), depois de a 15a fechar e o item 4 da D22 ser medido (ângulo 87,5°).
 
 **Ressalva menor, registrada:** a base usa o `DFF` (taxa EFETIVA), ~4 bps abaixo
 do meio da banda de então. É viés de nível constante, absorvido pela demeanagem
 expansiva — mas está aqui para ninguém redescobrir depois.
-
-**Pendência de reprodutibilidade (minha, não do grupo):** o script do teste
-vive no scratchpad e **não está no repositório** — a medição acima não é
-reproduzível a partir do branch. Promovê-lo a `scripts/teste_sinal.py` (com a
-2.2 e a 2.3 como controle embutido, no molde do `gate_sleeves.py`) é candidato a
-primeiro movimento da sessão seguinte.
-
-### 15e. Dependência do Paulo — um item bloqueia, dois não
-
-`Dump/trocas/PEDIDO_G10_Paulo.md` (08/08, reescrito no fim da
-sessão quando a quarta view entrou no escopo), três itens em ordem de prioridade:
-
-- **G10a — `DGS1` do FRED.** Uma série. É o único insumo que falta para a quarta
-  view (15g) existir, e **o único item BLOQUEANTE** do pedido.
-
-- **G10b — rótulo dos baldes de payrolls.** Os 234 JSONs do G9 trazem só preço; o
-  nome do arquivo tem o token, não o slug do desfecho. Sem rótulo não existe
-  `E_poly[payrolls]`, e payrolls fica limitado à entropia (que não usa rótulo e
-  por isso já roda). **Não bloqueia nenhuma das duas views.**
-- **G10c — calendário oficial do CPI via API do FRED.** O
-  `cpi_release_dates.csv` atual tem 15 datas derivadas das REGRAS dos mercados do
-  Polymarket. Destravaria a variante event-study do β da transversal. Melhoria,
-  não pré-requisito.
-
-**Nada fecha aqui.** Se qualquer das duas entrar, é decisão metodológica sob o
-regime das seções 9/10 (provisória, revisão do grupo), e o backtest só as empilha
-depois de 15a, 15b e 15c fecharem.
 
 ### 15h. As duas views MEDIDAS no backtest — o ganho é UM PREGÃO 🟡 (medido 2026-08-09)
 
@@ -1102,12 +938,6 @@ dias. O P dela no fim da janela é **long XLE +1,04 · XLF +0,29 contra XLP −0
 XLU −0,19**, com TLT ≈ 0 — ortogonal ao da 2.3, como a 15g previu; o problema não
 é duplicação, é que a view não prevê.
 
-**🛑 Pendência de protocolo que continua de pé:** a 15g registra a ordem `DGS1
-chegou → refazer o teste de sinal no vértice certo → só então empilhar`. Esta
-rodada fez a última etapa **sem a do meio**, por instrução do dono, e para medir.
-O **teste de sinal no `DGS1` segue não rodado**, e o precedente da D2b vale igual:
-se sair invertido, não entra e **não se inverte**.
-
 **Premissa declarada nesta rodada, e ela não estava escrita em lugar nenhum:** o
 M3 pergunta quantos cortes acontecem **dentro de 2025**, então a taxa de fim de
 ano de um balde é `taxa do FIM DE 2024 − 25bp × N`, não `taxa de hoje − 25bp × N`
@@ -1116,12 +946,19 @@ erro de nível em nov/2025). A espec da B só dizia "taxa_atual"
 (`backtest_v1.M3_INICIO_DO_ANO`). É leitura da REGRA do mercado, não escolha de
 parâmetro, mas fica declarada para quem revisar poder discordar.
 
-**Nada fecha aqui.** 15a, 15b, 15c e 15g continuam abertas e a recomendação
-implícita da tabela é do grupo, não minha.
+**Fechadas depois:** 15a, 15b e 15c em 10/08, e as duas views **entraram na
+entrega** pela D23. Esta tabela é o registro obrigatório de atribuição — está
+aqui para o número da entrega não ser lido como desempenho das views novas.
 
 ---
 
 ## 16 (branch `Felipe`). Camada tática RECONSTRUÍDA — duas sleeves, medidas e REPROVADAS 🟡
+
+> ⚠️ **A recomendação desta seção ("a camada tática não entra") foi SUPERADA
+> pela D28.** As duas sleeves *desta* seção continuam fora e reprovadas; a
+> camada que entrou na entrega é outra — transversal, M4/M9 (D28, D28.13). O
+> que sobreviveu daqui é a **âncora de tamanho `inv(δΣ)·μ`** (16a), que é a que
+> a camada v2 usa.
 
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D16 do
 > `Felipe`".
@@ -1219,6 +1056,10 @@ sob o regime das seções 9/10.
 
 ## 17 (branch `Felipe`). Gate de sleeves — quatro candidatos triados e REPROVADOS antes de virar código 🟡
 
+> ⚠️ **Registro histórico.** Os quatro candidatos daqui seguem reprovados, mas a
+> generalização do G1 caiu na D26 e a camada foi reaberta na D28. O que
+> sobrevive é o **protocolo**: medir antes de escrever módulo.
+
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D17 do
 > `Felipe`".
 
@@ -1277,7 +1118,7 @@ dupla contagem da 15a. **Ressalva contra o próprio candidato:** parte do 19,5×
 degrau de grade (a média expansiva atravessa a troca de mercado e a grade do CPI
 vai de 3 a 9 baldes); não muda o veredito, que é do G2 e do G3.
 
-### 17c. Premissas declaradas ANTES de medir 🔴
+### 17c. Premissas declaradas ANTES de medir 🟡
 
 São **categoria 3** (metodologia) e ficam registradas como declaradas, **não
 fechadas** — o valor delas é terem sido escritas antes do event-study, que é o
@@ -1313,33 +1154,6 @@ diária, abaixo do tick) ou **já pertencem a uma view** (cauda ≈ entropia). A
 âncora de tamanho da D16 (`inv(δΣ)·μ` encolhido) segue de pé e sem uso — **o que
 falta é sinal, não dimensionamento.**
 
-### 17e. Inventário de cortes e condições de reabertura
-
-`Dump/analises/Retomada_tatica.md` (escrito a pedido do dono, mesma sessão)
-consolida as **11 views** e os **12 desenhos táticos** com o motivo de cada corte
-e **o que teria de mudar** para reabrir. **Não decide nada** — a coluna de
-reabertura lista condição, não recomendação.
-
-Dois pontos de lá que interessam a esta decisão:
-
-- **O experimento que nunca foi feito.** A D16 trocou DUAS coisas ao mesmo tempo:
-  a âncora de tamanho (orçamento → `inv(δΣ)·μ`) **e** a fonte da surpresa (ΔDTB3
-  → poly). A surpresa antiga **nunca rodou com a âncora nova**, e o ΔDTB3 tem
-  dispersão onde o poly não tinha (σ 3,3 bps, 3 de 36 reuniões acima de 5 bps).
-  É **uma linha no `gate_sleeves.py`**, não um módulo. Ressalva contra a própria
-  ideia: a mediana COM SINAL do ΔDTB3 é +0,0 bps e a do valor absoluto não está
-  medida — pode morrer na primeira linha.
-- **Bloqueio de terceiro.** O `etf_open_daily.parquet` está em outra base de
-  ajuste que o `etf_prices_daily.parquet` (`Premissa_taticas.md`). Enquanto
-  durar, **nenhuma tática mede o retorno do PRÓPRIO dia do evento** — que é
-  exatamente onde o achado transversal do projeto diz que a informação aterrissa.
-  Conserto é um pull dos dois no mesmo dia: **módulo do Paulo**.
-
-**Nada fecha aqui.** A recomendação da D16 (a camada tática não entra) fica de pé
-com um motivo a mais, e a entrada continua sendo decisão do grupo.
-
----
-
 ## 18 (branch `Felipe`). Busca por views novas — régua do poly declarada e três candidatas triadas 🟡
 
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D18 do
@@ -1350,15 +1164,15 @@ de busca por views novas (arqueologia do repositório + literatura clássica),
 limitadas a 3 propostas cada. **Nenhuma linha de código foi escrita.** A entrega do
 v1 não foi tocada. O handoff detalhado das candidatas está em `leaveoff.md`.
 
-### 18a. Régua declarada pelo dono nesta sessão 🟡 — precisa de ratificação do grupo
+### 18a. Régua do poly declarada pelo dono 🟢 (absorvida pela D22, item 1)
 
 > **View que não lê o Polymarket não entra nem em discussão.**
 
 Declarada verbatim pelo Felipe em 2026-08-09, ao ver as 6 propostas. **Não está
 fechada como 🟢 porque não é decisão de um módulo só** — ela define o que conta como
 view admissível no modelo, o que é premissa compartilhada (CLAUDE.md §1, categoria
-3). Fica registrada como posição do dono da integração, **pendente de ratificação em
-reunião**.
+3). **Absorvida pela D22 (item 1) em 2026-08-10** — deixou de ser posição
+pendente e virou régua fechada.
 
 **Consequência medida, e é grande:** das 6 propostas geradas, **4 caem por esta
 régua** — inclusive as duas mais baratas de implementar e a de melhor esperança
@@ -1377,9 +1191,9 @@ melhorariam o backtest. As duas coisas são reais. **Quem decide é o grupo.**
 | Reversão de curto prazo 5d (Lehmann 1990; Jegadeesh 1990) | externa | não lê o poly. Era a única cujo horizonte natural bate com **H = 1 dia** |
 | Momentum setorial 12−1 (Moskowitz & Grinblatt 1999) | externa | não lê o poly; e descasamento de horizonte (paper é holding mensal, ~20 indústrias) |
 
-**Se a reunião derrubar a régua 18a, o primeiro item volta na frente dos outros três**
-— e custa uma linha no `gate_sleeves.py` para saber se vive (a mediana do |ΔDTB3|
-nunca foi medida; se ficar perto do tick de 1 bp do FRED, morre no G1).
+**Medido depois (D21c):** o primeiro item reprova no G1 — mediana |ΔDTB3| = 1 bps,
+exatamente 1,0× o tick de publicação do FRED. A régua 18a não custou a
+oportunidade.
 
 ### 18c. As três candidatas admitidas — nenhuma aprovada
 
@@ -1391,36 +1205,16 @@ Detalhe completo em `leaveoff.md`. Resumo do status:
 | **Transversal do CPI com β ortogonalizado** (ressuscita a 15f) | conserto proposto, não testado | teste de sinal **antes** do módulo | nenhum formal; risco técnico alto (ver abaixo) |
 | **3.1 recessão com P direcional** | 🛑 **bloqueada** | reunião | **D2b** — ver 18d |
 
+**Desfecho das três:** foram montadas e medidas na **D19** — nenhuma entrou. A
+transversal ⊥ risk-on reprovou (19b), a 3.1 direcional tem coeficiente que troca
+de sinal dentro da amostra (19c) e a **C** foi cortada na **23f**.
+
 **Sobre a transversal:** a causa da morte está medida e corroborada por três
 caminhos independentes (TIP dominado por **duração**, não por inflação). Mas o elo
 que falhou **não foi o β — foi o transporte** do β contemporâneo para retorno futuro
 (corr +0,06). Ortogonalizar ataca a causa declarada **sem garantia** de que o
 transporte apareça. Ordem obrigatória (lição da 14a/D17): **medir antes de escrever
 módulo.**
-
-### 18d. Decisão que a 3.1 direcional exige do grupo 🛑
-
-A 3.1 é o único caso do projeto com **sinal significante que a view não expressa**:
-no par defensivo−cíclico t −0,46 a −1,05, mas **SPY +0,59% em 10 pregões, |t| > 2**.
-O P neutro em mercado (`P[SPY] = 0`) apaga exatamente o que existe.
-
-**O problema não é técnico, é de tese:** o coeficiente direcional medido é
-**positivo**, e a tese original da view prevê **negativo**. Entrar como desenhada
-perde; **inverter é o que a D2b proibiu explicitamente**.
-
-**Pergunta para a reunião:** o grupo re-declara a tese a priori como **"prêmio de
-medo pago"** (o mercado remunera quem carrega risco quando o medo sobe) — que é tese
-diferente e defensável — ou mantém a 3.1 cortada?
-
-Duas ressalvas para quem for decidir: (i) re-declarar tese **depois** de ver o sinal
-é exatamente o vício que a D2b existe para barrar, então a declaração precisa ser
-explícita e datada; (ii) **não há segundo mercado de recessão**, logo não existe o
-teste fora da amostra que tornou o veredito da 2.4 confiável.
-
-**Nada fecha aqui.** Nenhuma das três candidatas está aprovada, e a régua 18a
-aguarda ratificação.
-
----
 
 ## 19 (branch `Felipe`). As três candidatas da D18 — MONTADAS e MEDIDAS 🟡
 
@@ -1531,12 +1325,11 @@ segundo mercado de recessão (a própria D18d registra isso), então não existe
 teste fora da amostra que tornou o veredito da 2.4 confiável — e agora sabemos
 que não existe nem *dentro* da amostra.
 
-**Consequência para a D18d, e ela é de agenda:** a pergunta registrada era "o
-grupo re-declara a tese como *prêmio de medo pago*?". Medido, essa pergunta fica
-**sem base empírica em qualquer das duas direções** — não porque a tese seja
-falsa, mas porque o sinal que a sustentaria não é estável. A D18d pode ser
-respondida sem discutir tese, o que **evita** o vício que a D2b existe para
-barrar (re-declarar tese depois de ver o sinal).
+**Consequência:** a saída mapeada para a 3.1 era o grupo **re-declarar a tese**
+como *prêmio de medo pago*. Medida, ela fica **sem base empírica em qualquer das
+duas direções** — não porque a tese seja falsa, mas porque o sinal que a
+sustentaria não é estável. A 3.1 fica fora sem precisar discutir tese, o que
+**evita** o vício que a D2b existe para barrar.
 
 **O que a medição confirma da premissa:** o P direcional de fato **captura o que
 o P neutro apaga** — as duas montagens dão números diferentes nos mesmos dias, e
@@ -1547,8 +1340,9 @@ diante), **as duas** montagens medem negativo — mas esse recorte é
 essencialmente a 2ª metade da tabela acima, então ele não é evidência
 independente, é a mesma metade com outro nome. Está dito no artefato.
 
-**Nada fecha aqui.** As três candidatas seguem sem destino; a régua 18a segue
-pendente de ratificação.
+**Desfecho:** **nenhuma das três entrou.** A transversal ficou fora (19b), a 3.1
+ficou fora (19c) e a C foi cortada na **23f**. A régua 18a virou o **item 1 da
+D22**, fechada em 10/08.
 
 ---
 
@@ -1563,27 +1357,6 @@ implementada do lado dela (`lia/omega.py`, 66 testes, 601 decisões da 2.2,
 90,3% ativas). Deste lado nada de comportamento mudou: a suíte sai de 240 para
 **244 testes** (os 4 novos são do script da 20c) e o `Backtest_v1.md` não foi
 re-gerado.
-
-### 20a. De onde vem o volume da régua — INTERFACE, depende do Paulo 🟡
-
-O `diagnostics_qualidade` **não tem campo de volume**, e a régua da Lia precisa
-dele para o veto de liquidez. Hoje a assinatura é
-`calcular_omega(diagnostics, volume_notional, nivel, janela_variacoes)`.
-
-| opção | o que muda | custo | quem toca |
-|---|---|---|---|
-| (1) volume vai como dict separado na chamada | nada — é o que já está pronto dos dois lados | zero | ninguém |
-| (2) volume vira campo `notional_usd_slot` do `diagnostics` | a régua passa a ter uma entrada só, em vez de duas | mudança de INTERFACE do bloco de diagnostics | Paulo (pipeline) + Lia (régua) |
-
-**Preferência declarada da Lia: a (2)** — uma porta em vez de duas, e o volume
-já vem do mesmo pipeline que monta o resto do bloco. **Não fechada aqui:** é
-mudança de interface entre módulos, categoria 3 do CLAUDE.md §1, e depende do
-Paulo. Enquanto não fechar, vale a (1), que não custa linha nenhuma.
-
-**O que já está fechado e não é objeto desta decisão:** a agregação do volume é
-**soma** sobre as faixas do mercado, não mínimo — medido pela Lia, o mínimo
-vetaria 47% dos slots de 12h porque é comum uma faixa de mercado de buckets não
-negociar em meio dia. Ausente ou `NaN` não veta; `0` veta.
 
 ### 20b. O eixo da escolha de 13/08 é o NÍVEL da régua, não o `c` das curvas 🟡
 
@@ -1627,17 +1400,6 @@ Duas leituras, e as duas são insumo da reunião:
    dela está na **cauda**, e grade constante não consegue mostrá-lo. Para medir
    o efeito de verdade é preciso a série de `c` **por decisão**, que ela ofereceu
    mandar — pedido feito na resposta.
-
-**Precisão do pedido, corrigida em 2026-08-10 (sessão 22), antes de a resposta
-sair:** a `RESPOSTA6` pedia "a série" no singular e declarava que com ela eu
-re-rodaria a curva no eixo do **nível** `(1, 2, 3, 5…)`. As duas coisas
-provavelmente não fecham juntas: se o nível é parâmetro de DENTRO da régua dela
-(entra antes do `c` sair), uma série é uma **coluna**, não uma varredura. O
-pedido passou a ser **uma série por nível, em `{1, 3, 5}`** — ou a confirmação
-dela de que o nível é reescalável fora da régua, caso em que uma série basta.
-**Não é decisão, é precisão de pedido**; quem sabe qual dos dois casos vale é
-ela, e a resposta muda só o volume de trabalho, não o eixo da escolha (que
-segue sendo o nível, como este item registra).
 
 **Não fecha nada:** nível e teto saem juntos, uma vez só, pelo protocolo
 anti-overfit da seção 10 — e não por iteração contra esta tabela.
@@ -1696,8 +1458,10 @@ dela é contra erro de previsão, não movimento cru — as duas leituras não s
 mesmo teste e a divergência de forma pode ser só isso. **Observação devolvida a
 ela na resposta; nada do módulo dela foi tocado.**
 
-**Nada fecha aqui.** A entrada da 1.3 e o `orcamento_max` seguem pendentes de
-reunião (D16/D17), sem mudança.
+**Desfecho:** a 1.3 **nunca entrou como overlay** — o prêmio de anúncio virou a
+**view 15b** (D23) —, e a camada que entrou na entrega é a **v2** (D28). O
+`orcamento` foi abandonado de vez: item 9 da D28, tamanho pela âncora
+`inv(δΣ)·μ`, zero parâmetro livre.
 
 ---
 
@@ -1777,22 +1541,8 @@ vez a âncora de tamanho (orçamento → `inv(δΣ)·μ`) **e** a fonte da surpr
 tem o tamanho do tick da fonte. **Consequência de agenda, e é o motivo de ter
 rodado antes da reunião:** a D18b registra que "se a régua 18a cair, este item
 volta na frente dos outros três". **Medido, ele não volta** — reprova pelos
-mesmos critérios que reprovaram os candidatos que leem o poly. A ratificação da
-18a segue sendo decisão do grupo, mas **deixa de custar esta oportunidade**.
-
-### 21d. Observação de dado, não é decisão minha
-
-O `origin/Paulo` já traz **os três itens do `PEDIDO_G10`**: `fred_DGS1.csv`
-(G10a), `payrolls_bucket_labels.csv` (G10b) e `cpi_release_dates_fred.csv`
-(G10c). O `data/` do working tree deste branch **não os tem** — as medições da
-21b rodaram com o `--raiz` apontado para um extract do `origin/Paulo`, e a linha
-da B só existe assim. Fica registrado porque o G10b era o que bloqueava
-`E_poly[payrolls]` (15e) e ninguém tinha registrado a chegada dele.
-
-**Nada fecha aqui.** As pendências de 13/08 seguem as da D20: série de `c` por
-decisão (Lia), nível + teto (grupo, uma vez só), interface do volume (Paulo).
-
----
+mesmos critérios que reprovaram os candidatos que leem o poly. A 18a foi absorvida pela **D22 (item 1)** no dia seguinte, e esta medição
+mostra que ela não custou a oportunidade.
 
 ## 22 (branch `Felipe`). Régua de admissão de views 🟢 (FECHADA pelo dono, 2026-08-10 — sessão 21)
 
@@ -1934,51 +1684,6 @@ tick da fonte (G1, D17).
 
 ---
 
-## 24 (branch `Felipe`). O portão de qualidade vale para views e NÃO para overlays 🔴 (pendência da próxima sessão)
-
-> ⚠️ Numeração paralela por branch — cite como "D24 do `Felipe`".
-
-**Registro, não decisão.** Encontrado em 2026-08-10 (sessão 23), ao verificar se a
-reativação da camada tática obrigaria a refazer o pedido do `c` à Lia. **Não
-obriga** — e o motivo de não obrigar é exatamente a assimetria.
-
-**O fato, verificável em `src/backtest.py`:**
-
-```
-294:  w_bl, info = bl_weights_from_views(sigma, w_mkt, tau, delta, view_results, omega)
-295:  w_pedido, diag = apply_overlays(w_bl, overlay_results or ())
-```
-
-A régua da Lia entra no **Ω**, que é a incerteza **das views**. A camada tática é
-overlay sobre os pesos: entra na linha seguinte, **depois** de o BL terminar, e
-nunca vê o `omega`. O montador devolve as duas coisas em listas separadas.
-
-**A consequência:** se a PMF de um mercado estiver degenerada, o `aplicar_veto`
-mata a view do dia. Uma **sleeve tática que leia o MESMO mercado ruim passa
-livre** — overlay não tem linha em P, logo não tem `c`, logo não tem veto. O
-portão de qualidade do poly cobre metade do modelo.
-
-**Por que não é urgente:** a camada tática está **desligada** (12c) e o v1 entrega
-sem ela. Enquanto isso valer, a assimetria não tem efeito.
-
-**Por que precisa estar escrita:** ela vira pergunta de verdade **no momento em
-que alguém reativar a tática** — que é justamente uma sessão em que a atenção vai
-estar no desenho da sleeve, não no encanamento do Ω. É o tipo de coisa que roda
-calado.
-
-**A pergunta a responder, quando for a hora — e é de desenho, não de
-implementação:** *sleeve também deve ser vetada por qualidade de dado?*
-
-- **Se sim**, é **pedido novo** à Lia (a régua passaria a aceitar chaves que não
-  são views) e mexe na interface — categoria 3. **Não** é correção da `RESPOSTA6`.
-- **Se não**, precisa estar declarado como escolha no relatório, não deixado como
-  omissão: "o overlay é dimensionado por orçamento e não por confiança de dado".
-
-**Comunicado à Lia** na seção 9 da `RESPOSTA6`, explicitamente como coisa que
-**não** se responde agora.
-
----
-
 ## 23 (branch `Felipe`). A estratégia passa a ter QUATRO views 🟢 (fechada pelo dono, 2026-08-10 — sessão 23)
 
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D23 do
@@ -2062,13 +1767,12 @@ O sinal do resultado **não depende do γ** na varredura de robustez (+6,24 a
 2. **O Ω é diagonal e não enxerga correlação entre views.** Com a 15g e a 2.2 a
    ρ +0,673 no sinal-fonte, isso deixa de ser hipotético. Limitação de relatório
    (D15a, D22e), não bug.
-3. **As varreduras irmãs ficaram desatualizadas.** `curva_c.py`, `curva_banda.py`,
-   `curva_orcamento.py`, `tatica_reconstruida.py` e `gate_sleeves.py` leem o
-   default do `carregar` e agora montam 4 views, mas os `.md` salvos foram
-   gerados com 2 — inclusive o **`Curva_c.md`, insumo direto da escolha de nível
-   + teto de 13/08**. Re-rodar como medição declarada depois que o conjunto de
-   views fechar; **não** re-rodar para escolher parâmetro melhor (protocolo
-   anti-overfit da seção 10).
+3. **🛑 Limitação declarada — nem toda varredura irmã foi re-gerada.** As
+   páginas de varredura leem o default do `carregar`, mas alguns `.md` salvos
+   são de configurações antigas (o pior é o `Curva_orcamento.md`, que ainda
+   anuncia a camada desligada pela 12c). **A carteira entregue é a do
+   `Backtest_v1.md` e só ela** — número de página de varredura não descreve a
+   entrega.
 
 ### 23f. A view C foi medida até o fim — e trava em decisão ANTERIOR a ela 🟡
 
@@ -2178,17 +1882,6 @@ diferente de 1.
 da 23f (a C fica fora), **não há candidata restante** — o `Candidatos.md` fica
 sem nenhuma view em estado candidato pela primeira vez desde que foi criado.
 
-**O que isto destrava, e passa a ser o caminho crítico:**
-
-1. **A `RESPOSTA6` à Lia pode sair.** Estava segurada exatamente até aqui
-   (D20b). Antes de enviar, as chaves passam de duas para **quatro**
-   (`2.2_inflacao`, `2.3_fed`, `15b_incerteza`, `15g_B_propria`) e a mensagem
-   precisa dizer o que sai em dia **sem** view — a 15b só existe em 27 pregões.
-2. **As varreduras irmãs podem ser re-geradas** (23d item 3), agora sobre o
-   conjunto final. Vale para o `Curva_c.md`, que é insumo do nível + teto.
-3. **Nível do `c` + teto** seguem sendo escolha única do grupo (seção 10 / 10a),
-   agora sem nada de views na frente.
-
 ---
 
 ## 25 (branch `Felipe`). Resposta à `RESPOSTA7` da Lia — três fechamentos 🟢 (fechadas pelo dono, 2026-08-11)
@@ -2227,40 +1920,6 @@ causa vai declarada no relatório, creditada à medição da Lia.
   de parâmetro.
 
 **A régua da Lia não muda.** Nenhum pedido foi feito ao módulo dela.
-
-### 25b. O `Cristalizacao_entropia.md` está CORRETO — confirmado contra o registro 🟢
-
-**Registro, não decisão nova.** A Lia congelou a verificação dela (6l) porque foi
-avisada de que o artefato estava errado e que viria um corrigido. Conferido antes
-de responder: o arquivo tem **um commit só** (`b895277`), nunca foi alterado, a
-**D20c** registra a medição como válida e **não existe registro de erro em lugar
-nenhum**.
-
-**O que estava errado era o enquadramento, não o número:** o item 5 descrevia o
-consumidor da medição como a tática 1.3 (desligada), e isso deixou de valer quando
-a 15b entrou na carteira — foi exatamente esse parágrafo que a reescrita da
-`RESPOSTA6` (`070d3bd`) trocou. Erro de comunicação do dono, e custou à Lia uma
-verificação cancelada no meio.
-
-**Consequências:** (i) a 6l dela descongela; (ii) a **15b NÃO está apoiada num
-número que vá mudar**; (iii) a frase interpretativa do relatório dela ganha o
-recorte — a cristalização acontece e **reverte no último slot** (CPI 0,0640 →
-**0,1717**; payrolls 0,1363 → **0,3270**; FOMC 0,0376 → **0,0610**), então "longe
-se move mais, perto cristaliza" vale no trecho médio da aproximação, não até o
-evento. Ressalva de amostra mantida: **n = 7 / 12 / 13** em d = 0.
-
-### 25c. O nível é reescalável e o formato do `c` está fechado 🟢
-
-- **`c(nivel) = c_nivel1 ** nivel`** — o nível é **expoente** e sai por fora da
-  régua. O pedido de `{1, 3, 5}` da `RESPOSTA6` **morre**: uma série basta, e o
-  eixo do nível passa a ser **contínuo**, não três pontos. A frase original da
-  `RESPOSTA6` estava certa; a releitura que a "corrigiu" é que errou.
-- **Formato: matriz cheia com buracos** (`lia/c_por_decisao.csv`, 2.795 linhas, em
-  `origin/Lia`), escolha dela com argumento: montar o esparso exigiria ela
-  reproduzir a cascata de views vivas do módulo do Felipe. **O filtro é do
-  Felipe**, uma linha, com a verdade do loop.
-- **Um `c` por pregão no slot das 12:00 UTC**, coluna `selecionado` marcando a
-  linha do dia — o mesmo slot pré-abertura que as views consomem.
 
 ### 25d. Duas declarações de relatório que a resposta dela obriga
 
@@ -2331,20 +1990,12 @@ tinha caminho relativo fixo, então rodar contra a cópia do Paulo (`--raiz
 /outro`) faria a tabela do nível — o insumo de 13/08 — **sumir calada**. O
 default passou a seguir o `--raiz`; só `--regua ""` desliga, e desliga explícito.
 
-### 25e. Observação de dado devolvida à Lia (não é decisão)
+## 26 (branch `Felipe`). A generalização do G1 da D17 caiu — e a camada tática reprova por MOTIVO NOVO 🟢 (registro, 2026-08-11 — sessão 25)
 
-A duplicata que ela achou (`M1_cpi_monthly` é duplicata exata de
-`CPI_july-inflation-monthly`) **não atinge o caminho de produção**: o
-`prefixos_cpi` casa release → mercado pela coluna `fonte` do calendário e devolve
-dicionário indexado por data, sempre com prefixo `CPI_*`. O único lugar onde o
-duplicado aparece é o `scripts/sensibilidade_reuniao.py`, que lista
-`M1_cpi_monthly_` explicitamente — logo o `Sensibilidade_decisoes_1.1_1.2_6.1.md`
-(30/07) tem julho duas vezes. Artefato antigo, não alimenta decisão viva, **não
-re-gerado**.
-
----
-
-## 26 (branch `Felipe`). A generalização do G1 da D17 caiu — e a camada tática reprova por MOTIVO NOVO 🔴 (registro, 2026-08-11 — sessão 25)
+> ⚠️ **SUPERADA no mesmo dia, pela D27/D28 (sessão 27).** O caminho que esta
+> seção declara esgotado é o de **ler o repreçamento diário do poly**; o que
+> abriu a camada foi outro eixo (livro transversal neutro + incremento), medido
+> na D27 e admitido na D28.
 
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D26 do
 > `Felipe`".
@@ -2399,16 +2050,20 @@ de ser medida.
 `gate_sleeves.py` para poder ser reusado; o artefato `Gate_sleeves.md` foi
 re-gerado e conferido por hash — **idêntico**.
 
-**A pergunta que fica para a reunião, e ela não é técnica:** com o caminho de
-"ler o repreçamento do poly" esgotado no dado entregue, reabrir a camada exige
-escolher entre **(a)** destravar a decisão 5 e medir a 1.1, **(b)** medir o
-resíduo pós-gap da 3.2, ou **(c)** pedir dado novo ao Paulo (mercados com fluxo
-de notícia têm dispersão de sobra — Irã 4,0×, tarifas 3,5× — mas duram 3 a 59
-pregões, e cobertura e dispersão são quase disjuntas no que temos).
+**O que aconteceu com as três saídas listadas aqui:** a **(a)** foi feita — a
+decisão 5 fechou e a 1.1 fora do Fed foi medida com o `CPIAUCSL` e **reprovou**
+(D28.c); a **(b)** foi medida e a 3.2 morreu sem sinal (D27); a **(c)** foi
+recusada. A camada acabou entrando por um quarto caminho, o livro transversal
+neutro (D27/D28).
 
 ---
 
-## 27 (branch `Felipe`). Maratona de medição da camada tática — 4 candidatos testados, 2 células vivas 🔴 (registro, 2026-08-11 — sessão 26)
+## 27 (branch `Felipe`). Maratona de medição da camada tática — 4 candidatos testados, 2 células vivas 🟢 (registro, 2026-08-11 — sessão 26)
+
+> ✅ **Desfecho:** as duas células vivas (M4 recessão, M9 Câmara) foram
+> **ADMITIDAS na D28** e estão **LIGADAS na entrega** (D28.13). As ressalvas
+> abaixo — comparações múltiplas sem correção, M9 como célula única — seguem de
+> pé e vão declaradas no relatório.
 
 > ⚠️ Numeração paralela por branch — ver o aviso no topo. Cite como "D27 do
 > `Felipe`".
@@ -2486,19 +2141,18 @@ critério de admissão — responde *"o sinal existe e aponta certo?"*, nunca *"
 ganha dinheiro?"*. O G4 é o primeiro que exige módulo, e por protocolo vem
 depois das duas pendências acima.
 
-**Três portões continuam fechados e nenhum é técnico:** reabertura de escopo da
-camada (grupo) · **D24 🔴** (o portão de qualidade do poly vale para views e não
-para overlays) · **12c** — esta resolvida na prática, já que a âncora
-`inv(δΣ)·μ` da D16 tem zero parâmetro livre e segue sem uso. **Não voltar a
-introduzir `orcamento`.**
+**Os três portões que esta seção listava como fechados foram todos resolvidos na
+D28, na sessão seguinte:** a reabertura de escopo (item 1), o portão de qualidade
+do poly valendo também para overlay (item 2 — era a antiga D24) e a 12c, com o
+tamanho pela âncora `inv(δΣ)·μ` e **sem `orcamento`** (item 9).
 
 **Correção de registro feita nesta sessão:** o `Conclusoes.md` rotulava uma
 premissa morta como *"o poly está atrasado"*, o que se lê como o contrário do
 que a tese diz. O rótulo virou *"o poly ajusta em rampa"* — a medição (VR ≈ 1) é
 sobre o repreçamento ser gradual ou instantâneo, e ele é instantâneo.
 
-**Decisão do dono ao fim da sessão:** a avaliação das duas candidatas fica para
-a **próxima sessão**.
+**Decisão do dono na sessão seguinte:** as duas foram avaliadas e admitidas —
+ver a **D28**.
 
 ---
 
@@ -2676,11 +2330,11 @@ resultado, que é o que a régua 28.0 barra. O teto de referência continua send
 executável. O custo aparece na entrega: breakeven de **28,5 bps por lado** contra
 os 2 bps premissados (era 34,5 sem a camada), ainda **14× de folga**.
 
-**Artefatos que ficaram DESATUALIZADOS com esta decisão** e precisam ser
-re-gerados por quem retomar — a carteira de referência deles mudou:
-`Curva_c.md`, `Curva_banda.md`, `Curva_orcamento.md`, `Teste_sinal.md`,
-`View_C_backtest.md`, `Ortogonalidade.md`. O `Backtest_v1.md` já foi re-gerado
-nesta sessão.
+**Limitação declarada — artefatos de carteira anterior.** `Curva_c.md`,
+`Curva_banda.md`, `Curva_orcamento.md`, `Teste_sinal.md`, `View_C_backtest.md` e
+`Ortogonalidade.md` foram gerados antes desta decisão; parte foi re-gerada
+depois, parte não. **Não citar número deles como sendo a entrega** — a entrega é
+o `Backtest_v1.md`, que já saiu com a camada ligada.
 
 #### Errata da 28.13 — os números foram re-medidos com a régua (2026-08-14, sessão 30)
 
@@ -2751,15 +2405,114 @@ O que sobra é breakeven menor (28,5 → 22,9 bps), ainda 11× a premissa de 2 b
 As views/dia caindo de 2,24 para 1,99 são o **veto de liquidez** dela, que é
 canal separado do nível (D25f) e continua agindo mesmo em `--regua-nivel 0`.
 
-**Pendências que isto NÃO fecha:**
+**O que isto deixa declarado (não é pendência — é limitação):**
 
-- 🔴 **D12 (teto) segue aberta.** Pelo §9 do `RELATORIO_omega.md` a ordem é:
-  entra o `c` → mede-se a Σ|w| → decide-se o teto. O passo 1 e o 2 estão feitos;
-  o 3 é da reunião. **Se o teto se mover, a Lia reabre a 6q** e o nível se refaz.
-- 🟡 `Teste_sinal.md` e `Ortogonalidade.md` seguem desatualizados **pela 28.13**,
-  não pela régua: nenhum dos dois passa pelo `run_backtest`, então não têm onde
-  receber `regua=` — o que envelheceu neles foi a entrada da camada.
+- **O teto nunca foi cravado num número, e isso é escolha.** A ordem era: entra
+  o `c` → mede-se a Σ|w| → decide-se o teto. Os dois primeiros passos estão
+  feitos e medidos; o terceiro nunca foi fechado, então a **entrega reporta a
+  grade {1, 2, 3, 5}** e cita **1 no tilt** como referência (10a), em vez de
+  escolher a linha de melhor número.
+- `Teste_sinal.md` e `Ortogonalidade.md` são anteriores à entrada da camada
+  (28.13) — nenhum dos dois passa pelo `run_backtest`. Valem para o que medem
+  (sinal das views, ângulo entre P), não como descrição da carteira.
 
 ---
 
-**Próximo passo:** voltar para a Decisão 1.
+---
+
+## 30 (branch `Felipe`). O slide 6 da semi × o que o backtest realmente rodou 🔴 (registro, 2026-09-06 — sessões 38 e 39)
+
+**A única decisão aberta do arquivo, e ela é de NARRATIVA — não de modelagem.**
+O código está congelado; o que a reunião decide aqui é o que os slides contam.
+
+**Correção de fato, feita na sessão 39 (lida no código, não no registro).** A
+versão anterior desta seção afirmava que a camada tática não entrou no backtest
+e que os números do slide 9 eram medidos **sem** ela. **As duas afirmações estão
+erradas**, e o erro nasceu de citar a D12c/D16 (camada *antiga*) como se
+descrevessem o estado atual:
+
+| verificação | resultado |
+|---|---|
+| `scripts/backtest_v1.py::carregar` | `sleeves=True` por **default** — o `main` não desliga |
+| `Dump/dados/backtest_diario.csv` | `n_taticas = 1` em **327 dos 374 pregões**, em todos os 8 cenários |
+| cabeçalho do `Backtest_v1.md` | "camada tática v2 (sleeves da D28): **LIGADA** — os números desta tabela **já incluem** o overlay" |
+| slide 9 (+33,2% × +30,1%) | é a coluna `tilt ≤ 1` desse relatório, ou seja **+3,04 pp COM a camada** (a errata da 28.13 mede +5,98 pp sem ela) |
+
+**O que continua desligado**, e é a origem da confusão: a camada tática
+**antiga** — prêmio de anúncios 1.3, drift pós-FOMC, gap de fim de semana
+(`tatica=()`, D12c/D16). A que roda é a **v2**, admitida na D28: sleeves M4
+recessão e M9 Câmara, livro `+XLP −XLK` hedgeado.
+
+**O conflito que SOBRA para a reunião alinhar** (o slide 6 não é o problema —
+ele está certo; os outros dois é que não acompanharam):
+
+| onde | o que diz | está certo? |
+|---|---|---|
+| slide 6 (`Semis.txt`) | camada tática ativa, exemplo de abril/2025 | ✅ a camada está ativa |
+| slide 8 (`Semis.txt`) | "5 candidatos passaram pelo gate, **nenhum entrou**" | ❌ **duas entraram** (M4 e M9, D28) |
+| slide 9 / backtest | +33,2% × +30,1% "sem camada tática" | ✅ o número; ❌ o rótulo — é **com** camada |
+| roteiro das quartas | "em abril de 2025 a carteira caiu **mais fundo** que o índice" | ⚠️ é sobre a carteira inteira; o slide 6 fala do ganho **da sleeve** naquele dia — as duas podem ser verdade ao mesmo tempo, mas ditas assim se contradizem no palco |
+
+**Duas coisas a decidir, e nenhuma mexe em código:**
+
+1. **Alinhar 8 e 9 ao 6** — o slide 8 passa a dizer "5 candidatos medidos, **2
+   entraram**" e o 9 rotula o número como *com* camada tática. É a saída que bate
+   com o que está entregue.
+2. **Como contar abril/2025 sem se contradizer:** a sleeve ganhou no dia, e a
+   carteira caiu mais que o índice no episódio. Dizer as duas, nessa ordem, é
+   defensável; dizer só a primeira é o que a banca cruza com o roteiro das
+   quartas.
+
+**Ressalva a levar junto**, porque a banca pode perguntar: a camada é **positiva
+sozinha** (+42,6 pp no G4) e **custa −2,94 pp** quando somada no teto de
+referência, porque divide um orçamento fixo de risco com o tilt das views
+(D28.13 e sua errata). Isso está medido e declarado — não é surpresa a ser
+descoberta no palco.
+
+### 30.a. Mais duas linhas do slide 8 que não batem (achado na sessão 42, ao montá-lo)
+
+Nenhuma fecha nada — entram na mesma pauta da reunião, que é de narrativa:
+
+| onde | o que diz | está certo? |
+|---|---|---|
+| slide 8 (`Semis.txt`) | "39 mercados coletados, 9 usados" | ⚠️ o **9 usados** bate (D5, `poly_preprocessing.py`); os **39 coletados** não aparecem em artefato nenhum do repositório — `data/raw/clob_exploracao` tem 366 arquivos e o dataset do Fed tem 76 mercados de desfecho. Ou alguém tem a fonte, ou o número sai do palco. |
+| slide 8 (`Semis.txt`) | "8 configurações testadas, tilt ≤ 1 **escolhido pelo Sharpe**" | ❌ a grade ({1, 2, 3, 5} × dois escopos = 8) está certa, mas o nível **1** foi escolhido **pela regra e antes de ver o resultado** (10a). Dizer "pelo Sharpe" contradiz a régua que o próprio slide 8 defende — é o pior lugar do deck para essa frase. |
+
+**O que o `Semis/Slide_8.pptx` faz enquanto a reunião não decide:** conta o funil
+pelo que está **medido** — 13 candidatas → 1 entrou (o placar da p. 4 do
+relatório), grade de 8 configurações com o nível escolhido pela regra, e sem o
+"39". A tupla `GRUPOS` do `scripts/slide8_pesquisa_pptx.py` está marcada com
+`# TODO(DECISAO-30)`: se a reunião fechar outra contagem, muda ali e só ali.
+
+
+## 31 (branch `Felipe`). Formato da apresentação da semifinal: HTML, PPTX ou híbrido 🔴 (registro, 2026-09-06 — sessão 40)
+
+**Por que é decisão de time e não minha:** os slides 1, 2 e 7–10 não são meus, e
+Paulo e Lia sobem no palco com o mesmo deck. Trocar o formato de um pedaço muda o
+que todo mundo entrega.
+
+**O que já está resolvido:** o guia da semifinal (regra 2) libera o formato —
+*"pode ser feita no formato que preferirem (PowerPoint, PDF, HTML, etc.),
+compartilhando a tela"*. Não há restrição do Itaú. São 6 minutos com hard stop,
+por Teams.
+
+**O que motivou:** o `Semis.txt` pede, para os slides 3–6, um diagrama que
+atravessa as quatro páginas revelando nós. Em PPTX cada acendimento vira um slide
+duplicado — os 4 slides lógicos viram 12 a 15 físicos, com as posições
+sincronizadas à mão. O Morph por nome (`!!q`) do `slides_3a6_pptx.py` é a solução
+certa dentro do PPTX, mas para de escalar exatamente aí. Em HTML é uma classe por
+estado.
+
+**Estado atual (feito, não decidido):** os slides 3–6 foram refeitos em
+`Semis/slides_3a6/index.html` por instrução direta do dono. O resto segue em
+PPTX.
+
+| opção | a favor | contra |
+|---|---|---|
+| **A. Híbrido** (3–6 em HTML, resto PPTX) | é o estado de hoje; nenhum retrabalho | trocar de janela no meio de uma apresentação de 6 min com hard stop |
+| **B. Deck inteiro em HTML** | uma janela só; ganha o modo apresentador (notas + cronômetro por bloco), que ajuda no hard stop | refazer 6 slides que não são meus |
+| **C. Voltar 3–6 para PPTX** | uma janela só, sem retrabalho de terceiros | perde o reveal progressivo que o `Semis.txt` pede — é o motivo de ter saído do PPTX |
+
+**Ressalva de palco (vale para A e B):** no modo apresentador do guizang,
+compartilhar a **janela** do público, nunca a tela inteira — senão a banca vê as
+notas.

@@ -55,6 +55,14 @@ Pacote: `slide9.xml` + rels (reusa `image1.png`), `[Content_Types]`,
 `presentation.xml` (sldId 267 / rId16) e `app.xml`. Script `fechamento.py`
 no scratchpad.
 
+**Slide-título "Estratégia" (3º pedido, 2026-09-08):** entrou entre os slides 2 e
+3 (`slide10.xml`, sldId 268 / rId17), clone do fechamento sem robô e sem frases:
+cabeçalho "KAIROS · Estratégia", palavra em Bahnschrift SemiBold Condensed 120 pt
+dourada e risca. Numerado "03" provisoriamente — o dono disse que acerta a
+numeração dos demais. Script `titulo.py` no scratchpad. Duas correções internas:
+`cx` caiu no `a:ext` do extLst em vez do xfrm (palavra quebrou em duas linhas) e
+a risca cortava a base das letras.
+
 **Pendente:** nada abriu. Se o time quiser transição de entrada nos slides sem
 Morph (1–3, 7–8), é adição simples, mas não foi feita por não estar no pedido.
 

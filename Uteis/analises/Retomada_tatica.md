@@ -1,5 +1,11 @@
 # Inventário de cortes — por que cada view e cada tática caiu, e o que reabriria
 
+> 🛑 **INVENTÁRIO HISTÓRICO (banner de 2026-09-06).** O estado do cabeçalho — "2
+> views vivas, camada tática desligada" — é o de 08/08/2026. A entrega tem
+> **quatro views** (D23) e a **camada tática v2 LIGADA** (D28.13). A coluna "o que
+> reabriria" **não vale mais: o código está congelado para a semifinal.** O que
+> este arquivo ainda serve é o motivo de cada corte, não a reabertura de nenhum.
+
 > **O que é:** um lugar só com o motivo de cada corte do projeto e, ao lado, **o
 > que teria de mudar** para o desenho voltar. Escrito para a sessão seguinte
 > começar por aqui em vez de redescobrir.

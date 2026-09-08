@@ -1,5 +1,11 @@
 # Curva orçamento → excesso — sensibilidade da camada tática
 
+> 🛑 **ARTEFATO SUPERADO (banner de 2026-09-06).** Esta página mede a camada tática
+> **ANTIGA** (orçamentos de drift, 12c), que de fato segue desligada — mas a frase
+> "a camada tática não entra no v1" **não descreve a entrega**: a camada **v2**
+> (sleeves M4 recessão e M9 Câmara) foi admitida na **D28** e está **LIGADA**
+> (D28.13). A carteira entregue é a do `Dump/analises/Backtest_v1.md`.
+
 > Gerado por `scripts/curva_orcamento.py`. A camada tática **não entra no v1** (decisão 12c): esta tabela é sensibilidade para o relatório, **não** proposta de orçamento. Escolher a linha de maior excesso é exatamente o overfit que o protocolo anti-overfit da seção 10 proíbe.
 
 - janela: **2025-02-10 a 2026-08-06** (374 pregões)
