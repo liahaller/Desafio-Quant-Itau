@@ -15,6 +15,11 @@ no PowerPoint com "manter formatação de origem".
        caminho REAL que um prompt percorreu, medido no transcript da sessão por
        `trace_sessao.py`. Uma sequência de slides Morph com avanço automático:
        um clique dispara o caminho inteiro.
+  13 · IA em números: os quatro indicadores, o esforço por tipo de sessão e os
+       145 erros × quem os pegou (os mesmos dados da página 5 do relatório,
+       `graficos_p5.py`, redesenhados em formas), uma penca de usos práticos, e
+       a metade da pesquisa — o método em quatro passos, uma hipótese que caiu
+       (`Premissa_tendencia.md`) e a peneira 31 → 7 do slide 8 da semi.
 
 Como o Morph casa as formas: nome com prefixo `!!` = mesmo objeto entre slides
 (anda, muda de cor, muda de tamanho); todo o resto ganha nome único do slide
@@ -29,6 +34,7 @@ Uso:
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -48,6 +54,8 @@ import matplotlib.dates as mdates          # noqa: E402
 import matplotlib.pyplot as plt            # noqa: E402
 
 import grafo_repo                          # noqa: E402
+import graficos_p5                         # noqa: E402
+from slide8_pesquisa_pptx import GRUPOS    # noqa: E402
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "Final" / "Slides_novos.pptx"
@@ -66,6 +74,7 @@ MUTED = RGBColor(0x83, 0x95, 0xB5)
 FOOT = RGBColor(0x58, 0x69, 0x8A)
 RULE = RGBColor(0x2A, 0x3F, 0x63)
 GHOST = RGBColor(0x10, 0x1A, 0x2E)
+RED = RGBColor(0xC2, 0x54, 0x4D)
 CARD_A, CARD_B = "182946", "0F182B"       # degradê do card
 BORDA_A, BORDA_B = "35507A", "22345A"     # degradê da borda
 
@@ -692,6 +701,182 @@ def s12_second_brain(prs, numero="12"):
     return slides
 
 
+
+# ================================================================== slide 13
+COR_TIPO = {"pesquisa": ORANGE, "analise": BLUE, "codigo": MINT}
+COR_BARROU = {"execucao_teste": MINT, "autocorrecao": BLUE,
+              "confererencia_humana": ORANGE, "so_depois": RED}
+ESCURO = RGBColor(0x0A, 0x13, 0x25)
+USOS = [
+    ("surpresa_fomc.py", "β por event-study, 36 reuniões"),
+    ("9 × gate_*.py", "um teste por candidata tática"),
+    ("curva_c.py", "varredura da régua do Ω"),
+    ("backtest_v1.py", "8 tetos × 374 pregões"),
+    ("download_polymarket_fed.py", "Gamma + CLOB API"),
+    ("graficos_p5.py", "3 LOGs → estes números"),
+    ("grafo_repo.py", "o second brain, medido"),
+    ("slides_*_pptx.py", "este deck, Morph incluso"),
+]
+SUB_CURTO = {"Decisões registradas": "escaladas ao humano",
+             "Taxa de recorreção": "pediram 2ª rodada"}
+
+
+def dados_ia():
+    """Os números da página 5, lidos dos CSV que `graficos_p5.py` gravou."""
+    quadro = pd.read_csv(DADOS / "log_sessoes.csv", parse_dates=["data"])
+    _, erros = graficos_p5.carregar_classificacao(
+        sorted(DADOS.glob("classificacao_*.csv")))
+    kpis = graficos_p5.indicadores(quadro)
+    por_sessao = quadro.groupby("tipo").size()
+    por_token = quadro.groupby("tipo")["tokens"].sum()
+    barrou = erros.groupby("barrou").size()
+    tipo_erro = erros.groupby("tipo_erro").size().sort_values(ascending=False)
+    vr = re.search(r"- VR: (.*)", (RAIZ / "Uteis" / "analises" / "Premissa_tendencia.md")
+                   .read_text(encoding="utf-8")).group(1)
+    vr = [(k.strip(), float(v)) for k, v in (par.split(":") for par in vr.split(","))]
+    n_testes = len(list((RAIZ / "tests").glob("test_*.py")))
+    n_analises = len(list((RAIZ / "Uteis" / "analises").glob("*.md")))
+    return kpis, por_sessao, por_token, barrou, tipo_erro, vr, n_testes, n_analises
+
+
+def barra_empilhada(slide, x, y, w, h, partes, minimo=0.32):
+    """Barra horizontal dividida; a fatia mostra o rótulo se couber."""
+    total = sum(v for v, _, _ in partes)
+    cx = x
+    for valor, cor, rotulo in partes:
+        lw = w * valor / total
+        r = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(cx), Inches(y),
+                                   Inches(lw), Inches(h))
+        r.fill.solid()
+        r.fill.fore_color.rgb = cor
+        r.line.color.rgb = ESCURO
+        r.line.width = Pt(0.75)
+        efeito(r, "")
+        r.text_frame.text = ""
+        if lw >= minimo:
+            texto(slide, cx, y, lw, h, [(rotulo, MONO, 8.5, ESCURO, True)],
+                  alinha=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        cx += lw
+
+
+def legenda(slide, x, y, itens, passo=None):
+    cx = x
+    for cor, rotulo in itens:
+        ponto(slide, cx + 0.06, y + 0.1, 0.11, cor)
+        texto(slide, cx + 0.19, y, 2.4, 0.2, [(rotulo, LIGHT, 8.5, MUTED)],
+              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        cx += passo or (0.19 + 0.062 * len(rotulo) + 0.18)
+
+
+def s13_ia_numeros(prs, numero="13"):
+    kpis, por_sessao, por_token, barrou, tipo_erro, vr, n_testes, n_analises = dados_ia()
+    s = moldura(prs, numero, "IA em números",
+                "Medimos o uso de IA como medimos a estratégia: pelo registro.")
+    CL, CW = L, 5.75                      # coluna da esquerda
+    CR = 6.92                             # coluna da direita
+    RW = R - CR
+
+    # --- os quatro indicadores
+    gw = (CW - 3 * 0.1) / 4
+    for i, (rot, (valor, sub)) in enumerate(kpis.items()):
+        x = CL + i * (gw + 0.1)
+        card(s, x, 1.70, gw, 0.98)
+        texto(s, x + 0.16, 1.76, gw - 0.3, 0.5, [(valor, COND, 26, ORANGE)])
+        texto(s, x + 0.16, 2.24, gw - 0.3, 0.2, [(rot.upper(), MONO, 6.5, TEXT, True, 40)],
+              wrap=False)
+        texto(s, x + 0.16, 2.42, gw - 0.3, 0.2, [(SUB_CURTO.get(rot, sub), LIGHT, 7.5, MUTED)],
+              wrap=False)
+
+    # --- onde foi o esforço: por sessão e por token
+    kicker(s, CL, 2.88, CW, "ONDE FOI O ESFORÇO")
+    ordem = [t for t in COR_TIPO if t in por_sessao.index]
+    for j, (rot, serie) in enumerate((("por sessão", por_sessao), ("por token", por_token))):
+        y = 3.15 + j * 0.36
+        texto(s, CL, y, 0.9, 0.24, [(rot, LIGHT, 8.5, MUTED)], anchor=MSO_ANCHOR.MIDDLE)
+        partes = [(float(serie[t]), COR_TIPO[t], f"{serie[t] / serie.sum():.0%}")
+                  for t in ordem]
+        barra_empilhada(s, CL + 0.95, y, CW - 0.95, 0.24, partes)
+    legenda(s, CL + 0.95, 3.9, [(COR_TIPO[t], graficos_p5.ROTULO_TIPO[t]) for t in ordem])
+
+    # --- os erros da IA e quem os pegou
+    total = int(barrou.sum())
+    kicker(s, CL, 4.28, CW, f"{total} ERROS DA IA  ·  QUEM PEGOU")
+    ordem_b = [b for b in graficos_p5.ORDEM_BARROU if b in barrou.index]
+    barra_empilhada(s, CL, 4.55, CW, 0.26,
+                    [(float(barrou[b]), COR_BARROU[b], str(int(barrou[b]))) for b in ordem_b])
+    rotulo_curto = {**graficos_p5.ROTULO_BARROU, "so_depois": "só pego depois"}
+    legenda(s, CL, 4.88, [(COR_BARROU[b], rotulo_curto[b]) for b in ordem_b])
+    tf = caixa(s, CL, 5.13, CW, 0.4).text_frame
+    dentro = 1 - float(barrou.get("so_depois", 0)) / total
+    paragrafo(tf, [(f"{dentro:.0%} pegos na própria sessão. ", SEMI, 9.5, TEXT),
+                   ("  ·  ".join(f"{int(n)} {graficos_p5.ROTULO_ERRO[t].replace(chr(10), ' ')}"
+                                 for t, n in tipo_erro.items()), LIGHT, 8.5, MUTED)],
+              primeiro=True, entre=1.15)
+
+    # --- a penca de usos práticos
+    kicker(s, CL, 5.62, CW, f"USOS PRÁTICOS  ·  {n_testes} TESTES  ·  {n_analises} ANÁLISES EM .MD")
+    for i, (arq, desc) in enumerate(USOS):
+        x = CL + (i // 4) * (CW / 2 + 0.05)
+        y = 5.9 + (i % 4) * 0.27
+        tf = caixa(s, x, y, CW / 2 - 0.1, 0.25, MSO_ANCHOR.MIDDLE, wrap=False).text_frame
+        paragrafo(tf, [(arq, MONO, 8, BLUE, True), ("  " + desc, LIGHT, 8.5, BODY)],
+                  primeiro=True)
+
+    # --- a metade da pesquisa: o método
+    kicker(s, CR, 1.70, RW, "PESQUISA  ·  O MÉTODO, TODA VEZ")
+    tf = caixa(s, CR, 1.97, RW, 2.1).text_frame
+    for i, (lead, resto) in enumerate([
+            ("1 · Hipótese escrita antes.", "Entra em Decisoes_pendentes.md com o teste "
+             "que a derruba e a régua de corte — antes de olhar o dado."),
+            ("2 · Um script por hipótese.", "gate_*.py e premissa_*.py medem no dado; a "
+             "saída é um .md com os números e o carimbo \u201cmede; não decide\u201d."),
+            ("3 · Régua declarada, não ajustada.", "|t| ≥ 2, sinal coerente com a "
+             "literatura, janela expansiva sem lookahead. Passa no dado, não no retorno."),
+            ("4 · Humano fecha; o que caiu fica.", "A IA nunca fecha decisão. Cada "
+             "reprovação continua no repositório, com número — e a banca pode conferir.")]):
+        paragrafo(tf, [(lead + " ", SEMI, 10.5, TEXT), (resto, LIGHT, 10.5, BODY)],
+                  primeiro=i == 0, entre=1.1, depois=5)
+
+    # --- uma hipótese que caiu, com o número que a derrubou
+    card(s, CR, 4.22, RW, 1.5)
+    kicker(s, CR + 0.24, 4.38, RW - 0.4, "UMA QUE CAIU  ·  MOMENTUM DO SINAL")
+    tf = caixa(s, CR + 0.24, 4.64, RW - 0.48, 0.5).text_frame
+    paragrafo(tf, [("Tese: ", SEMI, 9.5, TEXT),
+                   ("se a probabilidade subiu hoje, continua subindo amanhã — daria uma "
+                    "sleeve de tendência. Teste: variance ratio dos incrementos, VR = 1 é "
+                    "passeio aleatório.", LIGHT, 9.5, BODY)], primeiro=True, entre=1.1)
+    cw = (RW - 0.48) / len(vr)
+    for i, (k, v) in enumerate(vr):
+        x = CR + 0.24 + i * cw
+        texto(s, x, 5.08, cw, 0.2, [(k, MONO, 7.5, MUTED)], alinha=PP_ALIGN.CENTER)
+        texto(s, x, 5.24, cw, 0.28, [(f"{v:.2f}".replace(".", ","), COND, 15,
+                                       ORANGE if abs(v - 1) < 0.2 else RED)],
+              alinha=PP_ALIGN.CENTER)
+    texto(s, CR + 0.24, 5.5, RW - 0.48, 0.2,
+          [("colado em 1 e nenhum |t| ≥ 2 nos seis horizontes: a sleeve não entrou "
+            "(Premissa_tendencia.md).", LIGHT, 8.5, MUTED)], wrap=False)
+
+    # --- a peneira, em números
+    medidas, passaram = sum(g[1] for g in GRUPOS), sum(g[2] for g in GRUPOS)
+    kicker(s, CR, 5.92, RW, f"A PENEIRA  ·  {medidas} HIPÓTESES MEDIDAS, {passaram} ENTRARAM")
+    for i, (rot, total, k) in enumerate(GRUPOS):
+        y = 6.2 + i * 0.22
+        texto(s, CR, y - 0.02, 1.75, 0.2, [(rot, LIGHT, 8.5, BODY)], anchor=MSO_ANCHOR.MIDDLE)
+        inicio = (total - k) // 2
+        for j in range(total):
+            aceso = inicio <= j < inicio + k
+            ponto(s, CR + 1.85 + j * 0.2, y + 0.08, 0.12 if aceso else 0.09,
+                  ORANGE if aceso else RULE, luz=(50000, 40000) if aceso else None)
+        texto(s, CR + 1.85 + 13 * 0.2 + 0.1, y - 0.02, 1.5, 0.2,
+              [(f"{k} de {total}", MONO, 8, ORANGE if k else MUTED)], anchor=MSO_ANCHOR.MIDDLE)
+
+    s.notes_slide.notes_text_frame.text = (
+        "Números da página 5 do relatório (corte de 15/08, 91 sessões dos três LOGs) — "
+        "Uteis/analises/Metricas_p5.md. VR de Uteis/analises/Premissa_tendencia.md. "
+        "Peneira: GRUPOS do slide 8 da semi.")
+    sela(s, "s13")
+    return s
+
 # ------------------------------------------------------------------- render
 def render(pptx: Path, pasta: Path):
     """Exporta cada slide em PNG pelo próprio PowerPoint (COM) — conferência."""
@@ -713,6 +898,7 @@ def monta(saida: Path = SAIDA) -> Path:
     s3_polymarket(prs)
     s4_comparacao(prs)
     s12_second_brain(prs)
+    s13_ia_numeros(prs)
     saida.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(saida))
     return saida
