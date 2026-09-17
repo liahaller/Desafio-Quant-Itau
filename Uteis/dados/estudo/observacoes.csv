@@ -1,0 +1,1417 @@
+familia,evento,mercado,bucket,K,h,p,y,valor,volume
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,0,0.002,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,0,0.0045,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,0,0.991,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,0,0.007,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,1,0.004,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,1,0.0055,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,1,0.988,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,1,0.008,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,2,0.0075,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,2,0.0055,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,2,0.9845,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,2,0.008,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,3,0.0075,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,3,0.0045,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,3,0.9865,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,3,0.0095,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,5,0.008,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,5,0.009,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,5,0.979,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,5,0.0125,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,10,0.0095,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,10,0.0115,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,10,0.9775,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,10,0.01,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,15,0.0135,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,15,0.017,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,15,0.9645,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,15,0.0135,0.0,37.5,286083.44
+FOMC,2024-05-01,Fed decreases interest rates by 50+ bps after May 2024 meeting?,0,4,20,0.0125,0.0,-62.5,214654.56
+FOMC,2024-05-01,Fed decreases interest rates by 25 bps after 2024 May meeting?,1,4,20,0.0175,0.0,-25.0,234731.02
+FOMC,2024-05-01,No change in Fed interest rates after 2024 May meeting?,2,4,20,0.9675,1.0,0.0,165142.11
+FOMC,2024-05-01,Fed raises interest rates by 25+ bps after 2024 May meeting?,3,4,20,0.0035,0.0,37.5,286083.44
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,0,0.0005,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,0,0.0025,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,0,0.9975,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,0,0.002,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,0,0.0005,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,1,0.0005,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,1,0.0045,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,1,0.9945,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,1,0.0015,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,1,0.0005,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,2,0.0015,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,2,0.0035,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,2,0.9955,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,2,0.0005,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,2,0.0005,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,3,0.0015,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,3,0.0025,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,3,0.9955,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,3,0.0015,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,3,0.0005,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,5,0.0015,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,5,0.0025,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,5,0.9935,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,5,0.0035,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,5,0.0005,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,10,0.0015,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,10,0.0045,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,10,0.9925,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,10,0.0035,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,10,0.0005,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,15,0.0045,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,15,0.0095,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,15,0.9825,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,15,0.0055,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,15,0.0015,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,20,0.0055,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,20,0.0125,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,20,0.9755,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,20,0.0065,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,20,0.0025,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,30,0.0045,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,30,0.0105,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,30,0.9785,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,30,0.0075,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,30,0.0025,0.0,62.5,21740489.034398694
+FOMC,2026-06-17,Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?,0,5,45,0.0045,0.0,-62.5,37866883.42341023
+FOMC,2026-06-17,Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?,1,5,45,0.0365,0.0,-25.0,30934915.761426214
+FOMC,2026-06-17,Will there be no change in Fed interest rates after the June 2026 meeting?,2,5,45,0.955,1.0,0.0,43061416.20801809
+FOMC,2026-06-17,Will the Fed increase interest rates by 25 bps after the June 2026 meeting?,3,5,45,0.0115,0.0,25.0,31037182.120555956
+FOMC,2026-06-17,Will the Fed increase interest rates by 50+ bps after the June 2026 meeting?,4,5,45,0.0035,0.0,62.5,21740489.034398694
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,0,0.0025,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,0,0.0355,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,0,0.967,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,0,0.011,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,1,0.0015,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,1,0.031,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,1,0.968,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,1,0.003,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,2,0.0025,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,2,0.03,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,2,0.9675,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,2,0.0015,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,3,0.0035,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,3,0.037,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,3,0.9605,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,3,0.0015,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,5,0.005,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,5,0.05,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,5,0.944,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,5,0.002,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,10,0.009,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,10,0.0225,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,10,0.97,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,10,0.007,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,15,0.0065,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,15,0.017,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,15,0.9735,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,15,0.0065,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,20,0.006,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,20,0.018,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,20,0.9695,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,20,0.008,0.0,37.5,582731.69
+FOMC,2024-06-12,Fed decreases interest rates by 50+ bps after June 2024 meeting?,0,4,30,0.005,0.0,-62.5,571695.35
+FOMC,2024-06-12,Fed decreases interest rates by 25 bps after June 2024 meeting?,1,4,30,0.0465,0.0,-25.0,602846.11
+FOMC,2024-06-12,No change in Fed interest rates after 2024 June meeting?,2,4,30,0.947,1.0,0.0,530059.99
+FOMC,2024-06-12,Fed increases interest rates by 25+ bps after June 2024 meeting?,3,4,30,0.0085,0.0,37.5,582731.69
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,0,0.004,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,0,0.0395,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,0,0.96,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,0,0.003,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,1,0.004,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,1,0.0465,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,1,0.956,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,1,0.0025,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,2,0.0075,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,2,0.045,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,2,0.954,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,2,0.002,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,3,0.0055,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,3,0.0525,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,3,0.946,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,3,0.0015,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,5,0.0145,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,5,0.067,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,5,0.925,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,5,0.0005,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,10,0.0045,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,10,0.0525,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,10,0.95,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,10,0.003,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,15,0.008,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,15,0.0875,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,15,0.9005,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,15,0.005,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,20,0.006,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,20,0.063,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,20,0.9285,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,20,0.006,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,30,0.004,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,30,0.068,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,30,0.908,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,30,0.028,0.0,37.5,752276.2
+FOMC,2024-07-31,Fed decreases interest rates by 50+ bps after July 2024 meeting?,0,4,45,0.0105,0.0,-62.5,637520.07
+FOMC,2024-07-31,Fed decreases interest rates by 25 bps after July 2024 meeting?,1,4,45,0.0745,0.0,-25.0,884827.58
+FOMC,2024-07-31,No change in Fed interest rates after 2024 July meeting?,2,4,45,0.917,1.0,0.0,517320.23
+FOMC,2024-07-31,Fed increases interest rates by 25+ bps after July 2024 meeting?,3,4,45,0.0035,0.0,37.5,752276.2
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,0,0.517,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,0,0.4675,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,0,0.0165,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,0,0.0005,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,1,0.54,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,1,0.455,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,1,0.0145,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,1,0.0005,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,2,0.525,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,2,0.455,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,2,0.0175,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,2,0.0005,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,3,0.34,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,3,0.65,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,3,0.0165,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,3,0.0005,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,5,0.275,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,5,0.715,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,5,0.019,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,5,0.0015,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,10,0.255,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,10,0.725,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,10,0.022,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,10,0.0015,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,15,0.2,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,15,0.775,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,15,0.0375,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,15,0.002,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,20,0.245,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,20,0.715,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,20,0.0425,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,20,0.0025,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,30,0.145,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,30,0.795,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,30,0.0655,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,30,0.0015,0.0,37.5,17625581.465252
+FOMC,2024-09-18,Fed decreases interest rates by 50+ bps after September 2024 meeting?,0,4,45,0.46,1.0,-62.5,10906333.42219
+FOMC,2024-09-18,Fed decreases interest rates by 25 bps after September 2024 meeting?,1,4,45,0.5,0.0,-25.0,6660914.249885
+FOMC,2024-09-18,No change in Fed interest rates after 2024 September meeting?,2,4,45,0.05,0.0,0.0,23499210.730061
+FOMC,2024-09-18,Fed increases interest rates by 25+ bps after September 2024 meeting?,3,4,45,0.002,0.0,37.5,17625581.465252
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,0,0.0015,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,0,0.0145,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,0,0.9735,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,0,0.0135,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,0,0.0005,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,1,0.0025,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,1,0.014,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,1,0.96,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,1,0.0265,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,1,0.004,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,2,0.0035,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,2,0.0335,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,2,0.935,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,2,0.0305,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,2,0.004,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,3,0.0025,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,3,0.0355,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,3,0.935,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,3,0.031,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,3,0.0025,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,5,0.0025,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,5,0.046,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,5,0.925,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,5,0.027,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,5,0.003,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,10,0.003,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,10,0.0525,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,10,0.825,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,10,0.1265,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,10,0.0025,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,15,0.004,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,15,0.051,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,15,0.825,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,15,0.1205,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,15,0.002,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,20,0.0045,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,20,0.0405,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,20,0.795,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,20,0.1265,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,20,0.0025,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,30,0.0045,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,30,0.095,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,30,0.755,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,30,0.147,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,30,0.0025,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,45,0.0245,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,45,0.42,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,45,0.485,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,45,0.055,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,45,0.0015,0.0,37.5,133955589.249666
+FOMC,2024-11-07,Fed decreases interest rates by 75+ bps after November 2024 meeting?,0,5,60,0.0565,0.0,-87.5,15031954.754479
+FOMC,2024-11-07,Fed decreases interest rates by 50 bps after November 2024 meeting?,1,5,60,0.435,0.0,-50.0,8393267.791414
+FOMC,2024-11-07,Fed decreases interest rates by 25 bps after November 2024 meeting?,2,5,60,0.435,1.0,-25.0,5010507.074128
+FOMC,2024-11-07,No change in Fed interest rates after 2024 November meeting?,3,5,60,0.065,0.0,0.0,7995206.758932
+FOMC,2024-11-07,Fed increases interest rates by 25+ bps after November 2024 meeting?,4,5,60,0.005,0.0,37.5,133955589.249666
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,0,0.0005,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,0,0.0015,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,0,0.9505,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,0,0.047,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,0,0.0005,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,1,0.0005,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,1,0.0035,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,1,0.971,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,1,0.0265,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,1,0.0005,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,2,0.0015,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,2,0.0045,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,2,0.956,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,2,0.039,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,2,0.0005,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,3,0.002,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,3,0.0055,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,3,0.9655,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,3,0.0275,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,3,0.0005,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,5,0.0015,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,5,0.006,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,5,0.9445,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,5,0.048,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,5,0.0005,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,10,0.0025,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,10,0.0125,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,10,0.86,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,10,0.125,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,10,0.0035,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,15,0.004,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,15,0.013,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,15,0.715,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,15,0.245,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,15,0.0035,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,20,0.0035,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,20,0.015,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,20,0.675,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,20,0.305,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,20,0.004,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,30,0.0065,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,30,0.0185,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,30,0.65,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,30,0.315,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,30,0.0055,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,45,0.022,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,45,0.085,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,45,0.685,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,45,0.175,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,45,0.0045,0.0,37.5,10228496.464075
+FOMC,2024-12-18,Fed decreases interest rates by 75+ bps after December 2024 meeting?,0,5,60,0.02,0.0,-87.5,13304399.0156328
+FOMC,2024-12-18,Fed decreases interest rates by 50 bps after December 2024 meeting?,1,5,60,0.095,0.0,-50.0,9192309.53167407
+FOMC,2024-12-18,Fed decreases interest rates by 25 bps after December 2024 meeting?,2,5,60,0.7,1.0,-25.0,7490697.06615098
+FOMC,2024-12-18,No change in Fed interest rates after December 2024 meeting?,3,5,60,0.19,0.0,0.0,7400313.75189
+FOMC,2024-12-18,Fed increases interest rates by 25+ bps after December 2024 meeting?,4,5,60,0.006,0.0,37.5,10228496.464075
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,0,0.0005,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,0,0.0015,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,0,0.023,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,0,0.9755,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,0,0.0015,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,1,0.0005,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,1,0.0015,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,1,0.0185,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,1,0.9795,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,1,0.0015,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,2,0.0005,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,2,0.0015,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,2,0.033,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,2,0.966,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,2,0.0015,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,3,0.0015,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,3,0.0015,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,3,0.015,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,3,0.982,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,3,0.0015,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,5,0.0005,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,5,0.0015,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,5,0.0105,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,5,0.9885,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,5,0.0015,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,10,0.0015,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,10,0.002,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,10,0.03,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,10,0.9515,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,10,0.0035,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,15,0.0015,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,15,0.0015,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,15,0.032,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,15,0.9645,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,15,0.0035,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,20,0.0045,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,20,0.0055,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,20,0.055,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,20,0.935,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,20,0.0045,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,30,0.0045,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,30,0.0105,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,30,0.085,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,30,0.905,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,30,0.0055,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,45,0.009,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,45,0.0265,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,45,0.235,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,45,0.72,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,45,0.008,0.0,37.5,56978076.059909
+FOMC,2025-01-29,Fed decreases interest rates by 75+ bps after January 2025 meeting?,0,5,60,0.014,0.0,-87.5,48840781.093981
+FOMC,2025-01-29,Fed decreases interest rates by 50 bps after January 2025 meeting?,1,5,60,0.051,0.0,-50.0,42815445.766141
+FOMC,2025-01-29,Fed decreases interest rates by 25 bps after January 2025 meeting?,2,5,60,0.285,0.0,-25.0,21247359.999879
+FOMC,2025-01-29,No change in Fed interest rates after January 2025 meeting?,3,5,60,0.645,1.0,0.0,21033386.279391
+FOMC,2025-01-29,Fed increases interest rates by 25+ bps after January 2025 meeting?,4,5,60,0.0105,0.0,37.5,56978076.059909
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,0,0.0015,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,0,0.0085,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,0,0.9915,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,0,0.0005,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,1,0.0015,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,1,0.0085,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,1,0.9905,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,1,0.0005,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,2,0.0015,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,2,0.012,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,2,0.9885,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,2,0.0005,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,3,0.0015,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,3,0.0125,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,3,0.9865,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,3,0.0015,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,5,0.0015,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,5,0.013,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,5,0.9855,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,5,0.0015,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,10,0.005,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,10,0.0205,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,10,0.9725,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,10,0.0035,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,15,0.0115,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,15,0.057,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,15,0.924,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,15,0.0035,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,20,0.0065,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,20,0.031,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,20,0.9585,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,20,0.0055,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,30,0.0055,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,30,0.0255,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,30,0.9655,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,30,0.005,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,45,0.0105,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,45,0.125,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,45,0.865,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,45,0.009,0.0,37.5,21544318.532625
+FOMC,2025-03-19,Fed decreases interest rates by 50+ bps after March 2025 meeting?,0,4,60,0.023,0.0,-62.5,22150914.603213
+FOMC,2025-03-19,Fed decreases interest rates by 25 bps after March 2025 meeting?,1,4,60,0.225,0.0,-25.0,17180913.164155
+FOMC,2025-03-19,No change in Fed interest rates after March 2025 meeting?,2,4,60,0.725,1.0,0.0,17161804.938166
+FOMC,2025-03-19,Fed increases interest rates by 25+ bps after March 2025 meeting?,3,4,60,0.0105,0.0,37.5,21544318.532625
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,0,0.0015,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,0,0.0155,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,0,0.9825,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,0,0.0005,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,1,0.0015,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,1,0.0195,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,1,0.9785,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,1,0.001,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,2,0.0025,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,2,0.023,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,2,0.975,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,2,0.0005,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,3,0.0015,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,3,0.023,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,3,0.9765,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,3,0.0005,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,5,0.0045,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,5,0.044,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,5,0.955,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,5,0.0015,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,10,0.012,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,10,0.095,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,10,0.895,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,10,0.0055,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,15,0.0135,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,15,0.075,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,15,0.915,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,15,0.0055,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,20,0.0195,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,20,0.095,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,20,0.875,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,20,0.0055,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,30,0.0405,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,30,0.31,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,30,0.615,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,30,0.0035,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,45,0.0125,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,45,0.155,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,45,0.82,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,45,0.0055,0.0,37.5,24000661.535559
+FOMC,2025-05-07,Fed decreases interest rates by 50+ bps after May 2025 meeting?,0,4,60,0.029,0.0,-62.5,22089574.500042
+FOMC,2025-05-07,Fed decreases interest rates by 25 bps after May 2025 meeting?,1,4,60,0.35,0.0,-25.0,21653201.774564
+FOMC,2025-05-07,No change in Fed interest rates after May 2025 meeting?,2,4,60,0.59,1.0,0.0,20629387.641397
+FOMC,2025-05-07,Fed increases interest rates by 25+ bps after May 2025 meeting?,3,4,60,0.011,0.0,37.5,24000661.535559
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,0,0.0025,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,0,0.012,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,0,0.9855,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,0,0.0005,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,1,0.0025,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,1,0.0145,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,1,0.9835,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,1,0.0005,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,2,0.0035,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,2,0.0205,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,2,0.976,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,2,0.0015,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,3,0.0045,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,3,0.0215,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,3,0.9745,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,3,0.0005,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,5,0.0055,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,5,0.026,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,5,0.9675,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,5,0.0015,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,10,0.0035,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,10,0.017,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,10,0.9795,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,10,0.0015,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,15,0.0045,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,15,0.034,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,15,0.956,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,15,0.0025,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,20,0.0065,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,20,0.0355,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,20,0.955,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,20,0.0035,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,30,0.0125,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,30,0.095,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,30,0.895,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,30,0.0035,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,45,0.024,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,45,0.27,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,45,0.705,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,45,0.011,0.0,37.5,26912558.981079
+FOMC,2025-06-18,Fed decreases interest rates by 50+ bps after June 2025 meeting?,0,4,60,0.0885,0.0,-62.5,29564378.908894
+FOMC,2025-06-18,Fed decreases interest rates by 25 bps after June 2025 meeting?,1,4,60,0.42,0.0,-25.0,22347675.300958
+FOMC,2025-06-18,No change in Fed interest rates after June 2025 meeting?,2,4,60,0.48,1.0,0.0,28071372.791282
+FOMC,2025-06-18,Fed increases interest rates by 25+ bps after June 2025 meeting?,3,4,60,0.0095,0.0,37.5,26912558.981079
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,0,0.0035,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,0,0.026,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,0,0.9705,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,0,0.0005,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,1,0.0025,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,1,0.0245,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,1,0.9735,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,1,0.0005,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,2,0.0075,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,2,0.036,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,2,0.9535,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,2,0.0005,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,3,0.013,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,3,0.034,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,3,0.9515,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,3,0.0005,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,5,0.0075,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,5,0.0265,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,5,0.9665,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,5,0.0005,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,10,0.0085,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,10,0.0315,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,10,0.9595,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,10,0.0015,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,15,0.013,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,15,0.043,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,15,0.945,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,15,0.0035,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,20,0.01,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,20,0.0455,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,20,0.935,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,20,0.0035,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,30,0.0165,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,30,0.165,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,30,0.815,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,30,0.0065,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,45,0.0155,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,45,0.175,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,45,0.805,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,45,0.0065,0.0,37.5,43479262.352112
+FOMC,2025-07-30,Fed decreases interest rates by 50+ bps after July 2025 meeting?,0,4,60,0.0235,0.0,-62.5,40912544.015545
+FOMC,2025-07-30,Fed decreases interest rates by 25 bps after July 2025 meeting?,1,4,60,0.18,0.0,-25.0,23551704.395621
+FOMC,2025-07-30,No change in Fed interest rates after July 2025 meeting?,2,4,60,0.79,1.0,0.0,28670116.640169
+FOMC,2025-07-30,Fed increases interest rates by 25+ bps after July 2025 meeting?,3,4,60,0.0105,0.0,37.5,43479262.352112
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,0,0.0775,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,0,0.905,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,0,0.0205,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,0,0.0005,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,1,0.0695,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,1,0.905,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,1,0.0245,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,1,0.0015,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,2,0.081,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,2,0.895,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,2,0.0215,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,2,0.002,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,3,0.0665,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,3,0.905,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,3,0.0235,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,3,0.0015,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,5,0.115,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,5,0.865,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,5,0.0235,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,5,0.0015,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,10,0.0985,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,10,0.865,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,10,0.028,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,10,0.0025,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,15,0.0375,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,15,0.825,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,15,0.125,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,15,0.0035,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,20,0.054,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,20,0.775,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,20,0.16,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,20,0.0045,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,30,0.034,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,30,0.705,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,30,0.255,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,30,0.0055,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,45,0.083,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,45,0.705,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,45,0.215,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,45,0.0055,0.0,37.5,67002488.50419
+FOMC,2025-09-17,Fed decreases interest rates by 50+ bps after September 2025 meeting?,0,4,60,0.064,0.0,-62.5,49890284.071409
+FOMC,2025-09-17,Fed decreases interest rates by 25 bps after September 2025 meeting?,1,4,60,0.435,1.0,-25.0,36329925.673244
+FOMC,2025-09-17,No change in Fed interest rates after September 2025 meeting?,2,4,60,0.495,0.0,0.0,67368762.49652
+FOMC,2025-09-17,Fed increases interest rates by 25+ bps after September 2025 meeting?,3,4,60,0.0075,0.0,37.5,67002488.50419
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,1,0.0085,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,1,0.9805,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,1,0.0095,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,1,0.0005,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,2,0.0075,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,2,0.9825,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,2,0.0105,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,2,0.0005,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,3,0.0075,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,3,0.9825,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,3,0.0075,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,3,0.0005,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,5,0.0145,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,5,0.9575,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,5,0.0275,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,5,0.0015,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,10,0.0295,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,10,0.945,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,10,0.0275,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,10,0.0025,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,15,0.0285,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,15,0.915,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,15,0.055,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,15,0.0025,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,20,0.0225,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,20,0.895,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,20,0.075,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,20,0.0025,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,30,0.0355,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,30,0.805,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,30,0.155,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,30,0.0055,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,45,0.0845,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,45,0.68,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,45,0.235,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,45,0.0085,0.0,37.5,102216689.131463
+FOMC,2025-10-29,Fed decreases interest rates by 50+ bps after October 2025 meeting?,0,4,60,0.0645,0.0,-62.5,52589989.131546
+FOMC,2025-10-29,Fed decreases interest rates by 25 bps after October 2025 meeting?,1,4,60,0.46,1.0,-25.0,51626217.76071
+FOMC,2025-10-29,No change in Fed interest rates after October 2025 meeting?,2,4,60,0.45,0.0,0.0,46052653.992844
+FOMC,2025-10-29,Fed increases interest rates by 25+ bps after October 2025 meeting?,3,4,60,0.0095,0.0,37.5,102216689.131463
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,0,0.0045,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,0,0.969,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,0,0.0265,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,0,0.0005,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,1,0.0065,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,1,0.945,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,1,0.045,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,1,0.0005,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,2,0.0065,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,2,0.935,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,2,0.065,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,2,0.0005,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,3,0.0065,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,3,0.925,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,3,0.075,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,3,0.0015,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,5,0.0045,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,5,0.915,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,5,0.075,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,5,0.0015,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,10,0.0105,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,10,0.88,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,10,0.115,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,10,0.0035,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,15,0.0115,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,15,0.825,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,15,0.155,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,15,0.0035,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,20,0.0155,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,20,0.215,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,20,0.755,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,20,0.0055,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,30,0.0245,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,30,0.705,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,30,0.265,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,30,0.0055,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,45,0.055,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,45,0.84,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,45,0.095,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,45,0.0095,0.0,37.5,133173605.453166
+FOMC,2025-12-10,Fed decreases interest rates by 50+ bps after December 2025 meeting?,0,4,60,0.065,0.0,-62.5,161574382.129451
+FOMC,2025-12-10,Fed decreases interest rates by 25 bps after December 2025 meeting?,1,4,60,0.735,1.0,-25.0,54634506.683355
+FOMC,2025-12-10,No change in Fed interest rates after December 2025 meeting?,2,4,60,0.205,0.0,0.0,44523455.111481
+FOMC,2025-12-10,Fed increases interest rates by 25+ bps after December 2025 meeting?,3,4,60,0.0095,0.0,37.5,133173605.453166
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,0,0.0005,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,0,0.0035,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,0,0.9955,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,0,0.0015,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,1,0.0015,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,1,0.0055,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,1,0.9905,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,1,0.0015,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,2,0.0015,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,2,0.0075,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,2,0.991,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,2,0.0005,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,3,0.0005,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,3,0.0065,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,3,0.9905,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,3,0.0005,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,5,0.0015,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,5,0.0155,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,5,0.9835,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,5,0.0005,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,10,0.0035,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,10,0.038,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,10,0.9585,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,10,0.0015,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,15,0.0035,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,15,0.059,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,15,0.9375,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,15,0.0015,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,20,0.0065,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,20,0.075,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,20,0.925,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,20,0.0035,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,30,0.0115,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,30,0.125,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,30,0.865,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,30,0.0035,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,45,0.0145,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,45,0.205,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,45,0.765,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,45,0.0135,0.0,37.5,216455743.153891
+FOMC,2026-01-28,Fed decreases interest rates by 50+ bps after January 2026 meeting?,0,4,60,0.041,0.0,-62.5,235065166.637259
+FOMC,2026-01-28,Fed decreases interest rates by 25 bps after January 2026 meeting?,1,4,60,0.28,0.0,-25.0,101211542.667667
+FOMC,2026-01-28,No change in Fed interest rates after January 2026 meeting?,2,4,60,0.66,1.0,0.0,106767096.072298
+FOMC,2026-01-28,Fed increases interest rates by 25+ bps after January 2026 meeting?,3,4,60,0.0135,0.0,37.5,216455743.153891
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,0,0.0005,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,0,0.0035,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,0,0.9955,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,0,0.0005,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,1,0.0005,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,1,0.0035,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,1,0.9945,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,1,0.0005,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,2,0.0005,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,2,0.0025,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,2,0.9955,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,2,0.0005,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,3,0.0005,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,3,0.0025,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,3,0.9965,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,3,0.0005,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,5,0.0015,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,5,0.0035,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,5,0.9945,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,5,0.0015,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,10,0.0025,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,10,0.0115,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,10,0.9835,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,10,0.0025,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,15,0.0045,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,15,0.0145,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,15,0.9715,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,15,0.0045,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,20,0.0055,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,20,0.014,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,20,0.9725,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,20,0.0055,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,30,0.0065,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,30,0.065,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,30,0.925,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,30,0.0055,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,45,0.0175,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,45,0.075,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,45,0.885,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,45,0.0145,0.0,37.5,172972056.63332495
+FOMC,2026-03-18,Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?,0,4,60,0.0155,0.0,-62.5,0.0
+FOMC,2026-03-18,Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?,1,4,60,0.16,0.0,-25.0,87103283.7263213
+FOMC,2026-03-18,Will there be no change in Fed interest rates after the March 2026 meeting?,2,4,60,0.8,1.0,0.0,0.0
+FOMC,2026-03-18,Will the Fed increase interest rates by 25+ bps after the March 2026 meeting?,3,4,60,0.0155,0.0,37.5,172972056.63332495
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,0,0.0005,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,0,0.0015,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,0,0.9985,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,0,0.0005,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,1,0.0005,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,1,0.0005,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,1,0.9985,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,1,0.0005,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,2,0.0005,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,2,0.0005,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,2,0.9985,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,2,0.0005,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,3,0.0005,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,3,0.0015,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,3,0.9975,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,3,0.0015,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,5,0.0015,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,5,0.0025,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,5,0.9945,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,5,0.0025,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,10,0.0015,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,10,0.0025,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,10,0.9835,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,10,0.0025,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,20,0.0035,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,20,0.0065,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,20,0.9805,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,20,0.0085,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,30,0.0045,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,30,0.0105,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,30,0.9665,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,30,0.0175,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,45,0.0095,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,45,0.055,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,45,0.935,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,45,0.0155,0.0,37.5,75978206.16104123
+FOMC,2026-04-29,Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?,0,4,60,0.0175,0.0,-62.5,66025383.9220003
+FOMC,2026-04-29,Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?,1,4,60,0.105,0.0,-25.0,65311948.7161929
+FOMC,2026-04-29,Will there be no change in Fed interest rates after the April 2026 meeting?,2,4,60,0.835,1.0,0.0,76909226.49304736
+FOMC,2026-04-29,Will the Fed increase interest rates by 25+ bps after the April 2026 meeting?,3,4,60,0.0115,0.0,37.5,75978206.16104123
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,0,0.0055,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,0,0.155,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,0,0.56,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,0,0.26,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,0,0.0205,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,1,0.0145,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,1,0.19,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,1,0.49,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,1,0.26,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,1,0.0175,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,2,0.018,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,2,0.175,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,2,0.495,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,2,0.245,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,2,0.032,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,3,0.024,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,3,0.17,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,3,0.495,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,3,0.255,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,3,0.042,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,5,0.0385,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,5,0.145,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,5,0.485,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,5,0.28,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,5,0.085,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,10,0.05,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,10,0.15,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,10,0.46,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,10,0.26,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,10,0.105,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,15,0.034,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,15,0.145,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,15,0.435,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,15,0.26,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,15,0.105,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,20,0.045,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,20,0.185,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,20,0.415,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,20,0.235,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,20,0.155,0.0,0.55,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt1,0,5,30,0.165,0.0,0.05000000000000001,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt2,1,5,30,0.245,1.0,0.2,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt3,2,5,30,0.24,0.0,0.3,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt4,3,5,30,0.12,0.0,0.4,
+CPI,2025-03-12,will-monthly-inflation-increase-by-0pt5,4,5,30,0.16,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,0,0.485,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,0,0.19,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,0,0.062,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,0,0.0105,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,0,0.0065,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,1,0.56,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,1,0.275,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,1,0.06,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,1,0.0035,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,1,0.003,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,2,0.705,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,2,0.21,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,2,0.065,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,2,0.0095,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,2,0.005,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,3,0.785,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,3,0.115,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,3,0.055,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,3,0.013,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,3,0.0055,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,5,0.77,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,5,0.085,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,5,0.05,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,5,0.013,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,5,0.0045,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,10,0.675,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,10,0.215,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,10,0.085,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,10,0.023,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,10,0.0125,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,15,0.67,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,15,0.2,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,15,0.085,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,15,0.023,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,15,0.013,0.0,0.55,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt1,0,5,20,0.605,1.0,0.05000000000000001,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt2,1,5,20,0.23,0.0,0.2,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt3,2,5,20,0.12,0.0,0.3,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt4,3,5,20,0.039,0.0,0.4,
+CPI,2025-04-10,will-monthly-inflation-increase-by-0pt5,4,5,20,0.03,0.0,0.55,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,0,0.0435,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,0,0.47,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,0,0.485,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,0,0.135,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,0,0.012,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,1,0.055,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,1,0.44,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,1,0.43,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,1,0.09,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,1,0.0075,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,2,0.065,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,2,0.375,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,2,0.455,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,2,0.12,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,2,0.011,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,3,0.08,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,3,0.345,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,3,0.46,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,3,0.11,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,3,0.03,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,5,0.15,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,5,0.26,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,5,0.43,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,5,0.115,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,5,0.0345,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,10,0.14,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,10,0.34,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,10,0.36,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,10,0.11,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,10,0.085,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,15,0.08,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,15,0.255,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,15,0.395,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,15,0.185,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,15,0.1,0.0,0.45,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt0,0,5,20,0.07,0.0,-0.05,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt1,1,5,20,0.235,1.0,0.1,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt2,2,5,20,0.365,0.0,0.2,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt3,3,5,20,0.225,0.0,0.3,
+CPI,2025-06-11,will-monthly-inflation-increase-by-0pt4,4,5,20,0.13,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,0,0.0105,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,0,0.0675,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,0,0.62,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,0,0.32,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,0,0.02,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,1,0.0135,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,1,0.093,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,1,0.485,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,1,0.325,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,1,0.065,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,2,0.008,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,2,0.113,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,2,0.485,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,2,0.345,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,2,0.065,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,3,0.027,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,3,0.1055,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,3,0.445,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,3,0.34,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,3,0.1,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,5,0.048,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,5,0.1105,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,5,0.49,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,5,0.27,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,5,0.095,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,10,0.0155,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,10,0.0905,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,10,0.475,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,10,0.29,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,10,0.115,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,15,0.02,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,15,0.089,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,15,0.475,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,15,0.295,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,15,0.125,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,20,0.0355,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,20,0.105,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,20,0.42,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,20,0.245,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,20,0.18,0.0,0.45,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt0,0,5,30,0.005,0.0,-0.05,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt1,1,5,30,0.165,0.0,0.1,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt2,2,5,30,0.4,0.0,0.2,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt3,3,5,30,0.3,1.0,0.3,
+CPI,2025-07-15,will-monthly-inflation-increase-by-0pt4,4,5,30,0.15,0.0,0.45,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,0,0.0035,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,0,0.05,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,0,0.29,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,0,0.53,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,0,0.0955,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,0,0.009,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,1,0.029,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,1,0.105,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,1,0.42,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,1,0.325,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,1,0.109,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,1,0.0045,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,2,0.013,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,2,0.115,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,2,0.46,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,2,0.345,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,2,0.0655,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,2,0.0085,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,3,0.02,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,3,0.155,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,3,0.485,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,3,0.28,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,3,0.06,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,3,0.0115,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,5,0.02,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,5,0.16,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,5,0.48,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,5,0.3,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,5,0.055,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,5,0.0065,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,10,0.011,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,10,0.095,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,10,0.455,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,10,0.31,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,10,0.14,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,10,0.0085,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,15,0.0255,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,15,0.125,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,15,0.405,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,15,0.315,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,15,0.145,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,15,0.0055,0.0,0.55,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt0,0,6,20,0.014,0.0,-0.05,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt1,1,6,20,0.115,0.0,0.1,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt2,2,6,20,0.33,1.0,0.2,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt3,3,6,20,0.385,0.0,0.3,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt4,4,6,20,0.145,0.0,0.4,
+CPI,2025-08-12,will-monthly-inflation-increase-by-0pt5,5,6,20,0.0255,0.0,0.55,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,0,0.0115,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,0,0.0105,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,0,0.085,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,0,0.535,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,0,0.39,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,1,0.014,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,1,0.024,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,1,0.07,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,1,0.545,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,1,0.36,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,2,0.015,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,2,0.018,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,2,0.075,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,2,0.54,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,2,0.36,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,3,0.007,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,3,0.015,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,3,0.08,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,3,0.54,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,3,0.38,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,5,0.0175,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,5,0.017,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,5,0.06,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,5,0.535,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,5,0.38,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,10,0.0045,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,10,0.0065,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,10,0.09,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,10,0.55,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,10,0.37,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,15,0.002,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,15,0.01,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,15,0.12,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,15,0.49,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,15,0.385,0.0,0.45,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt0,0,5,20,0.0105,0.0,-0.05,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt1,1,5,20,0.016,0.0,0.1,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt2,2,5,20,0.1,0.0,0.2,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt3,3,5,20,0.52,1.0,0.3,
+CPI,2025-09-11,will-monthly-inflation-increase-by-0pt4,4,5,20,0.355,0.0,0.45,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,0,0.0165,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,0,0.373,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,0,0.45,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,0,0.5,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,0,0.1055,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,1,0.0135,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,1,0.0495,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,1,0.385,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,1,0.495,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,1,0.0765,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,2,0.0125,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,2,0.0545,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,2,0.385,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,2,0.49,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,2,0.074,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,3,0.03,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,3,0.0765,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,3,0.345,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,3,0.505,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,3,0.054,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,5,0.014,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,5,0.0515,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,5,0.305,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,5,0.49,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,5,0.134,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,10,0.02,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,10,0.0425,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,10,0.275,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,10,0.485,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,10,0.195,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,15,0.025,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,15,0.0585,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,15,0.25,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,15,0.435,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,15,0.17,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,20,0.0195,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,20,0.062,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,20,0.235,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,20,0.48,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,20,0.195,0.0,0.55,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt1,0,5,30,0.006,0.0,0.05000000000000001,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt2,1,5,30,0.0135,0.0,0.2,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt3,2,5,30,0.22,1.0,0.3,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt4,3,5,30,0.515,0.0,0.4,
+CPI,2025-10-24,will-monthly-inflation-increase-by-0pt5,4,5,30,0.23,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,0,0.0125,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,0,0.275,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,0,0.405,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,0,0.265,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,0,0.0375,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,1,0.0825,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,1,0.335,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,1,0.365,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,1,0.2,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,1,0.0335,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,2,0.0915,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,2,0.34,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,2,0.35,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,2,0.19,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,2,0.06,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,3,0.0845,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,3,0.35,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,3,0.355,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,3,0.18,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,3,0.0575,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,5,0.0845,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,5,0.325,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,5,0.355,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,5,0.23,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,5,0.041,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,10,0.121,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,10,0.39,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,10,0.365,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,10,0.13,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,10,0.0295,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,15,0.117,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,15,0.43,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,15,0.37,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,15,0.11,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,15,0.027,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,20,0.06,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,20,0.385,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,20,0.37,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,20,0.18,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,20,0.038,0.0,0.55,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt1,0,5,30,0.075,0.0,0.05000000000000001,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt2,1,5,30,0.375,0.0,0.2,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt3,2,5,30,0.54,1.0,0.3,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt4,3,5,30,0.085,0.0,0.4,
+CPI,2026-01-13,will-monthly-inflation-increase-by-0pt5,4,5,30,0.018,0.0,0.55,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,0,0.0065,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,0,0.005,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,0,0.0035,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,0,0.0155,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,0,0.0415,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,0,0.939,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,1,0.0065,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,1,0.005,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,1,0.0035,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,1,0.006,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,1,0.0415,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,1,0.939,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,2,0.0095,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,2,0.0055,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,2,0.004,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,2,0.03,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,2,0.0275,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,2,0.926,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,3,0.007,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,3,0.0035,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,3,0.006,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,3,0.004,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,3,0.0275,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,3,0.84,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,5,0.007,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,5,0.0035,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,5,0.006,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,5,0.0035,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,5,0.0275,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,5,0.84,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,10,0.0065,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,10,0.004,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,10,0.004,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,10,0.0085,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,10,0.115,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,10,0.84,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,15,0.0075,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,15,0.015,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,15,0.0095,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,15,0.0075,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,15,0.12,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,15,0.865,1.0,0.8500000000000001,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt3,0,6,20,0.0075,0.0,0.25,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt4,1,6,20,0.003,0.0,0.4,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt5,2,6,20,0.0075,0.0,0.5,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt6,3,6,20,0.0135,0.0,0.6,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt7,4,6,20,0.08,0.0,0.7,
+CPI,2026-04-10,will-monthly-inflation-increase-by-0pt8,5,6,20,0.875,1.0,0.8500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,0,0.0055,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,0,0.0545,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,0,0.235,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,0,0.435,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,0,0.275,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,0,0.0115,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,0,0.0035,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,0,0.0055,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,0,0.0055,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,1,0.012,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,1,0.0535,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,1,0.285,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,1,0.385,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,1,0.25,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,1,0.027,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,1,0.007,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,1,0.0075,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,1,0.0075,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,2,0.0155,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,2,0.06,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,2,0.29,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,2,0.385,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,2,0.205,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,2,0.026,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,2,0.0065,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,2,0.0075,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,2,0.0105,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,3,0.0105,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,3,0.05,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,3,0.3,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,3,0.385,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,3,0.24,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,3,0.025,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,3,0.005,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,3,0.0055,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,3,0.0035,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,5,0.019,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,5,0.075,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,5,0.365,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,5,0.435,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,5,0.125,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,5,0.0135,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,5,0.005,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,5,0.0055,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,5,0.0045,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,10,0.0195,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,10,0.095,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,10,0.355,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,10,0.365,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,10,0.135,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,10,0.0265,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,10,0.019,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,10,0.0065,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,10,0.015,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,15,0.0255,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,15,0.18,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,15,0.325,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,15,0.265,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,15,0.185,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,15,0.0565,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,15,0.021,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,15,0.0065,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,15,0.0025,0.0,1.1500000000000001,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt3,0,9,20,0.099,0.0,0.25,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt4,1,9,20,0.25,0.0,0.4,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt5,2,9,20,0.385,0.0,0.5,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt6,3,9,20,0.15,1.0,0.6,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt7,4,9,20,0.07,0.0,0.7,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt8,5,9,20,0.0205,0.0,0.8,
+CPI,2026-05-12,will-monthly-inflation-increase-by-0pt9,6,9,20,0.021,0.0,0.9,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt0,7,9,20,0.0095,0.0,1.0,
+CPI,2026-05-12,will-monthly-inflation-increase-by-1pt1,8,9,20,0.005,0.0,1.1500000000000001,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,0,0.0135,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,0,0.0085,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,0,0.021,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,0,0.1645,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,0,0.66,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,0,0.16,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,0,0.035,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,0,0.009,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,0,0.01,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,1,0.002,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,1,0.003,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,1,0.0295,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,1,0.1775,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,1,0.63,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,1,0.13,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,1,0.0205,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,1,0.0055,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,1,0.02,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,2,0.0035,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,2,0.0035,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,2,0.022,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,2,0.1835,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,2,0.585,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,2,0.11,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,2,0.0195,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,2,0.004,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,2,0.007,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,3,0.0035,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,3,0.0035,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,3,0.019,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,3,0.1835,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,3,0.58,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,3,0.165,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,3,0.0425,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,3,0.0175,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,3,0.0065,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,5,0.006,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,5,0.0105,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,5,0.0365,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,5,0.2155,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,5,0.515,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,5,0.16,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,5,0.0145,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,5,0.023,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,5,0.0115,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,10,0.006,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,10,0.004,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,10,0.0155,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,10,0.216,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,10,0.53,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,10,0.23,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,10,0.0265,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,10,0.004,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,10,0.0015,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,15,0.008,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,15,0.01,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,15,0.0365,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,15,0.0755,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,15,0.46,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,15,0.32,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,15,0.09,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,15,0.0125,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,15,0.0165,0.0,0.95,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt1,0,9,20,0.0105,0.0,0.05000000000000002,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt2,1,9,20,0.0065,0.0,0.2,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt3,2,9,20,0.0065,0.0,0.3,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt4,3,9,20,0.066,0.0,0.4,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt5,4,9,20,0.325,1.0,0.5,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt6,5,9,20,0.395,0.0,0.6,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt7,6,9,20,0.13,0.0,0.7,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt8,7,9,20,0.0155,0.0,0.8,
+CPI,2026-06-10,will-monthly-inflation-increase-by-0pt9,8,9,20,0.034,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,0,0.9835,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,0,0.0155,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,0,0.0045,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,0,0.001,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,0,0.0015,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,0,0.0035,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,0,0.0005,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,0,0.0005,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,0,0.0005,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,1,0.9815,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,1,0.014,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,1,0.0015,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,1,0.0005,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,1,0.0005,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,1,0.0005,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,1,0.0005,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,1,0.0005,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,1,0.0005,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,2,0.9805,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,2,0.0125,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,2,0.0005,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,2,0.0005,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,2,0.0015,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,2,0.0005,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,2,0.0005,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,2,0.0005,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,2,0.0005,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,3,0.9815,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,3,0.012,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,3,0.0005,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,3,0.0005,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,3,0.0005,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,3,0.0005,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,3,0.0005,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,3,0.0005,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,3,0.0005,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,5,0.9815,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,5,0.0095,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,5,0.0075,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,5,0.0055,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,5,0.0055,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,5,0.001,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,5,0.002,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,5,0.002,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,5,0.0015,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,10,0.9835,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,10,0.0255,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,10,0.0045,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,10,0.003,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,10,0.0015,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,10,0.002,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,10,0.0115,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,10,0.004,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,10,0.0045,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,15,0.9565,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,15,0.0145,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,15,0.0085,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,15,0.003,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,15,0.0045,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,15,0.0025,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,15,0.0035,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,15,0.0045,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,15,0.013,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,20,0.925,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,20,0.0405,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,20,0.01,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,20,0.0305,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,20,0.0035,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,20,0.0075,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,20,0.0345,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,20,0.012,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,20,0.0285,0.0,0.95,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt1,0,9,30,0.87,1.0,0.05000000000000002,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt2,1,9,30,0.085,0.0,0.2,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt3,2,9,30,0.03,0.0,0.3,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt4,3,9,30,0.04,0.0,0.4,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt5,4,9,30,0.0085,0.0,0.5,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt6,5,9,30,0.0345,0.0,0.6,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt7,6,9,30,0.0195,0.0,0.7,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt8,7,9,30,0.043,0.0,0.8,
+CPI,2026-07-14,will-monthly-inflation-increase-by-0pt9,8,9,30,0.0155,0.0,0.95,

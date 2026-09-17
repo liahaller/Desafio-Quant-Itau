@@ -2516,3 +2516,56 @@ PPTX.
 **Ressalva de palco (vale para A e B):** no modo apresentador do guizang,
 compartilhar a **janela** do público, nunca a tela inteira — senão a banca vê as
 notas.
+
+## 32 (branch `Felipe`). Estudo estatístico do Polymarket para a final — escopo e escolhas pré-registradas 🟢 (fechada pelo dono, 2026-09-17 — sessão 46)
+
+**O que é:** o slide 16 do planejamento da final ("análise estatística do valor
+do Polymarket como fonte de dados") virou um estudo formal —
+`Final/estudo/Estudo_polymarket.md`, `scripts/estudo_polymarket.py`,
+`Uteis/analises/Metricas_estudo.md`, figuras `Uteis/graficos/estudo_*` e os
+slides 16 + A1 + A2 em `Final/Slides_novos.pptx`. **Mede; não decide** — nada
+em `src/`, no backtest ou em parâmetro da estratégia muda por causa dele.
+
+**Fechado pelo dono na sessão (quatro escolhas de escopo):**
+1. **Amostra = só o dado macro já no repo** (FOMC · CPI · payrolls). Estudos
+   amplos (Kalshi Research 2026, Dune/McCullough) entram como referência
+   externa; **nenhum pedido de dado ao Paulo**. Um pull amplo de todas as
+   categorias ficou fora — se voltar, é pipeline do Paulo.
+2. **Formato = paper curto + slide 16 + 2 slides de apêndice + um script.**
+3. **Os achados negativos entram** (Δp não antecipa retorno — `Teste_sinal.md`;
+   preço do poly reverte em 12 h): o valor está no NÍVEL, não no movimento,
+   que é o argumento para usar o Polymarket via Black-Litterman.
+4. **Escolhas metodológicas pré-registradas no plano, aprovadas junto com ele**
+   (regra 1: valores não se assumem sozinhos): grade de horizontes
+   h ∈ {0, 1, 2, 3, 5, 10, 15, 20, 30, 45, 60} dias corridos; bins de calibração
+   10 (pooled) / 5 (por recorte); baseline do skill = PMF uniforme sobre os
+   buckets vivos; h-herói = 0 e 20; γ favorito-azarão só **medido** (D9 segue
+   com 1,0); VR(2), VR(5); Diebold–Mariano e Newey–West em numpy; cluster =
+   evento em todo IC e EP; B = 2.000.
+
+**Dois achados de DADO que mudaram o desenho (medidos, não escolhidos):**
+- a série de todo mercado termina no slot das 12:00 UTC do dia do anúncio —
+  **o preço terminal não é a resolução**. FOMC resolve pelo `DFF`
+  (`decisoes_realizadas_fomc`), CPI pelo `CPIAUCSL` (`mom_realizado`);
+- **payrolls não tem resolução no repo** (arquivos do G9 sem rótulo de faixa;
+  `PAYEMS`/`UNRATE` não estão no `data/`). Entram só em Σp e martingale. Com o
+  dado, entram na Q1 pelo mesmo script — é pedido ao Paulo **se** o time quiser.
+
+**Filtros de dado declarados (não são threshold de estratégia):** linha de PMF
+com Σp < 0,5 é leitura degenerada (buckets mortos — CPI de mar/2026) e sai;
+coluna de robustez do martingale usa só preços em (0,02; 0,98).
+
+**Resultado (números em `Metricas_estudo.md`):** Brier pooled na véspera 0,043
+[0,022; 0,067], BSS 0,73; `b` da calibração 1,04 (p = 0,15) na véspera e 1,08
+(p < 0,001) no pooled — viés favorito-azarão (p < 10 ¢ nunca resolveu Yes, n =
+908; γ ótimo 1,1–1,2 = a faixa de robustez da D9); FOMC na véspera: MAE 0,9 bps
+× 4,8 do proxy corrigido (DM p = 0,002), acerto modal 17/17, futuro não
+acrescenta em encompassing; lead-lag ≈ 0 fora da sobreposição de janela;
+event-study do dia: surpresa-poly R² médio 0,08 (quase não sobra surpresa);
+VR(5) < 1 em todas as famílias.
+
+**Uma correção pega na verificação (registro):** a primeira versão lia o
+`DTB3 − DFF` do próprio dia da leitura — lookahead de um fechamento frente ao
+slot pré-abertura. Corrigida para "último fechamento estritamente anterior",
+a mesma regra do backtest; o controle com o `s4_comparacao.csv` (E_poly −26,90
+e E_FF −42 na véspera de 17/09/2025) fecha exato.

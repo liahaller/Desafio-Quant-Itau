@@ -1,5 +1,121 @@
 # LOG de sessões
 
+## 2026-09-17 (sessão 46) — Felipe
+
+**Feito:** o estudo estatístico do Polymarket como fonte de sinal — o slide 16
+do planejamento da final ("análise estatística do valor do polymarket como
+fonte de dados") — planejado, medido, escrito e posto em slide na mesma sessão.
+
+- **Plano (plan mode):** três perguntas — Q1 calibração e acurácia por
+  horizonte; Q2 valor informacional vs mercado tradicional (FOMC × proxy do
+  futuro de FF `DTB3 − DFF`, D12); Q3 aplicabilidade (event-study do dia do
+  anúncio, negativos já medidos, martingale do preço). Quatro escolhas de escopo
+  fechadas com o dono antes do plano (amostra só do repo, sem pedido ao Paulo;
+  paper curto + slide + apêndice + um script; negativos entram) e as escolhas
+  metodológicas pré-registradas no próprio plano — **D32**.
+- **`scripts/estudo_polymarket.py`** (novo, único): monta a amostra (150
+  contratos binários — 76 FOMC + 74 CPI — em 30 eventos × 11 horizontes = 1.416
+  leituras), calcula tudo com numpy/scipy (Brier, BSS, Murphy, calibração com EP
+  cluster por evento e Wald, γ ótimo, RPS, overround, volume, MAE/acerto
+  modal/Diebold–Mariano com HLN, encompassing HC1, CCF e Granger com
+  Newey–West, event-study, ACF e variance ratio, bootstrap por evento
+  B = 2.000) e grava `Uteis/dados/estudo/*.csv` (14 tabelas),
+  `Uteis/graficos/estudo_1..6.{png,svg}` e `Uteis/analises/Metricas_estudo.md`.
+  `--demo` com 12 asserts sintéticos. Reusa `poly_loader`, `poly_preprocessing`,
+  `backtest_v1.decisoes_realizadas_fomc`, `gate_pead.mom_realizado`,
+  `premio_condicional.prefixos_cpi`/`PAYROLL_FAMILIAS`, `graficos_p4` (estilo).
+- **`Final/estudo/Estudo_polymarket.md`:** paper curto (resumo, literatura,
+  dados, método, resultados Q1–Q3, limitações, conclusão, 14 referências).
+  Números todos do `Metricas_estudo.md`.
+- **Slides 16 + A1 + A2** em `scripts/slides_final_pptx.py` →
+  `Final/Slides_novos.pptx` (agora 20 slides). Slide 16: quatro indicadores
+  lidos do CSV (0,043 · 73 % · 100 % · 0,9 × 4,8), calibração e Brier por
+  horizonte, três frases. A1: Polymarket × futuro de FF e lead-lag. A2:
+  event-study e o placar. Render conferido pelo PowerPoint (COM), três rodadas.
+
+**2º pedido — slide visual + guia de leitura:** o dono pediu o slide 16 "com
+foco em recursos visuais" e a análise num guia para ler e falar no dia. O slide
+16 foi refeito: quatro cards + **três painéis** lado a lado (calibração · Brier
+por horizonte · Polymarket × futuro de FF, versões compactas
+`estudo_s0..s2` com fonte maior) + **placar em ícones** (✔✔✔ ✕✕✕, números do
+CSV) + rodapé de amostra; as frases saíram. `Final/estudo/Guia_slide16.md`:
+mensagem em uma frase, fala de ~75 s, cada card/gráfico/ícone com "o que faz ·
+de onde vem · como ler · conclusão", os apêndices A1/A2, dez perguntas
+prováveis da banca com resposta curta, glossário e mapa de arquivos.
+
+**3º pedido — um slide, duas informações:** o dono cortou para "no máximo
+três informações (ideal duas), uma observação clara e uma conclusão direta".
+Slide 16 refeito: **Observação 1** (calibração: "quando diz X %, acontece X %",
+0,043, gráfico de calibração) · **Observação 2** (decisão do Fed: 0,9 × 4,8 bps,
+gráfico de erro por horizonte) · **Conclusão** num card ("é uma probabilidade
+confiável e melhor que os juros — por isso é a opinião do BL"). Cards, placar
+e Brier por horizonte saíram; a terceira informação (nível, não movimento) fica
+nas notas e no apêndice. Apêndice passou a três slides: A1 acurácia por
+horizonte, A2 Polymarket × juros + lead-lag, A3 event-study + placar. Guia
+reescrito em linguagem direta, gráfico a gráfico (o que mostra · de onde vem ·
+como ler · conclusão), com fala de 60 s, oito perguntas da banca e glossário.
+Deck ficou com 21 slides.
+
+**4º pedido — gráficos do slide 16 "apresentáveis":** os dois painéis ganharam
+versão própria para o slide (`fig_slide_calibracao`, `fig_slide_mae` →
+`estudo_s0_calibracao`, `estudo_s2_mae`): paleta viva do deck, fonte 13, sem
+barras de erro (eram as "linhas saindo"), ticks em %, valor da véspera escrito
+na ponta das linhas (0,9 · 4,8 bps), gráfico na largura da coluna com o número
+e os rótulos numa linha acima. Apêndice intocado. Painéis compactos anteriores
+removidos do script (código morto).
+
+**Resultado em uma linha:** o Polymarket é calibrado (Brier 0,043 na véspera,
+`b = 1,04`), erra 5× menos que o proxy de FF no Δtaxa do FOMC (0,9 × 4,8 bps,
+17/17 no desfecho modal, futuro não acrescenta em encompassing) — e o valor
+está no NÍVEL: Δp não antecipa retorno, o preço reverte em 12 h (VR(5) < 1) e a
+surpresa que sobra na véspera quase não explica o dia do anúncio (R² 0,08).
+
+**Escolhas de escopo próprio (categoria 1/2, tomadas e abertas a troca):**
+resolução por fonte externa em vez de preço terminal (achado de dado: a série
+termina no slot pré-anúncio); payrolls só em Σp e martingale (sem y no repo);
+filtro Σp < 0,5 = leitura degenerada; proxy de FF também na versão corrigida
+pela média expansiva (D12a), para a comparação ser justa; linha pooled do
+gráfico só até h = 20 (além disso a amostra vira só FOMC).
+
+**Quebrou / aprendido:**
+- **Lookahead de um fechamento no `E_FF`:** a primeira versão lia o `DTB3 − DFF`
+  do próprio dia da leitura pré-abertura. O controle com o `s4_comparacao.csv`
+  (E_FF −42 na véspera de 17/09/2025) acusou a diferença de um dia; corrigido
+  para "último fechamento estritamente anterior", regra do backtest. O E_poly
+  bateu exato desde a primeira rodada (−26,90).
+- Acerto modal comparava o valor da ponta aberta já resolvido pela D1.2 (−62,5)
+  com o realizado (−50): set/2024 saía como erro. Passou a comparar pelo bucket
+  vencedor.
+- Surpresa de CPI no event-study estava ×100 (os valores de bucket já vêm em
+  p.p. aqui, diferente do `pmf_diaria` do backtest).
+- O check da identidade de Murphy no `--demo` foi escrito contra o Brier do
+  previsor cru; a identidade fecha contra o Brier do previsor binado.
+- `carry_missing` mora em `poly_preprocessing`, não em `poly_loader`.
+- A fala e o guia diziam que o mercado de juros "errou" set/2024 (50 × 25): o
+  proxy, cru e corrigido, também apontava −50 na véspera. Verificado no
+  `fomc_previsoes.csv` e corrigido para "52 % contra 47 %" antes de entregar.
+- Heredoc do bash quebra com `'''` dentro; patches grandes foram por arquivo no
+  scratchpad.
+
+**Pendente:**
+- Colar os slides 16/A1/A2 no deck da final (numeração provisória) e decidir se
+  A1/A2 ficam como apêndice navegável.
+- Se o time quiser payrolls na Q1: pedir `PAYEMS`/`UNRATE` ao Paulo (e o slug
+  de faixa nos arquivos do G9) — entra pelo mesmo script.
+- Nada foi commitado nesta sessão (o dono não pediu): `scripts/estudo_polymarket.py`,
+  `Final/estudo/`, `Uteis/dados/estudo/`, `Uteis/graficos/estudo_*`,
+  `Uteis/analises/Metricas_estudo.md`, `scripts/slides_final_pptx.py`,
+  `Final/Slides_novos.pptx`, D32 e esta entrada.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~360k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "para final uma ideia que meu grupo teve seria fazer um estudo estatistico de valor do polymarket como sinal. Algo mais formal que iriamos apresentar para mostrar nossa capacidade. PEnsamos em algo parecido com o  que o CEO do kalshi postou a um tempo atrás. Me monte um plano de um estudo de cunho estatistico e possivelmente academico sobre o polymarket, sua acuracia e aplicabilidade"
+- **Iterações até aceitar:** 3 (plano aceito de primeira depois de 4 perguntas de escopo; o slide 16 passou por 2 rodadas do dono — "foque em recursos visuais, análise no guia" e depois "um slide, no máximo três informações, ideal duas" — e o guia por 1: "menos técnico, gráfico a gráfico").
+- **Erros da IA:** 6, todos pegos antes de gravar o entregável — lookahead de um dia no E_FF (pego pelo controle do s4), acerto modal contra valor de ponta aberta, unidade ×100 na surpresa de CPI, check de Murphy contra o previsor errado, import no módulo errado, afirmação errada sobre set/2024 na fala.
+- **Decisões escaladas:** 32 (fechada pelo dono na sessão: escopo e pré-registro do estudo).
+- **Tags:** `[PROMPT-CHAVE]` — o prompt + o plano aprovado reproduzem o estudo inteiro a partir do dado congelado.
+
 ## 2026-09-17 (sessão 45) — Felipe
 
 **Feito:** os quatro slides novos da final que o planejamento (`Final/fianl.pptx`)

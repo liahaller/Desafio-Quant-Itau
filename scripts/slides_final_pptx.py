@@ -19,6 +19,11 @@ no PowerPoint com "manter formatação de origem".
        relatório (`Uteis/graficos/p5_*.png`, de `graficos_p5.py`) — linha do
        tempo de contexto × decisões, erros × quem pegou, esforço por tipo — e a
        peneira 31 → 7 do slide 8 da semi. Texto só nos kickers.
+  16 · o estudo estatístico do Polymarket (`estudo_polymarket.py`,
+       `Final/estudo/Estudo_polymarket.md`) em duas observações e uma conclusão:
+       calibração (0,043) e decisão do Fed (0,9 × 4,8 bps). Três slides de
+       apêndice para a arguição — A1 acurácia por horizonte; A2 Polymarket ×
+       futuro de FF e lead-lag; A3 event-study e o placar "onde está o valor".
 
 Como o Morph casa as formas: nome com prefixo `!!` = mesmo objeto entre slides
 (anda, muda de cor, muda de tamanho); todo o resto ganha nome único do slide
@@ -801,6 +806,181 @@ def s13_ia_numeros(prs, numero="13"):
     return s
 
 
+# ================================================================== slide 16
+ESTUDO = DADOS / "estudo"
+NEG = RGBColor(0xC2, 0x5B, 0x54)
+
+
+def dados_estudo():
+    """Os quatro indicadores do slide 16, lidos dos CSV do estudo — nada à mão."""
+    bh = pd.read_csv(ESTUDO / "brier_horizonte.csv")
+    b0 = bh[(bh.familia == "pooled") & (bh.h == 0)].iloc[0]
+    ff = pd.read_csv(ESTUDO / "fomc_vs_ff.csv").set_index("h")
+    reg = pd.read_csv(ESTUDO / "murphy.csv").set_index("recorte").loc["h=0"]
+    obs = pd.read_csv(ESTUDO / "observacoes.csv")
+    n_fomc = int(ff.loc[0, "n"])
+    es = pd.read_csv(ESTUDO / "event_study.csv")
+    r2_poly = es[(es.familia == "FOMC") & (es.surpresa == "poly")].r2.mean()
+    mart = pd.read_csv(ESTUDO / "martingale.csv")
+    vr = mart[(mart.familia == "FOMC") & (mart.filtro == "todos")].iloc[0]
+    placar = [
+        (True, "Calibrado", f"b = {reg.b:.2f} · p = {reg.p_wald:.2f}"),
+        (True, "Skill na véspera", f"BSS {b0.bss:.0%} vs 'não sei'"),
+        (True, "Erra menos que o FF", f"{ff.loc[0, 'mae_poly']:.1f} × {ff.loc[0, 'mae_ff_dm']:.1f} bps"),
+        (False, "Explica o dia do FOMC?", f"R² médio {r2_poly:.2f}"),
+        (False, "Δp antecipa retorno?", "t ≈ 0 (Teste_sinal)"),
+        (False, "Tendência no preço?", f"VR(5) = {vr.vr5:.2f} < 1"),
+    ]
+    placar = [(ok, rot, num.replace(".", ",")) for ok, rot, num in placar]
+    return placar, {
+        "brier": (f"{b0.brier:.3f}".replace(".", ","), "BRIER NA VÉSPERA",
+                  "Kalshi a 1 h: 0,045"),
+        "skill": (f"{b0.bss:.0%}", "SKILL vs 'NÃO SEI'",
+                  "1 − Brier / Brier uniforme"),
+        "modal": (f"{ff.loc[0, 'acerto_modal_poly']:.0%}", "DECISÕES DO FED",
+                  f"{n_fomc} de {n_fomc}, na véspera"),
+        "mae": (f"{ff.loc[0, 'mae_poly']:.1f} × {ff.loc[0, 'mae_ff_dm']:.1f}".replace(".", ","),
+                "BPS: POLY × FUT. FF", "Diebold-Mariano p < 0,01"),
+    }, reg, obs
+
+
+def s16_estudo(prs, numero="16"):
+    """O estudo em um slide: duas observações (frase + número + gráfico) e uma conclusão."""
+    _, kpis, _, obs = dados_estudo()
+    s = moldura(prs, numero, "O Polymarket como fonte de dados",
+                "Calibrado e mais preciso que o mercado de juros.")
+
+    cw = (R - L - 0.5) / 2                      # duas colunas
+    observacoes = [
+        ("OBSERVAÇÃO 1  ·  CALIBRAÇÃO",
+         "Quando o Polymarket diz X %, acontece X % das vezes.",
+         kpis["brier"][0], "Brier na véspera", "Kalshi a 1 h: 0,045",
+         "estudo_s0_calibracao.png"),
+        ("OBSERVAÇÃO 2  ·  DECISÃO DO FED",
+         "Na decisão do Fed, o Polymarket erra 0,9 bps; o mercado de juros, 4,8.",
+         kpis["mae"][0], "bps de erro na véspera", "Polymarket × futuro de FF",
+         "estudo_s2_mae.png"),
+    ]
+    for i, (rot, frase, numero_, sub1, sub2, arquivo) in enumerate(observacoes):
+        x = L + i * (cw + 0.5)
+        kicker(s, x, 1.55, cw, rot)
+        texto(s, x, 1.8, cw, 0.62, [(frase, SEMI, 14, TEXT)], anchor=MSO_ANCHOR.TOP, entre=1.05)
+        # linha do número (número grande + rótulos ao lado) e o gráfico na largura toda
+        texto(s, x, 2.42, 1.7, 0.62, [(numero_, COND, 34, ORANGE)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        xn = x + (1.75 if len(numero_) > 5 else 1.25)
+        texto(s, xn, 2.47, cw - 1.8, 0.26, [(sub1.upper(), MONO, 7.5, TEXT, True, 40)],
+              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        texto(s, xn, 2.73, cw - 1.8, 0.26, [(sub2, LIGHT, 9, MUTED)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        imagem(s, GRAFICOS / arquivo, x, 3.12, cw)
+
+    # --- a conclusão, num card de largura inteira
+    card(s, L, 6.12, R - L, 0.72)
+    kicker(s, L + 0.25, 6.18, 3.0, "CONCLUSÃO", cor=MINT)
+    texto(s, L + 0.25, 6.37, R - L - 0.5, 0.42,
+          [("É uma probabilidade confiável — e melhor que os juros no que os dois precificam. ",
+            SEMI, 13, TEXT),
+           ("Por isso ela é a opinião do Black-Litterman.", SEMI, 13, ORANGE)],
+          anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+
+    n_c = int(obs.groupby(["familia", "mercado", "evento"]).ngroups)
+    texto(s, L, 6.93, R - L, 0.16,
+          [(f"{n_c} contratos do Polymarket (Fed e CPI) · {obs.evento.nunique()} eventos · "
+            f"{len(obs)} leituras em 11 horizontes · resolução no FRED · apêndice A1–A3",
+            MONO, 7.5, MUTED)], wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Fonte: scripts/estudo_polymarket.py → Uteis/analises/Metricas_estudo.md; guia de "
+        "leitura em Final/estudo/Guia_slide16.md. Amostra = todo o dado macro do repo "
+        "(FOMC 76 faixas/18 reuniões, CPI 74 faixas/12 meses), sem exclusão. Brier 0,043 "
+        "[0,022; 0,067]; calibração b = 1,04 (p = 0,15); FF = proxy DTB3−DFF corrigido do "
+        "viés (cru: 8,9 bps), DM p = 0,002; 17/17 no desfecho modal. Terceira informação, "
+        "se pedirem: o movimento do preço não é sinal (VR(5) = 0,78 < 1, Δp com t ≈ 0) — "
+        "por isso usamos o nível, não o Δp. Detalhe nos apêndices A1–A3.")
+    sela(s, "s16")
+    return s
+
+
+def sA1_horizonte(prs, numero="A1"):
+    """Apêndice: o erro cai até o evento e o quanto o preço acrescenta ao 'não sei'."""
+    s = moldura(prs, numero, "Apêndice · acurácia por horizonte",
+                "Quanto mais perto do evento, menor o erro — e na véspera está no nível do Kalshi.")
+    w = 9.6
+    kicker(s, L + (R - L - w) / 2, 1.55, w, "BRIER POR DIAS ANTES DA RESOLUÇÃO  ·  SKILL SOBRE A PMF UNIFORME")
+    imagem(s, GRAFICOS / "estudo_2_brier.png", L + (R - L - w) / 2, 1.8, w)
+    frases = [
+        "FOMC: 0,035 a 20 dias → 0,007 na véspera. CPI: 0,092 → 0,078 (é o objeto difícil; "
+        "ninguém sabe o CPI na véspera).",
+        "A linha branca (as duas famílias) para em 20 dias porque os mercados de CPI vivem "
+        "~30 dias; depois só sobra FOMC.",
+    ]
+    for i, f in enumerate(frases):
+        texto(s, L, 6.05 + i * 0.32, R - L, 0.28, [(f, LIGHT, 9.5, BODY)],
+              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Tabela: Uteis/dados/estudo/brier_horizonte.csv (IC por bootstrap de evento). "
+        "BSS = 1 − Brier/Brier da uniforme (1/K por faixa): 0,73 pooled na véspera; "
+        "FOMC 0,96, CPI 0,42. A 60 dias o FOMC ainda tem BSS 0,67.")
+    sela(s, "sA1")
+    return s
+
+
+def sA2_poly_vs_ff(prs, numero="A2"):
+    """Apêndice: Polymarket × proxy do futuro de FF por horizonte e o lead-lag."""
+    s = moldura(prs, numero, "Apêndice · Polymarket × mercado de juros",
+                "No FOMC, o Polymarket erra menos e o futuro de FF não acrescenta informação.")
+    kicker(s, L, 1.55, 7.2, "ERRO DO Δ TAXA E ACERTO DO DESFECHO MODAL, POR HORIZONTE")
+    imagem(s, GRAFICOS / "estudo_3_fomc_ff.png", L, 1.8, 7.2)
+    xr = L + 7.2 + 0.3
+    kicker(s, xr, 1.55, R - xr, "QUEM SE MOVE PRIMEIRO")
+    imagem(s, GRAFICOS / "estudo_4_leadlag.png", xr, 1.8, R - xr)
+    enc = pd.read_csv(ESTUDO / "encompassing.csv").set_index("h")
+    frases = [
+        (f"Encompassing na véspera:  Δreal = a + {enc.loc[0, 'b_poly']:.2f}·E_poly "
+         f"{enc.loc[0, 'b_ff']:+.2f}·E_FF   (t = {enc.loc[0, 't_poly']:.1f} e "
+         f"{enc.loc[0, 't_ff']:.1f}).").replace(".", ","),
+        "Proxy = DTB3 − DFF (sem o contrato ZQ, D12), corrigido do viés pela média expansiva "
+        "dos erros passados (D12a).",
+        "Lead-lag: nos lags sem sobreposição de janela (k = +1, −2) a correlação é ≈ 0 — a "
+        "informação chega aos dois no mesmo pregão.",
+    ]
+    for i, f in enumerate(frases):
+        texto(s, L, 5.35 + i * 0.32, R - L, 0.28, [(f, LIGHT, 9.5, BODY)],
+              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Tabelas: Uteis/dados/estudo/fomc_vs_ff.csv, encompassing.csv, leadlag_*.csv. "
+        "DM com correção HLN; n = 17-18 reuniões por horizonte. A 60 dias a vantagem some "
+        "(p = 0,76). Granger com Newey-West: t = 1,8 (poly → FF) e 1,9 (FF → poly).")
+    sela(s, "sA2")
+    return s
+
+
+def sA3_aplicabilidade(prs, numero="A3"):
+    """Apêndice: event-study do dia do anúncio e o placar 'onde está o valor'."""
+    s = moldura(prs, numero, "Apêndice · onde está o valor",
+                "O nível é sinal; o movimento não é — por isso Black-Litterman, e não trading de Δp.")
+    wl = 6.3
+    kicker(s, L, 1.55, wl, "QUAL EXPECTATIVA EXPLICA O RETORNO DO DIA DO FOMC (R², 9 ETFs)")
+    imagem(s, GRAFICOS / "estudo_5_event_study.png", L, 1.8, wl)
+    xr = L + wl + 0.35
+    kicker(s, xr, 1.55, R - xr, "PLACAR DO ESTUDO")
+    imagem(s, GRAFICOS / "estudo_6_sintese.png", xr, 1.8, R - xr)
+    frases = [
+        "Na véspera quase não sobra surpresa (MAE 0,9 bps): o que move os ETFs no dia é o "
+        "caminho da política, não a decisão.",
+        "Antes do anúncio, Δp não antecipa o retorno (Teste_sinal.md: t ≈ 0 em h = 0, 1, 5); "
+        "o preço do Polymarket reverte em 12 h (ACF −0,13, VR(5) = 0,78).",
+    ]
+    for i, f in enumerate(frases):
+        texto(s, L, 5.35 + i * 0.32, wl + 0.4, 0.28, [(f, LIGHT, 9.5, BODY)],
+              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Tabelas: Uteis/dados/estudo/event_study.csv e martingale.csv. FOMC n = 17; a "
+        "surpresa-FF corrigida explica mais (R² médio 0,19 vs 0,08) porque carrega o caminho "
+        "de 3 meses, não porque o Polymarket erre. CPI: R² ≈ 0 para as duas. VR(5) por "
+        "família: FOMC 0,78, CPI 0,72, payrolls 0,43 — nenhuma > 1.")
+    sela(s, "sA3")
+    return s
+
+
 # ------------------------------------------------------------------- render
 def render(pptx: Path, pasta: Path):
     """Exporta cada slide em PNG pelo próprio PowerPoint (COM) — conferência."""
@@ -823,6 +1003,10 @@ def monta(saida: Path = SAIDA) -> Path:
     s4_comparacao(prs)
     s12_second_brain(prs)
     s13_ia_numeros(prs)
+    s16_estudo(prs)
+    sA1_horizonte(prs)
+    sA2_poly_vs_ff(prs)
+    sA3_aplicabilidade(prs)
     saida.parent.mkdir(parents=True, exist_ok=True)
     prs.save(str(saida))
     return saida
@@ -836,6 +1020,11 @@ def demo():
     _, xy, n, _ = grafo_para_slide()
     trace = json.loads((DADOS / "trace_sessao.json").read_text(encoding="utf-8"))
     assert all(a["nome"] in xy for a in trace["arquivos"]) and n > 100
+    # os indicadores do slide 16 saem do CSV do estudo e têm a forma esperada
+    placar, kpis, reg, obs = dados_estudo()
+    assert set(kpis) == {"brier", "skill", "modal", "mae"} and 0.9 < reg.b < 1.2
+    assert len(placar) == 6 and [ok for ok, *_ in placar] == [True] * 3 + [False] * 3
+    assert obs.h.nunique() == 11 and obs.familia.nunique() == 2
     print("demo ok")
 
 
