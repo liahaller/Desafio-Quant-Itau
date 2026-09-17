@@ -118,8 +118,15 @@ def layout(n, arestas, passos=600, semente=7, gravidade=8.0):
     return pos - pos.mean(axis=0)
 
 
-def desenhar(nomes, familias, arestas, pos, destino: Path, rotulos=3):
-    """Grafo em fundo transparente, para o gradiente do slide passar por baixo."""
+def desenhar(nomes, familias, arestas, pos, destino: Path, rotulos=3,
+             miudos=22, extensao=None):
+    """Grafo em fundo transparente, para o gradiente do slide passar por baixo.
+
+    `extensao` fixa os eixos em [-extensao, +extensao] num quadro quadrado e
+    desliga o recorte justo: e o que permite ao slide 12 da final colocar um
+    halo EM CIMA de um no, porque a posicao no PNG vira funcao linear da
+    posicao no layout. `miudos` e quantos nomes pequenos entram alem dos hubs.
+    """
     grau = np.zeros(len(nomes))
     for i, j in arestas:
         grau[i] += 1
@@ -129,7 +136,7 @@ def desenhar(nomes, familias, arestas, pos, destino: Path, rotulos=3):
     # A figura entra no slide com ~2/3 do tamanho em que e desenhada, entao fio
     # e tipo sao dimensionados PARA A REDUCAO: 0,45 pt de linha e 8 pt de texto
     # somem na hora de projetar.
-    fig, eixo = plt.subplots(figsize=(6.1, 5.6))
+    fig, eixo = plt.subplots(figsize=(6.0, 6.0) if extensao else (6.1, 5.6))
     for i, j in arestas:
         eixo.plot(pos[[i, j], 0], pos[[i, j], 1], color=FIO, lw=0.9,
                   alpha=0.65, zorder=1, solid_capstyle="round")
@@ -150,8 +157,8 @@ def desenhar(nomes, familias, arestas, pos, destino: Path, rotulos=3):
     # destaque e um punhado de nomes miudos em volta. Sem os miudos o desenho
     # vira ilustracao generica; com todos eles, vira borrao — por isso um so
     # entra se a caixa dele nao encostar em nenhuma ja colocada.
-    extensao = float(np.ptp(pos, axis=0).max())
-    por_pt = extensao / (fig.get_size_inches()[0] * 72)   # unidade de dado / pt
+    alcance = float(np.ptp(pos, axis=0).max())
+    por_pt = alcance / (fig.get_size_inches()[0] * 72)    # unidade de dado / pt
     caixas = []
 
     def cabe(x, y, texto, corpo):
@@ -164,7 +171,7 @@ def desenhar(nomes, familias, arestas, pos, destino: Path, rotulos=3):
         return True
 
     ordem = np.argsort(grau)[::-1]
-    for posicao, i in enumerate(ordem[:rotulos + 22]):
+    for posicao, i in enumerate(ordem[:rotulos + miudos]):
         hub = posicao < rotulos
         corpo = 13.0 if hub else 8.0
         raio = (tam[i] / np.pi) ** 0.5      # do centro ate a borda, em pontos
@@ -184,10 +191,13 @@ def desenhar(nomes, familias, arestas, pos, destino: Path, rotulos=3):
     eixo.axis("off")
     eixo.set_aspect("equal")
     eixo.margins(0.06)
+    if extensao:
+        eixo.set_xlim(-extensao, extensao)
+        eixo.set_ylim(-extensao, extensao)
     fig.subplots_adjust(0, 0, 1, 1)
     destino.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(destino, transparent=True, dpi=160, bbox_inches="tight",
-                pad_inches=0.02)
+    fig.savefig(destino, transparent=True, dpi=160,
+                bbox_inches=None if extensao else "tight", pad_inches=0.02)
     plt.close(fig)
     return destino
 

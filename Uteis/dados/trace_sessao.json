@@ -1,0 +1,51 @@
+{
+ "sessao": "9ed8510d",
+ "prompt": "Estou preparando minha fala para o slide de retorno e preciso trazer uma explicação o porque o nosso Beta foi tão alto. analise a estratégia e explique porque ficamos tão expostos quando queriamos montar uma carteira neutra. Também traga possiveis pontos de melhora na estratégia para eu apresentar",
+ "comandos": 23,
+ "arquivos": [
+  {
+   "nome": "Decisoes_pendentes.md",
+   "familia": "contrato"
+  },
+  {
+   "nome": "Metricas_p4.md",
+   "familia": "analise"
+  },
+  {
+   "nome": "Metricas_p5.md",
+   "familia": "analise"
+  },
+  {
+   "nome": "Backtest_v1.md",
+   "familia": "analise"
+  },
+  {
+   "nome": "Ortogonalidade.md",
+   "familia": "analise"
+  },
+  {
+   "nome": "bl_optimizer.py",
+   "familia": "codigo"
+  },
+  {
+   "nome": "views_common.py",
+   "familia": "codigo"
+  },
+  {
+   "nome": "backtest_v1.py",
+   "familia": "codigo"
+  },
+  {
+   "nome": "view_B_trajetoria_propria.py",
+   "familia": "codigo"
+  },
+  {
+   "nome": "view_incerteza_anuncio.py",
+   "familia": "codigo"
+  },
+  {
+   "nome": "tatica_sleeves.py",
+   "familia": "codigo"
+  }
+ ]
+}

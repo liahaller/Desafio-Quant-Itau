@@ -1,5 +1,71 @@
 # LOG de sessões
 
+## 2026-09-17 (sessão 45) — Felipe
+
+**Feito:** os três slides novos da final que o planejamento (`Final/fianl.pptx`)
+deixava como placeholder — gerados em `Final/Slides_novos.pptx` (16 slides:
+3 · 4a/4b · 12 em 13 quadros) por `scripts/slides_final_pptx.py`, no estilo
+restilizado da semi (paleta e tipos lidos do XML do deck; a moldura foi
+reimplementada porque o `restyle.py` da sessão 44 era de uso único e ficou no
+scratchpad). Render conferido pelo PowerPoint (COM), três rodadas.
+
+- **Slide 3 — como funciona o Polymarket.** Card do mercado real do Fed de
+  set/2025 com os preços da véspera (90¢ / 7¢ / 2¢ / 0¢, US$ 221 mi) e o gráfico
+  das quatro probabilidades de 15/07 a 17/09 (`Uteis/graficos/s3_fed_set25.png`,
+  do `data/polymarket_fed_reunioes.parquet`), com os marcos 30/07 · 01/08 · 17/09.
+  Os dois KPIs do slide 2 (90,1 % e US$ 26,2 bi) foram trazidos para cá, como a
+  nota "só a ideia" do slide 2 pedia — o time tira do 2 quando montar.
+- **Slide 4 — o mesmo dia, duas previsões (Morph, 2 quadros).** Para cada ETF,
+  o retorno esperado no dia do anúncio segundo o MERCADO (π = δΣw_mkt) e
+  segundo o POLYMARKET (π + β_i × surpresa líquida da view 2.3), em gráfico de
+  halteres feito em formas — o Morph move os pontos. Quadro A: véspera de
+  27/01/2026 (surpresa −0,2 bps, os pontos coincidem). Quadro B: véspera de
+  16/09/2025 (+9,1 bps líquidos; XLK −1,5 %, SPY −1,1 %, XLU/TLT +0,15 %).
+  Dado de `scripts/comparacao_etf_s4.py` → `Uteis/dados/s4_comparacao.csv`
+  (374 pregões, 2.3 ativa em 312; é o `MontadorV1` com a régua da Lia, sem conta
+  nova). Os bps brutos (E_poly, DTB3−DFF) ficaram nas notas do slide para a banca.
+- **Slide 12 — setup de IA com o second brain acendendo.** O grafo do repo
+  (`grafo_repo.py`, agora 205 arquivos · 690 ligações) com o caminho REAL de um
+  prompt: `scripts/trace_sessao.py` lê o transcript local da sessão 9ed8510d
+  (08/09, "por que o nosso Beta foi tão alto") e devolve os 11 arquivos que ela
+  abriu em 23 comandos, na ordem — contrato → análise → código → dado
+  (`Uteis/dados/trace_sessao.json`). Cada quadro acende um nó, liga ao anterior
+  e adiciona a linha na lista; Morph com **avanço automático** (`advTm`), então
+  um clique no quadro de repouso toca o caminho inteiro (~10 s). `grafo_repo.
+  desenhar` ganhou `extensao`/`miudos` para o PNG ter mapa linear nó → slide.
+
+**Escolhas de escopo próprio (categoria 2), tomadas com recomendação e abertas
+a troca:** mercado "impresso" redesenhado com dado real em vez de screenshot;
+quantidade do slide 4 = π vs π + β·surpresa (a leitura pré-BL, sem misturar Ω);
+os dois dias; sessão 9ed8510d para a animação; numeração provisória 03/04/12.
+
+**Quebrou / aprendido:**
+- `pivot_table` da véspera tinha NaN num desfecho (leitura faltante de 12 h) —
+  `ffill` antes de ler a linha.
+- `desenhar` já tinha uma variável `extensao` local; o parâmetro novo a
+  sombreava — renomeada para `alcance`.
+- Rodar `grafo_repo.py --demo` regrava `s7_grafo.png` (figura da semi); restaurada
+  com `git checkout` para não sujar o diff.
+- Rótulos de fim das linhas do gráfico e marcos 30/07–01/08 se sobrepunham;
+  empilhamento com vão mínimo e `ha` por lado.
+
+**Pendente:**
+- Colar os slides no deck da final e acertar a numeração fantasma (03/04/12 são
+  provisórios) e o slide 2 (tirar ficha técnica e KPIs).
+- Slide 13 (IA e Pesquisa) exibe "200 arquivos · 665 ligações"; a medição de
+  hoje é 205 · 690 — atualizar quando o time fechar o deck.
+- Slides 6 (ficha técnica), 9 (processo das views), 15, 16 e 24 continuam
+  placeholder.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~160k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "preciso fazer os slides para a final. leia o pptx que tenho na pasta final ele é um planejamento rápido do que pensamos em fazer com os slides leia"
+- **Iterações até aceitar:** 2 (plano apresentado → o dono pediu o slide 4 "visual, previsões implícitas por ETF" em vez do gráfico de séries proposto; depois três rodadas internas de render).
+- **Erros da IA:** nenhum no entregável; dois defeitos (NaN na véspera, variável sombreada) pegos em execução antes de gravar.
+- **Decisões escaladas:** —.
+- **Tags:** —
+
 ## 2026-09-06 (sessão 44) — Felipe
 
 **Feito:** overhaul de ESTILO do `Semis/KAIROS_semifinal.pptx` — fontes, cores e
