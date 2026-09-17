@@ -64,6 +64,14 @@ na ponta das linhas (0,9 · 4,8 bps), gráfico na largura da coluna com o númer
 e os rótulos numa linha acima. Apêndice intocado. Painéis compactos anteriores
 removidos do script (código morto).
 
+**5º pedido — documentação de passagem:** `Final/estudo/README.md` — como o
+estudo foi feito, para outra sessão refazer ou mudar: mapa de arquivos, dados
+de entrada e os três achados de dado que definem o desenho, montagem da
+amostra, o que cada bloco calcula (com as convenções de timing), as escolhas
+pré-registradas (D32) que não mudam sem registro, verificação (demo + controle
+do s4 + sanidade), receitas de mudança, armadilhas já pegas e os números de
+referência para conferir depois de qualquer alteração.
+
 **Resultado em uma linha:** o Polymarket é calibrado (Brier 0,043 na véspera,
 `b = 1,04`), erra 5× menos que o proxy de FF no Δtaxa do FOMC (0,9 × 4,8 bps,
 17/17 no desfecho modal, futuro não acrescenta em encompassing) — e o valor
