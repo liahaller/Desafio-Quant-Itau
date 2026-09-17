@@ -1,0 +1,119 @@
+﻿SLIDE 1:
+* Boa tarde, nosso robô se chama Kairos, que em grego, significa o instante certo de agir. 
+
+
+SLIDE 2: 
+* A hipótese do Kairos é simples: mercados de previsão antecipam o mercado financeiro. 
+
+
+* O Polymarket é um mercado de previsão que negocia vários eventos macros, cada contrato paga um dólar se o evento ocorrer e zero se não — o preço é a probabilidade que o mercado está precificando com dinheiro real em jogo. 
+
+
+
+
+* Operamos em um universo de nove ETFs setoriais americanos, com o S&P 500 como benchmark, o modelo tem rebalanceamento diário 
+
+
+* e o período de tempo foi de fevereiro de 2025 até agosto de 2026, tivemos que usar um periodo curto porque os dados do polymarket não tem cobertura líquida e confiável antes disso.
+
+
+SLIDE 3: 
+
+
+O modelo que a gente decidiu usar foi o BL. ele parte da carteira de pesos do mercado (apêndice) no dia. 
+
+
+Em cima disso, o gestor tradicionalmente digita duas coisas: quanto espera que cada ativo renda, e quanto confia nessa opinião. O modelo combina os dois e devolve os pesos dos nove ETFs da nossa carteira.
+
+
+A gente escolheu esse modelo porque ele se encaixa bem com o uso do polymarket:
+* Ele permite que você crie previsões independentes sobre diferentes ativos
+* Adicionalmente, o modelo não te obriga a opinar sobre tudo, vão ter dias onde o polymarket não vai trazer previsão de algum ETF, nesse dia, apostamos no ETF o mesmo que o mercado.
+
+
+
+
+SLIDE 4:
+
+
+E agora como colocamos o polymarket nisso? Para montar as previsões, a gente usou alguns mercados recorrentes do polymarket, como por exemplo:
+* Decisão do Fed no fim do mês
+* Inflação no fim do mês
+* Taxa de juros no fim do ano
+A gente calculou a diferença entre o que cada um desses mercados prevê e o que o preço da bolsa assume. A gente transforma essa diferença em retorno esperado para cada ETF afetada pelo resultado do evento.
+
+
+SLIDE 5:
+
+
+Pra decidir o quanto confiamos em cada previsão usamos dois parâmetros:
+* A coerência das previsões, as probabilidades de todos os resultados possíveis têm que somar 100%. 
+* A volatilidade do mercado que a view analisa, quanto menos volátil mais confiável
+Ou seja, a nossa confiança no sinal vem do quão estável ele está no dia
+
+
+SLIDE 6:
+
+
+Em paralelo ao BL, também colocamos uma camada tática, que reage a mudanças rápidas dentro de mercados do polymarket. 
+
+
+Um exemplo disso é quando em Abril do ano passado, em uma semana, a chance de recessão nos Estados Unidos foi de 37% para 65%. A carteira comprou o setor de comida e produtos básicos (mais estáveis) e vendeu o de tecnologia (menos estáveis). Logo depois a bolsa americana caiu 5%, então essa parte da estratégia ganhou comparada com o resto do mercado.
+
+
+A gente juntou as duas camadas sob um teto de risco, que soma as diferenças entre os pesos da nossa carteira e do mercado sem deixar esse total passar de 100% para ela nao ficar muito arriscada
+
+
+O final dessa combinação é a nossa carteira do dia.
+
+
+
+
+
+
+PESQUISA E IA
+
+
+
+
+Agora vamos falar de como foi o uso de IA durante o projeto. 
+
+
+A gente usou o Claude Code como nossa IA principal, integrada dentro de um repositório compartilhado entre os membros. Para não precisar ficar re-explicando o projeto a cada nova conversa, criamos um CLAUDE.md , que é um arquivo que o claude automaticamente lê no começo.
+
+
+Dentro dele colocamos a nossa ideia e uma série de regras e condutas. A regra mais interessante foi que a IA automaticamente guardasse em formato de texto qualquer pesquisa ou decisão feita e criasse links entre ideias relacionadas. Tal regra gerou o gráfico ao lado, Explico. Com esse setup o claude começou a ficar cada vez mais esperto sobre o assunto e conseguiu trazer perspectivas que a gente nunca pensou. 
+
+
+A nossa pesquisa então foi feita dentro do repositório com auxílio do claude. Nosso foco foi estatisticamente testar qualquer hipótese antes de aplicá-la. Tanto que:
+   * De 13 ideias de sinal, só usamos uma
+   * E de 4 critérios para confiança, só usamos 2
+
+
+
+
+RESULTADOS
+
+
+Agora olhando para os resultados da estratégia
+
+
+* Nossa estratégia rendeu 3% acima do S&P500, com um Alfa anual de 2,57%
+
+
+* Olhando de onde veio o resultado, a perna de equilíbrio do black litterman trouxe 28.7 e a estratégia somou 5.2 em cima disso. (soma dos retornos diários)
+
+
+* A nossa estratégia ficou bem exposta ao mercado, teve um Beta de 0,95 e apenas ganhamos em regime de subida.Inclusive os regimes de descida foram mais violentos que do benchmark.
+   *  Isso se dá em parte pela natureza do black litterman, onde na maioria dos dias estamos comprando uma carteira majoritariamente composta pelo o que o mercado precifica
+   *  Mas devido ao nosso backtest reduzido não conseguimos ver como a nossa estratégia se desempenharia em regime de queda prolongado.
+   * Um ponto de melhora na nossa estratégia seria tentar reduzir nossa exposição ao mercado, uma possibilidade é fazer uma posição contrária ao índice para descontar o mercado dos setores comprados.
+
+
+
+
+FECHAMENTO
+O que a gente mostrou hoje é indício de que o Polymarket é um sinal válido para estratégias de investimento. 
+
+
+Obrigado

@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Kairós — Ficha técnica</title>
+<style>
+@page { size: A4; margin: 13mm 12mm 14mm; }
+* { box-sizing: border-box; }
+body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; font-size: 10.2pt;
+       line-height: 1.5; color: #16202b; margin: 0; }
+h1.sec { font-size: 15pt; margin: 0 0 3mm; padding-bottom: 2mm; border-bottom: 2px solid #16324f;
+         color: #16324f; page-break-before: always; page-break-after: avoid; }
+h1.sec .s { color: #7c8ea3; font-weight: 400; margin-right: 6px; }
+h1.first { page-break-before: avoid; }
+h2 { font-size: 11.5pt; margin: 5mm 0 2mm; color: #16324f; page-break-after: avoid; }
+h2.grp { background: #eaf0f6; padding: 1.5mm 2.5mm; border-radius: 3px; }
+p { margin: 0 0 2mm; }
+.lead { background: #16324f; color: #fff; padding: 3mm 4mm; border-radius: 3px; margin: 0 0 4mm;
+        font-size: 10.5pt; page-break-inside: avoid; }
+.lead b { color: #ffd479; }
+.card { border-left: 3px solid #3d6b99; background: #f7f9fb; padding: 2.5mm 3.5mm; margin: 0 0 3mm;
+        border-radius: 0 3px 3px 0; page-break-inside: avoid; }
+.card.red { border-left-color: #b3261e; background: #fdf5f4; }
+.card.amber { border-left-color: #b07d00; background: #fdfaf1; }
+.card.green { border-left-color: #2e7d4f; background: #f4faf6; }
+.card h3 { font-size: 10.5pt; margin: 0 0 1.5mm; color: #16324f; }
+.card.red h3 { color: #8c1d18; }
+.card.amber h3 { color: #8a6100; }
+.card.green h3 { color: #1e5c3a; }
+ul { margin: 0 0 2mm; padding-left: 5mm; }
+li { margin-bottom: 1.2mm; }
+ul.tight li { margin-bottom: 0.6mm; }
+table { width: 100%; border-collapse: collapse; font-size: 9pt; margin: 0 0 3mm;
+        page-break-inside: avoid; }
+th { background: #eaf0f6; color: #16324f; text-align: left; padding: 1.6mm 2mm; font-weight: 600;
+     border-bottom: 1.5px solid #c3d2e0; }
+td { padding: 1.4mm 2mm; border-bottom: 1px solid #e4eaf0; vertical-align: top; }
+tr:nth-child(even) td { background: #fafcfd; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.glo td:first-child { width: 26%; font-weight: 600; color: #16324f; }
+.formula { font-family: "Cascadia Mono", Consolas, monospace; font-size: 10pt; background: #f0f4f8;
+           border: 1px solid #d6e0ea; border-radius: 3px; padding: 2.5mm 3mm; margin: 0 0 2mm;
+           white-space: pre-wrap; page-break-inside: avoid; }
+.pt { background: #fffbe9; border-left: 3px solid #e0b93a; padding: 2mm 3mm; margin: 0 0 3mm;
+      font-size: 10pt; page-break-inside: avoid; }
+.pt b { color: #7a5c00; }
+.tag { display: inline-block; font-size: 7.5pt; font-weight: 700; padding: 0.3mm 1.5mm;
+       border-radius: 2px; vertical-align: 1px; margin-right: 3px; white-space: nowrap; }
+.tag.med { background: #d7eadf; color: #1e5c3a; }
+.tag.regra { background: #dde6f2; color: #1d4571; }
+.tag.hum { background: #f6e3c8; color: #7a4a00; }
+.src { color: #6b7d8f; font-size: 8.5pt; }
+.qa { margin: 0 0 3.5mm; page-break-inside: avoid; }
+.qa .p { font-weight: 700; color: #16324f; display: block; margin-bottom: 1mm; }
+.qa .r { display: block; }
+.qa .n { display: block; margin-top: 1mm; font-size: 9pt; color: #4a5c6e;
+         border-left: 2px solid #c3d2e0; padding-left: 2.5mm; }
+.kpi { display: flex; flex-wrap: wrap; gap: 2mm; margin-bottom: 3mm; }
+.kpi > div { flex: 1 1 30%; border: 1px solid #d6e0ea; border-radius: 3px; padding: 2mm 2.5mm;
+           background: #fff; page-break-inside: avoid; }
+.kpi .v { font-size: 13pt; font-weight: 700; color: #16324f; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: 8.5pt; color: #6b7d8f; text-transform: uppercase; letter-spacing: .3px; }
+.toc { column-count: 2; column-gap: 8mm; font-size: 10pt; }
+.toc div { margin-bottom: 1.6mm; break-inside: avoid; }
+.toc .s { display: inline-block; width: 9mm; color: #7c8ea3; font-weight: 700; }
+code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 9pt; background: #eef2f6;
+       padding: 0 1mm; border-radius: 2px; }
+.head { display: flex; justify-content: space-between; align-items: baseline;
+        border-bottom: 3px solid #16324f; padding-bottom: 2mm; margin-bottom: 4mm; }
+.head .t { font-size: 20pt; font-weight: 700; color: #16324f; }
+.head .d { font-size: 9.5pt; color: #6b7d8f; }
+</style></head><body>
+
+<div class="head"><div class="t">Kairós — Ficha técnica</div>
+<div class="d">Semifinal · Itaú Quant AI Challenge · uso interno</div></div>
+
+<div class="lead"><b>Como usar:</b> vá direto à seção pela pergunta que veio. Toda resposta começa
+com uma frase simples, sem número. O número vem depois, na linha cinza, só se pedirem.
+<br><b>🛑</b> = não pode ser dito no palco. &nbsp; <b>⚠️</b> = limitação que a gente já assume.
+&nbsp; Não entendeu um termo? Está tudo no <b>§2 Glossário</b>.</div>
+
+<h2 style="margin-top:0">Índice</h2>
+<div class="toc">
+<div><span class="s">§1</span> Cartão de 30 segundos</div>
+<div><span class="s">§2</span> Glossário — todo termo e sigla</div>
+<div><span class="s">§3</span> As sete contas, em português</div>
+<div><span class="s">§4</span> As quatro apostas (views)</div>
+<div><span class="s">§5</span> A camada tática</div>
+<div><span class="s">§6</span> De onde veio cada número</div>
+<div><span class="s">§7</span> Os nove ETFs</div>
+<div><span class="s">§8</span> Os mercados do Polymarket</div>
+<div><span class="s">§9</span> Resultados</div>
+<div><span class="s">§10</span> Limitações</div>
+<div><span class="s">§11</span> Perguntas e respostas</div>
+<div><span class="s">§12</span> 🛑 O que não podemos dizer</div>
+</div>
+
+<div class="card"><h3>A estratégia em cinco frases</h3>
+<ul class="tight">
+<li>Começamos comprando o mercado inteiro — o S&amp;P 500 — como se não tivéssemos opinião nenhuma.</li>
+<li>Lemos os preços do Polymarket para descobrir onde a nossa opinião é diferente da do mercado.</li>
+<li>Cada diferença dessas vira uma aposta: compramos um setor e vendemos outro.</li>
+<li>O tamanho de cada aposta depende de quanta confiança o próprio Polymarket nos dá naquele dia.</li>
+<li>Um limite de risco impede que a soma de todas as apostas afaste demais a carteira do mercado.</li>
+</ul></div>
+
+<h1 class="sec first"><span class="s">§1</span> Cartão de 30 segundos</h1>
+
+<div class="lead">Um ano e meio de simulação, nove fundos americanos, ajuste de carteira todo dia.
+Ganhamos <b>33,2%</b> contra <b>30,1%</b> do S&amp;P 500 — <b>três pontos percentuais a mais</b>,
+com risco praticamente igual ao do índice.</div>
+
+<div class="kpi">
+<div><div class="l">Nosso retorno</div><div class="v">+33,2%</div><div class="src">S&amp;P 500: +30,1%</div></div>
+<div><div class="l">Diferença</div><div class="v">+3,04 pp</div><div class="src">em 18 meses</div></div>
+<div><div class="l">Sharpe</div><div class="v">1,18</div><div class="src">S&amp;P 500: 1,08</div></div>
+<div><div class="l">Oscilação no ano</div><div class="v">17,6%</div><div class="src">S&amp;P 500: 17,9%</div></div>
+<div><div class="l">Maior tombo</div><div class="v">−19,6%</div><div class="src">S&amp;P 500: −18,8%</div></div>
+<div><div class="l">Beta</div><div class="v">0,95</div><div class="src">quase igual ao mercado</div></div>
+<div><div class="l">Alfa ao ano</div><div class="v">+2,57%</div><div class="src">mas não é significante</div></div>
+<div><div class="l">Exposição bruta</div><div class="v">1,91×</div><div class="src">o patrimônio</div></div>
+<div><div class="l">Folga de custo</div><div class="v">11×</div><div class="src">o custo que supomos</div></div>
+</div>
+
+<table>
+<tr><th style="width:20%">o que</th><th style="width:28%">valor</th><th>em uma frase</th></tr>
+<tr><td>Período</td><td>fev/2025 a ago/2026 · 374 dias de bolsa</td><td>Curto, e só de mercado em alta. O Polymarket não tem dado confiável antes disso.</td></tr>
+<tr><td>Onde investimos</td><td>9 fundos (ETFs) dos EUA</td><td>Seis setores da bolsa, dois de títulos públicos e o índice inteiro.</td></tr>
+<tr><td>Ponto de partida</td><td>100% no S&amp;P 500</td><td>Sem opinião, a carteira é o mercado. As apostas só afastam a carteira dali.</td></tr>
+<tr><td>Quantas apostas</td><td>4 no total · 2 por dia, em média</td><td>Quando o Polymarket não diz nada, a gente não aposta.</td></tr>
+<tr><td>Camada tática</td><td>2 apostas extras · ativas em 9 de cada 10 dias</td><td>Os números acima <b>já incluem</b> ela.</td></tr>
+<tr><td>Quanto giramos</td><td>40% da carteira por dia</td><td>Parece muito, mas o custo disso é pequeno perto do ganho.</td></tr>
+<tr><td>Meses melhores que o índice</td><td>11 de 19</td><td>O resultado não vem de um mês sortudo.</td></tr>
+</table>
+
+<div class="card amber"><h3>⚠️ As três coisas que a gente fala antes de perguntarem</h3>
+<ul class="tight">
+<li><b>O ganho pode ser sorte.</b> Com um ano e meio de dados, ninguém consegue provar habilidade. A gente prefere dizer isso do que fingir o contrário.</li>
+<li><b>Quase todo o retorno é do mercado.</b> A carteira sobe e desce junto com o S&amp;P 500; a nossa parte é a diferença de três pontos.</li>
+<li><b>A camada tática, sozinha, ganha muito — mas dentro da carteira ela atrapalha um pouco</b>, porque disputa espaço com as outras apostas. Está tudo medido (§5).</li>
+</ul></div>
+
+<h1 class="sec"><span class="s">§2</span> Glossário — todo termo e sigla</h1>
+
+<div class="lead">Se alguém usar uma palavra que você não reconhece, ela está aqui. Uma linha cada.</div>
+
+<h2 class="grp">Do modelo</h2>
+<table class="glo">
+<tr><td>Black-Litterman (BL)</td><td>A receita que usamos: mistura a carteira do mercado com as nossas opiniões e devolve os pesos finais.</td></tr>
+<tr><td>Prior</td><td>O ponto de partida, antes de qualquer opinião: comprar o mercado.</td></tr>
+<tr><td>View (aposta)</td><td>Uma opinião nossa. Ex.: "títulos indexados à inflação vão bater os prefixados".</td></tr>
+<tr><td>P</td><td>Em quem a aposta aposta: quem a gente compra e quem a gente vende.</td></tr>
+<tr><td>Q</td><td>Quanto a gente espera ganhar com aquela aposta.</td></tr>
+<tr><td>Ω (ômega)</td><td>O quanto confiamos na aposta. Número maior = <b>menos</b> confiança.</td></tr>
+<tr><td>Σ (sigma)</td><td>Tabela que diz como os nove fundos costumam se mexer juntos.</td></tr>
+<tr><td>π (pi)</td><td>O retorno que o mercado já promete só por comprar o índice.</td></tr>
+<tr><td>δ (delta)</td><td>O quanto o investidor típico odeia risco. Quanto maior, menores as posições.</td></tr>
+<tr><td>τ (tau)</td><td>O quanto a gente duvida do próprio ponto de partida.</td></tr>
+<tr><td>Tilt</td><td>O desvio: o quanto a nossa carteira está diferente da do mercado.</td></tr>
+<tr><td>Teto</td><td>O limite que impede o desvio de ficar grande demais.</td></tr>
+<tr><td>Sleeve</td><td>Uma aposta tática avulsa, somada por cima da carteira principal.</td></tr>
+<tr><td>Overlay</td><td>Camada de apostas somada por cima, sem refazer a carteira toda.</td></tr>
+<tr><td>β (beta) de um fundo</td><td>Quanto aquele fundo costuma andar quando um evento surpreende. Sai de regressão, não de palpite.</td></tr>
+<tr><td>Beta da carteira</td><td>Quanto a carteira inteira anda quando o mercado anda 1%. O nosso é 0,95.</td></tr>
+<tr><td>Regressão</td><td>Conta estatística que mede o "quanto anda junto" entre duas séries.</td></tr>
+<tr><td>Event-study</td><td>Medir o comportamento do preço só nos dias de evento (reunião do Fed, divulgação de inflação).</td></tr>
+<tr><td>Média expansiva</td><td>Média calculada só com o passado, crescendo dia a dia. Impede usar informação do futuro.</td></tr>
+<tr><td>Demeanar</td><td>Tirar a média histórica de um número, para sobrar só o desvio de hoje.</td></tr>
+<tr><td>Hedgeado</td><td>Com o efeito do índice removido das duas pontas, para sobrar só a diferença entre setores.</td></tr>
+<tr><td>Ortogonal</td><td>Aposta que não repete o que outra já faz.</td></tr>
+</table>
+
+<h2 class="grp">Do dado</h2>
+<table class="glo">
+<tr><td>Polymarket</td><td>Mercado de apostas sobre eventos reais. Cada contrato paga US$ 1 se o evento ocorre e nada se não ocorre — então o preço é a probabilidade.</td></tr>
+<tr><td>PMF</td><td>A lista de probabilidades de cada resultado possível. Ex.: chance de a inflação ficar em 0,1%, 0,2%, 0,3%…</td></tr>
+<tr><td>Entropia</td><td>Medida de indecisão da PMF. Perto de "cara ou coroa" = alta. Quase certeza = baixa.</td></tr>
+<tr><td>Midpoint</td><td>O preço no meio do caminho entre a melhor oferta de compra e a de venda.</td></tr>
+<tr><td>CLOB</td><td>O sistema de ofertas do Polymarket, de onde a gente baixa o histórico de preços.</td></tr>
+<tr><td>Slot pré-abertura</td><td>A última leitura do Polymarket antes de a bolsa abrir. É a que a gente usa.</td></tr>
+<tr><td>FOMC</td><td>O comitê que decide os juros nos EUA — o "Copom americano".</td></tr>
+<tr><td>CPI</td><td>O índice de inflação ao consumidor dos EUA.</td></tr>
+<tr><td>Payrolls</td><td>O relatório mensal de criação de empregos nos EUA.</td></tr>
+<tr><td>FRED</td><td>Base pública de dados econômicos do Fed, de onde vêm os juros e a inflação oficiais.</td></tr>
+<tr><td>DTB3 · DFF · DGS1</td><td>Juros dos EUA de 3 meses, do dia, e de 1 ano. Servem de referência para comparar com o Polymarket.</td></tr>
+<tr><td>Breakeven de inflação</td><td>A inflação que o mercado de títulos já embute no preço.</td></tr>
+<tr><td>Duration</td><td>O quanto um título sofre quando o juro sobe. Medida em anos.</td></tr>
+<tr><td>Favorite-longshot (γ)</td><td>Vício conhecido de apostadores: pagam caro demais no azarão. Testamos corrigir; não muda o resultado.</td></tr>
+<tr><td>k</td><td>De quantos dias para trás a gente olha a mudança de probabilidade.</td></tr>
+<tr><td>Lookahead</td><td>Usar sem perceber informação que ainda não existia no dia. O pecado capital do backtest.</td></tr>
+<tr><td>Overfit</td><td>Ajustar tanto a estratégia ao passado que ela deixa de funcionar no futuro.</td></tr>
+<tr><td>Fora da amostra</td><td>Testar em dado que não foi usado para construir a estratégia.</td></tr>
+<tr><td>Backtest</td><td>Simular a estratégia no passado, dia a dia, como se estivesse rodando na época.</td></tr>
+</table>
+
+<h2 class="grp">De resultado</h2>
+<table class="glo">
+<tr><td>pp (ponto percentual)</td><td>A diferença entre dois percentuais. De 30% para 33% são 3 pontos percentuais.</td></tr>
+<tr><td>bps</td><td>Centésimo de ponto percentual. 100 bps = 1%. Usado para custo de corretagem.</td></tr>
+<tr><td>Sharpe</td><td>Quanto de retorno se ganha por unidade de risco. Maior é melhor.</td></tr>
+<tr><td>Alfa</td><td>O que sobra do retorno depois de descontar o que veio só de acompanhar o mercado.</td></tr>
+<tr><td>Estatística t</td><td>Diz se um número é diferente de zero de verdade ou por acaso. <b>Abaixo de 2, não dá para afirmar nada.</b> O nosso alfa dá 0,62.</td></tr>
+<tr><td>p-valor</td><td>A chance de o resultado ter aparecido por puro acaso. O nosso: 54%.</td></tr>
+<tr><td>IR (índice de informação)</td><td>Quanto de ganho extra a estratégia entrega por unidade do risco que ela mesma cria.</td></tr>
+<tr><td>Tracking error</td><td>O quanto a carteira desgruda do índice no caminho.</td></tr>
+<tr><td>Drawdown</td><td>A queda do ponto mais alto até o mais baixo. O nosso pior foi 19,6%.</td></tr>
+<tr><td>Giro</td><td>Quanto da carteira é comprado e vendido por dia.</td></tr>
+<tr><td>Exposição bruta (Σ|w|)</td><td>A soma de tudo que está comprado e vendido. 1,91 significa quase o dobro do patrimônio.</td></tr>
+<tr><td>Custo de breakeven</td><td>O custo de corretagem que zeraria o nosso ganho. É a forma honesta de falar de custo sem fingir precisão.</td></tr>
+<tr><td>G4</td><td>Nome interno do teste que mede a camada tática <b>sozinha</b>, fora da carteira.</td></tr>
+</table>
+
+<h1 class="sec"><span class="s">§3</span> As sete contas, em português</h1>
+
+<div class="lead">O dia da estratégia, na ordem: <b>o que o mercado já promete</b> → <b>onde discordamos</b>
+→ <b>o quanto confiamos</b> → <b>a mistura</b> → <b>os pesos</b> → <b>o freio de risco</b>.
+Cada conta abaixo tem a fórmula e, logo em seguida, a mesma coisa em palavras.</div>
+
+<h2>1. π — o retorno que já está no preço</h2>
+<div class="formula">π = δ · Σ · w_mkt</div>
+<div class="pt"><b>Em português:</b> em vez de perguntar "quais pesos são os melhores?", a gente pergunta
+o contrário: "que retornos fariam a carteira do mercado ser a melhor de todas?". A resposta é o nosso
+ponto de partida — e ele não precisa de previsão nenhuma.</div>
+<table>
+<tr><th>peça</th><th>o que faz</th><th>de onde vem</th><th>valor</th></tr>
+<tr><td>δ</td><td>o quanto se odeia risco</td><td>medido no S&amp;P 500 ao longo de 22 anos</td><td>3,0</td></tr>
+<tr><td>Σ</td><td>como os nove fundos andam juntos</td><td>dois anos de histórico, atualizado todo dia</td><td>—</td></tr>
+<tr><td>w_mkt</td><td>a carteira do mercado</td><td>o próprio S&amp;P 500</td><td>100% SPY</td></tr>
+</table>
+
+<h2>2. P — em quem a aposta aposta</h2>
+<div class="formula">P[i] = 2 · (β_i − β_SPY) / soma de todos os |β − β_SPY|</div>
+<div class="pt"><b>Em português:</b> a aposta compra quem mais se beneficia do evento e vende quem mais
+sofre. O tamanho de cada ponta é proporcional à sensibilidade medida — <b>ninguém escolhe os fundos
+na mão</b>. E a conta desconta o índice, para a aposta falar de <b>um setor contra o outro</b>, não da
+bolsa subir ou cair.</div>
+<div class="card amber"><b>⚠️ 🛑 Cuidado com a frase "a carteira é neutra em relação ao mercado".</b>
+Ela não é. Descontar o índice de <i>dentro</i> da aposta não faz a carteira inteira ficar neutra — e a
+gente mediu isso. Se perguntarem, a resposta é: "a carteira nasce do índice e continua colada nele;
+o que é relativo é cada aposta por dentro".</div>
+
+<h2>3. Q — quanto a aposta espera ganhar</h2>
+<div class="formula">Q = (sensibilidade da carteira da aposta) × (surpresa de hoje)</div>
+<div class="pt"><b>Em português — e essa é a conta que mais vão perguntar:</b> a gente não transforma
+probabilidade em retorno de uma vez. São dois passos. <b>Primeiro</b>, olhando o passado, medimos
+quanto cada fundo costuma andar quando um evento desses surpreende. <b>Depois</b>, multiplicamos isso
+pela surpresa de hoje — a diferença entre o que o Polymarket acha e o que a bolsa já tem embutido no
+preço. A probabilidade entra na surpresa; o tamanho vem do histórico.</div>
+<div class="card"><b>Se pedirem um exemplo:</b> se o Polymarket aponta inflação maior do que a que os
+títulos já embutem, a aposta compra o título indexado à inflação e vende o prefixado. Quanto maior a
+diferença, maior a posição.</div>
+
+<h2>4. Ω — o quanto confiamos na aposta</h2>
+<div class="formula">Ω = (risco natural da aposta) × (penalidade de qualidade do sinal)</div>
+<div class="pt"><b>Em português:</b> ninguém digita a confiança. Ela sai de duas perguntas feitas ao
+próprio Polymarket naquele dia: <b>(1)</b> as probabilidades de todos os resultados somam 100%?
+<b>(2)</b> o preço está estável ou pulando? Sinal incoerente ou nervoso entra com peso menor.</div>
+<ul class="tight">
+<li>A penalidade só sabe <b>tirar</b> peso, nunca aumentar. No melhor dia possível, a aposta entra com a confiança máxima do modelo — nunca mais que isso.</li>
+<li>Existe ainda um <b>desligamento total</b>: se aquele mercado não teve negociação nenhuma antes da bolsa abrir, a aposta não entra no dia.</li>
+<li>⚠️ A conta trata cada aposta separadamente — ela não percebe quando duas apostas estão dizendo a mesma coisa. Sabemos disso e está declarado.</li>
+</ul>
+
+<h2>5. A mistura — juntar o mercado com as apostas</h2>
+<div class="formula">retorno final = ponto de partida + peso × (o que a aposta diz − o que o mercado já dizia)</div>
+<div class="pt"><b>Em português:</b> só a <b>discordância</b> move a carteira. Se a aposta concordar com
+o que o mercado já embutia, nada muda. Quanto maior a confiança, mais a aposta puxa o resultado para
+o lado dela.</div>
+
+<h2>6. Os pesos — de retorno esperado para quanto comprar</h2>
+<div class="formula">w = (δ · Σ)⁻¹ · retorno final</div>
+<div class="pt"><b>Em português:</b> a conta clássica de carteira ótima. Ela pega os retornos esperados
+e o risco, e devolve quanto comprar de cada fundo. A gente deixa a conta <b>livre</b>: ela pode vender
+a descoberto, que é o que permite montar "compra um setor, vende outro".</div>
+<div class="card green"><h3>A prova de uma frase de que a conta está certa</h3>
+Se nenhuma aposta estiver ativa, a conta devolve <b>exatamente a carteira do mercado</b>, sem sobra
+nem resíduo. Esse caso extremo é testado automaticamente. É a melhor resposta para "como vocês sabem
+que não tem erro no código?".</div>
+
+<h2>7. O teto — o freio de risco</h2>
+<div class="formula">soma de todos os desvios contra o mercado ≤ 100%</div>
+<div class="pt"><b>Em português:</b> somamos o quanto cada posição está diferente da carteira do
+mercado. Esse total não pode passar de 100% do patrimônio. Se passar, encolhemos todas as apostas na
+mesma proporção.</div>
+<ul class="tight">
+<li>O freio limita <b>o desvio</b>, não o tamanho total da carteira — a parte que é mercado fica intacta.</li>
+<li>A camada tática entra <b>dentro</b> do mesmo freio. Ela não ganha orçamento próprio.</li>
+<li><b>Por que o freio existe:</b> sem ele, uma aposta muito confiante pede posição gigante e a simulação vai à ruína.</li>
+</ul>
+
+<h1 class="sec"><span class="s">§4</span> As quatro apostas (views)</h1>
+
+<div class="lead">Cada aposta lê um mercado do Polymarket e compra um par de fundos.
+<b>Nenhuma delas tem sinal forte no teste estatístico — e isso é esperado.</b> O teste serve para
+eliminar quem aparece com o sinal <b>invertido</b>, não para aprovar quem aparece forte. Nenhuma das
+quatro aparece invertida.</div>
+
+<table>
+<tr><th>aposta</th><th>lê no Polymarket</th><th>compra / vende</th><th>dias ativa</th><th>dias com mercado</th></tr>
+<tr><td><b>Inflação</b></td><td>a inflação do mês</td><td>compra título indexado, vende prefixado</td><td>253</td><td>274</td></tr>
+<tr><td><b>Fed</b></td><td>a decisão de juros da próxima reunião</td><td>os 9 fundos, conforme a sensibilidade</td><td>312</td><td>325</td></tr>
+<tr><td><b>Incerteza</b></td><td>o quanto o mercado está indeciso na véspera</td><td>o índice inteiro</td><td>26</td><td>27</td></tr>
+<tr><td><b>Trajetória</b></td><td>onde o juro termina o ano</td><td>bancos e energia contra defensivos</td><td>154</td><td>210</td></tr>
+</table>
+<div class="pt"><b>Por que duas colunas — e é a pergunta que cruza com o slide 4:</b> "dias com mercado" é
+quando existe preço no Polymarket. "Dias ativa" é quando a aposta de fato entrou na carteira, já
+descontados os dias em que o filtro de liquidez a desligou. <b>O slide mostra a segunda coluna</b>
+(745 dias de aposta somando as quatro, ou 2 por pregão). Se perguntarem a diferença: "são os dias em
+que o mercado existia mas não teve negociação antes da abertura — a gente desliga a aposta nesses
+dias".</div>
+
+<div class="card"><h3>Inflação — compra TIP, vende TLT</h3>
+<b>A ideia:</b> se o Polymarket espera inflação maior do que a que os títulos já embutem, o título
+indexado à inflação vai render mais que o prefixado.<br>
+<b>Como medimos o tamanho:</b> pela duration — o quanto esses títulos sofrem quando o juro se mexe.
+A gente <b>mediu</b> esse número no próprio par, em vez de usar o valor de tabela.<br>
+⚠️ <b>O ponto fraco, se cavarem:</b> o mercado do Polymarket é sobre a inflação de <b>um mês</b>, e a
+referência dos títulos é de <b>dez anos</b>. A direção fica certa, mas o número oscila mais do que
+deveria.</div>
+
+<div class="card"><h3>Fed — a surpresa de juros</h3>
+<b>A ideia:</b> o que já é esperado na decisão do Fed <b>já está no preço</b>. Só a parte que
+surpreende move a bolsa. O Polymarket nos dá a parte esperada.<br>
+<b>Como medimos o tamanho:</b> olhando os dias de reunião do Fed no passado e vendo quanto cada fundo
+andou por unidade de surpresa. Os sinais batem com o que a literatura acadêmica diz.<br>
+⚠️ <b>O ponto fraco:</b> a referência ideal seria o mercado futuro de juros, que não tem fonte
+gratuita. Usamos um juro curto de mercado no lugar, e descontamos a média histórica para corrigir a
+diferença de horizonte.</div>
+
+<div class="card"><h3>Incerteza — o prêmio por carregar risco de evento</h3>
+<b>A ideia:</b> a bolsa costuma pagar um prêmio em dia de anúncio importante. Esse prêmio é a
+compensação por segurar risco — então ele só deveria existir quando o anúncio é de fato incerto. O
+Polymarket mostra quando o mercado está indeciso.<br>
+<b>O que medimos:</b> anúncios incertos rendem mais que anúncios previsíveis, e a diferença é
+estatisticamente sólida.<br>
+🛑 <b>Fraqueza que precisamos assumir:</b> essa aposta vive em pouquíssimos dias, e quase todo o ganho
+dela vem de <b>um único dia</b> — 10 de abril de 2025, o choque das tarifas. Tirando os três maiores
+dias, ela fica negativa. A gente escreveu isso <b>antes</b> de ligá-la.</div>
+
+<div class="card"><h3>Trajetória — onde o juro termina o ano</h3>
+<b>A ideia:</b> "o que o Fed faz na próxima reunião" e "onde o juro termina o ano" são perguntas
+diferentes, e o mercado pode acertar uma e errar a outra.<br>
+<b>O cuidado que tomamos:</b> medimos a sensibilidade contra o juro de <b>um ano</b>, que é o
+horizonte da pergunta. Sem isso, essa aposta seria uma cópia idêntica da aposta do Fed — e a gente
+acharia que tinha duas opiniões quando tinha uma só.<br>
+⚠️ <b>Ela perde dinheiro na simulação</b> e mesmo assim entrou, porque o critério de admissão é o
+mecanismo, não o resultado. Se a gente só aceitasse o que deu lucro no passado, isso seria overfit.</div>
+
+<div class="card red"><h3>🛑 O número que a banca acha se cavar</h3>
+Duas das quatro apostas dependem muito de poucos dias. A gente registrou isso por escrito
+<b>antes</b> de ligá-las, e é assim que se responde:
+<div class="pt" style="margin-top:2mm"><b>Resposta pronta:</b> "As apostas entram por um critério
+escrito antes de medir: a ideia tem de fazer sentido, o sinal tem de vir do Polymarket, e nenhum
+número pode ser escolhido olhando o resultado. Lucro não aprova e prejuízo não reprova — por isso
+publicamos a concentração em poucos dias antes de ligar, e não depois."</div>
+<table><tr><th>aposta</th><th class="num">quanto somou</th><th class="num">tirando os 3 melhores dias</th><th class="num">acerto de direção</th></tr>
+<tr><td>Incerteza</td><td class="num">+3,9 pp</td><td class="num">−0,5 pp</td><td class="num">48%</td></tr>
+<tr><td>Trajetória</td><td class="num">−1,4 pp</td><td class="num">+2,9 pp</td><td class="num">49%</td></tr>
+<tr><td>as duas juntas</td><td class="num">+2,2 pp</td><td class="num">+2,5 pp</td><td class="num">49%</td></tr></table>
+<span class="src">Acerto de direção de 50% é cara ou coroa. Nenhuma das duas acerta mais que isso — e por isso não dizemos que elas "funcionam", dizemos que elas fazem sentido e não foram desmentidas.</span></div>
+
+<h1 class="sec"><span class="s">§5</span> A camada tática</h1>
+
+<div class="lead">Duas apostas extras, somadas por cima da carteira. Elas não olham o <b>nível</b> da
+probabilidade, e sim o <b>quanto ela mudou</b> nos últimos dias. Ativas em 9 de cada 10 dias.</div>
+
+<table>
+<tr><th>aposta</th><th>lê no Polymarket</th><th>o que compra</th></tr>
+<tr><td><b>Recessão</b></td><td>a chance de recessão nos EUA em 2025</td><td>consumo defensivo contra tecnologia</td></tr>
+<tr><td><b>Câmara</b></td><td>quem controla a Câmara dos EUA</td><td>o mesmo par</td></tr>
+</table>
+
+<div class="card"><h3>Por que olhar a mudança e não o nível — o achado que sustenta a camada</h3>
+<b>O problema do nível:</b> uma probabilidade que sobe e desce ao longo do ano acaba virando um retrato
+do <b>momento econômico</b>, não do evento. Quem usa o nível acha que está apostando em recessão, mas
+na prática está apostando que 2025 se repete.<br>
+<b>A solução:</b> usar a <b>variação</b> da probabilidade. A comparação com o passado some por
+construção.<br>
+<b>Como testamos:</b> quebramos a amostra ao meio e vimos se o sinal trocava de direção entre as
+metades. O nível troca; a variação não troca em nenhum dos casos testados.</div>
+
+<div class="card"><h3>Por que removemos o índice das duas pontas</h3>
+Comprar defensivo e vender tecnologia parece uma aposta entre setores, mas na prática vira uma aposta
+disfarçada na bolsa inteira — os dois sobem junto com o mercado. Ao descontar o índice dos dois lados,
+sobra só a diferença entre eles. Depois disso, a ligação com a bolsa cai para quase nada.</div>
+
+<div class="card amber"><h3>⚠️ O par de números desconfortável — e como explicar</h3>
+<b>Sozinha, essa camada ganha bastante. Dentro da carteira, ela tira um pouco do resultado.</b>
+Não há contradição, e a explicação cabe em uma frase:
+<div class="pt" style="margin-top:2mm"><b>Diga assim:</b> "O limite de risco é fixo. Quando a camada
+tática entra, ela não soma — ela divide. Ela pede mais espaço do que o limite inteiro permite, então
+parte das outras apostas é encolhida para caber. Nessa janela específica, o que ela tirou valia um
+pouco mais do que o que ela trouxe."</div>
+<table><tr><th>medida</th><th class="num">valor</th><th>o que significa</th></tr>
+<tr><td>Sozinha, fora da carteira</td><td class="num">+42,6 pp</td><td>Acerta a direção em 54% dos dias — e tirando os três melhores dias, fica ainda melhor.</td></tr>
+<tr><td>Efeito ao entrar na carteira</td><td class="num">−2,9 pp</td><td>O ganho total cai de 6 pontos para 3 pontos acima do índice.</td></tr>
+<tr><td>Espaço que ela pede</td><td class="num">2,5×</td><td>Ela sozinha pediria duas vezes e meia o limite de risco da carteira inteira.</td></tr></table>
+🛑 <b>Não dizer "então era só afrouxar o limite".</b> Testamos quatro limites e o efeito não segue uma
+linha: piora, piora mais, e só depois melhora. Escolher o limite que fica bom seria exatamente o
+overfit que a gente diz evitar.</div>
+
+<div class="card green"><h3>O único teste fora da amostra do projeto</h3>
+A aposta da Câmara repete o mesmo comportamento em um mercado parecido, que não foi usado para
+construí-la. É o teste mais forte que temos — e é honesto dizer que é o único.</div>
+
+<h1 class="sec"><span class="s">§6</span> De onde veio cada número</h1>
+
+<div class="lead">A pergunta que esta seção responde: <b>algum número foi escolhido a dedo para o
+resultado ficar bom?</b> A resposta é não, e cada linha diz por quê.
+<br><span class="tag med">MEDIDO</span> saiu de conta no dado &nbsp;
+<span class="tag regra">REGRA</span> segue uma fórmula fixa, sem escolha &nbsp;
+<span class="tag hum">ESCOLHIDO</span> alguém decidiu — e a linha diz o que protege de overfit.</div>
+
+<table>
+<tr><th style="width:16%">número</th><th style="width:12%">valor</th><th style="width:11%">tipo</th><th>de onde veio</th></tr>
+<tr><td>Aversão a risco (δ)</td><td>3,0</td><td><span class="tag med">MEDIDO</span></td><td>Calculado no S&amp;P 500 com 22 anos de histórico — muito antes da janela da simulação. Janelas curtas dariam número maior; ficamos com o conservador.</td></tr>
+<tr><td>Dúvida sobre o ponto de partida (τ)</td><td>—</td><td><span class="tag regra">REGRA</span></td><td>Vem de uma fórmula fixa. E o valor <b>some da conta</b> pela forma como a confiança é montada: não há o que ajustar.</td></tr>
+<tr><td>Histórico de risco (Σ)</td><td>2 anos</td><td><span class="tag regra">REGRA</span></td><td>Janela móvel, sempre terminando na véspera.</td></tr>
+<tr><td>Carteira de partida</td><td>100% S&amp;P 500</td><td><span class="tag hum">ESCOLHIDO</span></td><td>Os setores já estão dentro do índice. Pesar os dois contaria a bolsa duas vezes.</td></tr>
+<tr><td>Frequência</td><td>diária</td><td><span class="tag regra">REGRA</span></td><td>O Polymarket atualiza duas vezes por dia — diário é o mais fino que o dado permite.</td></tr>
+<tr><td>Duration dos títulos</td><td>~8 anos</td><td><span class="tag med">MEDIDO</span></td><td>Era uma suposição no projeto original; passou a ser medido no próprio par de fundos.</td></tr>
+<tr><td>Sensibilidades (β)</td><td>—</td><td><span class="tag med">MEDIDO</span></td><td>Sempre por regressão, sempre com dado até a véspera. Nunca escritas na mão.</td></tr>
+<tr><td>Custo de corretagem</td><td>2 bps por lado</td><td><span class="tag hum">ESCOLHIDO</span></td><td>Estimativa conservadora: o custo real desses fundos é dessa ordem ou menor. Como não dá para medir com precisão, reportamos quanto o custo teria de ser para zerar o ganho.</td></tr>
+<tr><td>Correção de azarão (γ)</td><td>desligada</td><td><span class="tag hum">ESCOLHIDO</span></td><td>Não temos mercados resolvidos suficientes para calibrar. Mostramos o resultado com e sem: <b>não muda a conclusão</b>.</td></tr>
+<tr><td>Limite de risco</td><td>100% de desvio</td><td><span class="tag hum">ESCOLHIDO</span></td><td>🔑 A regra foi escrita <b>antes</b> de rodar. E publicamos as oito configurações testadas, em vez de escolher a de melhor número.</td></tr>
+<tr><td>Força da penalidade de confiança</td><td>nível 1</td><td><span class="tag hum">ESCOLHIDO</span></td><td>Decisão do módulo de confiança, tomada por outro membro do time com critério próprio.</td></tr>
+<tr><td>Piso de coerência</td><td>90%</td><td><span class="tag med">MEDIDO</span></td><td>Se as probabilidades somam menos que isso, o mercado está sem preço de verdade. O corte veio da distribuição observada, não de gosto.</td></tr>
+<tr><td>Janela das apostas táticas (k)</td><td>3, 5, 10 e 20 dias</td><td><span class="tag hum">ESCOLHIDO</span></td><td>Declarado <b>antes</b> de medir, e usando um bloco inteiro em vez da melhor janela — justamente para não escolher o horizonte olhando a tabela.</td></tr>
+<tr><td>Corte de "anúncio incerto"</td><td>sem corte</td><td><span class="tag regra">REGRA</span></td><td>A incerteza entra como número contínuo. Criar um corte seria inventar um parâmetro.</td></tr>
+<tr><td>Tamanho das apostas táticas</td><td>—</td><td><span class="tag regra">REGRA</span></td><td>Sai da mesma conta de carteira ótima. Zero parâmetro novo — e foi por não ter isso que a versão anterior da camada foi barrada.</td></tr>
+</table>
+
+<div class="card green"><h3>O nosso protocolo contra overfit, em quatro linhas</h3>
+<ul class="tight">
+<li><b>Critério escrito antes:</b> a ideia tem de fazer sentido, o sinal vem do Polymarket, nenhum número é escolhido olhando resultado, e toda variável é declarada antes de medir.</li>
+<li><b>Resultado não é critério:</b> nenhuma aposta foi cortada por dar prejuízo — e uma delas entrou dando prejuízo.</li>
+<li><b>A fraqueza vai escrita antes:</b> a dependência de poucos dias é registrada antes de ligar a aposta, não depois.</li>
+<li>⚠️ <b>Declarado:</b> testamos muitas combinações e não aplicamos correção estatística para isso. Está no relatório — esconder é que seria problema.</li>
+</ul></div>
+
+<h1 class="sec"><span class="s">§7</span> Os nove ETFs</h1>
+
+<div class="lead">Seis setores da bolsa americana, dois fundos de títulos públicos e o índice.
+O critério não foi escolher os que subiram: foi cobrir os canais que as apostas precisam expressar —
+<b>juros, inflação e defensivo contra cíclico</b>.</div>
+
+<table>
+<tr><th>sigla</th><th>o que é</th><th>por que está aqui</th></tr>
+<tr><td><b>SPY</b></td><td>o S&amp;P 500 inteiro</td><td>É o ponto de partida da carteira e a régua de comparação.</td></tr>
+<tr><td><b>TIP</b></td><td>títulos do governo indexados à inflação</td><td>Ponta comprada da aposta de inflação.</td></tr>
+<tr><td><b>TLT</b></td><td>títulos do governo longos, prefixados</td><td>Ponta vendida da aposta de inflação. É o mais sensível a juros.</td></tr>
+<tr><td><b>XLK</b></td><td>tecnologia</td><td>Sofre quando o juro sobe. É a ponta vendida das apostas táticas.</td></tr>
+<tr><td><b>XLP</b></td><td>consumo básico (comida, higiene)</td><td>Setor defensivo: ponta comprada das apostas táticas.</td></tr>
+<tr><td><b>XLU</b></td><td>energia elétrica e saneamento</td><td>Defensivo e muito sensível a juros.</td></tr>
+<tr><td><b>XLF</b></td><td>bancos e financeiras</td><td>Reage a juros na direção oposta à da tecnologia.</td></tr>
+<tr><td><b>XLE</b></td><td>petróleo e energia</td><td>Canal de choque de oferta e de ciclo econômico.</td></tr>
+<tr><td><b>XLV</b></td><td>saúde</td><td>Defensivo, com sensibilidade regulatória própria.</td></tr>
+</table>
+
+<ul class="tight">
+<li><b>Fonte dos preços:</b> Yahoo Finance, diário, já ajustado por dividendos e desdobramentos.</li>
+<li><b>Só EUA e sem ação individual:</b> as apostas são macroeconômicas, e macro se expressa em setor, não em empresa.</li>
+</ul>
+
+<div class="card"><h3>"Por que a carteira de partida é só o S&amp;P e não os nove fundos?"</h3>
+Porque os setores <b>estão dentro</b> do S&amp;P 500. Se a gente comprasse o índice e os setores ao
+mesmo tempo, estaria comprando a mesma bolsa duas vezes. Do jeito que está, quando não há aposta
+nenhuma a carteira é exatamente o índice — limpo.</div>
+
+<h1 class="sec"><span class="s">§8</span> Os mercados do Polymarket</h1>
+
+<div class="lead">Um contrato do Polymarket paga US$ 1 se o evento acontecer e nada se não acontecer.
+Por isso o preço <b>é</b> a probabilidade, com dinheiro de verdade em jogo.
+<b>A gente não compra nada lá</b> — só lê o preço, e negocia nos ETFs.</div>
+
+<table>
+<tr><th>mercado</th><th>a pergunta que ele responde</th><th>usado por</th></tr>
+<tr><td><b>Reunião do Fed</b></td><td>quanto o Fed mexe no juro na próxima reunião</td><td>aposta do Fed · incerteza</td></tr>
+<tr><td><b>Inflação mensal</b></td><td>em que faixa fica a inflação do mês</td><td>aposta de inflação · incerteza</td></tr>
+<tr><td><b>Emprego</b></td><td>quantas vagas foram criadas no mês</td><td>incerteza</td></tr>
+<tr><td><b>Juro de fim de ano</b></td><td>onde o juro termina o ano</td><td>aposta de trajetória</td></tr>
+<tr><td><b>Recessão</b></td><td>se os EUA entram em recessão em 2025</td><td>tática de recessão</td></tr>
+<tr><td><b>Câmara</b></td><td>qual partido controla a Câmara</td><td>tática da Câmara</td></tr>
+</table>
+
+<h2>Como o dado chega até nós</h2>
+<ul class="tight">
+<li><b>De graça, pela API pública</b> do Polymarket. Sem provedor pago.</li>
+<li><b>Duas leituras por dia.</b> É o máximo que a versão gratuita entrega para mercado já encerrado.</li>
+<li><b>A leitura que vale é a de antes de a bolsa abrir</b> — assim não existe risco de usar informação do futuro.</li>
+<li>⚠️ <b>Só temos o preço médio</b>, não as ofertas de compra e venda. Então o custo de negociar lá não é observável — mais um motivo para não negociarmos lá.</li>
+</ul>
+
+<h2>O que a gente testou e jogou fora</h2>
+<table>
+<tr><th>ideia</th><th>por que caiu</th></tr>
+<tr><td>Eleições</td><td>O efeito acontece de madrugada, entre o fechamento e a abertura — quando a bolsa abre, já passou. E o padrão não se repetiu na eleição seguinte.</td></tr>
+<tr><td>Recessão (como aposta principal)</td><td>No par de setores que ela montava não havia sinal nenhum. Voltou depois como aposta tática, lendo a <b>mudança</b> da probabilidade.</td></tr>
+<tr><td>Conflito no Irã</td><td>Foi a correlação mais forte que a gente achou — mas também some antes da abertura, e são pouquíssimas observações.</td></tr>
+<tr><td>Tarifas</td><td>Só 13 dias de dado.</td></tr>
+<tr><td>Contas públicas</td><td>Só 3 dias de dado.</td></tr>
+<tr><td>Reação atrasada a surpresas</td><td>Testamos e reprovou: a surpresa típica é menor que o próprio degrau do mercado — ou seja, seria ruído.</td></tr>
+</table>
+
+<div class="card"><h3>"Esses mercados têm volume baixíssimo. Por que confiar neles?"</h3>
+<b>Porque não é onde a gente investe, é onde a gente lê.</b> É como usar uma pesquisa eleitoral: ela
+não precisa ser líquida, precisa ser informativa. Quem compra e vende é a carteira de ETFs, entre os
+fundos mais líquidos do mundo. E quando o mercado do Polymarket fica sem negociação, a gente desliga
+aquela aposta no dia.</div>
+
+<h1 class="sec"><span class="s">§9</span> Resultados</h1>
+
+<h2>As oito configurações que testamos</h2>
+<div class="pt">Existem dois jeitos de aplicar o mesmo limite de risco: <b>encolher a carteira inteira</b>
+ou <b>encolher só o desvio contra o mercado</b>. A gente usa o segundo, e a razão é simples — o
+primeiro corta também a parte que é mercado, e vender índice num ano em que o índice subiu 30% custa
+caro sozinho, sem ter nada a ver com a qualidade das apostas.</div>
+<table>
+<tr><th>jeito de aplicar o limite</th><th class="num">limite</th><th class="num">nosso retorno</th><th class="num">contra o índice</th></tr>
+<tr><td>encolhendo a carteira inteira</td><td class="num">1</td><td class="num">+15,3%</td><td class="num">−14,9 pp</td></tr>
+<tr><td>encolhendo a carteira inteira</td><td class="num">2</td><td class="num">+18,8%</td><td class="num">−11,4 pp</td></tr>
+<tr><td>encolhendo a carteira inteira</td><td class="num">3</td><td class="num">+23,8%</td><td class="num">−6,4 pp</td></tr>
+<tr><td>encolhendo a carteira inteira</td><td class="num">5</td><td class="num">+28,3%</td><td class="num">−1,8 pp</td></tr>
+<tr><td><b>encolhendo só o desvio</b> ← a nossa</td><td class="num"><b>1</b></td><td class="num"><b>+33,2%</b></td><td class="num"><b>+3,0 pp</b></td></tr>
+<tr><td>encolhendo só o desvio</td><td class="num">2</td><td class="num">+36,5%</td><td class="num">+6,4 pp</td></tr>
+<tr><td>encolhendo só o desvio</td><td class="num">3</td><td class="num">+38,9%</td><td class="num">+8,8 pp</td></tr>
+<tr><td>encolhendo só o desvio</td><td class="num">5</td><td class="num">+45,8%</td><td class="num">+15,7 pp</td></tr>
+</table>
+<div class="card amber"><b>⚠️ Se perguntarem "vocês escolheram a linha que ficou boa?":</b> a regra foi
+escrita antes de rodar, e o limite que usamos é o <b>mais apertado</b> da tabela — não o de melhor
+número. Mostramos as oito justamente para isso ficar visível.</div>
+
+<h2>Ganhamos mais na alta ou perdemos menos na queda?</h2>
+<table>
+<tr><th>quando o índice…</th><th class="num">o índice fez</th><th class="num">a gente fez</th><th>leitura</th></tr>
+<tr><td>subiu (dias)</td><td class="num">+0,72%</td><td class="num">+0,68%</td><td>Subimos um pouco menos.</td></tr>
+<tr><td>caiu (dias)</td><td class="num">−0,73%</td><td class="num">−0,66%</td><td>Caímos um pouco menos.</td></tr>
+<tr><td><b>desabou</b> (5% piores dias)</td><td class="num">−2,48%</td><td class="num">−2,43%</td><td>🛑 Aqui a proteção some: caímos quase igual.</td></tr>
+<tr><td><b>disparou</b> (5% melhores dias)</td><td class="num">+2,47%</td><td class="num">+2,22%</td><td>E nos melhores dias ficamos para trás.</td></tr>
+</table>
+<div class="card amber"><h3>⚠️ A leitura honesta — e ela corrige uma frase do nosso roteiro</h3>
+No dia a dia a carteira até se protege um pouco: cai menos que o índice quando o mercado cai.
+<b>Mas nos extremos essa proteção some.</b> Nos piores dias caímos quase tanto quanto o índice, e nos
+melhores ficamos para trás. O tombo máximo também foi um pouco maior que o do S&amp;P.
+<div class="pt" style="margin-top:2mm"><b>Diga assim:</b> "A carteira é praticamente o mercado com um
+desvio pequeno. No dia comum ela cai um pouco menos; nos dias extremos, essa vantagem desaparece — e é
+por isso que o próximo passo do projeto é reduzir a exposição ao índice."</div></div>
+
+<h2>De onde veio o resultado</h2>
+<table>
+<tr><th>parcela</th><th class="num">quanto</th><th>o que é</th></tr>
+<tr><td>Por ser o mercado</td><td class="num">+30,1%</td><td>O que a carteira ganharia só comprando o índice e dormindo.</td></tr>
+<tr><td>Pelas nossas apostas</td><td class="num">+3,0 pp</td><td>O que sobrou depois de descontar o mercado e pagar os custos.</td></tr>
+</table>
+<div class="card"><b>Se perguntarem se esses 3 pontos são "de verdade":</b> a resposta honesta é que não
+dá para provar. O teste estatístico dá 0,62 e o mínimo para se afirmar algo é 2. Com um ano e meio, é
+matematicamente impossível chegar lá — seriam necessárias décadas. O que defendemos é o método.</div>
+
+<h2>Duas checagens que um gestor experiente vai pedir</h2>
+<ul class="tight">
+<li><b>"Vocês não estão sendo comidos pelo custo?"</b> Não. O custo teria de ser <b>11 vezes maior</b> do que o que supusemos para zerar o ganho.</li>
+<li><b>"E se vocês negociassem menos?"</b> Testamos: colocar uma faixa de tolerância para não mexer na carteira reduz muito pouco o giro e piora a folga de custo. Ficou de fora.</li>
+</ul>
+
+<h1 class="sec"><span class="s">§10</span> Limitações</h1>
+
+<div class="lead">Todas já estavam escritas no nosso registro <b>antes</b> da apresentação. Se a banca
+levantar qualquer uma, a resposta certa é: <b>"sim, está declarado, e o custo disso é este"</b>.</div>
+
+<table>
+<tr><th style="width:30%">limitação</th><th>o que ela custa</th></tr>
+<tr><td><b>Só um ano e meio de dados</b></td><td>É a limitação mais séria. E foi só de mercado em alta: não sabemos como a estratégia se comporta numa queda longa.</td></tr>
+<tr><td><b>Sem o mercado futuro de juros</b></td><td>Não tem fonte gratuita. Usamos um juro curto no lugar, com horizonte diferente do da pergunta — e corrigimos o viés descontando a média.</td></tr>
+<tr><td><b>Não vemos as ofertas do Polymarket</b></td><td>Só o preço médio. Sem isso, o custo de negociar lá é suposição — mais um motivo para só ler, não negociar.</td></tr>
+<tr><td><b>Duas leituras por dia</b></td><td>Fecha a porta para qualquer coisa mais rápida que o diário.</td></tr>
+<tr><td><b>A faixa aberta é estimada</b></td><td>Quando o mercado tem uma faixa do tipo "acima de X", a gente estima o valor por uma regra fixa. É extrapolação, e assumimos.</td></tr>
+<tr><td><b>A confiança não vê repetição</b></td><td>A conta trata cada aposta isoladamente; se duas dizem a mesma coisa, ela não percebe.</td></tr>
+<tr><td><b>Custo é suposição</b></td><td>Por isso reportamos quanto o custo teria de ser para zerar o ganho, em vez de fingir precisão.</td></tr>
+<tr><td><b>Custo de venda a descoberto = zero</b></td><td>Assumido, e dito abertamente: não existe número público para esses fundos. A folga de 11 vezes cobre com sobra.</td></tr>
+<tr><td><b>Muitos testes, sem correção</b></td><td>Testamos muitas combinações. Quanto mais se testa, mais fácil achar algo bom por acaso — e a gente declara isso em vez de esconder.</td></tr>
+<tr><td><b>Quase nada fora da amostra</b></td><td>Só uma aposta tática foi testada em mercado que não a construiu. As outras não têm esse teste, porque a janela é curta demais para dividir.</td></tr>
+</table>
+
+<h1 class="sec"><span class="s">§11</span> Perguntas e respostas</h1>
+
+<div class="lead">Leia só a frase em preto — ela já é a resposta completa. A linha cinza abaixo tem o
+número, para o caso de pedirem. As cinco primeiras são as que mais doem.</div>
+
+<div class="qa"><span class="p">🛑 1. "Esse ganho é significante ou é sorte?"</span>
+<span class="r">Pode ser sorte, e a gente não tem como provar o contrário. Com um ano e meio de dados
+ninguém consegue separar habilidade de acaso — seria preciso décadas. O que a gente defende não é o
+resultado, é o método: cada peça foi escolhida por um motivo escrito antes de rodar o teste.</span>
+<span class="n">Se pedirem número: o teste dá 0,62, e o mínimo para se afirmar algo é 2.</span></div>
+
+<div class="qa"><span class="p">🛑 2. "Vocês escolheram a configuração que fez a estratégia ganhar?"</span>
+<span class="r">Não. A regra de risco foi escrita antes de a gente ver qualquer resultado, e mostramos
+as oito configurações testadas em vez de só a melhor. A que usamos é a mais apertada, não a de melhor
+número.</span>
+<span class="n">Se pedirem número: com o outro jeito de aplicar o mesmo limite, o resultado cairia
+quase 18 pontos. É exatamente por ser uma escolha tão relevante que ela foi fixada antes.</span></div>
+
+<div class="qa"><span class="p">🛑 3. "A camada tática ajuda ou atrapalha?"</span>
+<span class="r">Sozinha ela ganha bastante. Dentro da carteira ela tira um pouco, porque o limite de
+risco é fixo e ela disputa espaço com as outras apostas — é como ter dois bons jogadores e uma vaga
+só. Ela entrou por fazer sentido, não por dar lucro; e o custo dessa decisão está medido.</span>
+<span class="n">Se pedirem número: +42,6 pontos sozinha, −2,9 pontos quando entra na carteira.</span></div>
+
+<div class="qa"><span class="p">🛑 4. "Esses mercados de aposta movimentam quase nada. Por que confiar?"</span>
+<span class="r">A gente não investe lá — só lê o preço, como quem lê uma pesquisa de opinião. A
+pesquisa não precisa ser líquida, precisa ser informativa. Quem compra e vende é a carteira de ETFs,
+que está entre as mais líquidas do mundo. E se o mercado passa o dia sem negociação, a gente desliga
+aquela aposta.</span></div>
+
+<div class="qa"><span class="p">🛑 5. "Vocês vendem a descoberto e não pagam aluguel nem financiamento?"</span>
+<span class="r">Assumimos esses custos como zero e dizemos isso abertamente, porque não existe preço
+público deles para esses fundos. A defesa é a margem: o custo teria de ser muito maior do que qualquer
+número realista para zerar o ganho.</span>
+<span class="n">Se pedirem número: 11 vezes o custo que supusemos.</span></div>
+
+<div class="qa"><span class="p">6. "Como vocês transformam uma probabilidade em retorno esperado?"</span>
+<span class="r">Em dois passos. Primeiro, olhando o passado, medimos quanto cada fundo costuma andar
+quando um evento desses surpreende. Depois multiplicamos isso pela surpresa de hoje — a diferença
+entre o que o Polymarket acha e o que a bolsa já tem embutido no preço.</span></div>
+
+<div class="qa"><span class="p">7. "Qual é a carteira de mercado de vocês?"</span>
+<span class="r">O S&amp;P 500 inteiro. Os setores já estão dentro dele; comprar os dois seria contar a
+bolsa duas vezes. E assim, num dia sem nenhuma aposta, a carteira é exatamente o índice.</span></div>
+
+<div class="qa"><span class="p">8. "Por que Black-Litterman e não simplesmente comprar mais do setor que vocês gostam?"</span>
+<span class="r">Por dois motivos. Ele deixa a gente opinar só sobre o que sabe — nos dias em que o
+Polymarket não diz nada sobre um setor, a carteira fica igual à do mercado ali, sem chute. E ele
+decide sozinho o tamanho da posição a partir da confiança, sem a gente ter de inventar um número.</span></div>
+
+<div class="qa"><span class="p">9. "Rebalancear todo dia não é caro demais?"</span>
+<span class="r">O dado do Polymarket muda duas vezes por dia, então diário é o ritmo natural. E o custo
+cabe com folga larga. Também testamos negociar menos, com uma faixa de tolerância, e não melhorou.</span>
+<span class="n">Se pedirem número: giramos 40% da carteira por dia, e o custo teria de ser 11 vezes
+maior para zerar o ganho.</span></div>
+
+<div class="qa"><span class="p">10. "Exposição bruta de 1,91 não é alavancagem de quase 2 vezes?"</span>
+<span class="r">A exposição bruta é essa, sim. O limite que a gente impõe não é sobre o tamanho total,
+e sim sobre <b>o quanto a carteira pode se afastar do índice</b>. Somando o índice mais o desvio
+permitido, chega-se perto de dois. É uma convenção de risco relativo, e a gente reporta as duas
+leituras lado a lado.</span></div>
+
+<div class="qa"><span class="p">11. "Tem informação do futuro entrando em algum lugar?"</span>
+<span class="r">Não. Toda conta usa apenas dado até o dia anterior, e a leitura do Polymarket é a da
+véspera, antes de a bolsa abrir. As médias históricas crescem dia a dia, nunca olham à frente.</span></div>
+
+<div class="qa"><span class="p">12. "Quantas ideias vocês testaram até chegar nessa?"</span>
+<span class="r">Muitas, e está tudo registrado. Treze ideias de sinal, das quais uma entrou. Na parte
+tática, cinco candidatas medidas e duas entraram. Também declaramos que não corrigimos
+estatisticamente pela quantidade de testes — quem testa muito acha coisa boa por acaso, e esconder
+isso seria pior.</span></div>
+
+<div class="qa"><span class="p">13. "Por que essas quatro apostas e não outras?"</span>
+<span class="r">Cada uma tem de passar por quatro exigências escritas antes: ler o Polymarket, operar
+em um ativo cuja sensibilidade a gente mediu, ter uma tese que o dado não desminta, e não repetir o
+que outra aposta já faz. Cinco candidatas caíram — umas por falta de dado, outras porque o padrão não
+se repetiu.</span></div>
+
+<div class="qa"><span class="p">14. "O teste estatístico de vocês dá quase zero. Isso não reprova as apostas?"</span>
+<span class="r">O teste serve para eliminar quem aparece com o sinal invertido, não para aprovar quem
+aparece forte. Nenhuma das quatro aparece invertida. Com a quantidade de dias que temos, sinal fraco é
+o esperado — por isso a admissão é pelo mecanismo, e não pelo resultado.</span></div>
+
+<div class="qa"><span class="p">15. "O que acontece num dia em que o Polymarket não diz nada?"</span>
+<span class="r">A aposta simplesmente não entra, e a carteira fica igual à do mercado naquela parte. Em
+média, duas das quatro apostas estão ativas por dia.</span></div>
+
+<div class="qa"><span class="p">16. "E se o mercado do Polymarket estiver travado ou sem liquidez?"</span>
+<span class="r">Três filtros pegam isso. Se as probabilidades não somam perto de 100%, a aposta sai. Se
+não houve negociação até a abertura, sai também. E se o preço está instável, ela entra com peso
+menor.</span></div>
+
+<div class="qa"><span class="p">17. "E se o Polymarket só estiver copiando o que a bolsa já sabe?"</span>
+<span class="r">Aí a diferença some, e a aposta some junto — a gente só age quando os dois discordam.
+A estratégia é construída sobre a discordância, nunca sobre o nível da probabilidade.</span></div>
+
+<div class="qa"><span class="p">18. "Beta de 0,95? Isso não deveria ser neutro em relação ao mercado?"</span>
+<span class="r">Não, e a gente nunca disse que era. A carteira nasce comprando o mercado e se afasta um
+pouco dele — o resultado é essencialmente o índice mais um desvio pequeno. Zerar essa exposição é
+justamente a melhoria que apontamos no fim da apresentação.</span></div>
+
+<div class="qa"><span class="p">19. "Qual é o pior cenário para essa estratégia?"</span>
+<span class="r">Uma queda longa e forte. Nos piores dias a carteira cai quase tanto quanto o índice, e
+o maior tombo do período foi um pouco pior que o dele. Como a nossa janela só tem mercado em alta, não
+temos evidência de crise prolongada — e preferimos dizer isso a extrapolar.</span></div>
+
+<div class="qa"><span class="p">20. "Isso escala? Qual a capacidade?"</span>
+<span class="r">Do lado da execução, sim: são nove ETFs enormes e líquidos. O gargalo é o outro lado —
+o Polymarket ainda tem poucos mercados com histórico bom o bastante, e é isso que limita quantos dias
+por ano a estratégia tem opinião.</span></div>
+
+<div class="qa"><span class="p">21. "De onde saiu esse custo de negociação?"</span>
+<span class="r">É uma estimativa conservadora do custo real de negociar esses fundos. Como o número
+exato depende de execução, a gente prefere responder outra pergunta, que é mais honesta: quanto o
+custo teria de ser para zerar o nosso ganho.</span>
+<span class="n">Se pedirem número: 11 vezes a nossa suposição.</span></div>
+
+<div class="qa"><span class="p">22. "Vocês testaram fora da amostra?"</span>
+<span class="r">Uma vez de verdade: uma das apostas táticas repetiu o comportamento em um mercado
+parecido, que não foi usado para construí-la. As outras não têm esse teste, porque a janela é curta
+demais para dividir sem esvaziar a amostra. Preferimos dizer isso a inventar um teste que não
+existe.</span></div>
+
+<div class="qa"><span class="p">23. "Quanto do resultado veio de um ou dois dias de sorte?"</span>
+<span class="r">A gente mede isso de propósito, e o resultado é misto. Uma das apostas depende quase
+inteiramente de um único dia — e isso foi escrito antes de ela ser ligada. A camada tática é o
+contrário: tirando os melhores dias, ela fica ainda melhor.</span></div>
+
+<div class="qa"><span class="p">24. "Qual seria o próximo passo?"</span>
+<span class="r">Reduzir a exposição ao mercado, vendendo o índice contra os setores comprados, para
+sobrar só a nossa opinião. E esperar o Polymarket ganhar histórico, que hoje é o que limita a
+estratégia.</span></div>
+
+<div class="qa"><span class="p">25. "Vocês usaram IA para escrever o código. Como sabem que está certo?"</span>
+<span class="r">Com três travas. Toda conta matemática tem um teste com resultado conhecido. O caso
+extremo é testado: sem nenhuma aposta, a carteira tem de ficar idêntica ao índice — e fica. E os
+números finais foram reproduzidos de forma independente por outro integrante, batendo dígito a
+dígito.</span></div>
+
+<h1 class="sec"><span class="s">§12</span> 🛑 O que não podemos dizer</h1>
+
+<div class="lead">Cada frase abaixo já apareceu escrita em algum rascunho nosso e <b>não descreve a
+carteira que entregamos</b>. Se alguém do grupo falar uma delas, a banca cruza com outro slide e a
+contradição aparece.</div>
+
+<div class="card red"><h3>Frases a corrigir</h3>
+<table>
+<tr><th style="width:45%">não dizer</th><th>dizer</th></tr>
+<tr><td>"cinco candidatos passaram e <b>nenhum entrou</b>"</td><td>"cinco medidos, <b>dois entraram</b>"</td></tr>
+<tr><td>"esse resultado é <b>sem</b> a camada tática"</td><td>"é <b>com</b> a camada tática ligada"</td></tr>
+<tr><td>"escolhemos a configuração <b>pelo Sharpe</b>"</td><td>"escolhemos <b>pela regra, antes</b> de ver o resultado" — dizer o contrário derruba o nosso próprio argumento anti-overfit</td></tr>
+<tr><td>"39 mercados coletados"</td><td>Não citar esse número: não achamos de onde ele saiu. O "9 mercados usados" está certo.</td></tr>
+<tr><td>"só ganhamos quando o mercado sobe, e as quedas foram mais violentas"</td><td>"no dia comum a carteira cai um pouco menos que o índice; nos dias extremos essa vantagem some"</td></tr>
+<tr><td>"as apostas são neutras em relação ao mercado"</td><td>"cada aposta é relativa por dentro, mas a carteira continua colada no índice"</td></tr>
+</table></div>
+
+<div class="card"><h3>Pares que parecem a mesma coisa e não são</h3>
+<table>
+<tr><th style="width:38%">par</th><th>diferença</th></tr>
+<tr><td>"limite na carteira" × "limite no desvio"</td><td>Um encolhe tudo, o outro só a parte que difere do índice. Números dos dois não se comparam pelo rótulo.</td></tr>
+<tr><td>"confiança" × "incerteza"</td><td>São o inverso um do outro. Número lido num gráfico de confiança não entra direto na fórmula.</td></tr>
+<tr><td>"+3,0 pontos" × "+6,2 pontos"</td><td>O primeiro é a entrega final. O segundo é uma medição intermediária, sem a camada tática.</td></tr>
+<tr><td>"+33,2%" × "+30,9"</td><td>O primeiro capitaliza os retornos; o segundo só soma os dias. É a mesma carteira — e é o que a cascata do slide 8 mostra: mercado +28,7, apostas +5,2, custo −3,0.</td></tr>
+</table></div>
+
+<div class="card green"><h3>Regra de bolso para o palco</h3>
+Se o número não estiver nesta ficha, ele não é da entrega. E se travar no ar, a saída segura é:
+<b>"esse número está no nosso apêndice, posso abrir"</b> — e abrir.</div>
+
+</body></html>
