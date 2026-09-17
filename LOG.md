@@ -33,16 +33,15 @@ scratchpad). Render conferido pelo PowerPoint (COM), três rodadas.
   e adiciona a linha na lista; Morph com **avanço automático** (`advTm`), então
   um clique no quadro de repouso toca o caminho inteiro (~10 s). `grafo_repo.
   desenhar` ganhou `extensao`/`miudos` para o PNG ter mapa linear nó → slide.
-- **Slide 13 — IA em números (2º pedido da sessão).** Os dados da página 5 do
-  relatório redesenhados em formas do deck, sem PNG: os quatro indicadores
-  (91 · 232k · 81 · 37 %), o esforço por tipo de sessão (por sessão e por token)
-  e os 145 erros × quem pegou (88 % na própria sessão), lidos de
-  `Uteis/dados/log_sessoes.csv` + `classificacao_*.csv` via `graficos_p5.py`
-  (corte de 15/08 — os números do relatório, não re-medidos). Mais a penca de
-  usos práticos (8 scripts, 37 testes, 39 análises contadas no branch) e a
-  metade da pesquisa: o método em quatro passos, uma hipótese que caiu com o
-  número (VR do momentum do sinal, `Premissa_tendencia.md`) e a peneira 31 → 7
-  importada de `slide8_pesquisa_pptx.GRUPOS`.
+- **Slide 13 — IA em números (2º pedido da sessão).** Primeira versão era
+  texto denso (método em 4 passos, penca de usos, VR do momentum); o dono pediu
+  "menos texto e mais visual, com os gráficos do relatório". Versão final: os
+  quatro indicadores em cards (91 · 232k · 81 · 37 %, de `log_sessoes.csv` via
+  `graficos_p5.indicadores`), os PNGs da página 5 (`p5_timeline`, `p5_erros`
+  de `Uteis/graficos`, corte de 15/08 — não re-medidos), o donut em duas barras
+  (por sessão / por token) e a peneira 31 → 7 em pontos, importada de
+  `slide8_pesquisa_pptx.GRUPOS`. Texto só nos kickers; método, usos e VR foram
+  para as notas do slide.
 
 **Escolhas de escopo próprio (categoria 2), tomadas com recomendação e abertas
 a troca:** mercado "impresso" redesenhado com dado real em vez de screenshot;
@@ -69,9 +68,9 @@ os dois dias; sessão 9ed8510d para a animação; numeração provisória 03/04/
 
 **Uso de IA:**
 - **Modelo:** Claude Code / Opus 5.
-- **Contexto consumido:** ~215k tokens (janela de 15M).
+- **Contexto consumido:** ~240k tokens (janela de 15M).
 - **Prompt inicial (verbatim):** "preciso fazer os slides para a final. leia o pptx que tenho na pasta final ele é um planejamento rápido do que pensamos em fazer com os slides leia"
-- **Iterações até aceitar:** 2 (plano apresentado → o dono pediu o slide 4 "visual, previsões implícitas por ETF" em vez do gráfico de séries proposto; depois três rodadas internas de render). Slide 13: 1 pedido, três rodadas internas de render (textos estourando caixa).
+- **Iterações até aceitar:** 2 (plano apresentado → o dono pediu o slide 4 "visual, previsões implícitas por ETF" em vez do gráfico de séries proposto; depois três rodadas internas de render). Slide 13: 2 (versão em texto → o dono pediu os gráficos do relatório e menos texto), mais três rodadas internas de render.
 - **Erros da IA:** nenhum no entregável; dois defeitos (NaN na véspera, variável sombreada) pegos em execução antes de gravar.
 - **Decisões escaladas:** —.
 - **Tags:** —
