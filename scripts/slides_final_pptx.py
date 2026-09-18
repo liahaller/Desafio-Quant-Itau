@@ -15,10 +15,11 @@ no PowerPoint com "manter formatação de origem".
        caminho REAL que um prompt percorreu, medido no transcript da sessão por
        `trace_sessao.py`. Uma sequência de slides Morph com avanço automático:
        um clique dispara o caminho inteiro.
-  13 · IA em números: os quatro indicadores e os gráficos da página 5 do
-       relatório (`Uteis/graficos/p5_*.png`, de `graficos_p5.py`) — linha do
-       tempo de contexto × decisões, erros × quem pegou, esforço por tipo — e a
-       peneira 31 → 7 do slide 8 da semi. Texto só nos kickers.
+  13 · IA em números: dois gráficos da página 5 do relatório
+       (`Uteis/graficos/p5_*.png`, de `graficos_p5.py`) — erros × quem pegou e
+       os donuts do esforço por tipo — e os quatro indicadores na faixa de
+       baixo. Texto só nos kickers: o slide é a base de uma leitura geral sobre
+       IA em estratégia quant, não dos nossos números.
   16 · o estudo estatístico do Polymarket (`estudo_polymarket.py`,
        `Final/estudo/Estudo_polymarket.md`) em duas observações e uma conclusão:
        calibração (0,043) e decisão do Fed (0,9 × 4,8 bps). Três slides de
@@ -58,7 +59,6 @@ import matplotlib.pyplot as plt            # noqa: E402
 
 import grafo_repo                          # noqa: E402
 import graficos_p5                         # noqa: E402
-from slide8_pesquisa_pptx import GRUPOS    # noqa: E402
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "Final" / "Slides_novos.pptx"
@@ -77,7 +77,6 @@ MUTED = RGBColor(0x83, 0x95, 0xB5)
 FOOT = RGBColor(0x58, 0x69, 0x8A)
 RULE = RGBColor(0x2A, 0x3F, 0x63)
 GHOST = RGBColor(0x10, 0x1A, 0x2E)
-ESCURO = RGBColor(0x0A, 0x13, 0x25)     # texto sobre fatia clara
 CARD_A, CARD_B = "182946", "0F182B"       # degradê do card
 BORDA_A, BORDA_B = "35507A", "22345A"     # degradê da borda
 
@@ -706,102 +705,50 @@ def s12_second_brain(prs, numero="12"):
 
 
 # ================================================================== slide 13
-COR_TIPO = {"pesquisa": ORANGE, "analise": BLUE, "codigo": MINT}
 SUB_CURTO = {"Decisões registradas": "escaladas ao humano",
              "Taxa de recorreção": "pediram 2ª rodada"}
 
 
 def dados_ia():
-    """Os números da página 5, lidos do CSV que `graficos_p5.py` gravou."""
+    """Os indicadores da página 5, lidos do CSV que `graficos_p5.py` gravou."""
     quadro = pd.read_csv(DADOS / "log_sessoes.csv", parse_dates=["data"])
-    return (graficos_p5.indicadores(quadro), quadro.groupby("tipo").size(),
-            quadro.groupby("tipo")["tokens"].sum())
+    return graficos_p5.indicadores(quadro)
 
 
-def barra_empilhada(slide, x, y, w, h, partes, minimo=0.32):
-    """Barra horizontal dividida; a fatia mostra o rótulo se couber."""
-    total = sum(v for v, _, _ in partes)
-    cx = x
-    for valor, cor, rotulo in partes:
-        lw = w * valor / total
-        r = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(cx), Inches(y),
-                                   Inches(lw), Inches(h))
-        r.fill.solid()
-        r.fill.fore_color.rgb = cor
-        r.line.color.rgb = ESCURO
-        r.line.width = Pt(0.75)
-        efeito(r, "")
-        r.text_frame.text = ""
-        if lw >= minimo:
-            texto(slide, cx, y, lw, h, [(rotulo, MONO, 8.5, ESCURO, True)],
-                  alinha=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, wrap=False)
-        cx += lw
+def s13_conteudo(s):
+    """Dois gráficos do relatório lado a lado e os quatro indicadores embaixo.
 
+    Separado da moldura para poder ser reaplicado num slide já existente do
+    deck (o dono edita o .pptx à mão; `monta()` não pode sobrescrevê-lo).
+    """
+    we = 6.2                                  # erros à esquerda, donuts à direita
+    xr = L + we + 0.43
+    kicker(s, L, 2.05, we, "145 ERROS DA IA  ·  QUEM PEGOU")
+    imagem(s, GRAFICOS / "p5_erros.png", L, 2.4, we)
+    kicker(s, xr, 2.05, R - xr, "ONDE FOI O ESFORÇO")
+    imagem(s, GRAFICOS / "p5_donut.png", xr, 2.5, R - xr)
 
-def legenda(slide, x, y, itens):
-    cx = x
-    for cor, rotulo in itens:
-        ponto(slide, cx + 0.06, y + 0.1, 0.11, cor)
-        texto(slide, cx + 0.19, y, 2.4, 0.2, [(rotulo, LIGHT, 8.5, MUTED)],
+    # --- os quatro indicadores, a largura toda, na faixa de baixo
+    gw = (R - L - 3 * 0.12) / 4
+    for i, (rot, (valor, sub)) in enumerate(dados_ia().items()):
+        x = L + i * (gw + 0.12)
+        card(s, x, 5.95, gw, 0.86)
+        texto(s, x + 0.22, 5.99, 1.5, 0.6, [(valor, COND, 30, ORANGE)],
+              anchor=MSO_ANCHOR.MIDDLE)
+        texto(s, x + 1.35, 6.07, gw - 1.5, 0.3, [(rot.upper(), MONO, 7.5, TEXT, True, 60)],
               anchor=MSO_ANCHOR.MIDDLE, wrap=False)
-        cx += 0.19 + 0.062 * len(rotulo) + 0.18
+        texto(s, x + 1.35, 6.35, gw - 1.5, 0.3, [(SUB_CURTO.get(rot, sub), LIGHT, 8.5, MUTED)],
+              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Gráficos da página 5 do relatório (Uteis/graficos/p5_*.png, graficos_p5.py; corte "
+        "de 15/08, 91 sessões dos três LOGs). Erros: 145, 88 % pegos na própria sessão. "
+        "Esforço: 31/54/15 % das sessões e 25/71/4 % dos tokens.")
 
 
 def s13_ia_numeros(prs, numero="13"):
-    """Os gráficos da página 5 do relatório, no slide — texto só nos kickers."""
-    kpis, por_sessao, por_token = dados_ia()
     s = moldura(prs, numero, "IA em números",
                 "Medimos o uso de IA como medimos a estratégia: pelo registro.")
-
-    # --- os quatro indicadores, a largura toda
-    gw = (R - L - 3 * 0.12) / 4
-    for i, (rot, (valor, sub)) in enumerate(kpis.items()):
-        x = L + i * (gw + 0.12)
-        card(s, x, 1.62, gw, 0.86)
-        texto(s, x + 0.22, 1.66, 1.5, 0.6, [(valor, COND, 30, ORANGE)],
-              anchor=MSO_ANCHOR.MIDDLE)
-        texto(s, x + 1.35, 1.74, gw - 1.5, 0.3, [(rot.upper(), MONO, 7.5, TEXT, True, 60)],
-              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
-        texto(s, x + 1.35, 2.02, gw - 1.5, 0.3, [(SUB_CURTO.get(rot, sub), LIGHT, 8.5, MUTED)],
-              anchor=MSO_ANCHOR.MIDDLE, wrap=False)
-
-    # --- os dois gráficos do relatório: linha do tempo e erros × quem pegou
-    kicker(s, L, 2.66, 6.2, "CONTEXTO POR DIA  ·  DECISÕES ACUMULADAS")
-    imagem(s, GRAFICOS / "p5_timeline.png", L, 2.9, 6.25)
-    xr = L + 6.25 + 0.38
-    kicker(s, xr, 2.66, R - xr, "145 ERROS DA IA  ·  QUEM PEGOU")
-    imagem(s, GRAFICOS / "p5_erros.png", xr, 2.92, R - xr)
-
-    # --- onde foi o esforço (o donut do relatório, em duas barras)
-    kicker(s, L, 5.6, 6.2, "ONDE FOI O ESFORÇO")
-    ordem = [t for t in COR_TIPO if t in por_sessao.index]
-    for j, (rot, serie) in enumerate((("por sessão", por_sessao), ("por token", por_token))):
-        y = 5.88 + j * 0.34
-        texto(s, L, y, 0.9, 0.24, [(rot, LIGHT, 8.5, MUTED)], anchor=MSO_ANCHOR.MIDDLE)
-        barra_empilhada(s, L + 0.95, y, 6.25 - 0.95, 0.24,
-                        [(float(serie[t]), COR_TIPO[t], f"{serie[t] / serie.sum():.0%}")
-                         for t in ordem])
-    legenda(s, L + 0.95, 6.62, [(COR_TIPO[t], graficos_p5.ROTULO_TIPO[t]) for t in ordem])
-
-    # --- a peneira da pesquisa, em pontos
-    medidas, passaram = sum(g[1] for g in GRUPOS), sum(g[2] for g in GRUPOS)
-    kicker(s, xr, 5.6, R - xr, f"PESQUISA  ·  {medidas} HIPÓTESES MEDIDAS, {passaram} ENTRARAM")
-    for i, (rot, total, k) in enumerate(GRUPOS):
-        y = 5.9 + i * 0.25
-        texto(s, xr, y - 0.02, 1.7, 0.2, [(rot, LIGHT, 8.5, BODY)], anchor=MSO_ANCHOR.MIDDLE)
-        inicio = (total - k) // 2
-        for j in range(total):
-            aceso = inicio <= j < inicio + k
-            ponto(s, xr + 1.8 + j * 0.2, y + 0.08, 0.13 if aceso else 0.09,
-                  ORANGE if aceso else RULE, luz=(50000, 40000) if aceso else None)
-        texto(s, xr + 1.8 + 13 * 0.2 + 0.1, y - 0.02, 1.2, 0.2,
-              [(f"{k} de {total}", MONO, 8, ORANGE)], anchor=MSO_ANCHOR.MIDDLE)
-
-    s.notes_slide.notes_text_frame.text = (
-        "Gráficos da página 5 do relatório (Uteis/graficos/p5_*.png, graficos_p5.py; corte "
-        "de 15/08, 91 sessões dos três LOGs). Esforço: 31/54/15 % das sessões e 25/71/4 % "
-        "dos tokens. Erros: 145, 88 % pegos na própria sessão. Peneira: GRUPOS do slide 8 "
-        "da semi. Uma que caiu: momentum do sinal, VR 0,97–1,18 (Premissa_tendencia.md).")
+    s13_conteudo(s)
     sela(s, "s13")
     return s
 

@@ -1,5 +1,42 @@
 # LOG de sessões
 
+## 2026-09-18 (sessão 47) — Felipe
+
+**Feito:** `git pull` na branch Felipe (mudança local de
+`Quartas/roteiro_apresentacao.txt` guardada em stash, a pedido). Em
+`Final/Slides_novos.pptx`, o dono editou no PowerPoint o slide 2 da animação
+"Setup de IA" (subtítulo "O segundo cérebro", bloco O SETUP em 12,5 pt com a
+linha "Exemplo", kicker "PROMPT EXEMPLO" e um prompt novo); a sessão replicou
+essas cinco caixas nos slides 3–14 copiando o XML do slide 2 (posições e
+tamanhos iguais, id/nome únicos de cada slide preservados — Morph intacto).
+Como a edição estava só em memória, o deck foi salvo/fechado/reaberto via COM
+(PowerShell) e o render dos slides 2, 3, 8 e 14 conferido. Script gerador
+`scripts/slides_final_pptx.py` não foi tocado nessa parte.
+
+**2º pedido — slide 15 (IA em números) mais limpo:** saíram o gráfico de
+contexto por dia e a peneira da pesquisa; ficaram erros × quem pegou
+(esquerda) e o esforço por tipo, agora com os donuts do relatório
+(`p5_donut.png`) no lugar das barras; a pedido, os quatro indicadores voltaram
+na faixa de baixo. `s13_ia_numeros` reescrito no script (split em
+`s13_conteudo(s)` para reaplicar no slide existente sem regenerar o deck, que
+tem edições manuais); barras/legenda/peneira e imports mortos removidos;
+`--demo` ok. Render conferido.
+
+**Quebrou / aprendido:** nada. `pywin32` não está instalado neste Python; o
+COM foi acionado por PowerShell (`GetActiveObject`).
+
+**Pendente:** `Final/fianl.pptx` está modificado (32 slides, edição do dono);
+stash do roteiro das quartas ainda guardado.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~70k tokens.
+- **Prompt inicial (verbatim):** "da pull na minha branch. ignore as mudanças que tem aqui"
+- **Iterações até aceitar:** 2 (slide 15: donuts pequenos na 1ª versão, colunas rebalanceadas; cards de volta a pedido).
+- **Erros da IA:** nenhum.
+- **Decisões escaladas:** —.
+- **Tags:** —
+
 ## 2026-09-17 (sessão 46) — Felipe
 
 **Feito:** o estudo estatístico do Polymarket como fonte de sinal — o slide 16
