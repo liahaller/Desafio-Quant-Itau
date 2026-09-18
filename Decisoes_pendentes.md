@@ -2569,3 +2569,64 @@ VR(5) < 1 em todas as famílias.
 slot pré-abertura. Corrigida para "último fechamento estritamente anterior",
 a mesma regra do backtest; o controle com o `s4_comparacao.csv` (E_poly −26,90
 e E_FF −42 na véspera de 17/09/2025) fecha exato.
+
+## 33 (branch `Felipe`). Análise estatística do backtest para a final — escolhas pré-registradas 🟢 (fechada pelo dono, 2026-09-18 — sessão 48)
+
+**O que é:** os slides 28 (Backtest e resultados) e 30 (Análise crítica) do
+`Final/fianl.pptx` mostravam o placar sem inferência — nenhum número com
+intervalo, nenhum teste contra o benchmark, nenhuma correção por nº de
+tentativas. Pesquisa de como a literatura julga uma estratégia
+(`Final/analise/Pesquisa_avaliacao_estrategia.md`: Lo 2002; Bailey–López de
+Prado 2012/2014; Ledoit–Wolf 2008; Politis–Romano 1994; Harvey–Liu 2015;
+López de Prado 2018 cap. 14; Arnott–Harvey–Markowitz 2019; Luo et al. 2014;
+Novy-Marx–Velikov 2016) → `scripts/analise_backtest.py` →
+`Uteis/analises/Analise_backtest.md` + `Uteis/dados/analise_backtest/*.csv` +
+`Uteis/graficos/ab_*` → slides **14, 15 e A9** em `Final/Slides_novos.pptx`.
+**Mede; não decide** — o código da estratégia segue congelado; o script lê só
+o `backtest_diario.csv` (cenário `tilt ≤ 1`) e as grades já gravadas.
+
+**Fechado pelo dono na sessão (três escolhas de escopo):**
+1. **A incerteza vai no slide de resultados**, não só nas notas: o +3,0 pp
+   aparece com IC95 e P(> 0), o Sharpe com IC95, o alpha com o t e a régua.
+2. Os slides nascem em `Slides_novos.pptx` (padrão das sessões 45–46); o dono
+   cola no `fianl.pptx`.
+3. Um slide de apêndice (A9) com a tear-sheet completa.
+
+**Escolhas metodológicas pré-registradas no plano, aprovadas junto com ele
+(regra 1: valores não se assumem sozinhos):** série `tilt ≤ 1`, 374 pregões,
+taxa livre zero (convenção do projeto); bootstrap estacionário de
+Politis–Romano com bloco médio 10 pregões, B = 2 000, semente 20260918, os
+MESMOS índices para Kairós e SPY; Newey–West 5 lags; metades por contagem de
+pregões (187/187); regime = sinal do retorno do SPY no dia; rolling de 63
+pregões; SR* = 0; nível 95 %; **N do DSR em grade, não escolhido** —
+{18 configurações com Sharpe gravado · 31 hipóteses do LOG · 231 = + ~200
+células da D27} × {V medido nas configurações (correlacionadas, subestima) ·
+V de tentativas independentes (SE² de Lo, cota superior)}.
+
+**Resultado (números em `Analise_backtest.md`):** excesso +3,04 pp, IC95
+[−12,9; +20,6], P(> 0) = 64 %; Sharpe 1,18 [−0,23; 3,04]; ΔSharpe
+[−0,42; 0,63], P(> 0) = 66 %; alpha +2,6 % a.a. com t = 0,62 (régua de
+Harvey–Liu: 3); PSR(0) = 93 %; **MinTRL(95 %) = 457 > 374 pregões**; DSR
+0,84–0,88 com V medido, 0,08–0,33 com V independente; excesso na 1ª metade
+(+3,3 pp) e negativo na 2ª (−0,6 pp); nos dias de queda do SPY +6,2 bps/dia
+(hit 52 %), nos de alta −3,9 bps/dia; hit do tilt 50 %, HHI 0,01, os 3
+maiores dias = 3,5 dos 5,2 pp; TuW 87 pregões (= SPY); 11 de 19 meses.
+**Leitura fechada com o dono:** o número é positivo em todas as leituras, mas
+18 meses não separam habilidade de sorte — o que sustenta a estratégia é o
+mecanismo medido fora do resultado, e é isso que os slides dizem.
+
+**Forma dos slides, fechada pelo dono na 2ª rodada:** o 14 replica o slide 28
+do `fianl.pptx` com um único tile a mais (P(excesso > 0) = 64 %, IC95, MinTRL);
+o 15 tem três números com leitura qualitativa (457 · +6,2 bps · 3 de 7) e uma
+linha "faríamos diferente" — o scorecard inteiro fica no
+`Pesquisa_avaliacao_estrategia.md` §2 e nas notas.
+
+**Scorecard do protocolo (resumido no slide 15 como "3 de 7"), registrado:** ✔ motivação econômica ·
+◐ testes múltiplos (DSR reportado; D27 sem correção) · ✔ dados/amostra ·
+✕ validação fora da amostra (não há OOS; o próximo semestre é o OOS
+pré-registrado) · ◐ dinâmica (parâmetros fixos, mas excesso só na 1ª
+metade) · ◐ complexidade (Ω diagonal) · ✔ cultura.
+
+**O que a pesquisa pede e NÃO foi feito (declarado no `Pesquisa_avaliacao_estrategia.md` §5):**
+walk-forward, correção célula a célula da D27, regressão de fatores, custo real
+de execução.

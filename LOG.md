@@ -1,5 +1,123 @@
 # LOG de sessões
 
+## 2026-09-18 (sessão 48) — Felipe
+
+**Feito:** os slides de backtest (28) e análise crítica (30) do `Final/fianl.pptx`
+ganharam embasamento estatístico — pesquisa, análise sobre o dado congelado e
+três slides novos, na mesma sessão.
+
+- **Pesquisa (plan mode):** 12 fontes sobre como se julga uma estratégia (Lo
+  2002; Bailey–López de Prado 2012/2014 — PSR, MinTRL, DSR; Ledoit–Wolf 2008;
+  Politis–Romano 1994; Harvey–Liu 2015 e Harvey–Liu–Zhu 2016; Grinold–Kahn;
+  López de Prado 2018 cap. 14; Arnott–Harvey–Markowitz 2019; Luo/DB 2014;
+  Novy-Marx–Velikov 2016; pyfolio) → `Final/analise/Pesquisa_avaliacao_estrategia.md`
+  (tabela de fontes com links, protocolo de 7 pontos × Kairós, 7 pecados ×
+  Kairós, "como ler cada número", o que a pesquisa pede e não foi feito).
+  Três escolhas de escopo fechadas com o dono antes do plano (incerteza vai no
+  slide; slides nascem em `Slides_novos.pptx`; 1 apêndice) e as escolhas
+  metodológicas pré-registradas no plano — **D33**.
+- **`scripts/analise_backtest.py`** (novo, único): lê `backtest_diario.csv`
+  (`tilt ≤ 1`) e as grades gravadas; **não roda o backtest**. Bloco A
+  inferência (IC do Sharpe por Lo e bootstrap estacionário, IC do excesso e
+  da ΔSharpe, alpha Newey–West, IR/TE, PSR, MinTRL, DSR em grade N × V),
+  B concentração (hit, payoff, HHI, top-3/10, tilt por nº de views), C
+  estabilidade (metades, regime do SPY, mensal, rolling IR/beta, drawdown,
+  TuW, 3 maiores DD), D implementação (relido). Grava
+  `Uteis/dados/analise_backtest/*.csv` (12 tabelas),
+  `Uteis/analises/Analise_backtest.md` e `Uteis/graficos/ab_*.{png,svg}` (5).
+  `--demo` com 14 asserts sintéticos (PSR = Φ em série gaussiana, DSR(N=1) =
+  PSR, PSR no MinTRL = 95 %, NW recupera β, HHI, TuW, drawdowns, bootstrap).
+- **Slides 14, 15 e A9** em `scripts/slides_final_pptx.py` (`s14_resultados`,
+  `s15_analise_critica`, `sA9_estatistica`, `dados_analise`, `br`). 14:
+  excesso acumulado com o IC95 do valor final + quatro cards (excesso,
+  Sharpe, alpha, track record) cada um com IC ou régua + cascata + conclusão.
+  15: scorecard do protocolo (✔✔✔ ◐◐◐ ✕) + "onde o ganho mora" (metades ×
+  regime) + fortes/fracos + faríamos diferente + como um fundo. A9:
+  tear-sheet de 20 linhas + rolling IR + curva do DSR. Notas com fala e
+  perguntas prováveis. **Novo modo `--anexar`**: acrescenta os três ao deck
+  JÁ SALVO (posições 16, 17 e 28 de 29), preservando as edições manuais da
+  sessão 47. Render conferido pelo PowerPoint (COM via PowerShell), quatro
+  rodadas.
+
+**2º pedido — cortar o excesso:** o dono quis o slide de backtest "sem mudar
+muito do que temos no fianl" e o de análise crítica com "no máximo três
+números que trazem uma conclusão qualitativa". Refeitos: **14** replica o
+slide 28 do `fianl.pptx` (placar 2 × 2 lido da série por
+`graficos_p4.metricas`, cascata, curva e drawdown, mesmas notas) com UM tile a
+mais — "P(excesso > 0) · sorte ou habilidade?": 64 %, IC95, faltam 83 pregões.
+**15** virou três cards: **457** pregões de track record mínimo (ainda não
+provada) · **+6,2 bps** por dia de queda do SPY, −3,9 nos de alta (defensiva,
+não proteção de cauda) · **3 de 7** no protocolo de Arnott–Harvey–Markowitz
+(rigor onde depende de nós, aberto onde só o tempo resolve) + uma linha
+"faríamos diferente". Saíram scorecard de 7 linhas, gráfico de metades,
+fortes/fracos e "como um fundo" (ficam no `Pesquisa_avaliacao_estrategia.md`
+§2–3 e nas notas). A9 intocado. Render conferido.
+
+**3º pedido — fala dos dois slides:** `Final/analise/Fala_slides_14_15.md` —
+~70 s por slide em linguagem de gestor (cada índice em uma frase: bootstrap =
+"embaralhar os dias em blocos e simular milhares de versões do mesmo período";
+MinTRL = "quantos pregões a estatística exige para afirmar com 95 %"; bps =
+centésimos de por cento; protocolo = checklist de 7 pontos), sete respostas
+curtas para perguntas prováveis e um glossário de bolso.
+
+**4º pedido — slide 18 (16 · Polymarket como fonte) sem Kalshi:** a sub-linha
+"Kalshi a 1 h: 0,045" virou o IC95 do Brier na véspera lido do CSV
+(`dados_estudo` no gerador); a linha "véspera do evento" do gráfico de
+calibração saiu do verde-água (lembra a marca do Kalshi) para verde-folha
+(`SLIDE["folha"]` em `estudo_polymarket.fig_slide_calibracao`; figura
+regerada só do `calibracao_bins.csv`, sem rodar o estudo) — e, a pedido,
+de verde para **roxo** (`SLIDE["roxo"]`, #B388FF) na rodada seguinte.
+
+**5º pedido — slide de transição:** `sT_resposta` no gerador ("Resposta da
+hipótese": título grande, a hipótese do slide 2 entre aspas, a linha de
+amostra lida do `observacoes.csv`; sem número fantasma) + `inserir_apos()` e
+o flag `--transicao`, que o coloca no deck salvo logo depois da análise
+crítica. Deck com 30 slides: 16 backtest · 17 análise crítica · 18 transição ·
+19 Polymarket como fonte · 29 A9. O deck estava aberto no PowerPoint na 1ª
+tentativa (PermissionError); o dono fechou e a inserção passou. Aplicado no deck
+salvo em vez de regenerar (texto e imagem trocados no lugar). O A1 (slide 19)
+ainda tem as linhas de referência Kalshi/Dune no gráfico de Brier por
+horizonte e o título "no nível do Kalshi" — não pedido, não mexido.
+
+**Resultado em uma linha:** +3,04 pp com IC95 [−12,9; +20,6] e P(> 0) = 64 %;
+Sharpe 1,18 [−0,23; 3,04]; alpha t = 0,62 (régua 3); PSR 93 %; MinTRL 457 >
+374; excesso só na 1ª metade (+3,3 / −0,6 pp) e nos dias de queda do SPY —
+**o número é positivo em toda leitura, mas 18 meses não separam habilidade
+de sorte; o que sustenta é o mecanismo medido fora do resultado.**
+
+**Quebrou / aprendido:**
+- **`monta()` apagou as edições manuais do `Slides_novos.pptx`** (slide 2 do
+  Setup de IA e os apêndices colados da semi): rodei o gerador inteiro sem
+  reler a nota da sessão 47. Pego na verificação (o deck saiu com 24 slides
+  em vez de 26); restaurado do git e resolvido com `--anexar`.
+- O A9 foi parar depois do slide da Kalshi porque `_indice("Apêndice")`
+  achava o próprio A9 recém-criado; posições agora medidas antes de inserir.
+- Os IC do CSV já vêm com colchetes: a 1ª versão dos cards mostrava `[[…]]`.
+- Kickers de 55+ caracteres quebram em duas linhas na coluna de 5,5–6,5 pol.
+- Importar `estudo_polymarket` custa 32 s (carrega dado no import):
+  `newey_west`/`_md`/paleta foram copiados (comentado no script).
+- Heredoc do bash com três aspas simples dentro (de novo, duas vezes) —
+  patch grande e esta entrada foram por arquivo no scratchpad.
+- `Remove-Item` no scratchpad é bloqueado pelo sandbox; renders em pastas novas.
+
+**Pendente:**
+- Colar os slides 16, 17, 18 (transição) e 29 (A9) do `Slides_novos.pptx` no
+  `fianl.pptx` no lugar dos 28 e 30 (e o placeholder 29), e recolar o 19
+  (Polymarket sem Kalshi, linha roxa) sobre o 31; numeração do deck a acertar.
+- Nada commitado (o dono não pediu): `scripts/analise_backtest.py`,
+  `Final/analise/`, `Uteis/analises/Analise_backtest.md`,
+  `Uteis/dados/analise_backtest/`, `Uteis/graficos/ab_*`,
+  `scripts/slides_final_pptx.py`, `Final/Slides_novos.pptx`, D33 e esta entrada.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~360k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "Estou acertando os slides para a final. Olhando para os slides de backtest e analise critica dos resultados sinto que eles estão faltando um embasamento mais cientifico. Preciso que a nossa analise do backtest e metodológica seja mais embasada e metodológica. Para isso queria que você pesquisasse fontes que mostram como analisar uma estratégia quantitativa com de forma metodológica e boa. Faça a pesquisa e monte um plano de analise da estratégia. Planeje então dois slides, um de exposição dos resultados do backtest e outro de analise critica da estratégia, seus pontos fortes, fracos e outras analises que a pesquisa mostrou que são comuns/valiosas. LEia o fianl.pptx para ver como esta os slides agora e monte esse plano de pesquisa."
+- **Iterações até aceitar:** 2 (plano aceito de primeira, depois de 3 perguntas de escopo; os slides 14/15 passaram por 1 rodada do dono — "o de backtest não deve mudar muito do que temos; o crítico com no máximo três números").
+- **Erros da IA:** 3 pegos pela própria sessão antes de entregar — regenerou o deck por cima das edições manuais (restaurado do git), A9 na posição errada, colchetes duplicados nos cards.
+- **Decisões escaladas:** 33 (fechada pelo dono na sessão: escopo e pré-registro da análise).
+- **Tags:** `[PROMPT-CHAVE]` — o prompt + o plano aprovado reproduzem a análise inteira a partir do CSV congelado.
+
 ## 2026-09-18 (sessão 47) — Felipe
 
 **Feito:** `git pull` na branch Felipe (mudança local de
