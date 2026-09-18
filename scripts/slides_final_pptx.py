@@ -25,6 +25,13 @@ no PowerPoint com "manter formatação de origem".
        calibração (0,043) e decisão do Fed (0,9 × 4,8 bps). Três slides de
        apêndice para a arguição — A1 acurácia por horizonte; A2 Polymarket ×
        futuro de FF e lead-lag; A3 event-study e o placar "onde está o valor".
+  14 · o slide 28 do deck da final (placar 2 × 2, cascata, curva e drawdown)
+       com UM tile a mais: P(excesso > 0) e o IC95 do bootstrap
+       (`analise_backtest.py`) — sorte ou habilidade?
+  15 · análise crítica em três números com leitura qualitativa: 457 pregões
+       de track record mínimo (ainda não provada) · +6,2 bps por dia de queda
+       do SPY (defensiva) · 3 de 7 no protocolo de Arnott, Harvey e Markowitz.
+       A9 · tear-sheet completa, rolling IR e a curva do DSR.
 
 Como o Morph casa as formas: nome com prefixo `!!` = mesmo objeto entre slides
 (anda, muda de cor, muda de tamanho); todo o resto ganha nome único do slide
@@ -33,7 +40,9 @@ Como o Morph casa as formas: nome com prefixo `!!` = mesmo objeto entre slides
 
 Uso:
 
-    python scripts/slides_final_pptx.py             # gera o deck
+    python scripts/slides_final_pptx.py             # gera o deck DO ZERO (apaga edições manuais)
+    python scripts/slides_final_pptx.py --anexar    # só acrescenta 14/15/A9 ao deck salvo
+    python scripts/slides_final_pptx.py --transicao # insere a transição "Resposta da hipótese" após o 15
     python scripts/slides_final_pptx.py --render    # e exporta PNG via PowerPoint
     python scripts/slides_final_pptx.py --demo      # auto-teste
 """
@@ -781,7 +790,7 @@ def dados_estudo():
     placar = [(ok, rot, num.replace(".", ",")) for ok, rot, num in placar]
     return placar, {
         "brier": (f"{b0.brier:.3f}".replace(".", ","), "BRIER NA VÉSPERA",
-                  "Kalshi a 1 h: 0,045"),
+                  f"IC95 [{b0.brier_lo:.3f}; {b0.brier_hi:.3f}]".replace(".", ",")),
         "skill": (f"{b0.bss:.0%}", "SKILL vs 'NÃO SEI'",
                   "1 − Brier / Brier uniforme"),
         "modal": (f"{ff.loc[0, 'acerto_modal_poly']:.0%}", "DECISÕES DO FED",
@@ -801,7 +810,7 @@ def s16_estudo(prs, numero="16"):
     observacoes = [
         ("OBSERVAÇÃO 1  ·  CALIBRAÇÃO",
          "Quando o Polymarket diz X %, acontece X % das vezes.",
-         kpis["brier"][0], "Brier na véspera", "Kalshi a 1 h: 0,045",
+         kpis["brier"][0], "Brier na véspera", kpis["brier"][2],
          "estudo_s0_calibracao.png"),
         ("OBSERVAÇÃO 2  ·  DECISÃO DO FED",
          "Na decisão do Fed, o Polymarket erra 0,9 bps; o mercado de juros, 4,8.",
@@ -928,6 +937,304 @@ def sA3_aplicabilidade(prs, numero="A3"):
     return s
 
 
+# =============================================================== slides 14/15/A9
+ANALISE = DADOS / "analise_backtest"
+
+
+def br(v, f="{:.1f}"):
+    """Número no formato do deck: vírgula decimal e sinal de menos tipográfico."""
+    return f.format(v).replace(".", ",").replace("-", "–")
+
+
+def dados_analise():
+    """Tudo que os slides 14, 15 e A9 mostram, lido dos CSV de `analise_backtest.py`."""
+    inf = pd.read_csv(ANALISE / "inferencia.csv").set_index("métrica")["valor"]
+    dsr = pd.read_csv(ANALISE / "dsr.csv")
+    conc = pd.read_csv(ANALISE / "concentracao.csv").set_index("métrica")["valor"]
+    met = pd.read_csv(ANALISE / "metades.csv", index_col=0)
+    reg = pd.read_csv(ANALISE / "regime.csv").set_index("regime")
+    est = pd.read_csv(ANALISE / "estabilidade.csv").set_index("métrica")["valor"]
+    imp = pd.read_csv(ANALISE / "implementacao.csv").set_index("métrica")["valor"]
+    dd = pd.read_csv(ANALISE / "drawdowns.csv")
+    f = lambda k: float(inf[k])
+    ic_ = lambda k: inf[k].replace(".", ",").replace("-", "−")
+    T = int(f("pregões (T)"))
+    k = {
+        "T": T,
+        "excesso": br(f("excesso acumulado (pp)")), "ic_exc": ic_("excesso · IC95 bootstrap (pp)"),
+        "p_exc": f"{f('P(excesso > 0)'):.0%}",
+        "sharpe": br(f("Sharpe Kairós"), "{:.2f}"), "ic_sr": ic_("Sharpe Kairós · IC95 bootstrap"),
+        "sharpe_spy": br(f("Sharpe SPY"), "{:.2f}"), "ic_dsr": ic_("ΔSharpe · IC95 bootstrap"),
+        "p_dsr": f"{f('P(ΔSharpe > 0)'):.0%}",
+        "alpha": br(f("alpha anualizado") * 100, "{:+.1f}"), "t_alpha": br(f("t do alpha (Newey-West)"), "{:.1f}"),
+        "beta": br(f("beta vs SPY"), "{:.2f}"), "ir": br(f("information ratio"), "{:.2f}"),
+        "te": br(f("tracking error") * 100), "psr": f"{f('PSR(SR* = 0)'):.0%}",
+        "mintrl": int(round(f("MinTRL a 95 % (pregões)"))),
+        "skew": br(f("assimetria"), "{:.2f}"), "kurt": br(f("curtose"), "{:.0f}"),
+        "acf": br(f("ACF(1) dos retornos"), "{:.2f}"),
+        "hit": f"{float(conc['hit ratio do tilt']):.0%}", "payoff": br(float(conc["payoff (ganho / |perda|)"]), "{:.2f}"),
+        "hhi": br(float(conc["HHI dos dias positivos"]), "{:.3f}") + " / " + br(float(conc["HHI dos dias negativos"]), "{:.3f}"),
+        "tilt": br(float(conc["soma do tilt (pp)"])), "top3": br(float(conc["3 maiores dias (pp)"])),
+        "sem_top3": br(float(conc["sem os 3 maiores (pp)"])), "sem_piores3": br(float(conc["sem os 3 piores (pp)"])),
+        "exc_m1": br(met.loc["1ª metade", "excesso (pp)"], "{:+.1f}"), "exc_m2": br(met.loc["2ª metade", "excesso (pp)"], "{:+.1f}"),
+        "alta_bps": br(reg.loc["SPY em alta", "excesso médio (bps)"], "{:+.1f}"),
+        "queda_bps": br(reg.loc["SPY em queda", "excesso médio (bps)"], "{:+.1f}"),
+        "alta_hit": f"{reg.loc['SPY em alta', 'hit do excesso']:.0%}", "queda_hit": f"{reg.loc['SPY em queda', 'hit do excesso']:.0%}",
+        "dd": br(float(est["máx. drawdown Kairós (%)"])), "dd_spy": br(float(est["máx. drawdown SPY (%)"])),
+        "tuw": int(float(est["time under water Kairós (pregões)"])), "tuw_spy": int(float(est["time under water SPY (pregões)"])),
+        "meses": est["meses K > SPY"], "roll_pos": f"{float(est['rolling IR 63d > 0 (fração)']):.0%}",
+        "roll_minmax": est["rolling IR 63d mín / máx"].replace(".", ",").replace("-", "−"),
+        "beta_minmax": est["rolling beta 63d mín / máx"].replace(".", ",").replace("-", "−"),
+        "giro": br(float(imp["giro diário médio"]), "{:.2f}"), "desfeito": f"{float(imp['giro desfeito em 1–2 pregões']):.0%}",
+        "breakeven": br(float(imp["breakeven (bps por lado)"])), "custo": br(float(imp["custo pago (pp)"])),
+        "dd_tab": dd,
+    }
+    med = dsr[dsr["variância"].str.startswith("V medido")].set_index("N")["DSR"]
+    ind = dsr[dsr["variância"].str.startswith("V de tent")].set_index("N")["DSR"]
+    k["dsr_ns"] = list(med.index)
+    k["dsr_med"] = f"{med.min():.2f}–{med.max():.2f}".replace(".", ",")
+    k["dsr_ind"] = f"{ind.min():.2f}–{ind.max():.2f}".replace(".", ",")
+    return k
+
+
+def placar_backtest():
+    """Os quatro números do placar e a cascata, da série diária — nada copiado à mão."""
+    from graficos_p4 import metricas
+    diario = pd.read_csv(DADOS / "backtest_diario.csv", parse_dates=["data"])
+    diario = diario[diario.cenario == "tilt ≤ 1"].set_index("data").sort_index()
+    m = metricas(diario)
+    pct = lambda v: f"{v * 100:+.1f}%".replace(".", ",").replace("-", "–")
+    tiles = [
+        ("RETORNO LÍQUIDO", pct(m.loc["Retorno líquido", "Kairós"]), "SPY " + pct(m.loc["Retorno líquido", "SPY"])),
+        ("SHARPE", br(m.loc["Sharpe (excesso zero)", "Kairós"], "{:.2f}"), "SPY " + br(m.loc["Sharpe (excesso zero)", "SPY"], "{:.2f}")),
+        ("VOLATILIDADE", pct(m.loc["Vol. anualizada", "Kairós"]).lstrip("+"), "SPY " + pct(m.loc["Vol. anualizada", "SPY"]).lstrip("+")),
+        ("MÁX. QUEDA", pct(m.loc["Máx. drawdown", "Kairós"]), "SPY " + pct(m.loc["Máx. drawdown", "SPY"])),
+    ]
+    soma = lambda c: float(diario[c].sum()) * 100
+    cascata = {"mercado": soma("r_mercado"), "views": soma("r_tilt"), "custo": -soma("custo"),
+               "entregue": soma("r_liquido")}
+    periodo = f"{len(diario)} pregões · {diario.index[0]:%d/%m/%Y} a {diario.index[-1]:%d/%m/%Y} · líquido de custo"
+    return tiles, cascata, periodo
+
+
+def _tile(s, x, y, w, h, rotulo, numero, sub, cor_num=ORANGE, tam=24):
+    card(s, x, y, w, h)
+    texto(s, x + 0.14, y + 0.13, w - 0.28, 0.14, [(rotulo, MONO, 7, ORANGE, True, 120)], wrap=False)
+    texto(s, x + 0.14, y + 0.31, w - 0.28, 0.39, [(numero, COND, tam, cor_num)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    texto(s, x + 0.14, y + 0.7, w - 0.28, 0.17, [(sub, BAHN, 8, MUTED)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+
+
+def s14_resultados(prs, numero="14"):
+    """O slide 28 do deck da final, com UMA análise a mais: a probabilidade de o excesso ser real."""
+    k = dados_analise()
+    tiles, cascata, periodo = placar_backtest()
+    s = moldura(prs, numero, "Backtest e resultados", f"{k['excesso']} pp sobre o SPY, ao mesmo risco")
+
+    # --- esquerda: o placar 2 × 2 (igual ao deck), o tile novo, a cascata
+    wl = 3.1
+    kicker(s, L, 1.42, wl, "O PLACAR")
+    tw, th = (wl - 0.14) / 2, 0.94
+    for i, (rot, num, sub) in enumerate(tiles):
+        _tile(s, L + (i % 2) * (tw + 0.14), 1.65 + (i // 2) * (th + 0.09), tw, th, rot, num, sub)
+    # o único acréscimo: sorte ou habilidade?
+    card(s, L, 3.71, wl, th)
+    texto(s, L + 0.14, 3.84, wl - 0.28, 0.14, [("P(EXCESSO > 0)  ·  SORTE OU HABILIDADE?", MONO, 7, MINT, True, 120)], wrap=False)
+    texto(s, L + 0.14, 4.02, 1.1, 0.39, [(k["p_exc"], COND, 24, MINT)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    texto(s, L + 1.15, 4.0, wl - 1.3, 0.2, [(f"IC95 {k['ic_exc']} pp · bootstrap", BAHN, 8, TEXT)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    texto(s, L + 1.15, 4.2, wl - 1.3, 0.2, [(f"faltam {k['mintrl'] - k['T']} pregões p/ 95 % (MinTRL)", BAHN, 8, MUTED)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    texto(s, L + 0.14, 4.41, wl - 0.28, 0.2, [("positivo em toda leitura; ainda não é prova", BAHN, 7.2, MUTED, False, 0, True)], wrap=False)
+    texto(s, L, 4.72, wl, 0.14, [("placar completo no apêndice A8 · estatística no A9", BAHN, 7.2, MUTED)], wrap=False)
+
+    kicker(s, L, 4.95, wl, "DE ONDE VEM O RESULTADO")
+    imagem(s, GRAFICOS / "p4_composicao.png", L, 5.17, wl)
+    texto(s, L, 6.78, wl, 0.34,
+          [(f"Soma dos retornos diários, não capitalização — daí {br(cascata['entregue'], '{:+.1f}')} pp aqui e "
+            f"{tiles[0][1]} na curva. Sem juros: taxa livre zero para os dois.",
+            BAHN, 7.2, MUTED)], entre=1.0)
+
+    # --- direita: a curva, como no deck
+    xr = L + wl + 0.35
+    fio(s, xr - 0.18, 1.42, xr - 0.18, 6.95)
+    kicker(s, xr, 1.42, 4.0, "CURVA ACUMULADA E DRAWDOWN")
+    texto(s, R - 4.4, 1.63, 4.4, 0.17, [(periodo, MONO, 7.4, MUTED)], alinha=PP_ALIGN.RIGHT, wrap=False)
+    imagem(s, GRAFICOS / "p4_curva.png", xr, 1.82, R - xr)
+
+    s.notes_slide.notes_text_frame.text = (
+        "Exposição à queda. Nos dois tombos a carteira caiu junto e, em abril/2025, mais fundo que o índice: "
+        "−19,6% contra −18,8%. O ganho vem da subida, não da defesa.\n"
+        "Uma janela, um regime. 374 pregões de alta do S&P, sem correção para as ~200 comparações da busca "
+        "tática. O teste em regime de queda é o que falta.\n"
+        "Teto de risco: somar é dividir. A camada tática faz +42,6 pp sozinha e −2,94 pp dentro da carteira. "
+        "Sob teto fixo, entrar não acrescenta — reparte o mesmo orçamento.\n"
+        "Giramos os quatro botões da estratégia — risco, confiança, gatilho e correção das probabilidades — e a "
+        "vantagem sobre o SPY não vira negativa em nenhuma posição: +0,5 a +15,8 pp. Não é um parâmetro bem "
+        "escolhido.\n"
+        f"O tile novo (sorte ou habilidade?): bootstrap estacionário (Politis-Romano, blocos de 10 pregões, "
+        f"B = 2 000) sobre a série diária. IC95 do excesso {k['ic_exc']} pp, P(> 0) = {k['p_exc']}; Sharpe "
+        f"{k['sharpe']} com IC95 {k['ic_sr']}; alpha t = {k['t_alpha']} (Newey-West) contra a régua de 3 de "
+        f"Harvey-Liu; PSR = {k['psr']}; track record mínimo a 95 % = {k['mintrl']} pregões, faltam "
+        f"{k['mintrl'] - k['T']}. Leitura: o número é positivo em toda leitura, mas 18 meses não separam "
+        "habilidade de sorte — o que sustenta a estratégia é o mecanismo medido fora do resultado (slides 8, 9 "
+        "e 16). Detalhe no apêndice A9 e em Uteis/analises/Analise_backtest.md.")
+    sela(s, "s14")
+    return s
+
+
+def s15_analise_critica(prs, numero="15"):
+    """Três números, uma leitura qualitativa: ainda não provada · defensiva · rigorosa onde depende de nós."""
+    k = dados_analise()
+    s = moldura(prs, numero, "Análise crítica",
+                "Três números, uma leitura: positiva, defensiva — e ainda não provada")
+    cw = (R - L - 0.6) / 3
+    colunas = [
+        ("A PROVA EXIGE TEMPO", str(k["mintrl"]), f"PREGÕES DE TRACK RECORD MÍNIMO A 95 %  ·  TEMOS {k['T']}",
+         "O excesso é positivo em toda leitura, mas ainda não é prova de habilidade. "
+         f"Faltam {k['mintrl'] - k['T']} pregões — o próximo semestre é o teste fora da amostra, "
+         "pré-registrado antes de ser visto.",
+         f"PSR {k['psr']} · IC95 do excesso {k['ic_exc']} pp · alpha t = {k['t_alpha']} contra a régua de 3 (Harvey–Liu)"),
+        ("ONDE O GANHO MORA", f"{k['queda_bps']} bps", f"POR DIA DE QUEDA DO SPY  ·  {k['alta_bps']} NOS DE ALTA",
+         "Perde menos quando o mercado cai, ganha menos quando sobe: é um tilt defensivo sobre beta "
+         f"{k['beta']}, não proteção de cauda — no tombo de abril caiu mais fundo que o índice, e na "
+         "2ª metade, só de alta, ficou atrás.",
+         f"hit {k['queda_hit']} nos dias de queda, {k['alta_hit']} nos de alta · metades {k['exc_m1']} / {k['exc_m2']} pp · "
+         f"máx. queda {k['dd']} % × SPY {k['dd_spy']} %"),
+        ("PELO PROTOCOLO DA LITERATURA", "3 de 7", "PONTOS DE ARNOTT, HARVEY & MARKOWITZ FECHADOS",
+         "Rigor onde depende de nós: hipótese antes do teste, dados sem look-ahead, admissão por mecanismo. "
+         "Parcial onde o desenho limita: testes múltiplos, Ω diagonal. Aberto onde só o tempo resolve: "
+         "validação fora da amostra.",
+         "fechados: motivação · dados · cultura  —  parciais: testes múltiplos · dinâmica · complexidade  —  aberto: fora da amostra"),
+    ]
+    y0, h = 1.62, 3.9
+    for i, (rot, num, sub, conclusao, evid) in enumerate(colunas):
+        x = L + i * (cw + 0.3)
+        card(s, x, y0, cw, h)
+        kicker(s, x + 0.25, y0 + 0.22, cw - 0.5, rot)
+        texto(s, x + 0.25, y0 + 0.5, cw - 0.5, 0.8, [(num, COND, 44, ORANGE)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        texto(s, x + 0.25, y0 + 1.34, cw - 0.5, 0.36, [(sub, MONO, 7.5, TEXT, True, 30)], entre=1.05)
+        texto(s, x + 0.25, y0 + 1.82, cw - 0.5, 1.7, [(conclusao, SEMI, 11, TEXT)], entre=1.08)
+        texto(s, x + 0.25, y0 + 3.15, cw - 0.5, 0.55, [(evid, LIGHT, 8.5, MUTED)], entre=1.05)
+
+    kicker(s, L, 5.9, 3.0, "FARÍAMOS DIFERENTE", cor=MINT)
+    texto(s, L, 6.12, R - L, 0.24,
+          [("Pré-registrar o próximo semestre como teste fora da amostra · corrigir a busca tática pelo nº de "
+            "tentativas (DSR) · um Ω que enxergue a correlação entre views.", LIGHT, 10, BODY)], wrap=False)
+    texto(s, L, 6.93, R - L, 0.16,
+          [("Arnott, Harvey & Markowitz (2019) · Bailey & López de Prado (2012, 2014) · Harvey & Liu (2015)  ·  "
+            "Final/analise/Pesquisa_avaliacao_estrategia.md  ·  apêndice A9", MONO, 7.5, MUTED)], wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Fala (~60 s): três números para ler a estratégia. (1) 457: o track record mínimo para dizer com 95 % que "
+        f"o Sharpe é positivo — temos {k['T']}. O excesso é positivo em toda leitura (P = {k['p_exc']}), mas não é "
+        "prova; o próximo semestre é o teste fora da amostra, e vai ser pré-registrado. (2) +6,2 bps por dia de "
+        "queda do SPY, −3,9 nos de alta: o ganho vem de perder menos quando o mercado cai — tilt defensivo sobre "
+        "beta 0,95. Não é proteção de cauda: no tombo de abril/2025 caímos mais fundo (−19,6 % × −18,8 %) e na 2ª "
+        "metade, só de alta, ficamos atrás (−0,6 pp). (3) 3 de 7 no protocolo de Arnott, Harvey e Markowitz: "
+        "fechados motivação econômica, dados/amostra e cultura de pesquisa; parciais testes múltiplos (~200 "
+        "comparações da tática sem correção; DSR reportado no A9), dinâmica (parâmetros fixos, mas excesso só na "
+        "1ª metade) e complexidade (Ω diagonal não vê correlação entre views); aberto validação fora da amostra.\n"
+        "Se perguntarem 'por que mostrar os fracos?': porque o protocolo pede e porque um slide só de fortes em "
+        "18 meses de dado é o que a literatura chama de storytelling. Scorecard completo em "
+        "Final/analise/Pesquisa_avaliacao_estrategia.md §2.")
+    sela(s, "s15")
+    return s
+
+
+def sA9_estatistica(prs, numero="A9"):
+    """Apêndice: a tear-sheet (López de Prado, cap. 14) e as duas curvas que a sustentam."""
+    k = dados_analise()
+    s = moldura(prs, numero, "Apêndice · estatística do backtest",
+                "Tear-sheet completa: inferência, concentração, estabilidade e implementação")
+    wl = 5.7
+    kicker(s, L, 1.55, wl, f"TILT ≤ 1  ·  {k['T']} PREGÕES  ·  IC95 BOOTSTRAP")
+    dd = k["dd_tab"]
+    linhas = [
+        ("INFERÊNCIA", None),
+        ("Sharpe Kairós [IC95]", f"{k['sharpe']}  {k['ic_sr']}"),
+        ("Sharpe SPY  ·  ΔSharpe [IC95]", f"{k['sharpe_spy']}  ·  {k['ic_dsr']}  P = {k['p_dsr']}"),
+        ("excesso acumulado [IC95]", f"{k['excesso']} pp  {k['ic_exc']}  P = {k['p_exc']}"),
+        ("alpha anual (t Newey-West)  ·  beta", f"{k['alpha']} %  (t {k['t_alpha']})  ·  {k['beta']}"),
+        ("information ratio  ·  tracking error", f"{k['ir']}  ·  {k['te']} %"),
+        ("PSR(SR > 0)  ·  MinTRL 95 %", f"{k['psr']}  ·  {k['mintrl']} pregões"),
+        ("DSR, N = " + " / ".join(str(n) for n in k["dsr_ns"]), f"V medido {k['dsr_med']}  ·  V indep. {k['dsr_ind']}"),
+        ("assimetria  ·  curtose  ·  ACF(1)", f"{k['skew']}  ·  {k['kurt']}  ·  {k['acf']}"),
+        ("CONCENTRAÇÃO (PERNA DAS VIEWS)", None),
+        ("hit ratio  ·  payoff  ·  HHI +/−", f"{k['hit']}  ·  {k['payoff']}  ·  {k['hhi']}"),
+        ("tilt  ·  sem os 3 maiores  ·  sem os 3 piores", f"{k['tilt']}  ·  {k['sem_top3']}  ·  {k['sem_piores3']} pp"),
+        ("ESTABILIDADE", None),
+        ("excesso 1ª / 2ª metade", f"{k['exc_m1']} / {k['exc_m2']} pp"),
+        ("excesso por dia: SPY em alta / em queda", f"{k['alta_bps']} / {k['queda_bps']} bps  (hit {k['alta_hit']} / {k['queda_hit']})"),
+        ("máx. drawdown  ·  time under water", f"{k['dd']} % ({k['tuw']} pregões)  ·  SPY {k['dd_spy']} % ({k['tuw_spy']})"),
+        ("maior drawdown", f"{dd.loc[0, 'início']} → {dd.loc[0, 'fundo']} → {dd.loc[0, 'recuperação']}"),
+        ("meses > SPY  ·  IR 63d > 0  ·  beta 63d", f"{k['meses']}  ·  {k['roll_pos']}  ·  {k['beta_minmax']}"),
+        ("IMPLEMENTAÇÃO", None),
+        ("giro/dia  ·  desfeito em 1–2 pregões", f"{k['giro']}  ·  {k['desfeito']}"),
+        ("custo pago  ·  breakeven", f"{k['custo']} pp  ·  {k['breakeven']} bps por lado"),
+    ]
+    y = 1.82
+    for rot, val in linhas:
+        if val is None:
+            fio(s, L, y + 0.05, L + wl, y + 0.05, alfa=60000)
+            kicker(s, L, y + 0.09, wl, rot, cor=MUTED)
+            y += 0.3
+            continue
+        texto(s, L, y, 2.75, 0.2, [(rot, LIGHT, 8.5, BODY)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        texto(s, L + 2.8, y, wl - 2.8, 0.2, [(val, MONO, 8, TEXT)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+        y += 0.215
+
+    xr, wr = L + wl + 0.4, R - L - wl - 0.4
+    kicker(s, xr, 1.55, wr, "INFORMATION RATIO EM JANELA MÓVEL DE 63 PREGÕES")
+    imagem(s, GRAFICOS / "ab_rolling_ir.png", xr, 1.78, wr)
+    kicker(s, xr, 4.2, wr, "DEFLATED SHARPE RATIO PELO Nº DE TENTATIVAS")
+    imagem(s, GRAFICOS / "ab_dsr.png", xr + 0.3, 4.43, wr - 1.7)
+    texto(s, xr, 6.58, wr, 0.36,
+          [("Laranja: variância dos Sharpe das configurações gravadas (correlacionadas — subestima). "
+            "Azul: tentativas independentes (cota superior). A verdade fica entre as duas.", LIGHT, 8.5, BODY)], entre=1.05)
+    texto(s, L, 6.93, R - L, 0.16,
+          [("Tabelas em Uteis/dados/analise_backtest/  ·  scripts/analise_backtest.py --demo  ·  "
+            "retornos mensais e os 3 maiores drawdowns em Uteis/analises/Analise_backtest.md", MONO, 7.5, MUTED)], wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Definições: PSR = P(Sharpe verdadeiro > 0) dado T, assimetria e curtose (Bailey-LdP 2012). "
+        "MinTRL = T necessário para PSR = 95 %. DSR = PSR contra o Sharpe esperado do máximo de N tentativas "
+        "de ruído (Bailey-LdP 2014); N vem do registro do projeto (configurações gravadas, hipóteses do LOG, "
+        "células da D27). HHI = concentração de Herfindahl dos dias positivos/negativos (0 = uniforme). "
+        "TuW = maior sequência de pregões abaixo do pico. Bootstrap: Politis-Romano, bloco médio 10, "
+        "B = 2 000, semente 20260918. Alpha com Newey-West 5 lags.")
+    sela(s, "sA9")
+    return s
+
+
+# ============================================================== transição
+def sT_resposta(prs, numero=""):
+    """Slide de transição entre a análise crítica e o estudo: a hipótese volta ao palco."""
+    s = moldura(prs, numero, "Resposta da hipótese", "")
+    texto(s, L, 2.25, R - L, 0.9, [("Resposta da hipótese", COND, 54, TEXT)], anchor=MSO_ANCHOR.MIDDLE, wrap=False)
+    kicker(s, L, 3.45, 6.0, "A HIPÓTESE, DO SLIDE 2")
+    texto(s, L, 3.72, R - L - 1.5, 1.1,
+          [("“Mercados de previsão antecipam o mercado financeiro. ", SEMI, 22, BODY),
+           ("Esse é o nosso sinal.”", SEMI, 22, ORANGE)], entre=1.1)
+    obs = pd.read_csv(ESTUDO / "observacoes.csv")
+    n_c = int(obs.groupby(["familia", "mercado", "evento"]).ngroups)
+    texto(s, L, 5.15, R - L, 0.3,
+          [(f"O que {n_c} contratos do Polymarket, {obs.evento.nunique()} eventos e {len(obs)} leituras dizem.",
+            LIGHT, 14, MUTED)], wrap=False)
+    s.notes_slide.notes_text_frame.text = (
+        "Transição (~10 s): 'Voltamos à hipótese do começo. Mercados de previsão antecipam o mercado "
+        "financeiro — esse era o sinal. A pergunta agora é se ele se confirmou no dado.' Avança para o "
+        "slide do estudo (calibração e decisão do Fed).")
+    sela(s, "sT")
+    return s
+
+
+def inserir_apos(saida: Path, construtor, prefixo: str) -> Path:
+    """Acrescenta UM slide ao deck salvo, logo depois do último cujo cabeçalho começa por `prefixo`."""
+    prs = Presentation(str(saida))
+    n = len(prs.slides)
+    pos = _indice(prs, prefixo)
+    construtor(prs)
+    _mover(prs, n, pos + 1)
+    prs.save(str(saida))
+    return saida
+
+
 # ------------------------------------------------------------------- render
 def render(pptx: Path, pasta: Path):
     """Exporta cada slide em PNG pelo próprio PowerPoint (COM) — conferência."""
@@ -950,11 +1257,54 @@ def monta(saida: Path = SAIDA) -> Path:
     s4_comparacao(prs)
     s12_second_brain(prs)
     s13_ia_numeros(prs)
+    s14_resultados(prs)
+    s15_analise_critica(prs)
+    sT_resposta(prs)
     s16_estudo(prs)
     sA1_horizonte(prs)
     sA2_poly_vs_ff(prs)
     sA3_aplicabilidade(prs)
+    sA9_estatistica(prs)
     saida.parent.mkdir(parents=True, exist_ok=True)
+    prs.save(str(saida))
+    return saida
+
+
+def _indice(prs, prefixo):
+    """Posição (0-based) do último slide cujo cabeçalho de seção começa por `prefixo`."""
+    achado = None
+    for i, sl in enumerate(prs.slides):
+        if any(sh.has_text_frame and sh.text_frame.text.startswith(prefixo) for sh in sl.shapes):
+            achado = i
+    return achado
+
+
+def _mover(prs, de, para):
+    lst = prs.slides._sldIdLst
+    el = list(lst)[de]
+    lst.remove(el)
+    lst.insert(para, el)
+
+
+def anexar(saida: Path = SAIDA) -> Path:
+    """Acrescenta 14, 15 e A9 ao deck JÁ SALVO, sem regenerar o resto.
+
+    O `Slides_novos.pptx` tem edições feitas à mão no PowerPoint (sessão 47) e
+    slides colados da semi; `monta()` apagaria tudo isso. Aqui os três slides
+    novos entram no deck existente: 14 e 15 logo depois do "IA em números",
+    A9 depois do último apêndice.
+    """
+    prs = Presentation(str(saida))
+    n = len(prs.slides)
+    # posições medidas ANTES de acrescentar (o A9 também se chama "Apêndice")
+    pos_ia = _indice(prs, "KAIROS   IA em números")
+    pos_ap = max(_indice(prs, p) or 0 for p in ("KAIROS   Apêndice", "KAIRÓS   Apêndice", "KAIRÓS  Apêndice"))
+    s14_resultados(prs)
+    s15_analise_critica(prs)
+    sA9_estatistica(prs)
+    _mover(prs, n, pos_ia + 1)        # 14
+    _mover(prs, n + 1, pos_ia + 2)    # 15
+    _mover(prs, n + 2, pos_ap + 3)    # A9: +2 pelos dois inseridos antes, +1 para ficar depois
     prs.save(str(saida))
     return saida
 
@@ -972,6 +1322,12 @@ def demo():
     assert set(kpis) == {"brier", "skill", "modal", "mae"} and 0.9 < reg.b < 1.2
     assert len(placar) == 6 and [ok for ok, *_ in placar] == [True] * 3 + [False] * 3
     assert obs.h.nunique() == 11 and obs.familia.nunique() == 2
+    # os slides 14/15/A9 leem o CSV da análise; o placar do protocolo soma 7
+    k = dados_analise()
+    assert k["T"] == 374 and k["ic_exc"].count(";") == 1 and k["mintrl"] > k["T"]
+    tiles, cascata, _ = placar_backtest()
+    assert len(tiles) == 4 and abs(cascata["mercado"] + cascata["views"] + cascata["custo"] - cascata["entregue"]) < 1e-6
+    assert br(-1.25) == "–1,2"
     print("demo ok")
 
 
@@ -979,7 +1335,10 @@ if __name__ == "__main__":
     if "--demo" in sys.argv:
         demo()
         sys.exit()
-    saida = monta()
+    if "--transicao" in sys.argv:
+        saida = inserir_apos(SAIDA, sT_resposta, "KAIROS   Análise crítica")
+    else:
+        saida = anexar() if "--anexar" in sys.argv else monta()
     print(f"gravado {saida.relative_to(RAIZ)}")
     if "--render" in sys.argv:
         pasta = Path(sys.argv[sys.argv.index("--render") + 1]) if len(sys.argv) > sys.argv.index("--render") + 1 else saida.parent / "render"

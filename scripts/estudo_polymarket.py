@@ -785,6 +785,7 @@ def fig_event_study(es, p):
 # Paleta do deck restilizado (slides_final_pptx.py) para as figuras que vão
 # DENTRO do slide 16 — mais vivas que a paleta do relatório.
 SLIDE = {"laranja": "#FFB531", "azul": "#4F8EF7", "verde": "#2FD3B0", "cinza": "#8395B5",
+         "roxo": "#B388FF",        # linha da véspera no slide 16 (o verde-água lembra a marca do Kalshi)
          "texto": "#F5F7FB", "suave": "#BAC6DA", "grade": "#2A3F63", "fundo": "#0A1325"}
 
 
@@ -804,7 +805,7 @@ def fig_slide_calibracao(bins):
         fig, ax = plt.subplots(figsize=(7.0, 3.6))
         ax.plot([0, 1], [0, 1], color=SLIDE["suave"], lw=1.3, ls="--", label="calibração perfeita", zorder=1)
         series = (("pooled", SLIDE["laranja"], "todos os horizontes", 2.6),
-                  ("h=0", SLIDE["verde"], "véspera do evento", 2.0))
+                  ("h=0", SLIDE["roxo"], "véspera do evento", 2.0))
         for recorte, cor, rotulo, lw in series:
             c = bins[bins.recorte == recorte].dropna(subset=["p_medio"])
             ax.plot(c.p_medio, c.freq, "-", color=cor, lw=lw, label=rotulo, zorder=2)
