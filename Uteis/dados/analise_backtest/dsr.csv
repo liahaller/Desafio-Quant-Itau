@@ -1,0 +1,7 @@
+tentativas,N,variância,σ(SR) anual,E[max SR] anual,DSR
+configurações com Sharpe gravado,18,V medido nas configurações,0.13886224631847546,0.2574329973573249,0.877759003467334
+configurações com Sharpe gravado,18,V de tentativas independentes,0.8219872218520896,1.5238600837947829,0.3331550341380288
+hipóteses medidas (LOG),31,V medido nas configurações,0.13886224631847546,0.2897883226640745,0.8693035819117364
+hipóteses medidas (LOG),31,V de tentativas independentes,0.8219872218520896,1.7153856039856312,0.2506500338354969
++ células da busca tática (D27),231,V medido nas configurações,0.13886224631847546,0.3905218405538238,0.840430922216604
++ células da busca tática (D27),231,V de tentativas independentes,0.8219872218520896,2.3116719720433694,0.0772995622371401

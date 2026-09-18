@@ -1,0 +1,23 @@
+métrica,valor,nota
+pregões (T),374,
+Sharpe Kairós,1.1814900254809557,"anualizado, taxa livre zero"
+Sharpe Kairós · IC95 Lo (iid),[-0.43; 2.79],Lo (2002)
+Sharpe Kairós · IC95 bootstrap,[-0.23; 3.04],estacionário
+Sharpe SPY,1.0806909978395045,
+ΔSharpe (K − SPY),0.10079902764145114,
+ΔSharpe · IC95 bootstrap,[-0.42; 0.63],Ledoit-Wolf (2008)
+P(ΔSharpe > 0),0.664,bootstrap
+excesso acumulado (pp),3.044864509850842,"líquido − SPY, composto"
+excesso · IC95 bootstrap (pp),[-12.9; 20.6],
+P(excesso > 0),0.639,bootstrap
+alpha anualizado,0.02573266000708276,"vs SPY, taxa livre zero"
+t do alpha (Newey-West),0.6158230312149148,5 lags · régua de Harvey-Liu: 3
+beta vs SPY,0.945316374315829,
+information ratio,0.2952901459036394,excesso / tracking error
+tracking error,0.05135338783655607,anualizado
+t do tilt líquido,0.35973648358166443,r_tilt − custo
+assimetria,1.363930001686005,retornos diários
+curtose,25.960826859276242,não excedente
+ACF(1) dos retornos,-0.07214354375160512,
+PSR(SR* = 0),0.9316371818238944,Bailey-LdP (2012)
+MinTRL a 95 % (pregões),456.7236587915669,temos 374

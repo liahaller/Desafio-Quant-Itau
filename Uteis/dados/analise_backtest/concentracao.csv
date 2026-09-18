@@ -1,0 +1,14 @@
+métrica,valor,nota
+dias com tilt ≠ 0,364.0,
+hit ratio do tilt,0.5,dias com tilt > 0
+ganho médio nos dias + (bps),20.413916837071884,
+perda média nos dias − (bps),-17.548430741545122,
+payoff (ganho / |perda|),1.1632901618230087,
+HHI dos dias positivos,0.008864399902889966,López de Prado (2018)
+HHI dos dias negativos,0.013486404669085423,
+soma do tilt (pp),5.2151846938587045,"perna das views, bruta"
+3 maiores dias (pp),3.52039131068916,
+sem os 3 maiores (pp),1.6947933831695448,
+3 piores dias (pp),-4.501467787547369,
+sem os 3 piores (pp),9.716652481406074,
+10 maiores dias (pp),10.10860493521799,
