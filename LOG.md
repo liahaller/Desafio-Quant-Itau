@@ -1,5 +1,107 @@
 # LOG de sessões
 
+## 2026-09-19 (sessão 51) — Felipe
+
+**Feito:** slide 6 do `Final/FINAL_T6.pptx` ("Como o Black-Litterman
+funciona") refeito do zero como o **diagrama de Idzorek (2005)** — réplica
+da captura de tela que o dono pôs em `Final/` (Captura-de-pantalla-…png),
+na notação do projeto e na pele T6. Script novo
+`scripts/slide6_bl_diagrama_t6.py` (grava no próprio FINAL_T6; `--render`
+exporta o slide em PNG via PowerPoint). Apaga tudo do slide 6 menos o
+chrome `!!t6_*` e redesenha:
+- Linha 1, cinco caixas de entrada com símbolo entre parênteses grandes
+  e dimensão embaixo: δ = (E[r] − r_f)/σ² (escalar, δ = 3,0) · (Σ) 9×9
+  amostral · (w_mkt) 9×1 · (P, Q) k×9 e k×1 · (Ω) k×k diagonal.
+- Linha 2: π = δ Σ w_mkt (9×1). Linha 3: distribuição a priori N~(π, τΣ)
+  com τ = 1/504 (curva cinza) e distribuição das views N~(Q, Ω) (curva
+  dourada). Linha 4: distribuição combinada N~(E[R], [(τΣ)⁻¹ + PᵀΩ⁻¹P]⁻¹)
+  com E[R] expandido e w = (δΣ)⁻¹E[R] em linha menor. Setas verticais
+  como na figura; sininhas em freeform; fonte da figura no rodapé.
+- Cabeçalho ganhou título ("| Do equilíbrio às views"); notas do
+  apresentador reescritas (as antigas falavam de um Morph que o slide não
+  tem). Q, Ω, P em dourado como no slide 7. Render conferido (2 rodadas:
+  título longo quebrava em duas linhas; fórmula do δ a 17 pt não cabia).
+
+**Quebrou / aprendido:**
+- Nada quebrou. `Final/FINAL_T7.pptx` não está mais na pasta (o dono
+  removeu; `scripts/final_t7_pptx.py` segue). O `~$FINAL_T6.pptx` é lock
+  velho do PowerPoint — o arquivo estava gravável.
+
+**Pendente:**
+- D34 segue aberta (reunião). Nada commitado: `scripts/slide6_bl_diagrama_t6.py`,
+  `Final/FINAL_T6.pptx` e esta entrada.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~120k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "preciso acertar o slide 6 do FINAL T6 para algo muito mais técnico. refaça o slide 6 completamente. QUero que quase replique a captura de tela na pasta para o slide, mostrando as matrizes e formulas"
+- **Iterações até aceitar:** 1 rodada do dono (entrega); 2 rodadas internas de render.
+- **Erros da IA:** 2 pegos pela própria sessão — título do cabeçalho longo demais (quebrava linha) e fórmula do δ não cabendo na caixa a 17 pt.
+- **Decisões escaladas:** —
+- **Tags:** —
+
+## 2026-09-19 (sessão 50) — Felipe
+
+**Feito:** o deck da final RECOMPOSTO no estilo T6 — `Final/FINAL_T7.pptx`
+(32 slides), gerado por `scripts/final_t7_pptx.py` (novo). O `FINAL_T6.pptx`
+tinha trocado a pele (grafite, Segoe UI, dourado) mas mantido a composição
+do deck antigo: cards com borda em todo lugar, elementos pequenos flutuando,
+vão sobrando — o dono achou "pouco profissional". Referências relidas em
+folha de contato (Waterloo/Rotman 2026, Polaris/Insper, Wolves/Insper):
+a estrutura vem de colunas com rótulo + régua fina, texto corrido, números
+grandes soltos, círculos numerados, UMA caixa por slide (a conclusão) e
+linha de fonte. O deck foi RECONSTRUÍDO slide a slide em python-pptx
+(não é transformação do T6): conteúdo, imagens (gráficos matplotlib, print
+do Polymarket, robô, grafo) e notas do apresentador lidos do `FINAL.pptx`.
+- Cabeçalho "Seção | Título" (20→14 pt pelo comprimento), marca KAIRÓS,
+  nav inferior com seção ativa sublinhada (Hipótese · Polymarket ·
+  Estratégia · Backtest · IA · Conclusão) e nº da página.
+- Sem cards: ficha técnica vira tabela com réguas; ETFs/fontes/mercados em
+  grade de texto (mercados com ponto colorido: dourado views, azul tática);
+  BL vira "① Equilíbrio + ② Previsão × ③ Confiança ↓ = Carteira BL"; views
+  ganham stepper (as quatro numa linha, ativa sublinhada, sublinhado com a
+  MESMA animação de trajetória do original) + três termos "Polymarket −
+  Contra × β Cesta" em colunas + "A conta" + conclusão tracejada; camada
+  tática em quatro passos numerados + três colunas com réguas verticais;
+  teto de risco como fluxo ①→②/③→④→⑤ com a caixa tracejada dourada só no
+  teto; backtest com placar em grade de números soltos; análise crítica em
+  três colunas com número de 40 pt; IA em números com KPIs soltos no topo;
+  fonte de dados com conclusão tracejada + linha de fonte.
+- Sequência Morph do "segundo cérebro" (13 slides) preservada: nós, arestas,
+  pulso e véu copiados do XML original e transladados junto com o grafo;
+  nomes `!!` mantidos; transição Morph com avanço automático copiada;
+  lista "o que acendeu" recriada com as cores originais (dourado/teal/azul).
+- Capa e fechamento sem nav (rodapé próprio); slide 16 do original (vazio)
+  NÃO entra — por isso 32 slides e numeração deslocada a partir do 17.
+- Render dos 32 conferido pelo PowerPoint (COM), duas rodadas: gráfico
+  encostando na caixa (slides 4 e 31), vão vertical (5, 6, 13, 29), kicker
+  "O μ" virando "O M" (`upper()` no grego → `caps()` só no latino), rodapé
+  do backtest colando na nav. Validação: sem IDs duplicados, Morph nos
+  novos 17–28, animação nos 9–11, 29 notas.
+
+**Quebrou / aprendido:**
+- `str.upper()` capitaliza grego (μ → Μ); rótulos em caixa alta precisam
+  de função que preserve U+0370–03FF.
+- Morph "byObject" sobrevive à reconstrução desde que os shapes de overlay
+  mantenham o nome `!!` e sejam copiados como XML (translação só no `a:off`).
+- Dois typos do original corrigidos de passagem: "quantitavas" →
+  "quantitativas" (hipótese) e "62centavos" → "62 centavos".
+
+**Pendente:**
+- Reunião do grupo: D34 continua aberta — agora com `FINAL_T7.pptx` ao lado
+  do `FINAL_T6.pptx` e do `FINAL.pptx` para comparar.
+- Nada commitado (o dono não pediu): `scripts/final_t7_pptx.py`,
+  `Final/FINAL_T7.pptx`, D34 e esta entrada.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5.
+- **Contexto consumido:** ~300k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "na ultima sessão mudamos os estilo da final para FINAL_t6, com estilo mais de consultoria. Mas sinto que a composição dos slides ainda está pouco profissional. Olhe os exemplos em reestilizar e monte um nvo pptx mudando a composição dos slides para ser mais profissional. Algo como tirar as varias caixinhas e etc"
+- **Iterações até aceitar:** 1 rodada do dono (entrega); 2 rodadas internas de render.
+- **Erros da IA:** 4 pegos pela própria sessão antes de entregar — gráfico sobre a caixa de conclusão (slides 4 e 31); kicker "O μ" em "O M"; vão vertical em 5/6/13; rodapé do backtest encostando na nav.
+- **Decisões escaladas:** 34 (segue aberta; nota do T7 acrescentada).
+- **Tags:** —
+
 ## 2026-09-18 (sessão 49) — Felipe
 
 **Feito:** seis templates de reestilização do deck da final em

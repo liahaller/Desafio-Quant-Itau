@@ -2655,3 +2655,8 @@ regeráveis com `--todos`) e manteve só o **T6** na pasta — candidato único,
 confirmação em reunião.
 **Aplicado:** `Final/FINAL_T6.pptx` = o deck inteiro no T6 (`scripts/final_t6_pptx.py`),
 para o grupo avaliar lado a lado com o `FINAL.pptx`.
+**2026-09-19 (sessão 50):** o dono achou a composição do T6 "pouco profissional"
+(cards com borda em todo lugar). `Final/FINAL_T7.pptx` = o deck RECOMPOSTO no
+estilo T6 com a composição dos decks de challenge — colunas com rótulo + régua,
+números soltos, círculos numerados, uma caixa por slide (`scripts/final_t7_pptx.py`,
+32 slides; o 16 vazio saiu). Três candidatos para a reunião: `FINAL` · `FINAL_T6` · `FINAL_T7`.
