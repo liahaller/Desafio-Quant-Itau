@@ -2630,3 +2630,28 @@ metade) · ◐ complexidade (Ω diagonal) · ✔ cultura.
 **O que a pesquisa pede e NÃO foi feito (declarado no `Pesquisa_avaliacao_estrategia.md` §5):**
 walk-forward, correção célula a célula da D27, regressão de fatores, custo real
 de execução.
+
+## 34 (branch `Felipe`). Estilo do deck da final — seis templates para o grupo escolher 🟡 (aberta, 2026-09-18 — sessão 49)
+
+**O que é:** o grupo achou o estilo atual do `Final/fianl.pptx` "bonitinho,
+pouco sério" e pediu propostas baseadas em decks de challenges financeiros
+reais (Polaris/Insper, Wolves of Quatá/Insper, Waterloo/Rotman 2026, em
+`Final/Reestilizar/`). Seis templates de um slide cada, mesmo conteúdo,
+em gradiente do atual ao challenge — `Final/Reestilizar/T1…T5` (`.pptx` +
+`.png`), esforço e trade-offs em `Final/Reestilizar/README_templates.md`.
+
+**Opções:** T1 Kairós sóbrio (escuro, esforço baixo) · T2 Kairós claro
+(claro, médio) · T3 Terminal (escuro, formato research, médio-alto) ·
+T4 Consultoria (claro Polaris, alto) · T5 Research (claro Waterloo, alto) ·
+T6 Terminal Polymarket (T3 com a série de mercado do gráfico em azul, médio-alto).
+
+**Trade-off central:** quanto mais perto do challenge, mais o deck precisa
+ser reconstruído (34 slides, gráficos regerados, slides manuais refeitos) —
+T1/T2 trocam paleta nos geradores; T4/T5 são um deck novo. A escolha é do
+grupo (afeta o entregável de todos). **Não fechar sem reunião.**
+
+**2026-09-18, mesma sessão:** o dono descartou T1–T5 (arquivos apagados;
+regeráveis com `--todos`) e manteve só o **T6** na pasta — candidato único,
+confirmação em reunião.
+**Aplicado:** `Final/FINAL_T6.pptx` = o deck inteiro no T6 (`scripts/final_t6_pptx.py`),
+para o grupo avaliar lado a lado com o `FINAL.pptx`.

@@ -1,5 +1,82 @@
 # LOG de sessões
 
+## 2026-09-18 (sessão 49) — Felipe
+
+**Feito:** seis templates de reestilização do deck da final em
+`Final/Reestilizar/` (T1…T6, `.pptx` + `.png`), gerados por
+`scripts/templates_reestilizar.py` (novo). O grupo achou o estilo atual
+"bonitinho, pouco sério"; as referências são os três decks de challenge na
+pasta (Polaris/Insper, Wolves of Quatá/Insper, Waterloo/Rotman 2026), lidos
+em folhas de contato com PyMuPDF. Cada template tem UM slide com o MESMO
+conteúdo — título, três caixas com setas, texto, **fórmula nativa** (OMML em
+`mc:AlternateContent`, editável no PowerPoint), **gráfico nativo** (colunas
+agrupadas), caixa de conclusão, rodapé/nav — para comparar só estilo.
+Gradiente: T1 Kairós sóbrio (escuro, chapado, sem glow/número fantasma) →
+T2 Kairós claro → T3 Terminal (escuro, formato research) → T4 Consultoria
+(claro, Polaris) → T5 Research (claro, Waterloo). Esforço de refatoração por
+template em `README_templates.md` (baixo / médio / médio-alto / alto / alto),
+com o que muda nos geradores e o que se aproveita. Render conferido pelo
+PowerPoint (COM), três rodadas. Nenhum outro .pptx tocado. **D34** aberta
+(escolha do grupo).
+
+**2º pedido — T6:** o T3 com os cinzas trocados por azul (cores do
+Polymarket): réguas, bordas, texto secundário e a série de mercado do gráfico
+em azul; dourado mantido como acento. Variante de cor, mesmo esforço do T3.
+**3º pedido:** azul do T6 escurecido (2E5BFF → 2A4BC4) para sair do neon.
+**4º pedido:** azul só no gráfico; réguas, bordas e texto secundário voltam
+ao cinza do T3 — o T6 vira o T3 com a série de mercado azul.
+**5º pedido:** apagados T1–T5 (`.pptx` + `.png`); só o T6 fica na pasta. O
+gerador passa a produzir só o T6 por padrão (`--todos` regera os seis).
+**6º pedido — o deck inteiro no T6:** `scripts/final_t6_pptx.py` (novo) lê
+`Final/FINAL.pptx` (o dono renomeou `fianl.pptx` → `FINAL.pptx` às 21:58) e
+grava **`Final/FINAL_T6.pptx`** (33 slides; o original não é tocado). É uma
+transformação shape a shape, sem regerar nada: fundo radial → grafite
+chapado; halos, número fantasma e tick apagados; cabeçalho "KAIROS · seção"
++ nº + filete + título viram "Seção | Título" numa linha (tamanho 20→14 pt
+conforme o comprimento) + régua + marca à direita; rodapé vira barra de
+navegação com seis seções (Hipótese · Polymarket · Estratégia · Backtest ·
+IA · Conclusão — rótulos meus, do vocabulário do deck; lista `NAV` no
+script) e nº = posição real do slide (os colados estavam defasados: 0, 16,
+10); cards `roundRect` em degradê com glow → retângulo chapado com borda
+cinza; Bahnschrift → Segoe UI (condensada a 0,80×, demais a 0,95× para
+segurar as quebras); Consolas → Segoe UI Semibold só nos kickers em caixa
+alta (fórmulas, nomes de arquivo e código ficam em Consolas); cores navy →
+cinzas do T6, azul 4F8EF7 → 2A4BC4/6C8CE0. Margens do cabeçalho/rodapé
+medidas por slide no conteúdo que sobra. PNGs de matplotlib mantidos (fundo
+transparente, já azul + dourado). Render dos 33 conferido em 4 rodadas:
+o KAIROS de 120 pt da capa/fechamento caiu no filtro do número fantasma
+(≥ 100 pt → ≥ 140 pt); "A hipótese | Hipótese" redundante (título contido
+na seção é suprimido); legenda do slide 17 encostava na régua da nav (nav
+desceu para 7,14 pol). Slide 16 estava vazio no original e segue vazio.
+
+**Quebrou / aprendido:**
+- Segoe UI Semibold é bem mais larga que Bahnschrift Condensed: "P(corte) =
+  0,72" quebrava em duas linhas nos T3–T5 → número virou "72 %" e o rótulo
+  desceu para a legenda; tamanho do número passou a depender da família.
+- No formato research o conteúdo ficou com um vão sob a régua do título
+  (topo ajustado por tipo de cabeçalho).
+- OMML dentro de `mc:AlternateContent` com `mc:Fallback` de texto plano abre
+  sem aviso no PowerPoint e renderiza em Cambria Math.
+
+**Pendente:**
+- Reunião do grupo para escolher o template (D34). Depois: aplicar nos
+  geradores e/ou reconstruir slides conforme o esforço do escolhido.
+- Nada commitado (o dono não pediu): `scripts/templates_reestilizar.py`,
+  `scripts/final_t6_pptx.py`, `Final/FINAL_T6.pptx`,
+  `Final/Reestilizar/T6_terminal_polymarket.{pptx,png}`, `README_templates.md`, D34 e esta
+  entrada. `Final/Slides_novos.pptx` e `Final/fianl.pptx` já constavam
+  modificados antes da sessão (mtime 20:45/20:48, salvos pelo dono); aqui só
+  foram abertos em modo leitura pelo PowerPoint para exportar PNG.
+
+**Uso de IA:**
+- **Modelo:** Claude Code / Opus 5 (início em Fable 5.1, trocado pelo dono).
+- **Contexto consumido:** ~80k tokens (janela de 15M).
+- **Prompt inicial (verbatim):** "É o seguinte, o grupo acha que o estilo da apresentação está ruim(muito bonitinho pouco sério). Queriamos então montar novas propostas de estilo baseadas em apresentações de challenges financeiros reais. Coloquei alguns exemplos, mas se precisar procure aplicações quant também. Quero que dentro da pasta reestilizar você coloque novos templates (1 slide de exemplo) com caixa, seta, texto, titulo, gráfico de exemplo e fórmula matemática. Crie de 3 a 5 templates, a ideia é: faça um gradiente de diferença. desde um template mais parecido com o que temos agora nos slides até algo muito parecido com os challenges. Quero opções com fundo escuro (como agora) e claros. apresente o nivel de esforço de refatoração de slide para cada template. Apenas crie os templates, não mexa em outro ppt"
+- **Iterações até aceitar:** 4 rodadas do dono (T6 novo; azul menos neon; azul só no gráfico; apagar T1–T5) e o pedido do deck inteiro; 6 rodadas internas de render.
+- **Erros da IA:** 5 pegos pela própria sessão antes de entregar — número quebrando linha nas fontes Segoe; vão entre régua e conteúdo; KAIROS da capa apagado pelo filtro do número fantasma; título redundante no cabeçalho; nav sobre a legenda do slide 17.
+- **Decisões escaladas:** 34 (aberta — escolha do grupo).
+- **Tags:** —
+
 ## 2026-09-18 (sessão 48) — Felipe
 
 **Feito:** os slides de backtest (28) e análise crítica (30) do `Final/fianl.pptx`
